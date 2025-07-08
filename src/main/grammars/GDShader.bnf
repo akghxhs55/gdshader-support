@@ -1,0 +1,136 @@
+{
+  parserClass="kr.jaehoyi.gdshader.parser.GDShaderParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Gdshader"
+  psiImplClassSuffix="Impl"
+  psiPackage="kr.jaehoyi.gdshader.psi"
+  psiImplPackage="kr.jaehoyi.gdshader.psi.impl"
+
+  elementTypeHolderClass="kr.jaehoyi.gdshader.psi.GDShaderTypes"
+  elementTypeClass="kr.jaehoyi.gdshader.psi.GDShaderElementType"
+  tokenTypeClass="kr.jaehoyi.gdshader.psi.GDShaderTokenType"
+}
+
+GDShaderFile ::= statement*
+
+statement ::= variable_declaration
+			| function_declaration
+			| struct_declaration
+			| control_statement
+			| expression_statement
+			| SEMICOLON
+
+variable_declaration ::= (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICONLON
+
+type ::= TYPE_VOID
+       | TYPE_BOOL
+       | TYPE_BVEC2
+       | TYPE_BVEC3
+       | TYPE_BVEC4
+       | TYPE_INT
+       | TYPE_IVEC2
+       | TYPE_IVEC3
+       | TYPE_IVEC4
+       | TYPE_UINT
+       | TYPE_UVEC2
+       | TYPE_UVEC3
+       | TYPE_UVEC4
+       | TYPE_FLOAT
+       | TYPE_VEC2
+       | TYPE_VEC3
+       | TYPE_VEC4
+       | TYPE_MAT2
+       | TYPE_MAT3
+       | TYPE_MAT4
+       | TYPE_SAMPLER2D
+       | TYPE_ISAMPLER2D
+       | TYPE_USAMPLER2D
+       | TYPE_SAMPLER3D
+       | TYPE_ISAMPLER3D
+       | TYPE_USAMPLER3D
+       | TYPE_SAMPLERCUBE
+       | TYPE_SAMPLERCUBEARRAY
+       | TYPE_SAMPLEREXT
+       | IDENTIFIER
+       
+function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+
+parameter_list ::= parameter (COMMA parameter)*
+parameter ::= type IDENTIFIER
+
+block ::= CURLY_BRACKET_OPEN statement* CURLY_BRACKET_CLOSE
+
+struct_declaration ::= STRUCT IDENTIFIER CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
+struct_member ::= type IDENTIFIER SEMICOLON
+
+control_statement ::= if_statement
+					| for_statement
+					| while_statement
+					| switch_statement
+					
+if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block (CF_ELSE block)?
+for_statement ::= CF_FOR PARENTHESIS_OPEN expression_statement expression_statement expression PARENTHESIS_CLOSE block
+while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block
+switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
+
+case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON statement*
+
+expression_statement ::= expression SEMICOLON
+
+expression ::= IDENTIFIER
+			 | literal
+			 | assign_expr
+			 | function_call
+			 
+function_call ::= IDENTIFIER PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+argument_list ::= expression (COMMA expression)*
+
+literal ::= TRUE
+		  | FALSE
+		  | FLOAT_CONSTANT
+		  | INT_CONSTANT
+		  | UINT_CONSTANT
+		  | STRING_CONSTANT
+		  
+{
+  precedence {
+    right OP_ASSIGN OP_ASSIGN_ADD OP_ASSIGN_SUB OP_ASSIGN_MUL OP_ASSIGN_DIV
+          OP_ASSIGN_MOD OP_ASSIGN_SHIFT_LEFT OP_ASSIGN_SHIFT_RIGHT
+    left OP_OR
+    left OP_AND
+    left OP_BIT_OR
+    left OP_BIT_XOR
+    left OP_BIT_AND
+    left OP_EQUAL OP_NOT_EQUAL
+    left OP_LESS OP_LESS_EQUAL OP_GREATER OP_GREATER_EQUAL
+    left OP_SHIFT_LEFT OP_SHIFT_RIGHT
+    left OP_ADD OP_SUB
+    left OP_MUL OP_DIV OP_MOD
+    left OP_NOT OP_BIT_INVERT OP_INCREMENT OP_DECREMENT
+  }
+}
+
+assign_expr ::= logic_or_expr (assignment_operator assign_expr)?
+logic_or_expr ::= logic_and_expr (OP_OR logic_and_expr)*
+logic_and_expr ::= bitwise_or_expr (OP_AND bitwise_or_expr)*
+bitwise_or_expr ::= bitwise_xor_expr (OP_BIT_OR bitwise_xor_expr)*
+bitwise_xor_expr ::= bitwise_and_expr (OP_BIT_XOR bitwise_and_expr)*
+bitwise_and_expr ::= equality_expr (OP_BIT_AND equality_expr)*
+equality_expr ::= relational_expr ((OP_EQUAL | OP_NOT_EQUAL) relational_expr)*
+relational_expr ::= shift_expr ((OP_LESS | OP_LESS_EQUAL | OP_GREATER | OP_GREATER_EQUAL) shift_expr)*
+shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
+additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
+multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
+
+unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT)? primary
+primary ::= IDENTIFIER | literal | function_call | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
+
+assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
+                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT 
+                        
+DUMMY ::= LINE_COMMENT | BLOCK_COMMENT | BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
+		| CF_CONTINUE | CF_RETURN | CF_DISCARD | KEYWORD | SHADER_TYPE | RENDER_MODE | STENCIL_MODE | PRECISION_LOW
+		| PRECISION_MEDIUM | PRECISION_HIGH | UNIFORM_GROUP | INSTANCE | GLOBAL | ARG_IN | ARG_OUT | ARG_INOUT
+					

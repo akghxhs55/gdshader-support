@@ -21,6 +21,15 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
+        <fileType
+            name="GDShader File"
+            implementationClass="kr.jaehoyi.gdshader.GDShaderFileType"
+            fieldName="INSTANCE"
+            language="GDShader"
+            extensions="gdshader" />
+        
+        <lang.parserDefinition
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.GDShaderParserDefinition" />
     </extensions>
 </idea-plugin>
