@@ -37,8 +37,9 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // LINE_COMMENT | BLOCK_COMMENT | BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
-  // 		| CF_CONTINUE | CF_RETURN | CF_DISCARD | KEYWORD | SHADER_TYPE | RENDER_MODE | STENCIL_MODE | PRECISION_LOW
+  // 		| CF_CONTINUE | CF_RETURN | CF_DISCARD | SHADER_TYPE | RENDER_MODE | STENCIL_MODE | PRECISION_LOW
   // 		| PRECISION_MEDIUM | PRECISION_HIGH | UNIFORM_GROUP | INSTANCE | GLOBAL | ARG_IN | ARG_OUT | ARG_INOUT
+  // 		| INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
   public static boolean DUMMY(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DUMMY")) return false;
     boolean r;
@@ -54,7 +55,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, CF_CONTINUE);
     if (!r) r = consumeToken(b, CF_RETURN);
     if (!r) r = consumeToken(b, CF_DISCARD);
-    if (!r) r = consumeToken(b, KEYWORD);
     if (!r) r = consumeToken(b, SHADER_TYPE);
     if (!r) r = consumeToken(b, RENDER_MODE);
     if (!r) r = consumeToken(b, STENCIL_MODE);
@@ -67,6 +67,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, ARG_IN);
     if (!r) r = consumeToken(b, ARG_OUT);
     if (!r) r = consumeToken(b, ARG_INOUT);
+    if (!r) r = consumeToken(b, INTERPOLATION_FLAT);
+    if (!r) r = consumeToken(b, INTERPOLATION_SMOOTH);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

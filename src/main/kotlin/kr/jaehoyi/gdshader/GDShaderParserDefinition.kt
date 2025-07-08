@@ -16,9 +16,6 @@ import kr.jaehoyi.gdshader.psi.GDShaderTokenSets
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderParserDefinition : ParserDefinition {
-    companion object {
-        val FILE: IFileElementType = IFileElementType(GDShaderLanguage)
-    }
 
     override fun createLexer(project: Project): Lexer = GDShaderLexerAdapter
 
@@ -34,3 +31,5 @@ class GDShaderParserDefinition : ParserDefinition {
 
     override fun createElement(node: ASTNode): PsiElement = GDShaderTypes.Factory.createElement(node) 
 }
+
+val FILE: IFileElementType = IFileElementType(GDShaderLanguage)

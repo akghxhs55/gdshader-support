@@ -19,8 +19,6 @@ Whitespace = [\ \t\r\n]+
 LineComment = "//"[^\r\n]*
 BlockComment = "/*"([^*]|\*+[^*/])*"*/"
 
-Keyword = \b(flat|smooth)\b
-
 %%
 
 
@@ -29,6 +27,9 @@ Keyword = \b(flat|smooth)\b
 	
 	{LineComment} 				{ return GDShaderTypes.LINE_COMMENT; }
 	{BlockComment} 				{ return GDShaderTypes.BLOCK_COMMENT; }
+      
+    "true" 						{ return GDShaderTypes.TRUE; }
+	"false" 					{ return GDShaderTypes.FALSE; }
       
     "[" 						{ return GDShaderTypes.BRACKET_OPEN; }
 	"]" 						{ return GDShaderTypes.BRACKET_CLOSE; }
@@ -86,13 +87,9 @@ Keyword = \b(flat|smooth)\b
 	"return" 					{ return GDShaderTypes.CF_RETURN; }
 	"discard" 					{ return GDShaderTypes.CF_DISCARD; }
       
-  	{Keyword} 					{ return GDShaderTypes.KEYWORD; }
-    "true" 						{ return GDShaderTypes.TRUE; }
-	"false" 					{ return GDShaderTypes.FALSE; }
 	"shader_type" 				{ return GDShaderTypes.SHADER_TYPE; }
  	"render_mode" 		 		{ return GDShaderTypes.RENDER_MODE; }
     "stencil_mode" 				{ return GDShaderTypes.STENCIL_MODE; }
-    
     "const" 					{ return GDShaderTypes.CONST; }
     "struct" 					{ return GDShaderTypes.STRUCT; }
     "lowp" 						{ return GDShaderTypes.PRECISION_LOW; }
@@ -106,6 +103,8 @@ Keyword = \b(flat|smooth)\b
     "in" 						{ return GDShaderTypes.ARG_IN; }
 	"out" 						{ return GDShaderTypes.ARG_OUT; }
 	"inout" 					{ return GDShaderTypes.ARG_INOUT; }
+	"flat"	 					{ return GDShaderTypes.INTERPOLATION_FLAT; }
+	"smooth" 					{ return GDShaderTypes.INTERPOLATION_SMOOTH; }
       
     "void" 						{ return GDShaderTypes.TYPE_VOID; }
 	"bool" 						{ return GDShaderTypes.TYPE_BOOL; }

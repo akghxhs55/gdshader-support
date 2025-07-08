@@ -72,8 +72,9 @@ public interface GDShaderTypes {
   IElementType GLOBAL = new GDShaderTokenType("GLOBAL");
   IElementType IDENTIFIER = new GDShaderTokenType("IDENTIFIER");
   IElementType INSTANCE = new GDShaderTokenType("INSTANCE");
+  IElementType INTERPOLATION_FLAT = new GDShaderTokenType("INTERPOLATION_FLAT");
+  IElementType INTERPOLATION_SMOOTH = new GDShaderTokenType("INTERPOLATION_SMOOTH");
   IElementType INT_CONSTANT = new GDShaderTokenType("INT_CONSTANT");
-  IElementType KEYWORD = new GDShaderTokenType("KEYWORD");
   IElementType LEFT = new GDShaderTokenType("left");
   IElementType LINE_COMMENT = new GDShaderTokenType("LINE_COMMENT");
   IElementType OP_ADD = new GDShaderTokenType("OP_ADD");
