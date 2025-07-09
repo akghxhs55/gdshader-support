@@ -19,6 +19,17 @@ Whitespace = [\ \t\r\n]+
 LineComment = "//"[^\r\n]*
 BlockComment = "/*"([^*]|\*+[^*/])*"*/"
 
+Identifier = [a-zA-Z_][a-zA-Z0-9_]*
+
+FloatConstant =
+	([0-9]+\.[0-9]*([eE][+-]?[0-9]+)?[fF]?) |
+    (\.[0-9]+([eE][+-]?[0-9]+)?[fF]?) |
+    ([0-9]+[eE][+-]?[0-9]+[fF]?) |
+    ([0-9]+[fF])
+IntConstant = 0|[1-9][0-9]*
+UintConstant = 0|[1-9][0-9]*[uU]
+StringConstant = \"([^\\\"\n]|\\.)*\"
+
 %%
 
 
@@ -30,6 +41,10 @@ BlockComment = "/*"([^*]|\*+[^*/])*"*/"
       
     "true" 						{ return GDShaderTypes.TRUE; }
 	"false" 					{ return GDShaderTypes.FALSE; }
+	{FloatConstant} 			{ return GDShaderTypes.FLOAT_CONSTANT; }
+	{IntConstant} 				{ return GDShaderTypes.INT_CONSTANT; }
+	{UintConstant} 				{ return GDShaderTypes.UINT_CONSTANT; }
+	{StringConstant} 			{ return GDShaderTypes.STRING_CONSTANT; }
       
     "[" 						{ return GDShaderTypes.BRACKET_OPEN; }
 	"]" 						{ return GDShaderTypes.BRACKET_CLOSE; }
@@ -135,4 +150,6 @@ BlockComment = "/*"([^*]|\*+[^*/])*"*/"
 	"samplerCube" 				{ return GDShaderTypes.TYPE_SAMPLERCUBE; }
   	"samplerCubeArray" 			{ return GDShaderTypes.TYPE_SAMPLERCUBEARRAY; }
     "samplerExternalOES" 		{ return GDShaderTypes.TYPE_SAMPLEREXT; }
+      
+  	{Identifier} 				{ return GDShaderTypes.IDENTIFIER; }
 }

@@ -34,6 +34,8 @@ public interface GDShaderTypes {
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
   IElementType RELATIONAL_EXPR = new GDShaderElementType("RELATIONAL_EXPR");
+  IElementType RENDER_MODE_DECLARATION = new GDShaderElementType("RENDER_MODE_DECLARATION");
+  IElementType SHADER_TYPE_DECLARATION = new GDShaderElementType("SHADER_TYPE_DECLARATION");
   IElementType SHIFT_EXPR = new GDShaderElementType("SHIFT_EXPR");
   IElementType STATEMENT = new GDShaderElementType("STATEMENT");
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
@@ -118,7 +120,6 @@ public interface GDShaderTypes {
   IElementType RENDER_MODE = new GDShaderTokenType("RENDER_MODE");
   IElementType RIGHT = new GDShaderTokenType("right");
   IElementType SEMICOLON = new GDShaderTokenType("SEMICOLON");
-  IElementType SEMICONLON = new GDShaderTokenType("SEMICONLON");
   IElementType SHADER_TYPE = new GDShaderTokenType("SHADER_TYPE");
   IElementType STENCIL_MODE = new GDShaderTokenType("STENCIL_MODE");
   IElementType STRING_CONSTANT = new GDShaderTokenType("STRING_CONSTANT");
@@ -238,6 +239,12 @@ public interface GDShaderTypes {
       }
       else if (type == RELATIONAL_EXPR) {
         return new GdshaderRelationalExprImpl(node);
+      }
+      else if (type == RENDER_MODE_DECLARATION) {
+        return new GdshaderRenderModeDeclarationImpl(node);
+      }
+      else if (type == SHADER_TYPE_DECLARATION) {
+        return new GdshaderShaderTypeDeclarationImpl(node);
       }
       else if (type == SHIFT_EXPR) {
         return new GdshaderShiftExprImpl(node);

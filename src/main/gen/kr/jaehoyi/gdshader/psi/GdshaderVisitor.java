@@ -111,6 +111,14 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitRenderModeDeclaration(@NotNull GdshaderRenderModeDeclaration o) {
+    visitPsiElement(o);
+  }
+
+  public void visitShaderTypeDeclaration(@NotNull GdshaderShaderTypeDeclaration o) {
+    visitPsiElement(o);
+  }
+
   public void visitShiftExpr(@NotNull GdshaderShiftExpr o) {
     visitPsiElement(o);
   }

@@ -17,6 +17,12 @@ public interface GdshaderStatement extends PsiElement {
   GdshaderFunctionDeclaration getFunctionDeclaration();
 
   @Nullable
+  GdshaderRenderModeDeclaration getRenderModeDeclaration();
+
+  @Nullable
+  GdshaderShaderTypeDeclaration getShaderTypeDeclaration();
+
+  @Nullable
   GdshaderStructDeclaration getStructDeclaration();
 
   @Nullable

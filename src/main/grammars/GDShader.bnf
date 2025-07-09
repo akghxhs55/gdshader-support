@@ -16,13 +16,17 @@
 GDShaderFile ::= statement*
 
 statement ::= variable_declaration
+			| shader_type_declaration 
+			| render_mode_declaration
 			| function_declaration
 			| struct_declaration
 			| control_statement
 			| expression_statement
+			| LINE_COMMENT
+			| BLOCK_COMMENT
 			| SEMICOLON
 
-variable_declaration ::= (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICONLON
+variable_declaration ::= (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICOLON
 
 type ::= TYPE_VOID
        | TYPE_BOOL
@@ -128,10 +132,14 @@ unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT)? primary
 primary ::= IDENTIFIER | literal | function_call | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
-                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT 
+                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
                         
-DUMMY ::= LINE_COMMENT | BLOCK_COMMENT | BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
-		| CF_CONTINUE | CF_RETURN | CF_DISCARD | SHADER_TYPE | RENDER_MODE | STENCIL_MODE | PRECISION_LOW
+shader_type_declaration ::= SHADER_TYPE IDENTIFIER SEMICOLON
+
+render_mode_declaration ::= RENDER_MODE IDENTIFIER SEMICOLON
+                        
+DUMMY ::= BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
+		| CF_CONTINUE | CF_RETURN | CF_DISCARD | STENCIL_MODE | PRECISION_LOW
 		| PRECISION_MEDIUM | PRECISION_HIGH | UNIFORM_GROUP | INSTANCE | GLOBAL | ARG_IN | ARG_OUT | ARG_INOUT
 		| INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
 					

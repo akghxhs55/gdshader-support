@@ -36,17 +36,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // LINE_COMMENT | BLOCK_COMMENT | BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
-  // 		| CF_CONTINUE | CF_RETURN | CF_DISCARD | SHADER_TYPE | RENDER_MODE | STENCIL_MODE | PRECISION_LOW
+  // BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
+  // 		| CF_CONTINUE | CF_RETURN | CF_DISCARD | STENCIL_MODE | PRECISION_LOW
   // 		| PRECISION_MEDIUM | PRECISION_HIGH | UNIFORM_GROUP | INSTANCE | GLOBAL | ARG_IN | ARG_OUT | ARG_INOUT
   // 		| INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
   public static boolean DUMMY(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "DUMMY")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, DUMMY, "<dummy>");
-    r = consumeToken(b, LINE_COMMENT);
-    if (!r) r = consumeToken(b, BLOCK_COMMENT);
-    if (!r) r = consumeToken(b, BRACKET_OPEN);
+    r = consumeToken(b, BRACKET_OPEN);
     if (!r) r = consumeToken(b, BRACKET_CLOSE);
     if (!r) r = consumeToken(b, QUESTION);
     if (!r) r = consumeToken(b, PERIOD);
@@ -55,8 +53,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, CF_CONTINUE);
     if (!r) r = consumeToken(b, CF_RETURN);
     if (!r) r = consumeToken(b, CF_DISCARD);
-    if (!r) r = consumeToken(b, SHADER_TYPE);
-    if (!r) r = consumeToken(b, RENDER_MODE);
     if (!r) r = consumeToken(b, STENCIL_MODE);
     if (!r) r = consumeToken(b, PRECISION_LOW);
     if (!r) r = consumeToken(b, PRECISION_MEDIUM);
@@ -925,6 +921,30 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // RENDER_MODE IDENTIFIER SEMICOLON
+  public static boolean render_mode_declaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "render_mode_declaration")) return false;
+    if (!nextTokenIs(b, RENDER_MODE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, RENDER_MODE, IDENTIFIER, SEMICOLON);
+    exit_section_(b, m, RENDER_MODE_DECLARATION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // SHADER_TYPE IDENTIFIER SEMICOLON
+  public static boolean shader_type_declaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "shader_type_declaration")) return false;
+    if (!nextTokenIs(b, SHADER_TYPE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, SHADER_TYPE, IDENTIFIER, SEMICOLON);
+    exit_section_(b, m, SHADER_TYPE_DECLARATION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
   public static boolean shift_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shift_expr")) return false;
@@ -969,20 +989,28 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // variable_declaration
+  // 			| shader_type_declaration 
+  // 			| render_mode_declaration
   // 			| function_declaration
   // 			| struct_declaration
   // 			| control_statement
   // 			| expression_statement
+  // 			| LINE_COMMENT
+  // 			| BLOCK_COMMENT
   // 			| SEMICOLON
   public static boolean statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, STATEMENT, "<statement>");
     r = variable_declaration(b, l + 1);
+    if (!r) r = shader_type_declaration(b, l + 1);
+    if (!r) r = render_mode_declaration(b, l + 1);
     if (!r) r = function_declaration(b, l + 1);
     if (!r) r = struct_declaration(b, l + 1);
     if (!r) r = control_statement(b, l + 1);
     if (!r) r = expression_statement(b, l + 1);
+    if (!r) r = consumeToken(b, LINE_COMMENT);
+    if (!r) r = consumeToken(b, BLOCK_COMMENT);
     if (!r) r = consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1152,7 +1180,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICONLON
+  // (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICOLON
   public static boolean variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_declaration")) return false;
     boolean r;
@@ -1161,7 +1189,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && type(b, l + 1);
     r = r && consumeToken(b, IDENTIFIER);
     r = r && variable_declaration_3(b, l + 1);
-    r = r && consumeToken(b, SEMICONLON);
+    r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

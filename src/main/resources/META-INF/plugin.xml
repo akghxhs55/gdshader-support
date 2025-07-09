@@ -31,5 +31,9 @@
         <lang.parserDefinition
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.GDShaderParserDefinition" />
+        
+        <lang.syntaxHighlighterFactory
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.GDShaderSyntaxHighlighterFactory" />
     </extensions>
 </idea-plugin>
