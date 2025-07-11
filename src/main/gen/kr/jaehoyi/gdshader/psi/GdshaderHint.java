@@ -5,12 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GdshaderVariableDeclaration extends PsiElement {
+public interface GdshaderHint extends PsiElement {
 
   @Nullable
-  GdshaderRegularVariableDeclaration getRegularVariableDeclaration();
+  GdshaderEnumHint getEnumHint();
 
   @Nullable
-  GdshaderUniformVariableDeclaration getUniformVariableDeclaration();
+  GdshaderRangeHint getRangeHint();
+
+  @Nullable
+  GdshaderSimpleHint getSimpleHint();
 
 }

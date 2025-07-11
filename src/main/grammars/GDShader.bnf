@@ -15,49 +15,35 @@
 
 GDShaderFile ::= statement*
 
-statement ::= variable_declaration
-			| shader_type_declaration 
+statement ::= shader_type_declaration
 			| render_mode_declaration
-			| function_declaration
-			| struct_declaration
-			| control_statement
-			| expression_statement
 			| LINE_COMMENT
 			| BLOCK_COMMENT
 			| SEMICOLON
+			| function_declaration
+			| struct_declaration
+			| control_statement
+			| variable_declaration	 
+			| expression_statement
 
-variable_declaration ::= (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICOLON
+shader_type_declaration ::= SHADER_TYPE IDENTIFIER SEMICOLON
 
-type ::= TYPE_VOID
-       | TYPE_BOOL
-       | TYPE_BVEC2
-       | TYPE_BVEC3
-       | TYPE_BVEC4
-       | TYPE_INT
-       | TYPE_IVEC2
-       | TYPE_IVEC3
-       | TYPE_IVEC4
-       | TYPE_UINT
-       | TYPE_UVEC2
-       | TYPE_UVEC3
-       | TYPE_UVEC4
-       | TYPE_FLOAT
-       | TYPE_VEC2
-       | TYPE_VEC3
-       | TYPE_VEC4
-       | TYPE_MAT2
-       | TYPE_MAT3
-       | TYPE_MAT4
-       | TYPE_SAMPLER2D
-       | TYPE_ISAMPLER2D
-       | TYPE_USAMPLER2D
-       | TYPE_SAMPLER3D
-       | TYPE_ISAMPLER3D
-       | TYPE_USAMPLER3D
-       | TYPE_SAMPLERCUBE
-       | TYPE_SAMPLERCUBEARRAY
-       | TYPE_SAMPLEREXT
-       | IDENTIFIER
+render_mode_declaration ::= RENDER_MODE IDENTIFIER SEMICOLON
+
+variable_declaration ::= uniform_variable_declaration
+					   | regular_variable_declaration
+
+uniform_variable_declaration ::= UNIFORM type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
+hints ::= hint (COMMA hint)*
+hint ::= simple_hint
+	   | range_hint
+	   | enum_hint
+simple_hint ::= hint_identifier (COMMA hint_identifier)*
+range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
+enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
+number ::= FLOAT_CONSTANT | INT_CONSTANT | UINT_CONSTANT
+
+regular_variable_declaration ::= (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICOLON
        
 function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
@@ -91,6 +77,37 @@ expression ::= IDENTIFIER
 function_call ::= IDENTIFIER PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*
 
+type ::= TYPE_VOID
+       | TYPE_BOOL
+       | TYPE_BVEC2
+       | TYPE_BVEC3
+       | TYPE_BVEC4
+       | TYPE_INT
+       | TYPE_IVEC2
+       | TYPE_IVEC3
+       | TYPE_IVEC4
+       | TYPE_UINT
+       | TYPE_UVEC2
+       | TYPE_UVEC3
+       | TYPE_UVEC4
+       | TYPE_FLOAT
+       | TYPE_VEC2
+       | TYPE_VEC3
+       | TYPE_VEC4
+       | TYPE_MAT2
+       | TYPE_MAT3
+       | TYPE_MAT4
+       | TYPE_SAMPLER2D
+       | TYPE_ISAMPLER2D
+       | TYPE_USAMPLER2D
+       | TYPE_SAMPLER3D
+       | TYPE_ISAMPLER3D
+       | TYPE_USAMPLER3D
+       | TYPE_SAMPLERCUBE
+       | TYPE_SAMPLERCUBEARRAY
+       | TYPE_SAMPLEREXT
+       | IDENTIFIER
+
 literal ::= TRUE
 		  | FALSE
 		  | FLOAT_CONSTANT
@@ -98,6 +115,32 @@ literal ::= TRUE
 		  | UINT_CONSTANT
 		  | STRING_CONSTANT
 		  
+hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
+			| HINT_DEFAULT_BLACK_TEXTURE
+			| HINT_DEFAULT_TRANSPARENT_TEXTURE
+			| HINT_NORMAL_TEXTURE
+			| HINT_ROUGHNESS_NORMAL_TEXTURE
+			| HINT_ROUGHNESS_R
+			| HINT_ROUGHNESS_G
+			| HINT_ROUGHNESS_B
+			| HINT_ROUGHNESS_A
+			| HINT_ROUGHNESS_GRAY
+			| HINT_ANISOTROPY_TEXTURE
+			| HINT_SOURCE_COLOR
+			| HINT_COLOR_CONVERSION_DISABLED
+			| HINT_INSTANCE_INDEX
+			| HINT_SCREEN_TEXTURE
+			| HINT_NORMAL_ROUGHNESS_TEXTURE
+			| HINT_DEPTH_TEXTURE
+			| FILTER_NEAREST
+			| FILTER_LINEAR
+			| FILTER_NEAREST_MIPMAP
+			| FILTER_LINEAR_MIPMAP
+			| FILTER_NEAREST_MIPMAP_ANISOTROPIC
+			| FILTER_LINEAR_MIPMAP_ANISOTROPIC
+			| REPEAT_ENABLE
+			| REPEAT_DISABLE
+			
 {
   precedence {
     right OP_ASSIGN OP_ASSIGN_ADD OP_ASSIGN_SUB OP_ASSIGN_MUL OP_ASSIGN_DIV
@@ -133,10 +176,6 @@ primary ::= IDENTIFIER | literal | function_call | PARENTHESIS_OPEN expression P
 
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
-                        
-shader_type_declaration ::= SHADER_TYPE IDENTIFIER SEMICOLON
-
-render_mode_declaration ::= RENDER_MODE IDENTIFIER SEMICOLON
                         
 DUMMY ::= BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
 		| CF_CONTINUE | CF_RETURN | CF_DISCARD | STENCIL_MODE | PRECISION_LOW

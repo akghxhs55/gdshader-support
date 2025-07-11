@@ -17,6 +17,8 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
             "GDSHADER_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
         val KEYWORD = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
+        val HINT = TextAttributesKey.createTextAttributesKey(
+            "GDSHADER_HINT", DefaultLanguageHighlighterColors.METADATA)
         val STRING = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_STRING", DefaultLanguageHighlighterColors.STRING)
         val BLOCK_COMMENT = TextAttributesKey.createTextAttributesKey(
@@ -49,6 +51,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
         private val IDENTIFIER_KEYS = arrayOf(IDENTIFIER)
         private val NUMBER_KEYS = arrayOf(NUMBER)
         private val KEYWORD_KEYS = arrayOf(KEYWORD)
+        private val HINT_KEYS = arrayOf(HINT)
         private val STRING_KEYS = arrayOf(STRING)
         private val BLOCK_COMMENT_KEYS = arrayOf(BLOCK_COMMENT)
         private val LINE_COMMENT_KEYS = arrayOf(LINE_COMMENT)
@@ -94,6 +97,19 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
             GDShaderTypes.GLOBAL, GDShaderTypes.VARYING, GDShaderTypes.ARG_IN, GDShaderTypes.ARG_OUT,
             GDShaderTypes.ARG_INOUT, GDShaderTypes.INTERPOLATION_FLAT, GDShaderTypes.INTERPOLATION_SMOOTH
                 -> KEYWORD_KEYS
+
+            GDShaderTypes.HINT_DEFAULT_WHITE_TEXTURE, GDShaderTypes.HINT_DEFAULT_BLACK_TEXTURE,
+            GDShaderTypes.HINT_DEFAULT_TRANSPARENT_TEXTURE, GDShaderTypes.HINT_NORMAL_TEXTURE,
+            GDShaderTypes.HINT_ROUGHNESS_NORMAL_TEXTURE, GDShaderTypes.HINT_ROUGHNESS_R, GDShaderTypes.HINT_ROUGHNESS_G,
+            GDShaderTypes.HINT_ROUGHNESS_B, GDShaderTypes.HINT_ROUGHNESS_A, GDShaderTypes.HINT_ROUGHNESS_GRAY,
+            GDShaderTypes.HINT_ANISOTROPY_TEXTURE, GDShaderTypes.HINT_SOURCE_COLOR,
+            GDShaderTypes.HINT_COLOR_CONVERSION_DISABLED, GDShaderTypes.HINT_RANGE, GDShaderTypes.HINT_ENUM,
+            GDShaderTypes.HINT_INSTANCE_INDEX, GDShaderTypes.HINT_SCREEN_TEXTURE,
+            GDShaderTypes.HINT_NORMAL_ROUGHNESS_TEXTURE, GDShaderTypes.HINT_DEPTH_TEXTURE, GDShaderTypes.FILTER_NEAREST,
+            GDShaderTypes.FILTER_LINEAR, GDShaderTypes.FILTER_NEAREST_MIPMAP, GDShaderTypes.FILTER_LINEAR_MIPMAP,
+            GDShaderTypes.FILTER_NEAREST_MIPMAP_ANISOTROPIC, GDShaderTypes.FILTER_LINEAR_MIPMAP_ANISOTROPIC,
+            GDShaderTypes.REPEAT_ENABLE, GDShaderTypes.REPEAT_DISABLE
+                -> HINT_KEYS
 
             GDShaderTypes.OP_EQUAL, GDShaderTypes.OP_NOT_EQUAL, GDShaderTypes.OP_LESS, GDShaderTypes.OP_LESS_EQUAL,
             GDShaderTypes.OP_GREATER, GDShaderTypes.OP_GREATER_EQUAL, GDShaderTypes.OP_AND, GDShaderTypes.OP_OR,

@@ -151,5 +151,33 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
   	"samplerCubeArray" 			{ return GDShaderTypes.TYPE_SAMPLERCUBEARRAY; }
     "samplerExternalOES" 		{ return GDShaderTypes.TYPE_SAMPLEREXT; }
       
+    "hint_default_white" 		{ return GDShaderTypes.HINT_DEFAULT_WHITE_TEXTURE; }
+    "hint_default_black" 		{ return GDShaderTypes.HINT_DEFAULT_BLACK_TEXTURE; }
+    "hint_default_transparent"  { return GDShaderTypes.HINT_DEFAULT_TRANSPARENT_TEXTURE; }
+    "hint_normal" 				{ return GDShaderTypes.HINT_NORMAL_TEXTURE; }
+    "hint_roughness_normal"		{ return GDShaderTypes.HINT_ROUGHNESS_NORMAL_TEXTURE; }
+    "hint_roughness_r" 			{ return GDShaderTypes.HINT_ROUGHNESS_R; }
+	"hint_roughness_g" 			{ return GDShaderTypes.HINT_ROUGHNESS_G; }
+	"hint_roughness_b" 			{ return GDShaderTypes.HINT_ROUGHNESS_B; }
+	"hint_roughness_a" 			{ return GDShaderTypes.HINT_ROUGHNESS_A; }
+	"hint_roughness_gray" 		{ return GDShaderTypes.HINT_ROUGHNESS_GRAY; }
+	"hint_anisotropy" 			{ return GDShaderTypes.HINT_ANISOTROPY_TEXTURE; }
+    "source_color" 				{ return GDShaderTypes.HINT_SOURCE_COLOR; }
+    "color_coversion_disabled"  { return GDShaderTypes.HINT_COLOR_CONVERSION_DISABLED; }
+    "hint_range" 				{ return GDShaderTypes.HINT_RANGE; }
+    "hint_enum" 				{ return GDShaderTypes.HINT_ENUM; }
+	"instance_index" 			{ return GDShaderTypes.HINT_INSTANCE_INDEX; }
+    "hint_screen_texture" 		{ return GDShaderTypes.HINT_SCREEN_TEXTURE; }
+	"hint_normal_roughness_texture" { return GDShaderTypes.HINT_NORMAL_ROUGHNESS_TEXTURE; }
+    "hint_depth_texture" 		{ return GDShaderTypes.HINT_DEPTH_TEXTURE; }
+    "filter_nearest" 			{ return GDShaderTypes.FILTER_NEAREST; }
+	"filter_linear" 			{ return GDShaderTypes.FILTER_LINEAR; }
+	"filter_nearest_mipmap" 	{ return GDShaderTypes.FILTER_NEAREST_MIPMAP; }
+	"filter_linear_mipmap" 		{ return GDShaderTypes.FILTER_LINEAR_MIPMAP; }
+	"filter_nearest_mipmap_anisotropic" { return GDShaderTypes.FILTER_NEAREST_MIPMAP_ANISOTROPIC; }
+	"filter_linear_mipmap_anisotropic" { return GDShaderTypes.FILTER_LINEAR_MIPMAP_ANISOTROPIC; }
+    "repeat_enable" 			{ return GDShaderTypes.REPEAT_ENABLE; }
+	"repeat_disable" 			{ return GDShaderTypes.REPEAT_DISABLE; }
+      
   	{Identifier} 				{ return GDShaderTypes.IDENTIFIER; }
 }
