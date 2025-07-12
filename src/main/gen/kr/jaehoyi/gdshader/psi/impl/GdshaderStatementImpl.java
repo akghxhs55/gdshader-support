@@ -53,14 +53,38 @@ public class GdshaderStatementImpl extends ASTWrapperPsiElement implements Gdsha
 
   @Override
   @Nullable
+  public GdshaderReturnStatement getReturnStatement() {
+    return findChildByClass(GdshaderReturnStatement.class);
+  }
+
+  @Override
+  @Nullable
   public GdshaderShaderTypeDeclaration getShaderTypeDeclaration() {
     return findChildByClass(GdshaderShaderTypeDeclaration.class);
   }
 
   @Override
   @Nullable
+  public GdshaderSimpleStatement getSimpleStatement() {
+    return findChildByClass(GdshaderSimpleStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public GdshaderStencilModeDeclaration getStencilModeDeclaration() {
+    return findChildByClass(GdshaderStencilModeDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public GdshaderStructDeclaration getStructDeclaration() {
     return findChildByClass(GdshaderStructDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public GdshaderUniformGroupDeclaration getUniformGroupDeclaration() {
+    return findChildByClass(GdshaderUniformGroupDeclaration.class);
   }
 
   @Override

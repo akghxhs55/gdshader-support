@@ -29,6 +29,12 @@ public class GdshaderControlStatementImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
+  public GdshaderDoWhileStatement getDoWhileStatement() {
+    return findChildByClass(GdshaderDoWhileStatement.class);
+  }
+
+  @Override
+  @Nullable
   public GdshaderForStatement getForStatement() {
     return findChildByClass(GdshaderForStatement.class);
   }

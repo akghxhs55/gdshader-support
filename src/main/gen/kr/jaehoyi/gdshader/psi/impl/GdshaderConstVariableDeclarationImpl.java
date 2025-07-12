@@ -35,8 +35,14 @@ public class GdshaderConstVariableDeclarationImpl extends ASTWrapperPsiElement i
 
   @Override
   @NotNull
-  public GdshaderExpression getExpression() {
-    return findNotNullChildByClass(GdshaderExpression.class);
+  public GdshaderInitializer getInitializer() {
+    return findNotNullChildByClass(GdshaderInitializer.class);
+  }
+
+  @Override
+  @Nullable
+  public GdshaderPrecision getPrecision() {
+    return findChildByClass(GdshaderPrecision.class);
   }
 
   @Override

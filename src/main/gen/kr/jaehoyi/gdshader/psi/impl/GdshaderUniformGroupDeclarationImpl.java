@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GdshaderDummyImpl extends ASTWrapperPsiElement implements GdshaderDummy {
+public class GdshaderUniformGroupDeclarationImpl extends ASTWrapperPsiElement implements GdshaderUniformGroupDeclaration {
 
-  public GdshaderDummyImpl(@NotNull ASTNode node) {
+  public GdshaderUniformGroupDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GdshaderVisitor visitor) {
-    visitor.visitDummy(this);
+    visitor.visitUniformGroupDeclaration(this);
   }
 
   @Override

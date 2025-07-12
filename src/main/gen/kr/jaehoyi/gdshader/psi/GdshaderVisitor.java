@@ -7,10 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public class GdshaderVisitor extends PsiElementVisitor {
 
-  public void visitDummy(@NotNull GdshaderDummy o) {
-    visitPsiElement(o);
-  }
-
   public void visitAdditiveExpr(@NotNull GdshaderAdditiveExpr o) {
     visitPsiElement(o);
   }
@@ -51,11 +47,19 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitConditionalExpr(@NotNull GdshaderConditionalExpr o) {
+    visitPsiElement(o);
+  }
+
   public void visitConstVariableDeclaration(@NotNull GdshaderConstVariableDeclaration o) {
     visitPsiElement(o);
   }
 
   public void visitControlStatement(@NotNull GdshaderControlStatement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDoWhileStatement(@NotNull GdshaderDoWhileStatement o) {
     visitPsiElement(o);
   }
 
@@ -107,6 +111,18 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitInitializer(@NotNull GdshaderInitializer o) {
+    visitPsiElement(o);
+  }
+
+  public void visitInitializerList(@NotNull GdshaderInitializerList o) {
+    visitPsiElement(o);
+  }
+
+  public void visitInstanceIndexHint(@NotNull GdshaderInstanceIndexHint o) {
+    visitPsiElement(o);
+  }
+
   public void visitLiteral(@NotNull GdshaderLiteral o) {
     visitPsiElement(o);
   }
@@ -139,6 +155,10 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitPrecision(@NotNull GdshaderPrecision o) {
+    visitPsiElement(o);
+  }
+
   public void visitPrimary(@NotNull GdshaderPrimary o) {
     visitPsiElement(o);
   }
@@ -159,6 +179,10 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReturnStatement(@NotNull GdshaderReturnStatement o) {
+    visitPsiElement(o);
+  }
+
   public void visitShaderTypeDeclaration(@NotNull GdshaderShaderTypeDeclaration o) {
     visitPsiElement(o);
   }
@@ -171,7 +195,15 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitSimpleStatement(@NotNull GdshaderSimpleStatement o) {
+    visitPsiElement(o);
+  }
+
   public void visitStatement(@NotNull GdshaderStatement o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStencilModeDeclaration(@NotNull GdshaderStencilModeDeclaration o) {
     visitPsiElement(o);
   }
 
@@ -192,6 +224,10 @@ public class GdshaderVisitor extends PsiElementVisitor {
   }
 
   public void visitUnaryExpr(@NotNull GdshaderUnaryExpr o) {
+    visitPsiElement(o);
+  }
+
+  public void visitUniformGroupDeclaration(@NotNull GdshaderUniformGroupDeclaration o) {
     visitPsiElement(o);
   }
 

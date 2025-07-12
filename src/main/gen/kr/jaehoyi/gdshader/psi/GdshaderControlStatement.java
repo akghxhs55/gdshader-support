@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GdshaderControlStatement extends PsiElement {
 
   @Nullable
+  GdshaderDoWhileStatement getDoWhileStatement();
+
+  @Nullable
   GdshaderForStatement getForStatement();
 
   @Nullable

@@ -40,6 +40,12 @@ public class GdshaderUniformVariableDeclarationImpl extends ASTWrapperPsiElement
   }
 
   @Override
+  @Nullable
+  public GdshaderPrecision getPrecision() {
+    return findChildByClass(GdshaderPrecision.class);
+  }
+
+  @Override
   @NotNull
   public GdshaderType getType() {
     return findNotNullChildByClass(GdshaderType.class);

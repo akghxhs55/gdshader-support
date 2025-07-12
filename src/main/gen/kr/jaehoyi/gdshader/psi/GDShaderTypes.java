@@ -18,9 +18,10 @@ public interface GDShaderTypes {
   IElementType BITWISE_XOR_EXPR = new GDShaderElementType("BITWISE_XOR_EXPR");
   IElementType BLOCK = new GDShaderElementType("BLOCK");
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
+  IElementType CONDITIONAL_EXPR = new GDShaderElementType("CONDITIONAL_EXPR");
   IElementType CONST_VARIABLE_DECLARATION = new GDShaderElementType("CONST_VARIABLE_DECLARATION");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
-  IElementType DUMMY = new GDShaderElementType("DUMMY");
+  IElementType DO_WHILE_STATEMENT = new GDShaderElementType("DO_WHILE_STATEMENT");
   IElementType ENUM_HINT = new GDShaderElementType("ENUM_HINT");
   IElementType EQUALITY_EXPR = new GDShaderElementType("EQUALITY_EXPR");
   IElementType EXPRESSION = new GDShaderElementType("EXPRESSION");
@@ -33,6 +34,9 @@ public interface GDShaderTypes {
   IElementType HINTS = new GDShaderElementType("HINTS");
   IElementType HINT_IDENTIFIER = new GDShaderElementType("HINT_IDENTIFIER");
   IElementType IF_STATEMENT = new GDShaderElementType("IF_STATEMENT");
+  IElementType INITIALIZER = new GDShaderElementType("INITIALIZER");
+  IElementType INITIALIZER_LIST = new GDShaderElementType("INITIALIZER_LIST");
+  IElementType INSTANCE_INDEX_HINT = new GDShaderElementType("INSTANCE_INDEX_HINT");
   IElementType LITERAL = new GDShaderElementType("LITERAL");
   IElementType LOGIC_AND_EXPR = new GDShaderElementType("LOGIC_AND_EXPR");
   IElementType LOGIC_OR_EXPR = new GDShaderElementType("LOGIC_OR_EXPR");
@@ -41,20 +45,25 @@ public interface GDShaderTypes {
   IElementType PARAMETER = new GDShaderElementType("PARAMETER");
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
   IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
+  IElementType PRECISION = new GDShaderElementType("PRECISION");
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
   IElementType RANGE_HINT = new GDShaderElementType("RANGE_HINT");
   IElementType REGULAR_VARIABLE_DECLARATION = new GDShaderElementType("REGULAR_VARIABLE_DECLARATION");
   IElementType RELATIONAL_EXPR = new GDShaderElementType("RELATIONAL_EXPR");
   IElementType RENDER_MODE_DECLARATION = new GDShaderElementType("RENDER_MODE_DECLARATION");
+  IElementType RETURN_STATEMENT = new GDShaderElementType("RETURN_STATEMENT");
   IElementType SHADER_TYPE_DECLARATION = new GDShaderElementType("SHADER_TYPE_DECLARATION");
   IElementType SHIFT_EXPR = new GDShaderElementType("SHIFT_EXPR");
   IElementType SIMPLE_HINT = new GDShaderElementType("SIMPLE_HINT");
+  IElementType SIMPLE_STATEMENT = new GDShaderElementType("SIMPLE_STATEMENT");
   IElementType STATEMENT = new GDShaderElementType("STATEMENT");
+  IElementType STENCIL_MODE_DECLARATION = new GDShaderElementType("STENCIL_MODE_DECLARATION");
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
   IElementType SWITCH_STATEMENT = new GDShaderElementType("SWITCH_STATEMENT");
   IElementType TYPE = new GDShaderElementType("TYPE");
   IElementType UNARY_EXPR = new GDShaderElementType("UNARY_EXPR");
+  IElementType UNIFORM_GROUP_DECLARATION = new GDShaderElementType("UNIFORM_GROUP_DECLARATION");
   IElementType UNIFORM_VARIABLE_DECLARATION = new GDShaderElementType("UNIFORM_VARIABLE_DECLARATION");
   IElementType VARIABLE_DECLARATION = new GDShaderElementType("VARIABLE_DECLARATION");
   IElementType VARYING_VARIABLE_DECLARATION = new GDShaderElementType("VARYING_VARIABLE_DECLARATION");
@@ -230,14 +239,17 @@ public interface GDShaderTypes {
       else if (type == CASE_CLAUSE) {
         return new GdshaderCaseClauseImpl(node);
       }
+      else if (type == CONDITIONAL_EXPR) {
+        return new GdshaderConditionalExprImpl(node);
+      }
       else if (type == CONST_VARIABLE_DECLARATION) {
         return new GdshaderConstVariableDeclarationImpl(node);
       }
       else if (type == CONTROL_STATEMENT) {
         return new GdshaderControlStatementImpl(node);
       }
-      else if (type == DUMMY) {
-        return new GdshaderDummyImpl(node);
+      else if (type == DO_WHILE_STATEMENT) {
+        return new GdshaderDoWhileStatementImpl(node);
       }
       else if (type == ENUM_HINT) {
         return new GdshaderEnumHintImpl(node);
@@ -275,6 +287,15 @@ public interface GDShaderTypes {
       else if (type == IF_STATEMENT) {
         return new GdshaderIfStatementImpl(node);
       }
+      else if (type == INITIALIZER) {
+        return new GdshaderInitializerImpl(node);
+      }
+      else if (type == INITIALIZER_LIST) {
+        return new GdshaderInitializerListImpl(node);
+      }
+      else if (type == INSTANCE_INDEX_HINT) {
+        return new GdshaderInstanceIndexHintImpl(node);
+      }
       else if (type == LITERAL) {
         return new GdshaderLiteralImpl(node);
       }
@@ -299,6 +320,9 @@ public interface GDShaderTypes {
       else if (type == POSTFIX_EXPR) {
         return new GdshaderPostfixExprImpl(node);
       }
+      else if (type == PRECISION) {
+        return new GdshaderPrecisionImpl(node);
+      }
       else if (type == PRIMARY) {
         return new GdshaderPrimaryImpl(node);
       }
@@ -314,6 +338,9 @@ public interface GDShaderTypes {
       else if (type == RENDER_MODE_DECLARATION) {
         return new GdshaderRenderModeDeclarationImpl(node);
       }
+      else if (type == RETURN_STATEMENT) {
+        return new GdshaderReturnStatementImpl(node);
+      }
       else if (type == SHADER_TYPE_DECLARATION) {
         return new GdshaderShaderTypeDeclarationImpl(node);
       }
@@ -323,8 +350,14 @@ public interface GDShaderTypes {
       else if (type == SIMPLE_HINT) {
         return new GdshaderSimpleHintImpl(node);
       }
+      else if (type == SIMPLE_STATEMENT) {
+        return new GdshaderSimpleStatementImpl(node);
+      }
       else if (type == STATEMENT) {
         return new GdshaderStatementImpl(node);
+      }
+      else if (type == STENCIL_MODE_DECLARATION) {
+        return new GdshaderStencilModeDeclarationImpl(node);
       }
       else if (type == STRUCT_DECLARATION) {
         return new GdshaderStructDeclarationImpl(node);
@@ -340,6 +373,9 @@ public interface GDShaderTypes {
       }
       else if (type == UNARY_EXPR) {
         return new GdshaderUnaryExprImpl(node);
+      }
+      else if (type == UNIFORM_GROUP_DECLARATION) {
+        return new GdshaderUniformGroupDeclarationImpl(node);
       }
       else if (type == UNIFORM_VARIABLE_DECLARATION) {
         return new GdshaderUniformVariableDeclarationImpl(node);

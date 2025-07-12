@@ -5,9 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GdshaderExpression extends PsiElement {
+public interface GdshaderConditionalExpr extends PsiElement {
 
   @NotNull
-  GdshaderConditionalExpr getConditionalExpr();
+  GdshaderAssignExpr getAssignExpr();
+
+  @NotNull
+  List<GdshaderExpression> getExpressionList();
 
 }

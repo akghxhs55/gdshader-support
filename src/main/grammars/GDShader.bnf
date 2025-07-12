@@ -15,45 +15,59 @@
 
 GDShaderFile ::= statement*
 
-statement ::= shader_type_declaration
-			| render_mode_declaration
-			| LINE_COMMENT
+statement ::= LINE_COMMENT
 			| BLOCK_COMMENT
 			| SEMICOLON
+			| shader_type_declaration
+			| render_mode_declaration
+			| stencil_mode_declaration
+			| uniform_group_declaration
+			| variable_declaration
 			| function_declaration
 			| struct_declaration
 			| control_statement
-			| variable_declaration
+			| return_statement
+			| simple_statement
 			| expression_statement
 
 shader_type_declaration ::= SHADER_TYPE IDENTIFIER SEMICOLON
 
 render_mode_declaration ::= RENDER_MODE IDENTIFIER SEMICOLON
 
+stencil_mode_declaration ::= STENCIL_MODE IDENTIFIER SEMICOLON
+
+uniform_group_declaration ::= UNIFORM_GROUP IDENTIFIER? (PERIOD IDENTIFIER)* SEMICOLON;
+
 variable_declaration ::= uniform_variable_declaration
 					   | const_variable_declaration
 					   | varying_variable_declaration
 					   | regular_variable_declaration
 
-uniform_variable_declaration ::= UNIFORM type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
+uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
 hints ::= hint (COMMA hint)*
 hint ::= simple_hint
 	   | range_hint
 	   | enum_hint
+	   | instance_index_hint
 simple_hint ::= hint_identifier (COMMA hint_identifier)*
 range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
 enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
+instance_index_hint ::= HINT_INSTANCE_INDEX PARENTHESIS_OPEN INT_CONSTANT PARENTHESIS_CLOSE
 
-const_variable_declaration ::= CONST type IDENTIFIER array_size? OP_ASSIGN expression SEMICOLON
+const_variable_declaration ::= CONST precision? type IDENTIFIER array_size? OP_ASSIGN initializer SEMICOLON
 
-varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? type IDENTIFIER array_size? (COLON hints)? SEMICOLON
+varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type IDENTIFIER array_size? (COLON hints)? SEMICOLON
 
-regular_variable_declaration ::= type IDENTIFIER array_size? (OP_ASSIGN expression)? SEMICOLON
+regular_variable_declaration ::= precision? type IDENTIFIER array_size? (OP_ASSIGN initializer)? SEMICOLON
+
+initializer ::= expression
+			  | initializer_list
+initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
        
 function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
 parameter_list ::= parameter (COMMA parameter)*
-parameter ::= type IDENTIFIER
+parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type IDENTIFIER
 
 block ::= CURLY_BRACKET_OPEN statement* CURLY_BRACKET_CLOSE
 
@@ -63,18 +77,27 @@ struct_member ::= type IDENTIFIER SEMICOLON
 control_statement ::= if_statement
 					| for_statement
 					| while_statement
+					| do_while_statement
 					| switch_statement
 					
 if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block (CF_ELSE block)?
 for_statement ::= CF_FOR PARENTHESIS_OPEN expression SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE block
+do_while_statement ::= CF_DO block CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
 while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
 
 case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON statement*
 
-expression_statement ::= expression SEMICOLON
-expression ::= assign_expr
+return_statement ::= CF_RETURN expression? SEMICOLON
 
+simple_statement ::= CF_BREAK SEMICOLON
+					| CF_CONTINUE SEMICOLON
+					| CF_DISCARD SEMICOLON
+
+expression_statement ::= expression SEMICOLON
+expression ::= conditional_expr
+
+conditional_expr ::= assign_expr (QUESTION expression COLON expression)?
 assign_expr ::= logic_or_expr (assignment_operator assign_expr)?
 logic_or_expr ::= logic_and_expr (OP_OR logic_and_expr)*
 logic_and_expr ::= bitwise_or_expr (OP_AND bitwise_or_expr)*
@@ -95,6 +118,8 @@ primary ::= literal
 		  
 function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*
+
+precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH
 
 number ::= FLOAT_CONSTANT | INT_CONSTANT | UINT_CONSTANT
 
@@ -175,8 +200,7 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 			| HINT_ROUGHNESS_GRAY
 			| HINT_ANISOTROPY_TEXTURE
 			| HINT_SOURCE_COLOR
-			| HINT_COLOR_CONVERSION_DISABLED
-			| HINT_INSTANCE_INDEX
+			| HINT_COLOR_CONVERSION_DISABLED	
 			| HINT_SCREEN_TEXTURE
 			| HINT_NORMAL_ROUGHNESS_TEXTURE
 			| HINT_DEPTH_TEXTURE
@@ -188,7 +212,3 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 			| FILTER_LINEAR_MIPMAP_ANISOTROPIC
 			| REPEAT_ENABLE
 			| REPEAT_DISABLE
-                        
-DUMMY ::= QUESTION | CF_DO | CF_BREAK
-		| CF_CONTINUE | CF_RETURN | CF_DISCARD | STENCIL_MODE | PRECISION_LOW
-		| PRECISION_MEDIUM | PRECISION_HIGH | UNIFORM_GROUP | INSTANCE | GLOBAL | ARG_IN | ARG_OUT | ARG_INOUT

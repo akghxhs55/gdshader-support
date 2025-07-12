@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GdshaderExpressionImpl extends ASTWrapperPsiElement implements GdshaderExpression {
+public class GdshaderReturnStatementImpl extends ASTWrapperPsiElement implements GdshaderReturnStatement {
 
-  public GdshaderExpressionImpl(@NotNull ASTNode node) {
+  public GdshaderReturnStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GdshaderVisitor visitor) {
-    visitor.visitExpression(this);
+    visitor.visitReturnStatement(this);
   }
 
   @Override
@@ -28,9 +28,9 @@ public class GdshaderExpressionImpl extends ASTWrapperPsiElement implements Gdsh
   }
 
   @Override
-  @NotNull
-  public GdshaderConditionalExpr getConditionalExpr() {
-    return findNotNullChildByClass(GdshaderConditionalExpr.class);
+  @Nullable
+  public GdshaderExpression getExpression() {
+    return findChildByClass(GdshaderExpression.class);
   }
 
 }

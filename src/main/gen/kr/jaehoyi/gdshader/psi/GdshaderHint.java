@@ -11,6 +11,9 @@ public interface GdshaderHint extends PsiElement {
   GdshaderEnumHint getEnumHint();
 
   @Nullable
+  GdshaderInstanceIndexHint getInstanceIndexHint();
+
+  @Nullable
   GdshaderRangeHint getRangeHint();
 
   @Nullable

@@ -11,7 +11,10 @@ public interface GdshaderConstVariableDeclaration extends PsiElement {
   GdshaderArraySize getArraySize();
 
   @NotNull
-  GdshaderExpression getExpression();
+  GdshaderInitializer getInitializer();
+
+  @Nullable
+  GdshaderPrecision getPrecision();
 
   @NotNull
   GdshaderType getType();

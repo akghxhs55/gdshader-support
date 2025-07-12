@@ -35,8 +35,14 @@ public class GdshaderRegularVariableDeclarationImpl extends ASTWrapperPsiElement
 
   @Override
   @Nullable
-  public GdshaderExpression getExpression() {
-    return findChildByClass(GdshaderExpression.class);
+  public GdshaderInitializer getInitializer() {
+    return findChildByClass(GdshaderInitializer.class);
+  }
+
+  @Override
+  @Nullable
+  public GdshaderPrecision getPrecision() {
+    return findChildByClass(GdshaderPrecision.class);
   }
 
   @Override

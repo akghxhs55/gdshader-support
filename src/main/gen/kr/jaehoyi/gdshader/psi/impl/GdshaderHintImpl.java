@@ -35,6 +35,12 @@ public class GdshaderHintImpl extends ASTWrapperPsiElement implements GdshaderHi
 
   @Override
   @Nullable
+  public GdshaderInstanceIndexHint getInstanceIndexHint() {
+    return findChildByClass(GdshaderInstanceIndexHint.class);
+  }
+
+  @Override
+  @Nullable
   public GdshaderRangeHint getRangeHint() {
     return findChildByClass(GdshaderRangeHint.class);
   }
