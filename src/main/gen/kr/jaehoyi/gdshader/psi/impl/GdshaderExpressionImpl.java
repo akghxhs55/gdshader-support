@@ -28,21 +28,9 @@ public class GdshaderExpressionImpl extends ASTWrapperPsiElement implements Gdsh
   }
 
   @Override
-  @Nullable
+  @NotNull
   public GdshaderAssignExpr getAssignExpr() {
-    return findChildByClass(GdshaderAssignExpr.class);
-  }
-
-  @Override
-  @Nullable
-  public GdshaderFunctionCall getFunctionCall() {
-    return findChildByClass(GdshaderFunctionCall.class);
-  }
-
-  @Override
-  @Nullable
-  public GdshaderLiteral getLiteral() {
-    return findChildByClass(GdshaderLiteral.class);
+    return findNotNullChildByClass(GdshaderAssignExpr.class);
   }
 
 }

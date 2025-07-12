@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GdshaderUnaryExpr extends PsiElement {
 
   @NotNull
-  GdshaderPrimary getPrimary();
+  GdshaderPostfixExpr getPostfixExpr();
 
 }

@@ -29,8 +29,8 @@ public class GdshaderUnaryExprImpl extends ASTWrapperPsiElement implements Gdsha
 
   @Override
   @NotNull
-  public GdshaderPrimary getPrimary() {
-    return findNotNullChildByClass(GdshaderPrimary.class);
+  public GdshaderPostfixExpr getPostfixExpr() {
+    return findNotNullChildByClass(GdshaderPostfixExpr.class);
   }
 
 }

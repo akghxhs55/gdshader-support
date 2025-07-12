@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GdshaderRegularVariableDeclarationImpl extends ASTWrapperPsiElement implements GdshaderRegularVariableDeclaration {
+public class GdshaderPostfixExprImpl extends ASTWrapperPsiElement implements GdshaderPostfixExpr {
 
-  public GdshaderRegularVariableDeclarationImpl(@NotNull ASTNode node) {
+  public GdshaderPostfixExprImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GdshaderVisitor visitor) {
-    visitor.visitRegularVariableDeclaration(this);
+    visitor.visitPostfixExpr(this);
   }
 
   @Override
@@ -28,21 +28,15 @@ public class GdshaderRegularVariableDeclarationImpl extends ASTWrapperPsiElement
   }
 
   @Override
-  @Nullable
-  public GdshaderArraySize getArraySize() {
-    return findChildByClass(GdshaderArraySize.class);
-  }
-
-  @Override
-  @Nullable
-  public GdshaderExpression getExpression() {
-    return findChildByClass(GdshaderExpression.class);
+  @NotNull
+  public List<GdshaderExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderExpression.class);
   }
 
   @Override
   @NotNull
-  public GdshaderType getType() {
-    return findNotNullChildByClass(GdshaderType.class);
+  public GdshaderPrimary getPrimary() {
+    return findNotNullChildByClass(GdshaderPrimary.class);
   }
 
 }

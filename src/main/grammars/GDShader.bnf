@@ -23,7 +23,7 @@ statement ::= shader_type_declaration
 			| function_declaration
 			| struct_declaration
 			| control_statement
-			| variable_declaration	 
+			| variable_declaration
 			| expression_statement
 
 shader_type_declaration ::= SHADER_TYPE IDENTIFIER SEMICOLON
@@ -31,6 +31,8 @@ shader_type_declaration ::= SHADER_TYPE IDENTIFIER SEMICOLON
 render_mode_declaration ::= RENDER_MODE IDENTIFIER SEMICOLON
 
 variable_declaration ::= uniform_variable_declaration
+					   | const_variable_declaration
+					   | varying_variable_declaration
 					   | regular_variable_declaration
 
 uniform_variable_declaration ::= UNIFORM type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
@@ -41,9 +43,12 @@ hint ::= simple_hint
 simple_hint ::= hint_identifier (COMMA hint_identifier)*
 range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
 enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
-number ::= FLOAT_CONSTANT | INT_CONSTANT | UINT_CONSTANT
 
-regular_variable_declaration ::= (CONST | UNIFORM | VARYING)? type IDENTIFIER (OP_ASSIGN expression)? SEMICOLON
+const_variable_declaration ::= CONST type IDENTIFIER array_size? OP_ASSIGN expression SEMICOLON
+
+varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? type IDENTIFIER array_size? (COLON hints)? SEMICOLON
+
+regular_variable_declaration ::= type IDENTIFIER array_size? (OP_ASSIGN expression)? SEMICOLON
        
 function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
@@ -61,21 +66,64 @@ control_statement ::= if_statement
 					| switch_statement
 					
 if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block (CF_ELSE block)?
-for_statement ::= CF_FOR PARENTHESIS_OPEN expression_statement expression_statement expression PARENTHESIS_CLOSE block
+for_statement ::= CF_FOR PARENTHESIS_OPEN expression SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE block
 while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
 
 case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON statement*
 
 expression_statement ::= expression SEMICOLON
+expression ::= assign_expr
 
-expression ::= IDENTIFIER
-			 | literal
-			 | assign_expr
-			 | function_call
-			 
-function_call ::= IDENTIFIER PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+assign_expr ::= logic_or_expr (assignment_operator assign_expr)?
+logic_or_expr ::= logic_and_expr (OP_OR logic_and_expr)*
+logic_and_expr ::= bitwise_or_expr (OP_AND bitwise_or_expr)*
+bitwise_or_expr ::= bitwise_xor_expr (OP_BIT_OR bitwise_xor_expr)*
+bitwise_xor_expr ::= bitwise_and_expr (OP_BIT_XOR bitwise_and_expr)*
+bitwise_and_expr ::= equality_expr (OP_BIT_AND equality_expr)*
+equality_expr ::= relational_expr ((OP_EQUAL | OP_NOT_EQUAL) relational_expr)*
+relational_expr ::= shift_expr ((OP_LESS | OP_LESS_EQUAL | OP_GREATER | OP_GREATER_EQUAL) shift_expr)*
+shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
+additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
+multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
+unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT)? postfix_expr
+postfix_expr ::= primary (PERIOD IDENTIFIER | BRACKET_OPEN expression BRACKET_CLOSE)*
+primary ::= literal
+		  | function_call
+		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
+		  | IDENTIFIER
+		  
+function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*
+
+number ::= FLOAT_CONSTANT | INT_CONSTANT | UINT_CONSTANT
+
+array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
+
+assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
+                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
+                        
+function_name ::= TYPE_VOID
+			    | TYPE_BOOL
+			    | TYPE_BVEC2
+			    | TYPE_BVEC3
+			    | TYPE_BVEC4
+			    | TYPE_INT
+			    | TYPE_IVEC2
+			    | TYPE_IVEC3
+			    | TYPE_IVEC4
+			    | TYPE_UINT
+			    | TYPE_UVEC2
+			    | TYPE_UVEC3
+			    | TYPE_UVEC4
+			    | TYPE_FLOAT
+			    | TYPE_VEC2
+			    | TYPE_VEC3
+			    | TYPE_VEC4
+			    | TYPE_MAT2
+			    | TYPE_MAT3
+			    | TYPE_MAT4
+			    | IDENTIFIER
 
 type ::= TYPE_VOID
        | TYPE_BOOL
@@ -140,45 +188,7 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 			| FILTER_LINEAR_MIPMAP_ANISOTROPIC
 			| REPEAT_ENABLE
 			| REPEAT_DISABLE
-			
-{
-  precedence {
-    right OP_ASSIGN OP_ASSIGN_ADD OP_ASSIGN_SUB OP_ASSIGN_MUL OP_ASSIGN_DIV
-          OP_ASSIGN_MOD OP_ASSIGN_SHIFT_LEFT OP_ASSIGN_SHIFT_RIGHT
-    left OP_OR
-    left OP_AND
-    left OP_BIT_OR
-    left OP_BIT_XOR
-    left OP_BIT_AND
-    left OP_EQUAL OP_NOT_EQUAL
-    left OP_LESS OP_LESS_EQUAL OP_GREATER OP_GREATER_EQUAL
-    left OP_SHIFT_LEFT OP_SHIFT_RIGHT
-    left OP_ADD OP_SUB
-    left OP_MUL OP_DIV OP_MOD
-    left OP_NOT OP_BIT_INVERT OP_INCREMENT OP_DECREMENT
-  }
-}
-
-assign_expr ::= logic_or_expr (assignment_operator assign_expr)?
-logic_or_expr ::= logic_and_expr (OP_OR logic_and_expr)*
-logic_and_expr ::= bitwise_or_expr (OP_AND bitwise_or_expr)*
-bitwise_or_expr ::= bitwise_xor_expr (OP_BIT_OR bitwise_xor_expr)*
-bitwise_xor_expr ::= bitwise_and_expr (OP_BIT_XOR bitwise_and_expr)*
-bitwise_and_expr ::= equality_expr (OP_BIT_AND equality_expr)*
-equality_expr ::= relational_expr ((OP_EQUAL | OP_NOT_EQUAL) relational_expr)*
-relational_expr ::= shift_expr ((OP_LESS | OP_LESS_EQUAL | OP_GREATER | OP_GREATER_EQUAL) shift_expr)*
-shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
-additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
-multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
-
-unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT)? primary
-primary ::= IDENTIFIER | literal | function_call | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-
-assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
-                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
                         
-DUMMY ::= BRACKET_OPEN | BRACKET_CLOSE | QUESTION | PERIOD | CF_DO | CF_BREAK
+DUMMY ::= QUESTION | CF_DO | CF_BREAK
 		| CF_CONTINUE | CF_RETURN | CF_DISCARD | STENCIL_MODE | PRECISION_LOW
 		| PRECISION_MEDIUM | PRECISION_HIGH | UNIFORM_GROUP | INSTANCE | GLOBAL | ARG_IN | ARG_OUT | ARG_INOUT
-		| INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
-					

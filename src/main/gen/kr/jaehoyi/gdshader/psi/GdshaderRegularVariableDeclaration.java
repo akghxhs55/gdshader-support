@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GdshaderRegularVariableDeclaration extends PsiElement {
 
   @Nullable
+  GdshaderArraySize getArraySize();
+
+  @Nullable
   GdshaderExpression getExpression();
 
   @NotNull

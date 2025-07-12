@@ -8,9 +8,15 @@ import com.intellij.psi.PsiElement;
 public interface GdshaderVariableDeclaration extends PsiElement {
 
   @Nullable
+  GdshaderConstVariableDeclaration getConstVariableDeclaration();
+
+  @Nullable
   GdshaderRegularVariableDeclaration getRegularVariableDeclaration();
 
   @Nullable
   GdshaderUniformVariableDeclaration getUniformVariableDeclaration();
+
+  @Nullable
+  GdshaderVaryingVariableDeclaration getVaryingVariableDeclaration();
 
 }

@@ -7,13 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GdshaderExpression extends PsiElement {
 
-  @Nullable
+  @NotNull
   GdshaderAssignExpr getAssignExpr();
-
-  @Nullable
-  GdshaderFunctionCall getFunctionCall();
-
-  @Nullable
-  GdshaderLiteral getLiteral();
 
 }

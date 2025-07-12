@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GdshaderRegularVariableDeclarationImpl extends ASTWrapperPsiElement implements GdshaderRegularVariableDeclaration {
+public class GdshaderConstVariableDeclarationImpl extends ASTWrapperPsiElement implements GdshaderConstVariableDeclaration {
 
-  public GdshaderRegularVariableDeclarationImpl(@NotNull ASTNode node) {
+  public GdshaderConstVariableDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GdshaderVisitor visitor) {
-    visitor.visitRegularVariableDeclaration(this);
+    visitor.visitConstVariableDeclaration(this);
   }
 
   @Override
@@ -34,9 +34,9 @@ public class GdshaderRegularVariableDeclarationImpl extends ASTWrapperPsiElement
   }
 
   @Override
-  @Nullable
+  @NotNull
   public GdshaderExpression getExpression() {
-    return findChildByClass(GdshaderExpression.class);
+    return findNotNullChildByClass(GdshaderExpression.class);
   }
 
   @Override

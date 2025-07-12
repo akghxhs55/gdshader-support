@@ -10,6 +10,7 @@ public interface GDShaderTypes {
 
   IElementType ADDITIVE_EXPR = new GDShaderElementType("ADDITIVE_EXPR");
   IElementType ARGUMENT_LIST = new GDShaderElementType("ARGUMENT_LIST");
+  IElementType ARRAY_SIZE = new GDShaderElementType("ARRAY_SIZE");
   IElementType ASSIGNMENT_OPERATOR = new GDShaderElementType("ASSIGNMENT_OPERATOR");
   IElementType ASSIGN_EXPR = new GDShaderElementType("ASSIGN_EXPR");
   IElementType BITWISE_AND_EXPR = new GDShaderElementType("BITWISE_AND_EXPR");
@@ -17,6 +18,7 @@ public interface GDShaderTypes {
   IElementType BITWISE_XOR_EXPR = new GDShaderElementType("BITWISE_XOR_EXPR");
   IElementType BLOCK = new GDShaderElementType("BLOCK");
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
+  IElementType CONST_VARIABLE_DECLARATION = new GDShaderElementType("CONST_VARIABLE_DECLARATION");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
   IElementType DUMMY = new GDShaderElementType("DUMMY");
   IElementType ENUM_HINT = new GDShaderElementType("ENUM_HINT");
@@ -26,6 +28,7 @@ public interface GDShaderTypes {
   IElementType FOR_STATEMENT = new GDShaderElementType("FOR_STATEMENT");
   IElementType FUNCTION_CALL = new GDShaderElementType("FUNCTION_CALL");
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
+  IElementType FUNCTION_NAME = new GDShaderElementType("FUNCTION_NAME");
   IElementType HINT = new GDShaderElementType("HINT");
   IElementType HINTS = new GDShaderElementType("HINTS");
   IElementType HINT_IDENTIFIER = new GDShaderElementType("HINT_IDENTIFIER");
@@ -37,6 +40,7 @@ public interface GDShaderTypes {
   IElementType NUMBER = new GDShaderElementType("NUMBER");
   IElementType PARAMETER = new GDShaderElementType("PARAMETER");
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
+  IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
   IElementType RANGE_HINT = new GDShaderElementType("RANGE_HINT");
   IElementType REGULAR_VARIABLE_DECLARATION = new GDShaderElementType("REGULAR_VARIABLE_DECLARATION");
@@ -53,6 +57,7 @@ public interface GDShaderTypes {
   IElementType UNARY_EXPR = new GDShaderElementType("UNARY_EXPR");
   IElementType UNIFORM_VARIABLE_DECLARATION = new GDShaderElementType("UNIFORM_VARIABLE_DECLARATION");
   IElementType VARIABLE_DECLARATION = new GDShaderElementType("VARIABLE_DECLARATION");
+  IElementType VARYING_VARIABLE_DECLARATION = new GDShaderElementType("VARYING_VARIABLE_DECLARATION");
   IElementType WHILE_STATEMENT = new GDShaderElementType("WHILE_STATEMENT");
 
   IElementType ARG_IN = new GDShaderTokenType("ARG_IN");
@@ -111,7 +116,6 @@ public interface GDShaderTypes {
   IElementType INTERPOLATION_FLAT = new GDShaderTokenType("INTERPOLATION_FLAT");
   IElementType INTERPOLATION_SMOOTH = new GDShaderTokenType("INTERPOLATION_SMOOTH");
   IElementType INT_CONSTANT = new GDShaderTokenType("INT_CONSTANT");
-  IElementType LEFT = new GDShaderTokenType("left");
   IElementType LINE_COMMENT = new GDShaderTokenType("LINE_COMMENT");
   IElementType OP_ADD = new GDShaderTokenType("OP_ADD");
   IElementType OP_AND = new GDShaderTokenType("OP_AND");
@@ -146,7 +150,6 @@ public interface GDShaderTypes {
   IElementType PARENTHESIS_CLOSE = new GDShaderTokenType("PARENTHESIS_CLOSE");
   IElementType PARENTHESIS_OPEN = new GDShaderTokenType("PARENTHESIS_OPEN");
   IElementType PERIOD = new GDShaderTokenType("PERIOD");
-  IElementType PRECEDENCE = new GDShaderTokenType("precedence");
   IElementType PRECISION_HIGH = new GDShaderTokenType("PRECISION_HIGH");
   IElementType PRECISION_LOW = new GDShaderTokenType("PRECISION_LOW");
   IElementType PRECISION_MEDIUM = new GDShaderTokenType("PRECISION_MEDIUM");
@@ -154,7 +157,6 @@ public interface GDShaderTypes {
   IElementType RENDER_MODE = new GDShaderTokenType("RENDER_MODE");
   IElementType REPEAT_DISABLE = new GDShaderTokenType("REPEAT_DISABLE");
   IElementType REPEAT_ENABLE = new GDShaderTokenType("REPEAT_ENABLE");
-  IElementType RIGHT = new GDShaderTokenType("right");
   IElementType SEMICOLON = new GDShaderTokenType("SEMICOLON");
   IElementType SHADER_TYPE = new GDShaderTokenType("SHADER_TYPE");
   IElementType STENCIL_MODE = new GDShaderTokenType("STENCIL_MODE");
@@ -204,6 +206,9 @@ public interface GDShaderTypes {
       else if (type == ARGUMENT_LIST) {
         return new GdshaderArgumentListImpl(node);
       }
+      else if (type == ARRAY_SIZE) {
+        return new GdshaderArraySizeImpl(node);
+      }
       else if (type == ASSIGNMENT_OPERATOR) {
         return new GdshaderAssignmentOperatorImpl(node);
       }
@@ -224,6 +229,9 @@ public interface GDShaderTypes {
       }
       else if (type == CASE_CLAUSE) {
         return new GdshaderCaseClauseImpl(node);
+      }
+      else if (type == CONST_VARIABLE_DECLARATION) {
+        return new GdshaderConstVariableDeclarationImpl(node);
       }
       else if (type == CONTROL_STATEMENT) {
         return new GdshaderControlStatementImpl(node);
@@ -251,6 +259,9 @@ public interface GDShaderTypes {
       }
       else if (type == FUNCTION_DECLARATION) {
         return new GdshaderFunctionDeclarationImpl(node);
+      }
+      else if (type == FUNCTION_NAME) {
+        return new GdshaderFunctionNameImpl(node);
       }
       else if (type == HINT) {
         return new GdshaderHintImpl(node);
@@ -284,6 +295,9 @@ public interface GDShaderTypes {
       }
       else if (type == PARAMETER_LIST) {
         return new GdshaderParameterListImpl(node);
+      }
+      else if (type == POSTFIX_EXPR) {
+        return new GdshaderPostfixExprImpl(node);
       }
       else if (type == PRIMARY) {
         return new GdshaderPrimaryImpl(node);
@@ -332,6 +346,9 @@ public interface GDShaderTypes {
       }
       else if (type == VARIABLE_DECLARATION) {
         return new GdshaderVariableDeclarationImpl(node);
+      }
+      else if (type == VARYING_VARIABLE_DECLARATION) {
+        return new GdshaderVaryingVariableDeclarationImpl(node);
       }
       else if (type == WHILE_STATEMENT) {
         return new GdshaderWhileStatementImpl(node);

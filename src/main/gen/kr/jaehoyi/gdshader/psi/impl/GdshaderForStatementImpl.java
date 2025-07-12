@@ -35,14 +35,8 @@ public class GdshaderForStatementImpl extends ASTWrapperPsiElement implements Gd
 
   @Override
   @NotNull
-  public GdshaderExpression getExpression() {
-    return findNotNullChildByClass(GdshaderExpression.class);
-  }
-
-  @Override
-  @NotNull
-  public List<GdshaderExpressionStatement> getExpressionStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderExpressionStatement.class);
+  public List<GdshaderExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderExpression.class);
   }
 
 }

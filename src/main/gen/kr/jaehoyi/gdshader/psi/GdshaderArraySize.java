@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GdshaderFunctionCall extends PsiElement {
-
-  @Nullable
-  GdshaderArgumentList getArgumentList();
+public interface GdshaderArraySize extends PsiElement {
 
   @NotNull
-  GdshaderFunctionName getFunctionName();
+  GdshaderExpression getExpression();
 
 }

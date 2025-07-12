@@ -29,6 +29,12 @@ public class GdshaderVariableDeclarationImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
+  public GdshaderConstVariableDeclaration getConstVariableDeclaration() {
+    return findChildByClass(GdshaderConstVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public GdshaderRegularVariableDeclaration getRegularVariableDeclaration() {
     return findChildByClass(GdshaderRegularVariableDeclaration.class);
   }
@@ -37,6 +43,12 @@ public class GdshaderVariableDeclarationImpl extends ASTWrapperPsiElement implem
   @Nullable
   public GdshaderUniformVariableDeclaration getUniformVariableDeclaration() {
     return findChildByClass(GdshaderUniformVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public GdshaderVaryingVariableDeclaration getVaryingVariableDeclaration() {
+    return findChildByClass(GdshaderVaryingVariableDeclaration.class);
   }
 
 }

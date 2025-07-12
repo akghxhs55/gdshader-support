@@ -33,4 +33,10 @@ public class GdshaderFunctionCallImpl extends ASTWrapperPsiElement implements Gd
     return findChildByClass(GdshaderArgumentList.class);
   }
 
+  @Override
+  @NotNull
+  public GdshaderFunctionName getFunctionName() {
+    return findNotNullChildByClass(GdshaderFunctionName.class);
+  }
+
 }

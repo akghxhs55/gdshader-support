@@ -11,9 +11,6 @@ public interface GdshaderForStatement extends PsiElement {
   GdshaderBlock getBlock();
 
   @NotNull
-  GdshaderExpression getExpression();
-
-  @NotNull
-  List<GdshaderExpressionStatement> getExpressionStatementList();
+  List<GdshaderExpression> getExpressionList();
 
 }
