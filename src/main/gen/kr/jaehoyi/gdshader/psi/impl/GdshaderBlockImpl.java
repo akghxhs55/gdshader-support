@@ -29,8 +29,8 @@ public class GdshaderBlockImpl extends ASTWrapperPsiElement implements GdshaderB
 
   @Override
   @NotNull
-  public List<GdshaderStatement> getStatementList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderStatement.class);
+  public List<GdshaderItem> getItemList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderItem.class);
   }
 
 }

@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GdshaderForStatementImpl extends ASTWrapperPsiElement implements GdshaderForStatement {
+public class GdshaderForVariableDeclarationImpl extends ASTWrapperPsiElement implements GdshaderForVariableDeclaration {
 
-  public GdshaderForStatementImpl(@NotNull ASTNode node) {
+  public GdshaderForVariableDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GdshaderVisitor visitor) {
-    visitor.visitForStatement(this);
+    visitor.visitForVariableDeclaration(this);
   }
 
   @Override
@@ -28,21 +28,21 @@ public class GdshaderForStatementImpl extends ASTWrapperPsiElement implements Gd
   }
 
   @Override
-  @NotNull
-  public GdshaderBlock getBlock() {
-    return findNotNullChildByClass(GdshaderBlock.class);
-  }
-
-  @Override
-  @NotNull
-  public List<GdshaderExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderExpression.class);
-  }
-
-  @Override
   @Nullable
-  public GdshaderForVariableDeclaration getForVariableDeclaration() {
-    return findChildByClass(GdshaderForVariableDeclaration.class);
+  public GdshaderPrecision getPrecision() {
+    return findChildByClass(GdshaderPrecision.class);
+  }
+
+  @Override
+  @NotNull
+  public GdshaderType getType() {
+    return findNotNullChildByClass(GdshaderType.class);
+  }
+
+  @Override
+  @NotNull
+  public GdshaderVariableDeclaratorList getVariableDeclaratorList() {
+    return findNotNullChildByClass(GdshaderVariableDeclaratorList.class);
   }
 
 }

@@ -27,6 +27,7 @@ public interface GDShaderTypes {
   IElementType EXPRESSION = new GDShaderElementType("EXPRESSION");
   IElementType EXPRESSION_STATEMENT = new GDShaderElementType("EXPRESSION_STATEMENT");
   IElementType FOR_STATEMENT = new GDShaderElementType("FOR_STATEMENT");
+  IElementType FOR_VARIABLE_DECLARATION = new GDShaderElementType("FOR_VARIABLE_DECLARATION");
   IElementType FUNCTION_CALL = new GDShaderElementType("FUNCTION_CALL");
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
   IElementType FUNCTION_NAME = new GDShaderElementType("FUNCTION_NAME");
@@ -37,6 +38,7 @@ public interface GDShaderTypes {
   IElementType INITIALIZER = new GDShaderElementType("INITIALIZER");
   IElementType INITIALIZER_LIST = new GDShaderElementType("INITIALIZER_LIST");
   IElementType INSTANCE_INDEX_HINT = new GDShaderElementType("INSTANCE_INDEX_HINT");
+  IElementType ITEM = new GDShaderElementType("ITEM");
   IElementType LITERAL = new GDShaderElementType("LITERAL");
   IElementType LOGIC_AND_EXPR = new GDShaderElementType("LOGIC_AND_EXPR");
   IElementType LOGIC_OR_EXPR = new GDShaderElementType("LOGIC_OR_EXPR");
@@ -46,6 +48,7 @@ public interface GDShaderTypes {
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
   IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
   IElementType PRECISION = new GDShaderElementType("PRECISION");
+  IElementType PREPROCESSOR_DIRECTIVE = new GDShaderElementType("PREPROCESSOR_DIRECTIVE");
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
   IElementType RANGE_HINT = new GDShaderElementType("RANGE_HINT");
   IElementType REGULAR_VARIABLE_DECLARATION = new GDShaderElementType("REGULAR_VARIABLE_DECLARATION");
@@ -66,6 +69,8 @@ public interface GDShaderTypes {
   IElementType UNIFORM_GROUP_DECLARATION = new GDShaderElementType("UNIFORM_GROUP_DECLARATION");
   IElementType UNIFORM_VARIABLE_DECLARATION = new GDShaderElementType("UNIFORM_VARIABLE_DECLARATION");
   IElementType VARIABLE_DECLARATION = new GDShaderElementType("VARIABLE_DECLARATION");
+  IElementType VARIABLE_DECLARATOR = new GDShaderElementType("VARIABLE_DECLARATOR");
+  IElementType VARIABLE_DECLARATOR_LIST = new GDShaderElementType("VARIABLE_DECLARATOR_LIST");
   IElementType VARYING_VARIABLE_DECLARATION = new GDShaderElementType("VARYING_VARIABLE_DECLARATION");
   IElementType WHILE_STATEMENT = new GDShaderElementType("WHILE_STATEMENT");
 
@@ -159,6 +164,17 @@ public interface GDShaderTypes {
   IElementType PARENTHESIS_CLOSE = new GDShaderTokenType("PARENTHESIS_CLOSE");
   IElementType PARENTHESIS_OPEN = new GDShaderTokenType("PARENTHESIS_OPEN");
   IElementType PERIOD = new GDShaderTokenType("PERIOD");
+  IElementType PP_DEFINE_LINE = new GDShaderTokenType("PP_DEFINE_LINE");
+  IElementType PP_ELIF_LINE = new GDShaderTokenType("PP_ELIF_LINE");
+  IElementType PP_ELSE_LINE = new GDShaderTokenType("PP_ELSE_LINE");
+  IElementType PP_ENDIF_LINE = new GDShaderTokenType("PP_ENDIF_LINE");
+  IElementType PP_ERROR_LINE = new GDShaderTokenType("PP_ERROR_LINE");
+  IElementType PP_IFDEF_LINE = new GDShaderTokenType("PP_IFDEF_LINE");
+  IElementType PP_IFNDEF_LINE = new GDShaderTokenType("PP_IFNDEF_LINE");
+  IElementType PP_IF_LINE = new GDShaderTokenType("PP_IF_LINE");
+  IElementType PP_INCLUDE_LINE = new GDShaderTokenType("PP_INCLUDE_LINE");
+  IElementType PP_PRAGMA_LINE = new GDShaderTokenType("PP_PRAGMA_LINE");
+  IElementType PP_UNDEF_LINE = new GDShaderTokenType("PP_UNDEF_LINE");
   IElementType PRECISION_HIGH = new GDShaderTokenType("PRECISION_HIGH");
   IElementType PRECISION_LOW = new GDShaderTokenType("PRECISION_LOW");
   IElementType PRECISION_MEDIUM = new GDShaderTokenType("PRECISION_MEDIUM");
@@ -266,6 +282,9 @@ public interface GDShaderTypes {
       else if (type == FOR_STATEMENT) {
         return new GdshaderForStatementImpl(node);
       }
+      else if (type == FOR_VARIABLE_DECLARATION) {
+        return new GdshaderForVariableDeclarationImpl(node);
+      }
       else if (type == FUNCTION_CALL) {
         return new GdshaderFunctionCallImpl(node);
       }
@@ -296,6 +315,9 @@ public interface GDShaderTypes {
       else if (type == INSTANCE_INDEX_HINT) {
         return new GdshaderInstanceIndexHintImpl(node);
       }
+      else if (type == ITEM) {
+        return new GdshaderItemImpl(node);
+      }
       else if (type == LITERAL) {
         return new GdshaderLiteralImpl(node);
       }
@@ -322,6 +344,9 @@ public interface GDShaderTypes {
       }
       else if (type == PRECISION) {
         return new GdshaderPrecisionImpl(node);
+      }
+      else if (type == PREPROCESSOR_DIRECTIVE) {
+        return new GdshaderPreprocessorDirectiveImpl(node);
       }
       else if (type == PRIMARY) {
         return new GdshaderPrimaryImpl(node);
@@ -382,6 +407,12 @@ public interface GDShaderTypes {
       }
       else if (type == VARIABLE_DECLARATION) {
         return new GdshaderVariableDeclarationImpl(node);
+      }
+      else if (type == VARIABLE_DECLARATOR) {
+        return new GdshaderVariableDeclaratorImpl(node);
+      }
+      else if (type == VARIABLE_DECLARATOR_LIST) {
+        return new GdshaderVariableDeclaratorListImpl(node);
       }
       else if (type == VARYING_VARIABLE_DECLARATION) {
         return new GdshaderVaryingVariableDeclarationImpl(node);

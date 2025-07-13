@@ -83,6 +83,10 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitForVariableDeclaration(@NotNull GdshaderForVariableDeclaration o) {
+    visitPsiElement(o);
+  }
+
   public void visitFunctionCall(@NotNull GdshaderFunctionCall o) {
     visitPsiElement(o);
   }
@@ -123,6 +127,10 @@ public class GdshaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitItem(@NotNull GdshaderItem o) {
+    visitPsiElement(o);
+  }
+
   public void visitLiteral(@NotNull GdshaderLiteral o) {
     visitPsiElement(o);
   }
@@ -156,6 +164,10 @@ public class GdshaderVisitor extends PsiElementVisitor {
   }
 
   public void visitPrecision(@NotNull GdshaderPrecision o) {
+    visitPsiElement(o);
+  }
+
+  public void visitPreprocessorDirective(@NotNull GdshaderPreprocessorDirective o) {
     visitPsiElement(o);
   }
 
@@ -236,6 +248,14 @@ public class GdshaderVisitor extends PsiElementVisitor {
   }
 
   public void visitVariableDeclaration(@NotNull GdshaderVariableDeclaration o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVariableDeclarator(@NotNull GdshaderVariableDeclarator o) {
+    visitPsiElement(o);
+  }
+
+  public void visitVariableDeclaratorList(@NotNull GdshaderVariableDeclaratorList o) {
     visitPsiElement(o);
   }
 

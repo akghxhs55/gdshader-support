@@ -39,4 +39,10 @@ public class GdshaderIfStatementImpl extends ASTWrapperPsiElement implements Gds
     return findNotNullChildByClass(GdshaderExpression.class);
   }
 
+  @Override
+  @Nullable
+  public GdshaderIfStatement getIfStatement() {
+    return findChildByClass(GdshaderIfStatement.class);
+  }
+
 }

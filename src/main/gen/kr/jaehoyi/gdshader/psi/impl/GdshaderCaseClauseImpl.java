@@ -35,6 +35,12 @@ public class GdshaderCaseClauseImpl extends ASTWrapperPsiElement implements Gdsh
 
   @Override
   @NotNull
+  public List<GdshaderItem> getItemList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderItem.class);
+  }
+
+  @Override
+  @NotNull
   public List<GdshaderStatement> getStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, GdshaderStatement.class);
   }

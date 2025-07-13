@@ -13,4 +13,7 @@ public interface GdshaderForStatement extends PsiElement {
   @NotNull
   List<GdshaderExpression> getExpressionList();
 
+  @Nullable
+  GdshaderForVariableDeclaration getForVariableDeclaration();
+
 }

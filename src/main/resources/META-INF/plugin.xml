@@ -5,14 +5,21 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>GDShader Support</name>
+    <name>GDShader</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor url="https://www.jaehoyi.kr">Jaeho Yi</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description>GDShader(Godot Shading Language) Integration for JetBrains IDEs</description>
+    <description>
+        <![CDATA[
+            Adds support for GDShader (Godot Shading Language) for Godot 4.0+.<br />
+            <ul>
+                <li>Syntax highlighting</li>
+            </ul>
+        ]]>
+    </description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->

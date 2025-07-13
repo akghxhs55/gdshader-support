@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GdshaderRegularVariableDeclaration extends PsiElement {
+public interface GdshaderForVariableDeclaration extends PsiElement {
 
   @Nullable
   GdshaderPrecision getPrecision();

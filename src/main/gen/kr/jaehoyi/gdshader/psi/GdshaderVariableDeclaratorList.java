@@ -5,15 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GdshaderIfStatement extends PsiElement {
+public interface GdshaderVariableDeclaratorList extends PsiElement {
 
   @NotNull
-  List<GdshaderBlock> getBlockList();
-
-  @NotNull
-  GdshaderExpression getExpression();
-
-  @Nullable
-  GdshaderIfStatement getIfStatement();
+  List<GdshaderVariableDeclarator> getVariableDeclaratorList();
 
 }

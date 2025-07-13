@@ -17,7 +17,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderParserDefinition : ParserDefinition {
 
-    override fun createLexer(project: Project): Lexer = GDShaderLexerAdapter
+    override fun createLexer(project: Project): Lexer = GDShaderLexerAdapter()
 
     override fun getCommentTokens(): TokenSet = GDShaderTokenSets.COMMENTS
     

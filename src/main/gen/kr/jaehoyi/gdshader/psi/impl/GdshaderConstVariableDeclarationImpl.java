@@ -29,18 +29,6 @@ public class GdshaderConstVariableDeclarationImpl extends ASTWrapperPsiElement i
 
   @Override
   @Nullable
-  public GdshaderArraySize getArraySize() {
-    return findChildByClass(GdshaderArraySize.class);
-  }
-
-  @Override
-  @NotNull
-  public GdshaderInitializer getInitializer() {
-    return findNotNullChildByClass(GdshaderInitializer.class);
-  }
-
-  @Override
-  @Nullable
   public GdshaderPrecision getPrecision() {
     return findChildByClass(GdshaderPrecision.class);
   }
@@ -49,6 +37,12 @@ public class GdshaderConstVariableDeclarationImpl extends ASTWrapperPsiElement i
   @NotNull
   public GdshaderType getType() {
     return findNotNullChildByClass(GdshaderType.class);
+  }
+
+  @Override
+  @NotNull
+  public GdshaderVariableDeclaratorList getVariableDeclaratorList() {
+    return findNotNullChildByClass(GdshaderVariableDeclaratorList.class);
   }
 
 }
