@@ -27,7 +27,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
         val BLOCK_COMMENT = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT)
         val LINE_COMMENT = TextAttributesKey.createTextAttributesKey(
-            "GDSHADER_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+            "GDSHADER_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
         val OPERATOR = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN)
         val COLON = TextAttributesKey.createTextAttributesKey(

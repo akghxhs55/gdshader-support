@@ -42,5 +42,8 @@
         <lang.syntaxHighlighterFactory
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.GDShaderSyntaxHighlighterFactory" />
+        
+        <colorSettingsPage
+            implementation="kr.jaehoyi.gdshader.GDShaderColorSettingsPage" />
     </extensions>
 </idea-plugin>
