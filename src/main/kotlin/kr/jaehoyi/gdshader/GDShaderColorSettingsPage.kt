@@ -7,27 +7,6 @@ import com.intellij.openapi.options.colors.ColorSettingsPage
 import javax.swing.Icon
 
 class GDShaderColorSettingsPage : ColorSettingsPage {
-    companion object {
-        private val DESCRIPTORS = arrayOf(
-            AttributesDescriptor("Identifier", GDShaderSyntaxHighlighter.IDENTIFIER),
-            AttributesDescriptor("Keyword", GDShaderSyntaxHighlighter.KEYWORD),
-            AttributesDescriptor("Number", GDShaderSyntaxHighlighter.NUMBER),
-            AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.HINT),
-            AttributesDescriptor("String", GDShaderSyntaxHighlighter.STRING),
-            AttributesDescriptor("Block Comment", GDShaderSyntaxHighlighter.BLOCK_COMMENT),
-            AttributesDescriptor("Line Comment", GDShaderSyntaxHighlighter.LINE_COMMENT),
-            AttributesDescriptor("Operator", GDShaderSyntaxHighlighter.OPERATOR),
-            AttributesDescriptor("Colon", GDShaderSyntaxHighlighter.COLON),
-            AttributesDescriptor("Curly Bracket", GDShaderSyntaxHighlighter.CURLY_BRACKET),
-            AttributesDescriptor("Period", GDShaderSyntaxHighlighter.PERIOD),
-            AttributesDescriptor("Semicolon", GDShaderSyntaxHighlighter.SEMICOLON),
-            AttributesDescriptor("Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
-            AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
-            AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
-            AttributesDescriptor("Type", GDShaderSyntaxHighlighter.TYPE),
-            AttributesDescriptor("Preprocessor", GDShaderSyntaxHighlighter.PREPROCESSOR),
-        )
-    }
 
     override fun getIcon(): Icon? = GDShaderIcons.FILE
     override fun getHighlighter() = GDShaderSyntaxHighlighter()
@@ -56,9 +35,28 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
                that spans multiple lines */
         }
     """.trimIndent()
-
     override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String?, TextAttributesKey?>? = null
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> = DESCRIPTORS
     override fun getColorDescriptors(): Array<out ColorDescriptor?> = ColorDescriptor.EMPTY_ARRAY
     override fun getDisplayName(): String = "GDShader"
 }
+
+private val DESCRIPTORS = arrayOf(
+    AttributesDescriptor("Identifier", GDShaderSyntaxHighlighter.IDENTIFIER),
+    AttributesDescriptor("Keyword", GDShaderSyntaxHighlighter.KEYWORD),
+    AttributesDescriptor("Number", GDShaderSyntaxHighlighter.NUMBER),
+    AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.HINT),
+    AttributesDescriptor("String", GDShaderSyntaxHighlighter.STRING),
+    AttributesDescriptor("Block Comment", GDShaderSyntaxHighlighter.BLOCK_COMMENT),
+    AttributesDescriptor("Line Comment", GDShaderSyntaxHighlighter.LINE_COMMENT),
+    AttributesDescriptor("Operator", GDShaderSyntaxHighlighter.OPERATOR),
+    AttributesDescriptor("Colon", GDShaderSyntaxHighlighter.COLON),
+    AttributesDescriptor("Curly Bracket", GDShaderSyntaxHighlighter.CURLY_BRACKET),
+    AttributesDescriptor("Period", GDShaderSyntaxHighlighter.PERIOD),
+    AttributesDescriptor("Semicolon", GDShaderSyntaxHighlighter.SEMICOLON),
+    AttributesDescriptor("Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
+    AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
+    AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
+    AttributesDescriptor("Type", GDShaderSyntaxHighlighter.TYPE),
+    AttributesDescriptor("Preprocessor", GDShaderSyntaxHighlighter.PREPROCESSOR),
+)
