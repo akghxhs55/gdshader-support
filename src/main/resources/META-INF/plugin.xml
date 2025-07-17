@@ -45,5 +45,8 @@
         
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.GDShaderColorSettingsPage" />
+        
+        <indexedRootsProvider
+            implementation="kr.jaehoyi.gdshader.GDShaderIndexableSetContributor" />
     </extensions>
 </idea-plugin>
