@@ -7,8 +7,7 @@ This plugin adds basic support for GDShader (Godot Shading Language) in JetBrain
 ## Features
 
 - Syntax highlighting for GDShader (`.gdshader`) files
-- Recognition of GDShader language constructs
-- Basic integration for Godot 4.0 and higher
+- Indexing of GDShader files for file search
 
 ## Supported IDEs
 
