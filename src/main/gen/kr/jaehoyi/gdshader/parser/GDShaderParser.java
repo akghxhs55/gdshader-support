@@ -448,14 +448,14 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_DO block CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
+  // CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
   public static boolean do_while_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "do_while_statement")) return false;
     if (!nextTokenIs(b, CF_DO)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, CF_DO);
-    r = r && block(b, l + 1);
+    r = r && statement_body(b, l + 1);
     r = r && consumeTokens(b, 0, CF_WHILE, PARENTHESIS_OPEN);
     r = r && expression(b, l + 1);
     r = r && consumeTokens(b, 0, PARENTHESIS_CLOSE, SEMICOLON);
@@ -565,7 +565,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE block
+  // CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE statement_body
   public static boolean for_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_statement")) return false;
     if (!nextTokenIs(b, CF_FOR)) return false;
@@ -578,7 +578,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, SEMICOLON);
     r = r && expression(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && block(b, l + 1);
+    r = r && statement_body(b, l + 1);
     exit_section_(b, m, FOR_STATEMENT, r);
     return r;
   }
@@ -815,7 +815,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block (CF_ELSE (if_statement | block))?
+  // CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | block))?
   public static boolean if_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "if_statement")) return false;
     if (!nextTokenIs(b, CF_IF)) return false;
@@ -824,7 +824,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 0, CF_IF, PARENTHESIS_OPEN);
     r = r && expression(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && block(b, l + 1);
+    r = r && statement_body(b, l + 1);
     r = r && if_statement_5(b, l + 1);
     exit_section_(b, m, IF_STATEMENT, r);
     return r;
@@ -1614,6 +1614,25 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // block
+  // 				 | control_statement
+  // 				 | return_statement
+  // 				 | simple_statement
+  // 				 | expression_statement
+  public static boolean statement_body(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "statement_body")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, STATEMENT_BODY, "<statement body>");
+    r = block(b, l + 1);
+    if (!r) r = control_statement(b, l + 1);
+    if (!r) r = return_statement(b, l + 1);
+    if (!r) r = simple_statement(b, l + 1);
+    if (!r) r = expression_statement(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // STENCIL_MODE IDENTIFIER SEMICOLON
   public static boolean stencil_mode_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stencil_mode_declaration")) return false;
@@ -2068,7 +2087,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block
+  // CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body
   public static boolean while_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "while_statement")) return false;
     if (!nextTokenIs(b, CF_WHILE)) return false;
@@ -2077,7 +2096,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 0, CF_WHILE, PARENTHESIS_OPEN);
     r = r && expression(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && block(b, l + 1);
+    r = r && statement_body(b, l + 1);
     exit_section_(b, m, WHILE_STATEMENT, r);
     return r;
   }

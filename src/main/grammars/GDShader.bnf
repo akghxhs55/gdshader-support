@@ -3,7 +3,7 @@
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
-  psiClassPrefix="Gdshader"
+  psiClassPrefix="GDShader"
   psiImplClassSuffix="Impl"
   psiPackage="kr.jaehoyi.gdshader.psi"
   psiImplPackage="kr.jaehoyi.gdshader.psi.impl"
@@ -81,17 +81,23 @@ control_statement ::= if_statement
 					| do_while_statement
 					| switch_statement
 					
-if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block (CF_ELSE (if_statement | block))?
-for_statement ::= CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE block
+if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | block))?
+for_statement ::= CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE statement_body
 for_variable_declaration ::= precision? type variable_declarator_list
-do_while_statement ::= CF_DO block CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
-while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE block
+do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
+while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
 case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON item*
 return_statement ::= CF_RETURN expression? SEMICOLON
 simple_statement ::= CF_BREAK SEMICOLON
 					| CF_CONTINUE SEMICOLON
 					| CF_DISCARD SEMICOLON
+					
+statement_body ::= block
+				 | control_statement
+				 | return_statement
+				 | simple_statement
+				 | expression_statement
 
 // Expressions
 expression_statement ::= expression SEMICOLON

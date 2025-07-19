@@ -60,6 +60,7 @@ public interface GDShaderTypes {
   IElementType SIMPLE_HINT = new GDShaderElementType("SIMPLE_HINT");
   IElementType SIMPLE_STATEMENT = new GDShaderElementType("SIMPLE_STATEMENT");
   IElementType STATEMENT = new GDShaderElementType("STATEMENT");
+  IElementType STATEMENT_BODY = new GDShaderElementType("STATEMENT_BODY");
   IElementType STENCIL_MODE_DECLARATION = new GDShaderElementType("STENCIL_MODE_DECLARATION");
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
@@ -226,199 +227,202 @@ public interface GDShaderTypes {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
       if (type == ADDITIVE_EXPR) {
-        return new GdshaderAdditiveExprImpl(node);
+        return new GDShaderAdditiveExprImpl(node);
       }
       else if (type == ARGUMENT_LIST) {
-        return new GdshaderArgumentListImpl(node);
+        return new GDShaderArgumentListImpl(node);
       }
       else if (type == ARRAY_SIZE) {
-        return new GdshaderArraySizeImpl(node);
+        return new GDShaderArraySizeImpl(node);
       }
       else if (type == ASSIGNMENT_OPERATOR) {
-        return new GdshaderAssignmentOperatorImpl(node);
+        return new GDShaderAssignmentOperatorImpl(node);
       }
       else if (type == ASSIGN_EXPR) {
-        return new GdshaderAssignExprImpl(node);
+        return new GDShaderAssignExprImpl(node);
       }
       else if (type == BITWISE_AND_EXPR) {
-        return new GdshaderBitwiseAndExprImpl(node);
+        return new GDShaderBitwiseAndExprImpl(node);
       }
       else if (type == BITWISE_OR_EXPR) {
-        return new GdshaderBitwiseOrExprImpl(node);
+        return new GDShaderBitwiseOrExprImpl(node);
       }
       else if (type == BITWISE_XOR_EXPR) {
-        return new GdshaderBitwiseXorExprImpl(node);
+        return new GDShaderBitwiseXorExprImpl(node);
       }
       else if (type == BLOCK) {
-        return new GdshaderBlockImpl(node);
+        return new GDShaderBlockImpl(node);
       }
       else if (type == CASE_CLAUSE) {
-        return new GdshaderCaseClauseImpl(node);
+        return new GDShaderCaseClauseImpl(node);
       }
       else if (type == CONDITIONAL_EXPR) {
-        return new GdshaderConditionalExprImpl(node);
+        return new GDShaderConditionalExprImpl(node);
       }
       else if (type == CONST_VARIABLE_DECLARATION) {
-        return new GdshaderConstVariableDeclarationImpl(node);
+        return new GDShaderConstVariableDeclarationImpl(node);
       }
       else if (type == CONTROL_STATEMENT) {
-        return new GdshaderControlStatementImpl(node);
+        return new GDShaderControlStatementImpl(node);
       }
       else if (type == DO_WHILE_STATEMENT) {
-        return new GdshaderDoWhileStatementImpl(node);
+        return new GDShaderDoWhileStatementImpl(node);
       }
       else if (type == ENUM_HINT) {
-        return new GdshaderEnumHintImpl(node);
+        return new GDShaderEnumHintImpl(node);
       }
       else if (type == EQUALITY_EXPR) {
-        return new GdshaderEqualityExprImpl(node);
+        return new GDShaderEqualityExprImpl(node);
       }
       else if (type == EXPRESSION) {
-        return new GdshaderExpressionImpl(node);
+        return new GDShaderExpressionImpl(node);
       }
       else if (type == EXPRESSION_STATEMENT) {
-        return new GdshaderExpressionStatementImpl(node);
+        return new GDShaderExpressionStatementImpl(node);
       }
       else if (type == FOR_STATEMENT) {
-        return new GdshaderForStatementImpl(node);
+        return new GDShaderForStatementImpl(node);
       }
       else if (type == FOR_VARIABLE_DECLARATION) {
-        return new GdshaderForVariableDeclarationImpl(node);
+        return new GDShaderForVariableDeclarationImpl(node);
       }
       else if (type == FUNCTION_CALL) {
-        return new GdshaderFunctionCallImpl(node);
+        return new GDShaderFunctionCallImpl(node);
       }
       else if (type == FUNCTION_DECLARATION) {
-        return new GdshaderFunctionDeclarationImpl(node);
+        return new GDShaderFunctionDeclarationImpl(node);
       }
       else if (type == FUNCTION_NAME) {
-        return new GdshaderFunctionNameImpl(node);
+        return new GDShaderFunctionNameImpl(node);
       }
       else if (type == HINT) {
-        return new GdshaderHintImpl(node);
+        return new GDShaderHintImpl(node);
       }
       else if (type == HINTS) {
-        return new GdshaderHintsImpl(node);
+        return new GDShaderHintsImpl(node);
       }
       else if (type == HINT_IDENTIFIER) {
-        return new GdshaderHintIdentifierImpl(node);
+        return new GDShaderHintIdentifierImpl(node);
       }
       else if (type == IF_STATEMENT) {
-        return new GdshaderIfStatementImpl(node);
+        return new GDShaderIfStatementImpl(node);
       }
       else if (type == INITIALIZER) {
-        return new GdshaderInitializerImpl(node);
+        return new GDShaderInitializerImpl(node);
       }
       else if (type == INITIALIZER_LIST) {
-        return new GdshaderInitializerListImpl(node);
+        return new GDShaderInitializerListImpl(node);
       }
       else if (type == INSTANCE_INDEX_HINT) {
-        return new GdshaderInstanceIndexHintImpl(node);
+        return new GDShaderInstanceIndexHintImpl(node);
       }
       else if (type == ITEM) {
-        return new GdshaderItemImpl(node);
+        return new GDShaderItemImpl(node);
       }
       else if (type == LITERAL) {
-        return new GdshaderLiteralImpl(node);
+        return new GDShaderLiteralImpl(node);
       }
       else if (type == LOGIC_AND_EXPR) {
-        return new GdshaderLogicAndExprImpl(node);
+        return new GDShaderLogicAndExprImpl(node);
       }
       else if (type == LOGIC_OR_EXPR) {
-        return new GdshaderLogicOrExprImpl(node);
+        return new GDShaderLogicOrExprImpl(node);
       }
       else if (type == MULTIPLICATIVE_EXPR) {
-        return new GdshaderMultiplicativeExprImpl(node);
+        return new GDShaderMultiplicativeExprImpl(node);
       }
       else if (type == NUMBER) {
-        return new GdshaderNumberImpl(node);
+        return new GDShaderNumberImpl(node);
       }
       else if (type == PARAMETER) {
-        return new GdshaderParameterImpl(node);
+        return new GDShaderParameterImpl(node);
       }
       else if (type == PARAMETER_LIST) {
-        return new GdshaderParameterListImpl(node);
+        return new GDShaderParameterListImpl(node);
       }
       else if (type == POSTFIX_EXPR) {
-        return new GdshaderPostfixExprImpl(node);
+        return new GDShaderPostfixExprImpl(node);
       }
       else if (type == PRECISION) {
-        return new GdshaderPrecisionImpl(node);
+        return new GDShaderPrecisionImpl(node);
       }
       else if (type == PREPROCESSOR_DIRECTIVE) {
-        return new GdshaderPreprocessorDirectiveImpl(node);
+        return new GDShaderPreprocessorDirectiveImpl(node);
       }
       else if (type == PRIMARY) {
-        return new GdshaderPrimaryImpl(node);
+        return new GDShaderPrimaryImpl(node);
       }
       else if (type == RANGE_HINT) {
-        return new GdshaderRangeHintImpl(node);
+        return new GDShaderRangeHintImpl(node);
       }
       else if (type == REGULAR_VARIABLE_DECLARATION) {
-        return new GdshaderRegularVariableDeclarationImpl(node);
+        return new GDShaderRegularVariableDeclarationImpl(node);
       }
       else if (type == RELATIONAL_EXPR) {
-        return new GdshaderRelationalExprImpl(node);
+        return new GDShaderRelationalExprImpl(node);
       }
       else if (type == RENDER_MODE_DECLARATION) {
-        return new GdshaderRenderModeDeclarationImpl(node);
+        return new GDShaderRenderModeDeclarationImpl(node);
       }
       else if (type == RETURN_STATEMENT) {
-        return new GdshaderReturnStatementImpl(node);
+        return new GDShaderReturnStatementImpl(node);
       }
       else if (type == SHADER_TYPE_DECLARATION) {
-        return new GdshaderShaderTypeDeclarationImpl(node);
+        return new GDShaderShaderTypeDeclarationImpl(node);
       }
       else if (type == SHIFT_EXPR) {
-        return new GdshaderShiftExprImpl(node);
+        return new GDShaderShiftExprImpl(node);
       }
       else if (type == SIMPLE_HINT) {
-        return new GdshaderSimpleHintImpl(node);
+        return new GDShaderSimpleHintImpl(node);
       }
       else if (type == SIMPLE_STATEMENT) {
-        return new GdshaderSimpleStatementImpl(node);
+        return new GDShaderSimpleStatementImpl(node);
       }
       else if (type == STATEMENT) {
-        return new GdshaderStatementImpl(node);
+        return new GDShaderStatementImpl(node);
+      }
+      else if (type == STATEMENT_BODY) {
+        return new GDShaderStatementBodyImpl(node);
       }
       else if (type == STENCIL_MODE_DECLARATION) {
-        return new GdshaderStencilModeDeclarationImpl(node);
+        return new GDShaderStencilModeDeclarationImpl(node);
       }
       else if (type == STRUCT_DECLARATION) {
-        return new GdshaderStructDeclarationImpl(node);
+        return new GDShaderStructDeclarationImpl(node);
       }
       else if (type == STRUCT_MEMBER) {
-        return new GdshaderStructMemberImpl(node);
+        return new GDShaderStructMemberImpl(node);
       }
       else if (type == SWITCH_STATEMENT) {
-        return new GdshaderSwitchStatementImpl(node);
+        return new GDShaderSwitchStatementImpl(node);
       }
       else if (type == TYPE) {
-        return new GdshaderTypeImpl(node);
+        return new GDShaderTypeImpl(node);
       }
       else if (type == UNARY_EXPR) {
-        return new GdshaderUnaryExprImpl(node);
+        return new GDShaderUnaryExprImpl(node);
       }
       else if (type == UNIFORM_GROUP_DECLARATION) {
-        return new GdshaderUniformGroupDeclarationImpl(node);
+        return new GDShaderUniformGroupDeclarationImpl(node);
       }
       else if (type == UNIFORM_VARIABLE_DECLARATION) {
-        return new GdshaderUniformVariableDeclarationImpl(node);
+        return new GDShaderUniformVariableDeclarationImpl(node);
       }
       else if (type == VARIABLE_DECLARATION) {
-        return new GdshaderVariableDeclarationImpl(node);
+        return new GDShaderVariableDeclarationImpl(node);
       }
       else if (type == VARIABLE_DECLARATOR) {
-        return new GdshaderVariableDeclaratorImpl(node);
+        return new GDShaderVariableDeclaratorImpl(node);
       }
       else if (type == VARIABLE_DECLARATOR_LIST) {
-        return new GdshaderVariableDeclaratorListImpl(node);
+        return new GDShaderVariableDeclaratorListImpl(node);
       }
       else if (type == VARYING_VARIABLE_DECLARATION) {
-        return new GdshaderVaryingVariableDeclarationImpl(node);
+        return new GDShaderVaryingVariableDeclarationImpl(node);
       }
       else if (type == WHILE_STATEMENT) {
-        return new GdshaderWhileStatementImpl(node);
+        return new GDShaderWhileStatementImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }
