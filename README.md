@@ -15,8 +15,11 @@ This plugin adds basic support for GDShader (Godot Shading Language) in JetBrain
 
 ## Installation
 
-- [Download from JetBrains Marketplace](https://plugins.jetbrains.com/) (soon)
-- Or build and install from source via the plugin settings in your JetBrains IDE
+- Manual installation:
+  - Download the latest release .zip file from the Releases page.
+  - Open your JetBrains IDE (e.g. IntelliJ IDEA, Rider, PyCharm, etc.).
+  - Install it using `Preferences` > `Plugins` > `Gear (⚙️) icon` > `Install Plugin from Disk…`.
+  - Select the downloaded .zip file and click OK.
 
 ## License
 
