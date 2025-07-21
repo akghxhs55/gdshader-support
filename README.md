@@ -29,7 +29,7 @@ This plugin adds basic support for GDShader (Godot Shading Language) in JetBrain
 
 ## License
 
-This plugin is licensed under the MIT LIcense.
+This plugin is licensed under the MIT License.
 
 ## Contributing
 
