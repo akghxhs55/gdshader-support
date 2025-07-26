@@ -52,5 +52,25 @@
         
         <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.rider.GDShaderNestingRulesProvider" />
         
+        <!-- File Templates -->
+        <internalFileTemplate name="Spatial" />
+        <internalFileTemplate name="Canvas Item" />
+        <internalFileTemplate name="Particles" />
+        <internalFileTemplate name="Sky" />
+        <internalFileTemplate name="Fog" />
+        
     </extensions>
+    
+    <actions>
+        
+        <action
+            id="GDShader.NewFile"
+            text="GDShader File"
+            description="Create a new GDShader file"
+            class="kr.jaehoyi.gdshader.actions.GDShaderNewFileAction"
+            icon="kr.jaehoyi.gdshader.GDShaderIcons.FILE">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
+        </action>
+        
+    </actions>
 </idea-plugin>
