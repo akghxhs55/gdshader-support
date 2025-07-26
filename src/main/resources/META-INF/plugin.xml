@@ -24,7 +24,7 @@
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <depends>com.intellij.modules.rider</depends>
+    <depends>com.intellij.modules.platform</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -48,9 +48,7 @@
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.GDShaderColorSettingsPage" />
         
-        <rider.filesIndexingRuleProvider implementation="kr.jaehoyi.gdshader.rider.GDShaderFilesIndexingRuleProvider" />
-        
-        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.rider.GDShaderNestingRulesProvider" />
+        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GDShaderNestingRulesProvider" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />

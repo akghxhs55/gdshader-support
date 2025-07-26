@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.rider
+package kr.jaehoyi.gdshader
 
 import com.intellij.ide.projectView.ProjectViewNestingRulesProvider
 

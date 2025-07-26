@@ -11,6 +11,8 @@
   elementTypeHolderClass="kr.jaehoyi.gdshader.psi.GDShaderTypes"
   elementTypeClass="kr.jaehoyi.gdshader.psi.GDShaderElementType"
   tokenTypeClass="kr.jaehoyi.gdshader.psi.GDShaderTokenType"
+  
+  psiImplUtilClass="kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil"
 }
 
 GDShaderFile ::= item*
@@ -56,7 +58,9 @@ varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMO
 regular_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
 variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
-variable_declarator ::= IDENTIFIER array_size? (OP_ASSIGN initializer)?
+variable_declarator ::= IDENTIFIER array_size? (OP_ASSIGN initializer)? {
+    methods=[getName getArraySize]
+}
 initializer ::= expression | initializer_list
 initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
 

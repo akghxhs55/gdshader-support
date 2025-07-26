@@ -13,4 +13,12 @@ public interface GDShaderVariableDeclarator extends PsiElement {
   @Nullable
   GDShaderInitializer getInitializer();
 
+  //WARNING: getName(...) is skipped
+  //matching getName(GDShaderVariableDeclarator, ...)
+  //methods are not found in GDShaderPsiImplUtil
+
+  //WARNING: getArraySize(...) is skipped
+  //matching getArraySize(GDShaderVariableDeclarator, ...)
+  //methods are not found in GDShaderPsiImplUtil
+
 }
