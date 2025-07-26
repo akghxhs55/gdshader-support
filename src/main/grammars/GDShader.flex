@@ -32,14 +32,14 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 
 {LineComment} 				{ return GDShaderTypes.LINE_COMMENT; }
 {BlockComment} 				{ return GDShaderTypes.BLOCK_COMMENT; }
-  
+
 "true" 						{ return GDShaderTypes.TRUE; }
 "false" 					{ return GDShaderTypes.FALSE; }
 {FloatConstant} 			{ return GDShaderTypes.FLOAT_CONSTANT; }
 {IntConstant} 				{ return GDShaderTypes.INT_CONSTANT; }
 {UintConstant} 				{ return GDShaderTypes.UINT_CONSTANT; }
 {StringConstant} 			{ return GDShaderTypes.STRING_CONSTANT; }
-  
+
 "[" 						{ return GDShaderTypes.BRACKET_OPEN; }
 "]" 						{ return GDShaderTypes.BRACKET_CLOSE; }
 "{" 						{ return GDShaderTypes.CURLY_BRACKET_OPEN; }
@@ -51,7 +51,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 ":" 						{ return GDShaderTypes.COLON; }
 ";" 						{ return GDShaderTypes.SEMICOLON; }
 "." 						{ return GDShaderTypes.PERIOD; }
-  
+
 "==" 						{ return GDShaderTypes.OP_EQUAL; }
 "!=" 						{ return GDShaderTypes.OP_NOT_EQUAL; }
 "<" 						{ return GDShaderTypes.OP_LESS; }
@@ -82,7 +82,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "~" 						{ return GDShaderTypes.OP_BIT_INVERT; }
 "++" 						{ return GDShaderTypes.OP_INCREMENT; }
 "--" 						{ return GDShaderTypes.OP_DECREMENT; }
-	 
+
 "if"	 					{ return GDShaderTypes.CF_IF; }
 "else"	 					{ return GDShaderTypes.CF_ELSE; }
 "for" 						{ return GDShaderTypes.CF_FOR; }
@@ -95,7 +95,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "continue" 					{ return GDShaderTypes.CF_CONTINUE; }
 "return" 					{ return GDShaderTypes.CF_RETURN; }
 "discard" 					{ return GDShaderTypes.CF_DISCARD; }
-  
+
 "shader_type" 				{ return GDShaderTypes.SHADER_TYPE; }
 "render_mode" 		 		{ return GDShaderTypes.RENDER_MODE; }
 "stencil_mode" 				{ return GDShaderTypes.STENCIL_MODE; }
@@ -114,7 +114,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "inout" 					{ return GDShaderTypes.ARG_INOUT; }
 "flat"	 					{ return GDShaderTypes.INTERPOLATION_FLAT; }
 "smooth" 					{ return GDShaderTypes.INTERPOLATION_SMOOTH; }
-  
+
 "void" 						{ return GDShaderTypes.TYPE_VOID; }
 "bool" 						{ return GDShaderTypes.TYPE_BOOL; }
 "bvec2" 					{ return GDShaderTypes.TYPE_BVEC2; }
@@ -144,7 +144,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "samplerCube" 				{ return GDShaderTypes.TYPE_SAMPLERCUBE; }
 "samplerCubeArray" 			{ return GDShaderTypes.TYPE_SAMPLERCUBEARRAY; }
 "samplerExternalOES" 		{ return GDShaderTypes.TYPE_SAMPLEREXT; }
-  
+
 "hint_default_white" 		{ return GDShaderTypes.HINT_DEFAULT_WHITE_TEXTURE; }
 "hint_default_black" 		{ return GDShaderTypes.HINT_DEFAULT_BLACK_TEXTURE; }
 "hint_default_transparent"  { return GDShaderTypes.HINT_DEFAULT_TRANSPARENT_TEXTURE; }
@@ -172,7 +172,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "filter_linear_mipmap_anisotropic" { return GDShaderTypes.FILTER_LINEAR_MIPMAP_ANISOTROPIC; }
 "repeat_enable" 			{ return GDShaderTypes.REPEAT_ENABLE; }
 "repeat_disable" 			{ return GDShaderTypes.REPEAT_DISABLE; }
-  
+
 "#define"([^\r\n]*\\\r?\n)*[^\r\n]*  { return GDShaderTypes.PP_DEFINE_LINE; }
 "#undef"([^\r\n]*\\\r?\n)*[^\r\n]*   { return GDShaderTypes.PP_UNDEF_LINE; }
 "#else"([^\r\n]*\\\r?\n)*[^\r\n]*    { return GDShaderTypes.PP_ELSE_LINE; }
@@ -186,7 +186,7 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "#pragma"([^\r\n]*\\\r?\n)*[^\r\n]*  { return GDShaderTypes.PP_PRAGMA_LINE; }
 
 {Identifier} 				{ return GDShaderTypes.IDENTIFIER; }
-  
+
 {Whitespace}				{ return TokenType.WHITE_SPACE; }
-  
+
 . 							{ return TokenType.BAD_CHARACTER; }

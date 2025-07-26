@@ -24,11 +24,12 @@
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.rider</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        
         <fileType
             name="GDShader File"
             implementationClass="kr.jaehoyi.gdshader.GDShaderFileType"
@@ -47,7 +48,9 @@
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.GDShaderColorSettingsPage" />
         
-        <indexedRootsProvider
-            implementation="kr.jaehoyi.gdshader.GDShaderIndexableSetContributor" />
+        <rider.filesIndexingRuleProvider implementation="kr.jaehoyi.gdshader.rider.GDShaderFilesIndexingRuleProvider" />
+        
+        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.rider.GDShaderNestingRulesProvider" />
+        
     </extensions>
 </idea-plugin>

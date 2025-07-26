@@ -28,7 +28,6 @@ repositories {
 dependencies {
     intellijPlatform {
         create("RD", "2025.1.2")
-        testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
 
         // Add necessary plugin dependencies for compilation here, example:
         // bundledPlugin("com.intellij.java")
