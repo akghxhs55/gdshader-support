@@ -1,31 +1,24 @@
 # JetBrains plugin for GDShader
 
-This plugin adds basic support for GDShader (Godot Shading Language) in JetBrains IDEs, including syntax highlighting and file type recognition.
+This plugin adds basic support for GDShader (Godot Shading Language) in JetBrains Rider, including syntax highlighting and file type recognition.
 
 ## Features
 
 - Syntax highlighting for GDShader (`.gdshader`) files
 - Indexing of GDShader files for file search
 
-## Supported IDEs
-
-- JetBrains Rider
-- IntelliJ IDEA (Ultimate, Community)
-- CLion
-- And other JetBrains IDEs that support plugins. Refer to the [Plugin Page](https://plugins.jetbrains.com/plugin/27949-gdshader) for compatibility details.
-
 ## Installation
 
 - Marketplace installation ([Link](https://plugins.jetbrains.com/plugin/27949-gdshader)):
-  - Open your JetBrains IDE (e.g. Rider, IntelliJ IDEA, CLion, etc.).
+  - Open JetBrains Rider.
   - Go to `Preferences` > `Plugins`.
   - Search for "GDShader" in the Marketplace tab.
-  - Click `Install` and restart your IDE if prompted.
+  - Click `Install`.
 - Manual installation:
   - Download the latest release .zip file from the Releases page.
-  - Open your JetBrains IDE (e.g. Rider, IntelliJ IDEA, CLion, etc.).
+  - Open JetBrains Rider.
   - Go to `Preferences` > `Plugins` > `Gear (⚙️) icon` > `Install Plugin from Disk…`.
-  - Select the downloaded .zip file and click OK.
+  - Select the downloaded .zip file and click `OK`.
 
 ## License
 
