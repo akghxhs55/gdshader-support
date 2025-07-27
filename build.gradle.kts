@@ -23,14 +23,10 @@ repositories {
     }
 }
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin.html
 dependencies {
     intellijPlatform {
-        create("RD", "2025.1.2")
-
-        // Add necessary plugin dependencies for compilation here, example:
-        // bundledPlugin("com.intellij.java")
+        rider("2025.1.2")
+//        bundledPlugin("com.intellij.java")
     }
 }
 
@@ -47,7 +43,6 @@ intellijPlatform {
 }
 
 tasks {
-    // Set the JVM compatibility versions
     withType<JavaCompile> {
         sourceCompatibility = "21"
         targetCompatibility = "21"
