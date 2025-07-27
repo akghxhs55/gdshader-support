@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader
+package kr.jaehoyi.gdshader.highlighter
 
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.project.Project

@@ -20,25 +20,22 @@
 
     <extensions defaultExtensionNs="com.intellij">
         
+        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GDShaderNestingRulesProvider" />
+        
         <fileType
             name="GDShader File"
             implementationClass="kr.jaehoyi.gdshader.GDShaderFileType"
             fieldName="INSTANCE"
             language="GDShader"
             extensions="gdshader" />
-        
         <lang.parserDefinition
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.GDShaderParserDefinition" />
-        
         <lang.syntaxHighlighterFactory
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.GDShaderSyntaxHighlighterFactory" />
-        
+            implementationClass="kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighterFactory" />
         <colorSettingsPage
-            implementation="kr.jaehoyi.gdshader.GDShaderColorSettingsPage" />
-        
-        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GDShaderNestingRulesProvider" />
+            implementation="kr.jaehoyi.gdshader.highlighter.GDShaderColorSettingsPage" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
@@ -55,7 +52,7 @@
             id="GDShader.NewFile"
             text="GDShader File"
             description="Create a new GDShader file"
-            class="kr.jaehoyi.gdshader.actions.GDShaderNewFileAction"
+            class="kr.jaehoyi.gdshader.action.GDShaderNewFileAction"
             icon="kr.jaehoyi.gdshader.GDShaderIcons.FILE">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
         </action>

@@ -1,14 +1,15 @@
-package kr.jaehoyi.gdshader
+package kr.jaehoyi.gdshader.highlighter
 
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
+import kr.jaehoyi.gdshader.GDShaderIcons
 import javax.swing.Icon
 
 class GDShaderColorSettingsPage : ColorSettingsPage {
 
-    override fun getIcon(): Icon? = GDShaderIcons.FILE
+    override fun getIcon(): Icon? = GDShaderIcons.Companion.FILE
     override fun getHighlighter() = GDShaderSyntaxHighlighter()
     override fun getDemoText(): String = """
         // This is a comment

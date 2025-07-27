@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader
+package kr.jaehoyi.gdshader.highlighter
 
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.diagnostic.Logger
@@ -8,11 +8,12 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
+import kr.jaehoyi.gdshader.GDShaderLexerAdapter
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
     companion object {
-        private val log = Logger.getInstance("kr.jaehoyi.gdshader.GDShaderSyntaxHighlighter")
+        private val log = Logger.getInstance("kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter")
         
         val IDENTIFIER = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)

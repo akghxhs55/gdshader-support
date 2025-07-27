@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.actions
+package kr.jaehoyi.gdshader.action
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
