@@ -58,9 +58,8 @@ varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMO
 regular_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
 variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
-variable_declarator ::= IDENTIFIER array_size? (OP_ASSIGN initializer)? {
-    methods=[getName getArraySize]
-}
+variable_declarator ::= IDENTIFIER array_size? (OP_ASSIGN initializer)?
+
 initializer ::= expression | initializer_list
 initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
 
