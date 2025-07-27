@@ -14,7 +14,7 @@ import com.intellij.psi.TokenType;
 %function advance
 %type IElementType
 
-Whitespace = [\ \t\r\n]+
+Whitespace = [ \t\r\n]+
 LineComment = "//"[^\r\n]*
 BlockComment = "/*"([^*]|\*+[^*/])*"*/"
 
@@ -27,6 +27,8 @@ FloatConstant =
 IntConstant = 0|[1-9][0-9]*
 UintConstant = 0|[1-9][0-9]*[uU]
 StringConstant = \"([^\\\"\n]|\\.)*\"
+
+PreprocessorLine = ([^\r\n]*\\\r?\n)*[^\r\n]*
 
 %%
 
@@ -172,21 +174,22 @@ StringConstant = \"([^\\\"\n]|\\.)*\"
 "filter_linear_mipmap_anisotropic" { return GDShaderTypes.FILTER_LINEAR_MIPMAP_ANISOTROPIC; }
 "repeat_enable" 			{ return GDShaderTypes.REPEAT_ENABLE; }
 "repeat_disable" 			{ return GDShaderTypes.REPEAT_DISABLE; }
+  
+  
 
-"#define"([^\r\n]*\\\r?\n)*[^\r\n]*  { return GDShaderTypes.PP_DEFINE_LINE; }
-"#undef"([^\r\n]*\\\r?\n)*[^\r\n]*   { return GDShaderTypes.PP_UNDEF_LINE; }
-"#else"([^\r\n]*\\\r?\n)*[^\r\n]*    { return GDShaderTypes.PP_ELSE_LINE; }
-"#elif"([^\r\n]*\\\r?\n)*[^\r\n]*    { return GDShaderTypes.PP_ELIF_LINE; }
-"#endif"([^\r\n]*\\\r?\n)*[^\r\n]*   { return GDShaderTypes.PP_ENDIF_LINE; }
-"#ifdef"([^\r\n]*\\\r?\n)*[^\r\n]*   { return GDShaderTypes.PP_IFDEF_LINE; }
-"#ifndef"([^\r\n]*\\\r?\n)*[^\r\n]*  { return GDShaderTypes.PP_IFNDEF_LINE; }
-"#if"([^\r\n]*\\\r?\n)*[^\r\n]*      { return GDShaderTypes.PP_IF_LINE; }
-"#error"([^\r\n]*\\\r?\n)*[^\r\n]*   { return GDShaderTypes.PP_ERROR_LINE; }
-"#include"([^\r\n]*\\\r?\n)*[^\r\n]* { return GDShaderTypes.PP_INCLUDE_LINE; }
-"#pragma"([^\r\n]*\\\r?\n)*[^\r\n]*  { return GDShaderTypes.PP_PRAGMA_LINE; }
-
+"#define"{PreprocessorLine}  	{ return GDShaderTypes.PP_DEFINE_LINE; }
+"#undef"{PreprocessorLine}   	{ return GDShaderTypes.PP_UNDEF_LINE; }
+"#else"{PreprocessorLine}		{ return GDShaderTypes.PP_ELSE_LINE; }
+"#elif"{PreprocessorLine}   	{ return GDShaderTypes.PP_ELIF_LINE; }
+"#endif"{PreprocessorLine}   	{ return GDShaderTypes.PP_ENDIF_LINE; }
+"#ifdef"{PreprocessorLine}   	{ return GDShaderTypes.PP_IFDEF_LINE; }
+"#ifndef"{PreprocessorLine}  	{ return GDShaderTypes.PP_IFNDEF_LINE; }
+"#if"{PreprocessorLine}      	{ return GDShaderTypes.PP_IF_LINE; }
+"#error"{PreprocessorLine}   	{ return GDShaderTypes.PP_ERROR_LINE; }
+"#include"{PreprocessorLine} 	{ return GDShaderTypes.PP_INCLUDE_LINE; }
+"#pragma"{PreprocessorLine}  	{ return GDShaderTypes.PP_PRAGMA_LINE; }
+  
+{Whitespace} 				{ return TokenType.WHITE_SPACE; }
 {Identifier} 				{ return GDShaderTypes.IDENTIFIER; }
-
-{Whitespace}				{ return TokenType.WHITE_SPACE; }
-
+      
 . 							{ return TokenType.BAD_CHARACTER; }
