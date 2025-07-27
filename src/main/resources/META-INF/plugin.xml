@@ -16,7 +16,6 @@
     </description>
 
     <depends>com.intellij.modules.platform</depends>
-<!--    <depends>org.jetbrains.kotlin</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
         
@@ -36,6 +35,8 @@
             implementationClass="kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighterFactory" />
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.highlighter.GDShaderColorSettingsPage" />
+        
+        <!-- Annotators -->
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />

@@ -28,7 +28,7 @@ IntConstant = 0|[1-9][0-9]*
 UintConstant = 0|[1-9][0-9]*[uU]
 StringConstant = \"([^\\\"\n]|\\.)*\"
 
-PreprocessorLine = ([^\r\n]*\\\r?\n)*[^\r\n]*
+PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
 
 %%
 
@@ -174,8 +174,6 @@ PreprocessorLine = ([^\r\n]*\\\r?\n)*[^\r\n]*
 "filter_linear_mipmap_anisotropic" { return GDShaderTypes.FILTER_LINEAR_MIPMAP_ANISOTROPIC; }
 "repeat_enable" 			{ return GDShaderTypes.REPEAT_ENABLE; }
 "repeat_disable" 			{ return GDShaderTypes.REPEAT_DISABLE; }
-  
-  
 
 "#define"{PreprocessorLine}  	{ return GDShaderTypes.PP_DEFINE_LINE; }
 "#undef"{PreprocessorLine}   	{ return GDShaderTypes.PP_UNDEF_LINE; }
