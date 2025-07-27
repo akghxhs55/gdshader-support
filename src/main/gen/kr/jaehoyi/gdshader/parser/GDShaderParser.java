@@ -1477,14 +1477,28 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // SHADER_TYPE IDENTIFIER SEMICOLON
+  // SHADER_TYPE shader_type_name SEMICOLON
   public static boolean shader_type_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shader_type_declaration")) return false;
     if (!nextTokenIs(b, SHADER_TYPE)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, SHADER_TYPE, IDENTIFIER, SEMICOLON);
+    r = consumeToken(b, SHADER_TYPE);
+    r = r && shader_type_name(b, l + 1);
+    r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, m, SHADER_TYPE_DECLARATION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean shader_type_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "shader_type_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, SHADER_TYPE_NAME, r);
     return r;
   }
 

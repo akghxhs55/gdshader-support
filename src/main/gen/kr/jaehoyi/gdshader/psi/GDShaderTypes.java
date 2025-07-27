@@ -56,6 +56,7 @@ public interface GDShaderTypes {
   IElementType RENDER_MODE_DECLARATION = new GDShaderElementType("RENDER_MODE_DECLARATION");
   IElementType RETURN_STATEMENT = new GDShaderElementType("RETURN_STATEMENT");
   IElementType SHADER_TYPE_DECLARATION = new GDShaderElementType("SHADER_TYPE_DECLARATION");
+  IElementType SHADER_TYPE_NAME = new GDShaderElementType("SHADER_TYPE_NAME");
   IElementType SHIFT_EXPR = new GDShaderElementType("SHIFT_EXPR");
   IElementType SIMPLE_HINT = new GDShaderElementType("SIMPLE_HINT");
   IElementType SIMPLE_STATEMENT = new GDShaderElementType("SIMPLE_STATEMENT");
@@ -369,6 +370,9 @@ public interface GDShaderTypes {
       }
       else if (type == SHADER_TYPE_DECLARATION) {
         return new GDShaderShaderTypeDeclarationImpl(node);
+      }
+      else if (type == SHADER_TYPE_NAME) {
+        return new GDShaderShaderTypeNameImpl(node);
       }
       else if (type == SHIFT_EXPR) {
         return new GDShaderShiftExprImpl(node);
