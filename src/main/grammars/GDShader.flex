@@ -175,7 +175,7 @@ PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
 "repeat_enable" 			{ return GDShaderTypes.REPEAT_ENABLE; }
 "repeat_disable" 			{ return GDShaderTypes.REPEAT_DISABLE; }
 
-"#define"{PreprocessorLine}  	{ return GDShaderTypes.PP_DEFINE_LINE; }
+^[ \t]*"#define"{PreprocessorLine}  	{ return GDShaderTypes.PP_DEFINE_LINE; }
 "#undef"{PreprocessorLine}   	{ return GDShaderTypes.PP_UNDEF_LINE; }
 "#else"{PreprocessorLine}		{ return GDShaderTypes.PP_ELSE_LINE; }
 "#elif"{PreprocessorLine}   	{ return GDShaderTypes.PP_ELIF_LINE; }
