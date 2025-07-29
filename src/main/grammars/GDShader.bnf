@@ -17,24 +17,20 @@
 
 GDShaderFile ::= item*
 
-item ::= statement
+item ::= top_level_declaration
+	   | SEMICOLON
 	   | LINE_COMMENT
 	   | BLOCK_COMMENT
 	   | preprocessor_directive
 	   
-// Statements
-statement ::= SEMICOLON
-			| shader_type_declaration
-			| render_mode_declaration
-			| stencil_mode_declaration
-			| uniform_group_declaration
-			| variable_declaration
-			| function_declaration
-			| struct_declaration
-			| control_statement
-			| return_statement
-			| simple_statement
-			| expression_statement
+// Top Level Declarations
+top_level_declaration ::= shader_type_declaration
+		    		    | render_mode_declaration
+		    		    | stencil_mode_declaration
+		    		    | uniform_group_declaration
+		    		    | global_variable_declaration
+		    		    | function_declaration
+		    		    | struct_declaration
 
 // Shader, Render Mode, Stencil Mode, Uniform Group Declarations
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
@@ -47,18 +43,15 @@ stencil_mode_declaration ::= STENCIL_MODE IDENTIFIER SEMICOLON
 uniform_group_declaration ::= UNIFORM_GROUP IDENTIFIER? (PERIOD IDENTIFIER)* SEMICOLON
 
 // Variable Declarations
-variable_declaration ::= uniform_variable_declaration
-					   | const_variable_declaration
-					   | varying_variable_declaration
-					   | regular_variable_declaration
+global_variable_declaration ::= uniform_variable_declaration
+					   		  | const_variable_declaration
+					   		  | varying_variable_declaration
 
 uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
 
 const_variable_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
 
 varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type IDENTIFIER array_size? (COLON hints)? SEMICOLON
-
-regular_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
 variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
 variable_declarator ::= IDENTIFIER array_size? (OP_ASSIGN initializer)?
@@ -74,7 +67,7 @@ function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENT
 parameter_list ::= parameter (COMMA parameter)*
 parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type IDENTIFIER
 
-block ::= CURLY_BRACKET_OPEN item* CURLY_BRACKET_CLOSE
+block ::= CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
 
 // Struct Declarations
 struct_declaration ::= STRUCT IDENTIFIER CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
@@ -93,7 +86,7 @@ for_variable_declaration ::= precision? type variable_declarator_list
 do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
 while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
-case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON item*
+case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON statement_body*
 return_statement ::= CF_RETURN expression? SEMICOLON
 simple_statement ::= CF_BREAK SEMICOLON
 					| CF_CONTINUE SEMICOLON
@@ -104,6 +97,16 @@ statement_body ::= block
 				 | return_statement
 				 | simple_statement
 				 | expression_statement
+				 | local_variable_declaration
+				 | SEMICOLON
+				 | LINE_COMMENT
+				 | BLOCK_COMMENT
+				 | preprocessor_directive
+				 
+local_variable_declaration ::= const_variable_declaration
+							 | regular_variable_declaration
+
+regular_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
 // Expressions
 expression_statement ::= expression SEMICOLON

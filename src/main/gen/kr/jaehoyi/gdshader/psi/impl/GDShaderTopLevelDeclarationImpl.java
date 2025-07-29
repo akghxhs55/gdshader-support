@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderStatementImpl extends ASTWrapperPsiElement implements GDShaderStatement {
+public class GDShaderTopLevelDeclarationImpl extends ASTWrapperPsiElement implements GDShaderTopLevelDeclaration {
 
-  public GDShaderStatementImpl(@NotNull ASTNode node) {
+  public GDShaderTopLevelDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitStatement(this);
+    visitor.visitTopLevelDeclaration(this);
   }
 
   @Override
@@ -29,20 +29,14 @@ public class GDShaderStatementImpl extends ASTWrapperPsiElement implements GDSha
 
   @Override
   @Nullable
-  public GDShaderControlStatement getControlStatement() {
-    return findChildByClass(GDShaderControlStatement.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderExpressionStatement getExpressionStatement() {
-    return findChildByClass(GDShaderExpressionStatement.class);
-  }
-
-  @Override
-  @Nullable
   public GDShaderFunctionDeclaration getFunctionDeclaration() {
     return findChildByClass(GDShaderFunctionDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderGlobalVariableDeclaration getGlobalVariableDeclaration() {
+    return findChildByClass(GDShaderGlobalVariableDeclaration.class);
   }
 
   @Override
@@ -53,20 +47,8 @@ public class GDShaderStatementImpl extends ASTWrapperPsiElement implements GDSha
 
   @Override
   @Nullable
-  public GDShaderReturnStatement getReturnStatement() {
-    return findChildByClass(GDShaderReturnStatement.class);
-  }
-
-  @Override
-  @Nullable
   public GDShaderShaderTypeDeclaration getShaderTypeDeclaration() {
     return findChildByClass(GDShaderShaderTypeDeclaration.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderSimpleStatement getSimpleStatement() {
-    return findChildByClass(GDShaderSimpleStatement.class);
   }
 
   @Override
@@ -85,12 +67,6 @@ public class GDShaderStatementImpl extends ASTWrapperPsiElement implements GDSha
   @Nullable
   public GDShaderUniformGroupDeclaration getUniformGroupDeclaration() {
     return findChildByClass(GDShaderUniformGroupDeclaration.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderVariableDeclaration getVariableDeclaration() {
-    return findChildByClass(GDShaderVariableDeclaration.class);
   }
 
 }

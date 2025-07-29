@@ -35,8 +35,8 @@ public class GDShaderItemImpl extends ASTWrapperPsiElement implements GDShaderIt
 
   @Override
   @Nullable
-  public GDShaderStatement getStatement() {
-    return findChildByClass(GDShaderStatement.class);
+  public GDShaderTopLevelDeclaration getTopLevelDeclaration() {
+    return findChildByClass(GDShaderTopLevelDeclaration.class);
   }
 
 }

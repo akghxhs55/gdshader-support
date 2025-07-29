@@ -5,28 +5,19 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderStatement extends PsiElement {
-
-  @Nullable
-  GDShaderControlStatement getControlStatement();
-
-  @Nullable
-  GDShaderExpressionStatement getExpressionStatement();
+public interface GDShaderTopLevelDeclaration extends PsiElement {
 
   @Nullable
   GDShaderFunctionDeclaration getFunctionDeclaration();
 
   @Nullable
+  GDShaderGlobalVariableDeclaration getGlobalVariableDeclaration();
+
+  @Nullable
   GDShaderRenderModeDeclaration getRenderModeDeclaration();
 
   @Nullable
-  GDShaderReturnStatement getReturnStatement();
-
-  @Nullable
   GDShaderShaderTypeDeclaration getShaderTypeDeclaration();
-
-  @Nullable
-  GDShaderSimpleStatement getSimpleStatement();
 
   @Nullable
   GDShaderStencilModeDeclaration getStencilModeDeclaration();
@@ -36,8 +27,5 @@ public interface GDShaderStatement extends PsiElement {
 
   @Nullable
   GDShaderUniformGroupDeclaration getUniformGroupDeclaration();
-
-  @Nullable
-  GDShaderVariableDeclaration getVariableDeclaration();
 
 }

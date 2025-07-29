@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderCaseClauseImpl extends ASTWrapperPsiElement implements GDShaderCaseClause {
+public class GDShaderGlobalVariableDeclarationImpl extends ASTWrapperPsiElement implements GDShaderGlobalVariableDeclaration {
 
-  public GDShaderCaseClauseImpl(@NotNull ASTNode node) {
+  public GDShaderGlobalVariableDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitCaseClause(this);
+    visitor.visitGlobalVariableDeclaration(this);
   }
 
   @Override
@@ -29,14 +29,20 @@ public class GDShaderCaseClauseImpl extends ASTWrapperPsiElement implements GDSh
 
   @Override
   @Nullable
-  public GDShaderExpression getExpression() {
-    return findChildByClass(GDShaderExpression.class);
+  public GDShaderConstVariableDeclaration getConstVariableDeclaration() {
+    return findChildByClass(GDShaderConstVariableDeclaration.class);
   }
 
   @Override
-  @NotNull
-  public List<GDShaderStatementBody> getStatementBodyList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderStatementBody.class);
+  @Nullable
+  public GDShaderUniformVariableDeclaration getUniformVariableDeclaration() {
+    return findChildByClass(GDShaderUniformVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderVaryingVariableDeclaration getVaryingVariableDeclaration() {
+    return findChildByClass(GDShaderVaryingVariableDeclaration.class);
   }
 
 }

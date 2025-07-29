@@ -11,9 +11,6 @@ public interface GDShaderCaseClause extends PsiElement {
   GDShaderExpression getExpression();
 
   @NotNull
-  List<GDShaderItem> getItemList();
-
-  @NotNull
-  List<GDShaderStatement> getStatementList();
+  List<GDShaderStatementBody> getStatementBodyList();
 
 }
