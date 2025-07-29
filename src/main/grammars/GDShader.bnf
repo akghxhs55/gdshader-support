@@ -38,7 +38,7 @@ statement ::= SEMICOLON
 
 // Shader, Render Mode, Stencil Mode, Uniform Group Declarations
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
-	methods=[getShaderType]
+	methods = [ getShaderType ]
 }
 shader_type_name ::= IDENTIFIER
 render_mode_declaration ::= RENDER_MODE IDENTIFIER (COMMA IDENTIFIER)* SEMICOLON

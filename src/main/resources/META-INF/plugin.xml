@@ -37,6 +37,7 @@
             implementation="kr.jaehoyi.gdshader.highlighter.GDShaderColorSettingsPage" />
         
         <!-- Annotators -->
+        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderFunctionAnnotator" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />

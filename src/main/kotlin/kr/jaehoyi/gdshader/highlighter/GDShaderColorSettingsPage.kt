@@ -58,6 +58,8 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
     AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
     AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
+    AttributesDescriptor("Function Declaration", GDShaderSyntaxHighlighter.FUNCTION_DECLARATION),
+    AttributesDescriptor("Function Call", GDShaderSyntaxHighlighter.FUNCTION_CALL),
     AttributesDescriptor("Type", GDShaderSyntaxHighlighter.TYPE),
     AttributesDescriptor("Preprocessor", GDShaderSyntaxHighlighter.PREPROCESSOR),
 )
