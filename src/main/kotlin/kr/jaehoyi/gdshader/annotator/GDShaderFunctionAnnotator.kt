@@ -24,7 +24,7 @@ class GDShaderFunctionAnnotator : Annotator {
     ) {
         val functionNameElement = element.node.findChildByType(GDShaderTypes.IDENTIFIER)?.psi
         
-        if (functionNameElement == null || functionNameElement.text.isEmpty()) {
+        if (functionNameElement == null) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Function declaration must have a name")
                 .range(element)
                 .create()
@@ -42,14 +42,6 @@ class GDShaderFunctionAnnotator : Annotator {
         holder: AnnotationHolder
     ) {
         val functionNameElement = element.functionName
-        
-        val functionName = functionNameElement.text
-        if (functionName.isEmpty()) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Function name cannot be empty")
-                .range(functionNameElement)
-                .create()
-            return
-        }
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(functionNameElement)
