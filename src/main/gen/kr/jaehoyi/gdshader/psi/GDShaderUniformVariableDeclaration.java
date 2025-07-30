@@ -19,4 +19,7 @@ public interface GDShaderUniformVariableDeclaration extends PsiElement {
   @NotNull
   GDShaderType getType();
 
+  @NotNull
+  GDShaderVariableName getVariableName();
+
 }

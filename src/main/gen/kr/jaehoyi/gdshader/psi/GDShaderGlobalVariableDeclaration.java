@@ -16,4 +16,8 @@ public interface GDShaderGlobalVariableDeclaration extends PsiElement {
   @Nullable
   GDShaderVaryingVariableDeclaration getVaryingVariableDeclaration();
 
+  //WARNING: getVariableNameElement(...) is skipped
+  //matching getVariableNameElement(GDShaderGlobalVariableDeclaration, ...)
+  //methods are not found in GDShaderPsiImplUtil
+
 }

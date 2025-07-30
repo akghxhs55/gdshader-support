@@ -13,4 +13,7 @@ public interface GDShaderVariableDeclarator extends PsiElement {
   @Nullable
   GDShaderInitializer getInitializer();
 
+  @NotNull
+  GDShaderVariableName getVariableName();
+
 }

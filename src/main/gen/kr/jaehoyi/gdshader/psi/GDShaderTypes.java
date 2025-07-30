@@ -74,6 +74,7 @@ public interface GDShaderTypes {
   IElementType UNIFORM_VARIABLE_DECLARATION = new GDShaderElementType("UNIFORM_VARIABLE_DECLARATION");
   IElementType VARIABLE_DECLARATOR = new GDShaderElementType("VARIABLE_DECLARATOR");
   IElementType VARIABLE_DECLARATOR_LIST = new GDShaderElementType("VARIABLE_DECLARATOR_LIST");
+  IElementType VARIABLE_NAME = new GDShaderElementType("VARIABLE_NAME");
   IElementType VARYING_VARIABLE_DECLARATION = new GDShaderElementType("VARYING_VARIABLE_DECLARATION");
   IElementType WHILE_STATEMENT = new GDShaderElementType("WHILE_STATEMENT");
 
@@ -426,6 +427,9 @@ public interface GDShaderTypes {
       }
       else if (type == VARIABLE_DECLARATOR_LIST) {
         return new GDShaderVariableDeclaratorListImpl(node);
+      }
+      else if (type == VARIABLE_NAME) {
+        return new GDShaderVariableNameImpl(node);
       }
       else if (type == VARYING_VARIABLE_DECLARATION) {
         return new GDShaderVaryingVariableDeclarationImpl(node);

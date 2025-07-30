@@ -19,15 +19,21 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
 
         uniform vec4 color : source_color;
         uniform int name : hint_enum("Option1", "Option2", "Option3");
+        uniform sampler2D image : hint_default_white;
+        
+        int foo(int a, float b) {
+            return a + int(b);
+        }
 
         void fragment() {
-            vec4 texColor = texture(texture, UV);
+            vec4 texColor = texture(image, UV);
             COLOR = texColor * color;
             int values[3] = { 1, 2, 3 };
             
             for (int i = 0; i < 10; i++) {
                 COLOR.rgb += vec3(float(i) / 10.0);
                 if (i % 2 == 0) {
+                    values[i % 3] += foo(i, 0.5);
                     continue;
                 }
             }
@@ -58,6 +64,7 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
     AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
     AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
+    AttributesDescriptor("Global Variable", GDShaderSyntaxHighlighter.GLOBAL_VARIABLE),
     AttributesDescriptor("Function Declaration", GDShaderSyntaxHighlighter.FUNCTION_DECLARATION),
     AttributesDescriptor("Function Call", GDShaderSyntaxHighlighter.FUNCTION_CALL),
     AttributesDescriptor("Type", GDShaderSyntaxHighlighter.TYPE),

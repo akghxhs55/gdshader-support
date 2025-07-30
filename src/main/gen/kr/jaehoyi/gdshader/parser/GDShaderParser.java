@@ -1896,7 +1896,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (GLOBAL | INSTANCE)? UNIFORM precision? type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
+  // (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
   public static boolean uniform_variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_variable_declaration")) return false;
     boolean r;
@@ -1905,7 +1905,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, UNIFORM);
     r = r && uniform_variable_declaration_2(b, l + 1);
     r = r && type(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && variable_name(b, l + 1);
     r = r && uniform_variable_declaration_5(b, l + 1);
     r = r && uniform_variable_declaration_6(b, l + 1);
     r = r && consumeToken(b, SEMICOLON);
@@ -1973,13 +1973,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // IDENTIFIER array_size? (OP_ASSIGN initializer)?
+  // variable_name array_size? (OP_ASSIGN initializer)?
   public static boolean variable_declarator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_declarator")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, IDENTIFIER);
+    r = variable_name(b, l + 1);
     r = r && variable_declarator_1(b, l + 1);
     r = r && variable_declarator_2(b, l + 1);
     exit_section_(b, m, VARIABLE_DECLARATOR, r);
@@ -2047,7 +2047,19 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type IDENTIFIER array_size? (COLON hints)? SEMICOLON
+  // IDENTIFIER
+  public static boolean variable_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, VARIABLE_NAME, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hints)? SEMICOLON
   public static boolean varying_variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_variable_declaration")) return false;
     if (!nextTokenIs(b, VARYING)) return false;
@@ -2057,7 +2069,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && varying_variable_declaration_1(b, l + 1);
     r = r && varying_variable_declaration_2(b, l + 1);
     r = r && type(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && variable_name(b, l + 1);
     r = r && varying_variable_declaration_5(b, l + 1);
     r = r && varying_variable_declaration_6(b, l + 1);
     r = r && consumeToken(b, SEMICOLON);

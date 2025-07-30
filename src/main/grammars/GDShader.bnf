@@ -46,15 +46,20 @@ uniform_group_declaration ::= UNIFORM_GROUP IDENTIFIER? (PERIOD IDENTIFIER)* SEM
 global_variable_declaration ::= uniform_variable_declaration
 					   		  | const_variable_declaration
 					   		  | varying_variable_declaration
+{
+	methods = [ getVariableNameElement ]
+}
 
-uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type IDENTIFIER (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
+uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
 
 const_variable_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
 
-varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type IDENTIFIER array_size? (COLON hints)? SEMICOLON
+varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hints)? SEMICOLON
 
 variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
-variable_declarator ::= IDENTIFIER array_size? (OP_ASSIGN initializer)?
+variable_declarator ::= variable_name array_size? (OP_ASSIGN initializer)?
+
+variable_name ::= IDENTIFIER
 
 initializer ::= expression | initializer_list
 initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
