@@ -30,7 +30,7 @@ class GDShaderFunctionAnnotator : Annotator {
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(functionNameElement)
-            .textAttributes(GDShaderSyntaxHighlighter.FUNCTION_DECLARATION)
+            .textAttributes(GDShaderSyntaxHighlighter.FUNCTION)
             .create()
     }
     
@@ -39,7 +39,7 @@ class GDShaderFunctionAnnotator : Annotator {
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(functionNameElement)
-            .textAttributes(GDShaderSyntaxHighlighter.FUNCTION_CALL)
+            .textAttributes(GDShaderSyntaxHighlighter.FUNCTION)
             .create()
     }
 }
