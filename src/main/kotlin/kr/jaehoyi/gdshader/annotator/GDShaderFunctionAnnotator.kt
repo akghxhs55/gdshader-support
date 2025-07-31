@@ -18,10 +18,7 @@ class GDShaderFunctionAnnotator : Annotator {
         }
     }
     
-    private fun annotateFunctionDeclaration(
-        element: GDShaderFunctionDeclaration,
-        holder: AnnotationHolder
-    ) {
+    private fun annotateFunctionDeclaration(element: GDShaderFunctionDeclaration, holder: AnnotationHolder) {
         val functionNameElement = element.node.findChildByType(GDShaderTypes.IDENTIFIER)?.psi
         
         if (functionNameElement == null) {
@@ -37,10 +34,7 @@ class GDShaderFunctionAnnotator : Annotator {
             .create()
     }
     
-    private fun annotateFunctionCall(
-        element: GDShaderFunctionCall,
-        holder: AnnotationHolder
-    ) {
+    private fun annotateFunctionCall(element: GDShaderFunctionCall, holder: AnnotationHolder) {
         val functionNameElement = element.functionName
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
