@@ -39,4 +39,10 @@ public class GDShaderPostfixExprImpl extends ASTWrapperPsiElement implements GDS
     return findNotNullChildByClass(GDShaderPrimary.class);
   }
 
+  @Override
+  @NotNull
+  public List<GDShaderStructMemberName> getStructMemberNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderStructMemberName.class);
+  }
+
 }

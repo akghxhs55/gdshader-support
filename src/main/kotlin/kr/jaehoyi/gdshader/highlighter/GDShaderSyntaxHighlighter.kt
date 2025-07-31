@@ -53,6 +53,8 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
             "GDSHADER_FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION)
         val FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL)
+        val STRUCT = TextAttributesKey.createTextAttributesKey(
+            "GDSHADER_STRUCT", DefaultLanguageHighlighterColors.CLASS_NAME)
         val TYPE = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_TYPE", DefaultLanguageHighlighterColors.CLASS_NAME)
         val PREPROCESSOR = TextAttributesKey.createTextAttributesKey(
@@ -79,6 +81,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
         private val GLOBAL_VARIABLE_KEYS = arrayOf(GLOBAL_VARIABLE)
         private val FUNCTION_DECLARATION_KEYS = arrayOf(FUNCTION_DECLARATION)
         private val FUNCTION_CALL_KEYS = arrayOf(FUNCTION_CALL)
+        private val STRUCT_KEYS = arrayOf(STRUCT)
         private val TYPE_KEYS = arrayOf(TYPE)
         private val PREPROCESSOR_KEYS = arrayOf(PREPROCESSOR)
         private val BAD_CHARACTER_KEYS = arrayOf(BAD_CHARACTER)

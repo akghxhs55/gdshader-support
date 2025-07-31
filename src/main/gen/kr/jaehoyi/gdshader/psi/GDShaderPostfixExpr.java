@@ -13,4 +13,7 @@ public interface GDShaderPostfixExpr extends PsiElement {
   @NotNull
   GDShaderPrimary getPrimary();
 
+  @NotNull
+  List<GDShaderStructMemberName> getStructMemberNameList();
+
 }

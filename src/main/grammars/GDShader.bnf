@@ -75,8 +75,10 @@ parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type IDENTIFIER
 block ::= CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
 
 // Struct Declarations
-struct_declaration ::= STRUCT IDENTIFIER CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
-struct_member ::= type IDENTIFIER SEMICOLON
+struct_declaration ::= STRUCT struct_name CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
+struct_name ::= IDENTIFIER
+struct_member ::= type struct_member_name (array_size)? SEMICOLON
+struct_member_name ::= IDENTIFIER
 
 // Control Statements
 control_statement ::= if_statement
@@ -130,7 +132,7 @@ shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
 additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
 multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
 unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)? postfix_expr
-postfix_expr ::= primary (PERIOD IDENTIFIER | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+postfix_expr ::= primary (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
 primary ::= literal
 		  | function_call
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
@@ -209,7 +211,7 @@ type ::= TYPE_VOID
        | TYPE_SAMPLERCUBE
        | TYPE_SAMPLERCUBEARRAY
        | TYPE_SAMPLEREXT
-       | IDENTIFIER
+       | struct_name
 
 literal ::= TRUE
 		  | FALSE

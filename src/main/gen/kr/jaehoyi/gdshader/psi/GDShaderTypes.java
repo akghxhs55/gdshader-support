@@ -66,6 +66,8 @@ public interface GDShaderTypes {
   IElementType STENCIL_MODE_DECLARATION = new GDShaderElementType("STENCIL_MODE_DECLARATION");
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
+  IElementType STRUCT_MEMBER_NAME = new GDShaderElementType("STRUCT_MEMBER_NAME");
+  IElementType STRUCT_NAME = new GDShaderElementType("STRUCT_NAME");
   IElementType SWITCH_STATEMENT = new GDShaderElementType("SWITCH_STATEMENT");
   IElementType TOP_LEVEL_DECLARATION = new GDShaderElementType("TOP_LEVEL_DECLARATION");
   IElementType TYPE = new GDShaderElementType("TYPE");
@@ -403,6 +405,12 @@ public interface GDShaderTypes {
       }
       else if (type == STRUCT_MEMBER) {
         return new GDShaderStructMemberImpl(node);
+      }
+      else if (type == STRUCT_MEMBER_NAME) {
+        return new GDShaderStructMemberNameImpl(node);
+      }
+      else if (type == STRUCT_NAME) {
+        return new GDShaderStructNameImpl(node);
       }
       else if (type == SWITCH_STATEMENT) {
         return new GDShaderSwitchStatementImpl(node);

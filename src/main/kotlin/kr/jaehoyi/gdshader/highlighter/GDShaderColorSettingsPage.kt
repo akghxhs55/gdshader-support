@@ -24,6 +24,11 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
         int foo(int a, float b) {
             return a + int(b);
         }
+        
+        struct MyStruct {
+            vec2 position;
+            vec3 color;
+        };
 
         void fragment() {
             vec4 texColor = texture(image, UV);
@@ -67,6 +72,7 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Global Variable", GDShaderSyntaxHighlighter.GLOBAL_VARIABLE),
     AttributesDescriptor("Function Declaration", GDShaderSyntaxHighlighter.FUNCTION_DECLARATION),
     AttributesDescriptor("Function Call", GDShaderSyntaxHighlighter.FUNCTION_CALL),
+    AttributesDescriptor("Struct", GDShaderSyntaxHighlighter.STRUCT),
     AttributesDescriptor("Type", GDShaderSyntaxHighlighter.TYPE),
     AttributesDescriptor("Preprocessor", GDShaderSyntaxHighlighter.PREPROCESSOR),
 )

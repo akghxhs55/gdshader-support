@@ -7,6 +7,12 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderStructMember extends PsiElement {
 
+  @Nullable
+  GDShaderArraySize getArraySize();
+
+  @NotNull
+  GDShaderStructMemberName getStructMemberName();
+
   @NotNull
   GDShaderType getType();
 

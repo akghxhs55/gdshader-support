@@ -1214,7 +1214,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // primary (PERIOD IDENTIFIER | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+  // primary (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
   public static boolean postfix_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr")) return false;
     boolean r;
@@ -1226,7 +1226,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (PERIOD IDENTIFIER | BRACKET_OPEN expression BRACKET_CLOSE)*
+  // (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)*
   private static boolean postfix_expr_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1")) return false;
     while (true) {
@@ -1237,13 +1237,24 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // PERIOD IDENTIFIER | BRACKET_OPEN expression BRACKET_CLOSE
+  // PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE
   private static boolean postfix_expr_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = parseTokens(b, 0, PERIOD, IDENTIFIER);
+    r = postfix_expr_1_0_0(b, l + 1);
     if (!r) r = postfix_expr_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // PERIOD struct_member_name
+  private static boolean postfix_expr_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "postfix_expr_1_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, PERIOD);
+    r = r && struct_member_name(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1666,13 +1677,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // STRUCT IDENTIFIER CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
+  // STRUCT struct_name CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
   public static boolean struct_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_declaration")) return false;
     if (!nextTokenIs(b, STRUCT)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, STRUCT, IDENTIFIER, CURLY_BRACKET_OPEN);
+    r = consumeToken(b, STRUCT);
+    r = r && struct_name(b, l + 1);
+    r = r && consumeToken(b, CURLY_BRACKET_OPEN);
     r = r && struct_declaration_3(b, l + 1);
     r = r && consumeTokens(b, 0, CURLY_BRACKET_CLOSE, SEMICOLON);
     exit_section_(b, m, STRUCT_DECLARATION, r);
@@ -1691,14 +1704,57 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // type IDENTIFIER SEMICOLON
+  // type struct_member_name (array_size)? SEMICOLON
   public static boolean struct_member(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, STRUCT_MEMBER, "<struct member>");
     r = type(b, l + 1);
-    r = r && consumeTokens(b, 0, IDENTIFIER, SEMICOLON);
+    r = r && struct_member_name(b, l + 1);
+    r = r && struct_member_2(b, l + 1);
+    r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (array_size)?
+  private static boolean struct_member_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_2")) return false;
+    struct_member_2_0(b, l + 1);
+    return true;
+  }
+
+  // (array_size)
+  private static boolean struct_member_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = array_size(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean struct_member_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, STRUCT_MEMBER_NAME, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean struct_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, STRUCT_NAME, r);
     return r;
   }
 
@@ -1782,7 +1838,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   //        | TYPE_SAMPLERCUBE
   //        | TYPE_SAMPLERCUBEARRAY
   //        | TYPE_SAMPLEREXT
-  //        | IDENTIFIER
+  //        | struct_name
   public static boolean type(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "type")) return false;
     boolean r;
@@ -1816,7 +1872,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, TYPE_SAMPLERCUBE);
     if (!r) r = consumeToken(b, TYPE_SAMPLERCUBEARRAY);
     if (!r) r = consumeToken(b, TYPE_SAMPLEREXT);
-    if (!r) r = consumeToken(b, IDENTIFIER);
+    if (!r) r = struct_name(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
