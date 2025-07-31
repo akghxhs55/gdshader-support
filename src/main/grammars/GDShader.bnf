@@ -134,7 +134,7 @@ postfix_expr ::= primary (PERIOD IDENTIFIER | BRACKET_OPEN expression BRACKET_CL
 primary ::= literal
 		  | function_call
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-		  | IDENTIFIER
+		  | variable_name
 		  
 function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*

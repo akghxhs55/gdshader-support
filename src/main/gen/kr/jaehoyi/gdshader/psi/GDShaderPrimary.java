@@ -16,4 +16,7 @@ public interface GDShaderPrimary extends PsiElement {
   @Nullable
   GDShaderLiteral getLiteral();
 
+  @Nullable
+  GDShaderVariableName getVariableName();
+
 }
