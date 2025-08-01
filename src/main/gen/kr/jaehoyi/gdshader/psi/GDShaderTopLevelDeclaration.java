@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderTopLevelDeclaration extends PsiElement {
 
   @Nullable
-  GDShaderFunctionDeclaration getFunctionDeclaration();
+  GDShaderConstVariableDeclaration getConstVariableDeclaration();
 
   @Nullable
-  GDShaderGlobalVariableDeclaration getGlobalVariableDeclaration();
+  GDShaderFunctionDeclaration getFunctionDeclaration();
 
   @Nullable
   GDShaderRenderModeDeclaration getRenderModeDeclaration();
@@ -27,5 +27,11 @@ public interface GDShaderTopLevelDeclaration extends PsiElement {
 
   @Nullable
   GDShaderUniformGroupDeclaration getUniformGroupDeclaration();
+
+  @Nullable
+  GDShaderUniformVariableDeclaration getUniformVariableDeclaration();
+
+  @Nullable
+  GDShaderVaryingVariableDeclaration getVaryingVariableDeclaration();
 
 }

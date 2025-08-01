@@ -35,6 +35,12 @@ public class GDShaderStatementBodyImpl extends ASTWrapperPsiElement implements G
 
   @Override
   @Nullable
+  public GDShaderConstVariableDeclaration getConstVariableDeclaration() {
+    return findChildByClass(GDShaderConstVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderControlStatement getControlStatement() {
     return findChildByClass(GDShaderControlStatement.class);
   }

@@ -28,7 +28,9 @@ top_level_declaration ::= shader_type_declaration
 		    		    | render_mode_declaration
 		    		    | stencil_mode_declaration
 		    		    | uniform_group_declaration
-		    		    | global_variable_declaration
+		    		    | uniform_variable_declaration
+		    		    | const_variable_declaration
+		    		    | varying_variable_declaration
 		    		    | function_declaration
 		    		    | struct_declaration
 
@@ -43,18 +45,13 @@ stencil_mode_declaration ::= STENCIL_MODE IDENTIFIER SEMICOLON
 uniform_group_declaration ::= UNIFORM_GROUP IDENTIFIER? (PERIOD IDENTIFIER)* SEMICOLON
 
 // Variable Declarations
-global_variable_declaration ::= uniform_variable_declaration
-					   		  | const_variable_declaration
-					   		  | varying_variable_declaration
-{
-	methods = [ getVariableNameElement ]
-}
-
 uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
 
 const_variable_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
 
 varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hints)? SEMICOLON
+
+local_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
 variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
 variable_declarator ::= variable_name array_size? (OP_ASSIGN initializer)?
@@ -107,19 +104,12 @@ statement_body ::= block
 				 | return_statement
 				 | simple_statement
 				 | expression_statement
+				 | const_variable_declaration
 				 | local_variable_declaration
 				 | SEMICOLON
 				 | LINE_COMMENT
 				 | BLOCK_COMMENT
 				 | preprocessor_directive
-				 
-local_variable_declaration ::= const_variable_declaration
-							 | regular_variable_declaration
-{
-	methods = [ getVariableNameElement ]
-}
-
-regular_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
 // Expressions
 expression_statement ::= expression SEMICOLON

@@ -21,6 +21,10 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
         uniform int name : hint_enum("Option1", "Option2", "Option3");
         uniform sampler2D image : hint_default_white;
         
+        const float offset = 0.5;
+        
+        varying vec2 uv;
+        
         int foo(int a, float b) {
             return a + int(b);
         }
@@ -70,7 +74,8 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
     AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
     AttributesDescriptor("Local Variable", GDShaderSyntaxHighlighter.LOCAL_VARIABLE),
-    AttributesDescriptor("Global Variable", GDShaderSyntaxHighlighter.GLOBAL_VARIABLE),
+    AttributesDescriptor("Uniform Variable", GDShaderSyntaxHighlighter.UNIFORM_VARIABLE),
+    AttributesDescriptor("Varying Variable", GDShaderSyntaxHighlighter.VARYING_VARIABLE),
     AttributesDescriptor("Function", GDShaderSyntaxHighlighter.FUNCTION),
     AttributesDescriptor("Parameter", GDShaderSyntaxHighlighter.PARAMETER),
     AttributesDescriptor("Struct", GDShaderSyntaxHighlighter.STRUCT),

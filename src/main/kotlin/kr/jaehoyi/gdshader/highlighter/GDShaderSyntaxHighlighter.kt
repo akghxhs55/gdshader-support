@@ -49,8 +49,10 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
             "GDSHADER_CONSTANT", DefaultLanguageHighlighterColors.CONSTANT)
         val LOCAL_VARIABLE = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_LOCAL_VARIABLE", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
-        val GLOBAL_VARIABLE = TextAttributesKey.createTextAttributesKey(
+        val UNIFORM_VARIABLE = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_GLOBAL_VARIABLE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE)
+        val VARYING_VARIABLE = TextAttributesKey.createTextAttributesKey(
+            "GDSHADER_VARYING_VARIABLE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE)
         val FUNCTION = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_CALL)
         val PARAMETER = TextAttributesKey.createTextAttributesKey(
@@ -81,7 +83,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
         private val BRACKET_KEYS = arrayOf(BRACKET)
         private val CONSTANT_KEYS = arrayOf(CONSTANT)
         private val LOCAL_VARIABLE_KEYS = arrayOf(LOCAL_VARIABLE)
-        private val GLOBAL_VARIABLE_KEYS = arrayOf(GLOBAL_VARIABLE)
+        private val UNIFORM_VARIABLE_KEYS = arrayOf(UNIFORM_VARIABLE)
         private val FUNCTION_KEYS = arrayOf(FUNCTION)
         private val PARAMETER_KEYS = arrayOf(PARAMETER)
         private val STRUCT_KEYS = arrayOf(STRUCT)
@@ -118,7 +120,8 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
                 GDShaderTypes.STRUCT, GDShaderTypes.PRECISION_LOW, GDShaderTypes.PRECISION_MEDIUM,
                 GDShaderTypes.PRECISION_HIGH, GDShaderTypes.UNIFORM, GDShaderTypes.UNIFORM_GROUP, GDShaderTypes.INSTANCE,
                 GDShaderTypes.GLOBAL, GDShaderTypes.VARYING, GDShaderTypes.ARG_IN, GDShaderTypes.ARG_OUT,
-                GDShaderTypes.ARG_INOUT, GDShaderTypes.INTERPOLATION_FLAT, GDShaderTypes.INTERPOLATION_SMOOTH
+                GDShaderTypes.ARG_INOUT, GDShaderTypes.INTERPOLATION_FLAT, GDShaderTypes.INTERPOLATION_SMOOTH,
+                GDShaderTypes.TRUE, GDShaderTypes.FALSE
                     -> KEYWORD_KEYS
 
                 GDShaderTypes.HINT_DEFAULT_WHITE_TEXTURE, GDShaderTypes.HINT_DEFAULT_BLACK_TEXTURE,
@@ -165,9 +168,6 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
 
                 GDShaderTypes.BRACKET_OPEN, GDShaderTypes.BRACKET_CLOSE
                     -> BRACKET_KEYS
-
-                GDShaderTypes.TRUE, GDShaderTypes.FALSE
-                    -> CONSTANT_KEYS
 
                 GDShaderTypes.TYPE_VOID, GDShaderTypes.TYPE_BOOL, GDShaderTypes.TYPE_BVEC2, GDShaderTypes.TYPE_BVEC3,
                 GDShaderTypes.TYPE_BVEC4, GDShaderTypes.TYPE_INT, GDShaderTypes.TYPE_IVEC2, GDShaderTypes.TYPE_IVEC3,

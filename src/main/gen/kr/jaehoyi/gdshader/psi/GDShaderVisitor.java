@@ -99,10 +99,6 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitGlobalVariableDeclaration(@NotNull GDShaderGlobalVariableDeclaration o) {
-    visitPsiElement(o);
-  }
-
   public void visitHint(@NotNull GDShaderHint o) {
     visitPsiElement(o);
   }
@@ -192,10 +188,6 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitRangeHint(@NotNull GDShaderRangeHint o) {
-    visitPsiElement(o);
-  }
-
-  public void visitRegularVariableDeclaration(@NotNull GDShaderRegularVariableDeclaration o) {
     visitPsiElement(o);
   }
 

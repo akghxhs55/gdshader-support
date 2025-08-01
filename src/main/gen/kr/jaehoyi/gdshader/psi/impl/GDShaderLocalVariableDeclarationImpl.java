@@ -29,14 +29,20 @@ public class GDShaderLocalVariableDeclarationImpl extends ASTWrapperPsiElement i
 
   @Override
   @Nullable
-  public GDShaderConstVariableDeclaration getConstVariableDeclaration() {
-    return findChildByClass(GDShaderConstVariableDeclaration.class);
+  public GDShaderPrecision getPrecision() {
+    return findChildByClass(GDShaderPrecision.class);
   }
 
   @Override
-  @Nullable
-  public GDShaderRegularVariableDeclaration getRegularVariableDeclaration() {
-    return findChildByClass(GDShaderRegularVariableDeclaration.class);
+  @NotNull
+  public GDShaderType getType() {
+    return findNotNullChildByClass(GDShaderType.class);
+  }
+
+  @Override
+  @NotNull
+  public GDShaderVariableDeclaratorList getVariableDeclaratorList() {
+    return findNotNullChildByClass(GDShaderVariableDeclaratorList.class);
   }
 
 }

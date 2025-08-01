@@ -31,7 +31,6 @@ public interface GDShaderTypes {
   IElementType FUNCTION_CALL = new GDShaderElementType("FUNCTION_CALL");
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
   IElementType FUNCTION_NAME = new GDShaderElementType("FUNCTION_NAME");
-  IElementType GLOBAL_VARIABLE_DECLARATION = new GDShaderElementType("GLOBAL_VARIABLE_DECLARATION");
   IElementType HINT = new GDShaderElementType("HINT");
   IElementType HINTS = new GDShaderElementType("HINTS");
   IElementType HINT_IDENTIFIER = new GDShaderElementType("HINT_IDENTIFIER");
@@ -55,7 +54,6 @@ public interface GDShaderTypes {
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
   IElementType PRIMITIVE_TYPE = new GDShaderElementType("PRIMITIVE_TYPE");
   IElementType RANGE_HINT = new GDShaderElementType("RANGE_HINT");
-  IElementType REGULAR_VARIABLE_DECLARATION = new GDShaderElementType("REGULAR_VARIABLE_DECLARATION");
   IElementType RELATIONAL_EXPR = new GDShaderElementType("RELATIONAL_EXPR");
   IElementType RENDER_MODE_DECLARATION = new GDShaderElementType("RENDER_MODE_DECLARATION");
   IElementType RETURN_STATEMENT = new GDShaderElementType("RETURN_STATEMENT");
@@ -303,9 +301,6 @@ public interface GDShaderTypes {
       else if (type == FUNCTION_NAME) {
         return new GDShaderFunctionNameImpl(node);
       }
-      else if (type == GLOBAL_VARIABLE_DECLARATION) {
-        return new GDShaderGlobalVariableDeclarationImpl(node);
-      }
       else if (type == HINT) {
         return new GDShaderHintImpl(node);
       }
@@ -374,9 +369,6 @@ public interface GDShaderTypes {
       }
       else if (type == RANGE_HINT) {
         return new GDShaderRangeHintImpl(node);
-      }
-      else if (type == REGULAR_VARIABLE_DECLARATION) {
-        return new GDShaderRegularVariableDeclarationImpl(node);
       }
       else if (type == RELATIONAL_EXPR) {
         return new GDShaderRelationalExprImpl(node);

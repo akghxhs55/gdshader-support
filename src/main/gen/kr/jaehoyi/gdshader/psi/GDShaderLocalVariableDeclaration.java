@@ -8,13 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderLocalVariableDeclaration extends PsiElement {
 
   @Nullable
-  GDShaderConstVariableDeclaration getConstVariableDeclaration();
+  GDShaderPrecision getPrecision();
 
-  @Nullable
-  GDShaderRegularVariableDeclaration getRegularVariableDeclaration();
+  @NotNull
+  GDShaderType getType();
 
-  //WARNING: getVariableNameElement(...) is skipped
-  //matching getVariableNameElement(GDShaderLocalVariableDeclaration, ...)
-  //methods are not found in GDShaderPsiImplUtil
+  @NotNull
+  GDShaderVariableDeclaratorList getVariableDeclaratorList();
 
 }

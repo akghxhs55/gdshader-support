@@ -29,14 +29,14 @@ public class GDShaderTopLevelDeclarationImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
-  public GDShaderFunctionDeclaration getFunctionDeclaration() {
-    return findChildByClass(GDShaderFunctionDeclaration.class);
+  public GDShaderConstVariableDeclaration getConstVariableDeclaration() {
+    return findChildByClass(GDShaderConstVariableDeclaration.class);
   }
 
   @Override
   @Nullable
-  public GDShaderGlobalVariableDeclaration getGlobalVariableDeclaration() {
-    return findChildByClass(GDShaderGlobalVariableDeclaration.class);
+  public GDShaderFunctionDeclaration getFunctionDeclaration() {
+    return findChildByClass(GDShaderFunctionDeclaration.class);
   }
 
   @Override
@@ -67,6 +67,18 @@ public class GDShaderTopLevelDeclarationImpl extends ASTWrapperPsiElement implem
   @Nullable
   public GDShaderUniformGroupDeclaration getUniformGroupDeclaration() {
     return findChildByClass(GDShaderUniformGroupDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderUniformVariableDeclaration getUniformVariableDeclaration() {
+    return findChildByClass(GDShaderUniformVariableDeclaration.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderVaryingVariableDeclaration getVaryingVariableDeclaration() {
+    return findChildByClass(GDShaderVaryingVariableDeclaration.class);
   }
 
 }
