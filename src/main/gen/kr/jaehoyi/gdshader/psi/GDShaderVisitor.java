@@ -187,6 +187,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitPrimitiveType(@NotNull GDShaderPrimitiveType o) {
+    visitPsiElement(o);
+  }
+
   public void visitRangeHint(@NotNull GDShaderRangeHint o) {
     visitPsiElement(o);
   }

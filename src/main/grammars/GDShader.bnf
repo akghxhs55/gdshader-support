@@ -113,6 +113,9 @@ statement_body ::= block
 				 
 local_variable_declaration ::= const_variable_declaration
 							 | regular_variable_declaration
+{
+	methods = [ getVariableNameElement ]
+}
 
 regular_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
@@ -161,48 +164,10 @@ precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
                         
-function_name ::= TYPE_VOID
-			    | TYPE_BOOL
-			    | TYPE_BVEC2
-			    | TYPE_BVEC3
-			    | TYPE_BVEC4
-			    | TYPE_INT
-			    | TYPE_IVEC2
-			    | TYPE_IVEC3
-			    | TYPE_IVEC4
-			    | TYPE_UINT
-			    | TYPE_UVEC2
-			    | TYPE_UVEC3
-			    | TYPE_UVEC4
-			    | TYPE_FLOAT
-			    | TYPE_VEC2
-			    | TYPE_VEC3
-			    | TYPE_VEC4
-			    | TYPE_MAT2
-			    | TYPE_MAT3
-			    | TYPE_MAT4
+function_name ::= primitive_type
 			    | IDENTIFIER
 
-type ::= TYPE_VOID
-       | TYPE_BOOL
-       | TYPE_BVEC2
-       | TYPE_BVEC3
-       | TYPE_BVEC4
-       | TYPE_INT
-       | TYPE_IVEC2
-       | TYPE_IVEC3
-       | TYPE_IVEC4
-       | TYPE_UINT
-       | TYPE_UVEC2
-       | TYPE_UVEC3
-       | TYPE_UVEC4
-       | TYPE_FLOAT
-       | TYPE_VEC2
-       | TYPE_VEC3
-       | TYPE_VEC4
-       | TYPE_MAT2
-       | TYPE_MAT3
-       | TYPE_MAT4
+type ::= primitive_type
        | TYPE_SAMPLER2D
        | TYPE_ISAMPLER2D
        | TYPE_USAMPLER2D
@@ -213,6 +178,27 @@ type ::= TYPE_VOID
        | TYPE_SAMPLERCUBEARRAY
        | TYPE_SAMPLEREXT
        | struct_name
+       
+primitive_type ::= TYPE_VOID
+			   | TYPE_BOOL
+			   | TYPE_BVEC2
+			   | TYPE_BVEC3
+			   | TYPE_BVEC4
+			   | TYPE_INT
+			   | TYPE_IVEC2
+			   | TYPE_IVEC3
+			   | TYPE_IVEC4
+			   | TYPE_UINT
+			   | TYPE_UVEC2
+			   | TYPE_UVEC3
+			   | TYPE_UVEC4
+			   | TYPE_FLOAT
+			   | TYPE_VEC2
+			   | TYPE_VEC3
+			   | TYPE_VEC4
+			   | TYPE_MAT2
+			   | TYPE_MAT3
+			   | TYPE_MAT4
 
 literal ::= TRUE
 		  | FALSE

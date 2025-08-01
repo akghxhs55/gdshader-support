@@ -53,6 +53,7 @@ public interface GDShaderTypes {
   IElementType PRECISION = new GDShaderElementType("PRECISION");
   IElementType PREPROCESSOR_DIRECTIVE = new GDShaderElementType("PREPROCESSOR_DIRECTIVE");
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
+  IElementType PRIMITIVE_TYPE = new GDShaderElementType("PRIMITIVE_TYPE");
   IElementType RANGE_HINT = new GDShaderElementType("RANGE_HINT");
   IElementType REGULAR_VARIABLE_DECLARATION = new GDShaderElementType("REGULAR_VARIABLE_DECLARATION");
   IElementType RELATIONAL_EXPR = new GDShaderElementType("RELATIONAL_EXPR");
@@ -367,6 +368,9 @@ public interface GDShaderTypes {
       }
       else if (type == PRIMARY) {
         return new GDShaderPrimaryImpl(node);
+      }
+      else if (type == PRIMITIVE_TYPE) {
+        return new GDShaderPrimitiveTypeImpl(node);
       }
       else if (type == RANGE_HINT) {
         return new GDShaderRangeHintImpl(node);

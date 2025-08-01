@@ -656,51 +656,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // TYPE_VOID
-  // 			    | TYPE_BOOL
-  // 			    | TYPE_BVEC2
-  // 			    | TYPE_BVEC3
-  // 			    | TYPE_BVEC4
-  // 			    | TYPE_INT
-  // 			    | TYPE_IVEC2
-  // 			    | TYPE_IVEC3
-  // 			    | TYPE_IVEC4
-  // 			    | TYPE_UINT
-  // 			    | TYPE_UVEC2
-  // 			    | TYPE_UVEC3
-  // 			    | TYPE_UVEC4
-  // 			    | TYPE_FLOAT
-  // 			    | TYPE_VEC2
-  // 			    | TYPE_VEC3
-  // 			    | TYPE_VEC4
-  // 			    | TYPE_MAT2
-  // 			    | TYPE_MAT3
-  // 			    | TYPE_MAT4
+  // primitive_type
   // 			    | IDENTIFIER
   public static boolean function_name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_name")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_NAME, "<function name>");
-    r = consumeToken(b, TYPE_VOID);
-    if (!r) r = consumeToken(b, TYPE_BOOL);
-    if (!r) r = consumeToken(b, TYPE_BVEC2);
-    if (!r) r = consumeToken(b, TYPE_BVEC3);
-    if (!r) r = consumeToken(b, TYPE_BVEC4);
-    if (!r) r = consumeToken(b, TYPE_INT);
-    if (!r) r = consumeToken(b, TYPE_IVEC2);
-    if (!r) r = consumeToken(b, TYPE_IVEC3);
-    if (!r) r = consumeToken(b, TYPE_IVEC4);
-    if (!r) r = consumeToken(b, TYPE_UINT);
-    if (!r) r = consumeToken(b, TYPE_UVEC2);
-    if (!r) r = consumeToken(b, TYPE_UVEC3);
-    if (!r) r = consumeToken(b, TYPE_UVEC4);
-    if (!r) r = consumeToken(b, TYPE_FLOAT);
-    if (!r) r = consumeToken(b, TYPE_VEC2);
-    if (!r) r = consumeToken(b, TYPE_VEC3);
-    if (!r) r = consumeToken(b, TYPE_VEC4);
-    if (!r) r = consumeToken(b, TYPE_MAT2);
-    if (!r) r = consumeToken(b, TYPE_MAT3);
-    if (!r) r = consumeToken(b, TYPE_MAT4);
+    r = primitive_type(b, l + 1);
     if (!r) r = consumeToken(b, IDENTIFIER);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1373,6 +1335,55 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // TYPE_VOID
+  // 			   | TYPE_BOOL
+  // 			   | TYPE_BVEC2
+  // 			   | TYPE_BVEC3
+  // 			   | TYPE_BVEC4
+  // 			   | TYPE_INT
+  // 			   | TYPE_IVEC2
+  // 			   | TYPE_IVEC3
+  // 			   | TYPE_IVEC4
+  // 			   | TYPE_UINT
+  // 			   | TYPE_UVEC2
+  // 			   | TYPE_UVEC3
+  // 			   | TYPE_UVEC4
+  // 			   | TYPE_FLOAT
+  // 			   | TYPE_VEC2
+  // 			   | TYPE_VEC3
+  // 			   | TYPE_VEC4
+  // 			   | TYPE_MAT2
+  // 			   | TYPE_MAT3
+  // 			   | TYPE_MAT4
+  public static boolean primitive_type(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primitive_type")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, PRIMITIVE_TYPE, "<primitive type>");
+    r = consumeToken(b, TYPE_VOID);
+    if (!r) r = consumeToken(b, TYPE_BOOL);
+    if (!r) r = consumeToken(b, TYPE_BVEC2);
+    if (!r) r = consumeToken(b, TYPE_BVEC3);
+    if (!r) r = consumeToken(b, TYPE_BVEC4);
+    if (!r) r = consumeToken(b, TYPE_INT);
+    if (!r) r = consumeToken(b, TYPE_IVEC2);
+    if (!r) r = consumeToken(b, TYPE_IVEC3);
+    if (!r) r = consumeToken(b, TYPE_IVEC4);
+    if (!r) r = consumeToken(b, TYPE_UINT);
+    if (!r) r = consumeToken(b, TYPE_UVEC2);
+    if (!r) r = consumeToken(b, TYPE_UVEC3);
+    if (!r) r = consumeToken(b, TYPE_UVEC4);
+    if (!r) r = consumeToken(b, TYPE_FLOAT);
+    if (!r) r = consumeToken(b, TYPE_VEC2);
+    if (!r) r = consumeToken(b, TYPE_VEC3);
+    if (!r) r = consumeToken(b, TYPE_VEC4);
+    if (!r) r = consumeToken(b, TYPE_MAT2);
+    if (!r) r = consumeToken(b, TYPE_MAT3);
+    if (!r) r = consumeToken(b, TYPE_MAT4);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
   public static boolean range_hint(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "range_hint")) return false;
@@ -1821,26 +1832,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // TYPE_VOID
-  //        | TYPE_BOOL
-  //        | TYPE_BVEC2
-  //        | TYPE_BVEC3
-  //        | TYPE_BVEC4
-  //        | TYPE_INT
-  //        | TYPE_IVEC2
-  //        | TYPE_IVEC3
-  //        | TYPE_IVEC4
-  //        | TYPE_UINT
-  //        | TYPE_UVEC2
-  //        | TYPE_UVEC3
-  //        | TYPE_UVEC4
-  //        | TYPE_FLOAT
-  //        | TYPE_VEC2
-  //        | TYPE_VEC3
-  //        | TYPE_VEC4
-  //        | TYPE_MAT2
-  //        | TYPE_MAT3
-  //        | TYPE_MAT4
+  // primitive_type
   //        | TYPE_SAMPLER2D
   //        | TYPE_ISAMPLER2D
   //        | TYPE_USAMPLER2D
@@ -1855,26 +1847,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "type")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TYPE, "<type>");
-    r = consumeToken(b, TYPE_VOID);
-    if (!r) r = consumeToken(b, TYPE_BOOL);
-    if (!r) r = consumeToken(b, TYPE_BVEC2);
-    if (!r) r = consumeToken(b, TYPE_BVEC3);
-    if (!r) r = consumeToken(b, TYPE_BVEC4);
-    if (!r) r = consumeToken(b, TYPE_INT);
-    if (!r) r = consumeToken(b, TYPE_IVEC2);
-    if (!r) r = consumeToken(b, TYPE_IVEC3);
-    if (!r) r = consumeToken(b, TYPE_IVEC4);
-    if (!r) r = consumeToken(b, TYPE_UINT);
-    if (!r) r = consumeToken(b, TYPE_UVEC2);
-    if (!r) r = consumeToken(b, TYPE_UVEC3);
-    if (!r) r = consumeToken(b, TYPE_UVEC4);
-    if (!r) r = consumeToken(b, TYPE_FLOAT);
-    if (!r) r = consumeToken(b, TYPE_VEC2);
-    if (!r) r = consumeToken(b, TYPE_VEC3);
-    if (!r) r = consumeToken(b, TYPE_VEC4);
-    if (!r) r = consumeToken(b, TYPE_MAT2);
-    if (!r) r = consumeToken(b, TYPE_MAT3);
-    if (!r) r = consumeToken(b, TYPE_MAT4);
+    r = primitive_type(b, l + 1);
     if (!r) r = consumeToken(b, TYPE_SAMPLER2D);
     if (!r) r = consumeToken(b, TYPE_ISAMPLER2D);
     if (!r) r = consumeToken(b, TYPE_USAMPLER2D);

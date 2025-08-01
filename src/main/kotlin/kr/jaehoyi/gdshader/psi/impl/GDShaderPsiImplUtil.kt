@@ -4,6 +4,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.psi.GDShaderConstVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderGlobalVariableDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderRegularVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderUniformVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableName
@@ -25,6 +27,18 @@ object GDShaderPsiImplUtil {
         
         val varying = PsiTreeUtil.getChildOfType(element, GDShaderVaryingVariableDeclaration::class.java)
         if (varying != null) return listOf(varying.variableName)
+        
+        return emptyList()
+    }
+    
+    // Local Variable Declaration
+    @JvmStatic
+    fun getVariableNameElements(element: GDShaderLocalVariableDeclaration): List<GDShaderVariableName> {
+        val const = PsiTreeUtil.getChildOfType(element, GDShaderConstVariableDeclaration::class.java)
+        if (const != null) return const.variableDeclaratorList.variableDeclaratorList.map { it.variableName }
+        
+        val regular = PsiTreeUtil.getChildOfType(element, GDShaderRegularVariableDeclaration::class.java)
+        if (regular != null) return regular.variableDeclaratorList.variableDeclaratorList.map { it.variableName }
         
         return emptyList()
     }

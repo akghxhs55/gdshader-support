@@ -13,4 +13,8 @@ public interface GDShaderLocalVariableDeclaration extends PsiElement {
   @Nullable
   GDShaderRegularVariableDeclaration getRegularVariableDeclaration();
 
+  //WARNING: getVariableNameElement(...) is skipped
+  //matching getVariableNameElement(GDShaderLocalVariableDeclaration, ...)
+  //methods are not found in GDShaderPsiImplUtil
+
 }

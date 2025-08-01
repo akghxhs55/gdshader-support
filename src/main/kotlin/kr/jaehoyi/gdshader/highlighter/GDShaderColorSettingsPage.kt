@@ -69,6 +69,7 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
     AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
     AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
+    AttributesDescriptor("Local Variable", GDShaderSyntaxHighlighter.LOCAL_VARIABLE),
     AttributesDescriptor("Global Variable", GDShaderSyntaxHighlighter.GLOBAL_VARIABLE),
     AttributesDescriptor("Function", GDShaderSyntaxHighlighter.FUNCTION),
     AttributesDescriptor("Parameter", GDShaderSyntaxHighlighter.PARAMETER),
