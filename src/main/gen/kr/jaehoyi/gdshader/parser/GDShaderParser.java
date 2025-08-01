@@ -613,16 +613,25 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  // (primitive_type | function_name) PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
   public static boolean function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL, "<function call>");
-    r = function_name(b, l + 1);
+    r = function_call_0(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
     r = r && function_call_2(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // primitive_type | function_name
+  private static boolean function_call_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_call_0")) return false;
+    boolean r;
+    r = primitive_type(b, l + 1);
+    if (!r) r = function_name(b, l + 1);
     return r;
   }
 
@@ -634,13 +643,14 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+  // type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
   public static boolean function_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_DECLARATION, "<function declaration>");
     r = type(b, l + 1);
-    r = r && consumeTokens(b, 0, IDENTIFIER, PARENTHESIS_OPEN);
+    r = r && function_name(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_OPEN);
     r = r && function_declaration_3(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
     r = r && block(b, l + 1);
@@ -656,15 +666,14 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // primitive_type
-  // 			    | IDENTIFIER
+  // IDENTIFIER
   public static boolean function_name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FUNCTION_NAME, "<function name>");
-    r = primitive_type(b, l + 1);
-    if (!r) r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, l, m, r, false, null);
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, FUNCTION_NAME, r);
     return r;
   }
 

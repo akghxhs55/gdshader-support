@@ -67,7 +67,9 @@ initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRA
 array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
        
 // Function Declarations
-function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+
+function_name ::= IDENTIFIER
 
 parameter_list ::= parameter (COMMA parameter)*
 parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
@@ -142,7 +144,7 @@ primary ::= literal
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 		  | variable_name
 		  
-function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+function_call ::= (primitive_type | function_name) PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*
 
 // Preprocessor Directives
@@ -163,9 +165,6 @@ precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH
 
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
-                        
-function_name ::= primitive_type
-			    | IDENTIFIER
 
 type ::= primitive_type
        | TYPE_SAMPLER2D

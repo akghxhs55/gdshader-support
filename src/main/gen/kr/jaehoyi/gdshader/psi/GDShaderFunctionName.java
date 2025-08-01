@@ -7,7 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderFunctionName extends PsiElement {
 
-  @Nullable
-  GDShaderPrimitiveType getPrimitiveType();
-
 }
