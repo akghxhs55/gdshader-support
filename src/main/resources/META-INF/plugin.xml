@@ -9,8 +9,9 @@
         <![CDATA[
             Adds support for GDShader (Godot Shading Language) for Godot 4.0+.<br />
             <ul>
-                <li>Syntax highlighting</li>
+                <li>Syntax highlighting for GDShader files</li>
                 <li>Indexing of .gdshader files for file search</li>
+                <li>Creation of new GDShader files from templates</li>
             </ul>
         ]]>
     </description>
