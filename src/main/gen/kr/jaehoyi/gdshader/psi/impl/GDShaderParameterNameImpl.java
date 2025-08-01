@@ -11,32 +11,20 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDShaderParameter {
+public class GDShaderParameterNameImpl extends ASTWrapperPsiElement implements GDShaderParameterName {
 
-  public GDShaderParameterImpl(@NotNull ASTNode node) {
+  public GDShaderParameterNameImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitParameter(this);
+    visitor.visitParameterName(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GDShaderVisitor) accept((GDShaderVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public GDShaderParameterName getParameterName() {
-    return findNotNullChildByClass(GDShaderParameterName.class);
-  }
-
-  @Override
-  @NotNull
-  public GDShaderType getType() {
-    return findNotNullChildByClass(GDShaderType.class);
   }
 
 }

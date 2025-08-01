@@ -1150,14 +1150,14 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (ARG_IN | ARG_OUT | ARG_INOUT)? type IDENTIFIER
+  // (ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
   public static boolean parameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PARAMETER, "<parameter>");
     r = parameter_0(b, l + 1);
     r = r && type(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && parameter_name(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1210,6 +1210,18 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, COMMA);
     r = r && parameter(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean parameter_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_name")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, PARAMETER_NAME, r);
     return r;
   }
 

@@ -48,6 +48,7 @@ public interface GDShaderTypes {
   IElementType NUMBER = new GDShaderElementType("NUMBER");
   IElementType PARAMETER = new GDShaderElementType("PARAMETER");
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
+  IElementType PARAMETER_NAME = new GDShaderElementType("PARAMETER_NAME");
   IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
   IElementType PRECISION = new GDShaderElementType("PRECISION");
   IElementType PREPROCESSOR_DIRECTIVE = new GDShaderElementType("PREPROCESSOR_DIRECTIVE");
@@ -351,6 +352,9 @@ public interface GDShaderTypes {
       }
       else if (type == PARAMETER_LIST) {
         return new GDShaderParameterListImpl(node);
+      }
+      else if (type == PARAMETER_NAME) {
+        return new GDShaderParameterNameImpl(node);
       }
       else if (type == POSTFIX_EXPR) {
         return new GDShaderPostfixExprImpl(node);

@@ -70,7 +70,8 @@ array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
 function_declaration ::= type IDENTIFIER PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
 parameter_list ::= parameter (COMMA parameter)*
-parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type IDENTIFIER
+parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
+parameter_name ::= IDENTIFIER
 
 block ::= CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
 

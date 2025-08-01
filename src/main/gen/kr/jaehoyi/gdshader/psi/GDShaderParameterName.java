@@ -5,12 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderParameter extends PsiElement {
-
-  @NotNull
-  GDShaderParameterName getParameterName();
-
-  @NotNull
-  GDShaderType getType();
+public interface GDShaderParameterName extends PsiElement {
 
 }

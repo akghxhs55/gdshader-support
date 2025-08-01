@@ -167,6 +167,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitParameterName(@NotNull GDShaderParameterName o) {
+    visitPsiElement(o);
+  }
+
   public void visitPostfixExpr(@NotNull GDShaderPostfixExpr o) {
     visitPsiElement(o);
   }

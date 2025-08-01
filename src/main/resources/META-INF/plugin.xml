@@ -40,6 +40,7 @@
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderFunctionAnnotator" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderVariableAnnotator" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderStructAnnotator" />
+        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderParameterAnnotator" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
