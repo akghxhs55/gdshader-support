@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.1.0-beta"
+version = "0.2.1-beta"
 
 sourceSets {
     main {
@@ -33,11 +33,20 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = "251"
+            sinceBuild = "231"
         }
 
         changeNotes = """
-      Initial version
+            ## 0.2.1-beta
+            - Lowered minimum required IDE version to 2023.1
+            
+            ## 0.2.0-beta
+            - Added creation of new GDShader files from templates
+            - Improved syntax highlighting
+            - Improved grammar support
+            
+            ## 0.1.0-beta
+            - Initial release
     """.trimIndent()
     }
 }
