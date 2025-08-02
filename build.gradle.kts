@@ -37,17 +37,23 @@ intellijPlatform {
         }
 
         changeNotes = """
-            ## 0.2.1-beta
-            - Lowered minimum required IDE version to 2023.1
-            
-            ## 0.2.0-beta
-            - Added creation of new GDShader files from templates
-            - Improved syntax highlighting
-            - Improved grammar support
-            
-            ## 0.1.0-beta
-            - Initial release
-    """.trimIndent()
+            <h2>0.2.1-beta</h2>
+            <ul>
+              <li>Lowered minimum required IDE version to 2023.1</li>
+            </ul>
+
+            <h2>0.2.0-beta</h2>
+            <ul>
+              <li>Added creation of new GDShader files from templates</li>
+              <li>Improved syntax highlighting</li>
+              <li>Improved grammar support</li>
+            </ul>
+
+            <h2>0.1.0-beta</h2>
+            <ul>
+              <li>Initial release</li>
+            </ul>
+        """.trimIndent()
     }
 }
 
