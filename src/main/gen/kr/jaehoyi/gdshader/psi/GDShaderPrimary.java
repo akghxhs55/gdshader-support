@@ -19,4 +19,12 @@ public interface GDShaderPrimary extends PsiElement {
   @Nullable
   GDShaderVariableName getVariableName();
 
+  boolean isLiteral();
+
+  boolean isFunctionCall();
+
+  boolean isExpression();
+
+  boolean isVariableName();
+
 }

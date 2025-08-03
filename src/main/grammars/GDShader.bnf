@@ -152,6 +152,9 @@ primary ::= literal
 		  | function_call
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 		  | variable_name
+{
+	methods = [ isLiteral isFunctionCall isExpression isVariableName ]
+}
 		  
 function_call ::= (primitive_type | function_name) PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*

@@ -51,4 +51,24 @@ public class GDShaderPrimaryImpl extends ASTWrapperPsiElement implements GDShade
     return findChildByClass(GDShaderVariableName.class);
   }
 
+  @Override
+  public boolean isLiteral() {
+    return GDShaderPsiImplUtil.isLiteral(this);
+  }
+
+  @Override
+  public boolean isFunctionCall() {
+    return GDShaderPsiImplUtil.isFunctionCall(this);
+  }
+
+  @Override
+  public boolean isExpression() {
+    return GDShaderPsiImplUtil.isExpression(this);
+  }
+
+  @Override
+  public boolean isVariableName() {
+    return GDShaderPsiImplUtil.isVariableName(this);
+  }
+
 }
