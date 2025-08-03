@@ -29,25 +29,35 @@ top_level_declaration ::= shader_type_declaration
 		    		    | stencil_mode_declaration
 		    		    | uniform_group_declaration
 		    		    | uniform_variable_declaration
-		    		    | const_variable_declaration
+		    		    | constant_declaration
 		    		    | varying_variable_declaration
 		    		    | function_declaration
 		    		    | struct_declaration
 
-// Shader, Render Mode, Stencil Mode, Uniform Group Declarations
+// Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
 	methods = [ getShaderType ]
 }
 shader_type_name ::= IDENTIFIER
-render_mode_declaration ::= RENDER_MODE IDENTIFIER (COMMA IDENTIFIER)* SEMICOLON
-stencil_mode_declaration ::= STENCIL_MODE IDENTIFIER SEMICOLON
 
-uniform_group_declaration ::= UNIFORM_GROUP IDENTIFIER? (PERIOD IDENTIFIER)* SEMICOLON
+// Render Mode Declaration
+render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON
+render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
+render_mode_name ::= IDENTIFIER
+
+// Stencil Mode Declaration
+stencil_mode_declaration ::= STENCIL_MODE stencil_mode_declarator_list SEMICOLON
+stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)*
+stencil_mode_name ::= IDENTIFIER
+
+// Uniform Group Declaration
+uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON
+uniform_group_name ::= IDENTIFIER
 
 // Variable Declarations
 uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
 
-const_variable_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
+constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
 
 varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hints)? SEMICOLON
 
@@ -63,7 +73,7 @@ initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRA
 
 array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
        
-// Function Declarations
+// Function Declaration
 function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
 function_name ::= IDENTIFIER
@@ -76,7 +86,9 @@ block ::= CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
 
 // Struct Declarations
 struct_declaration ::= STRUCT struct_name CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
+
 struct_name ::= IDENTIFIER
+
 struct_member ::= type struct_member_name (array_size)? SEMICOLON
 struct_member_name ::= IDENTIFIER
 
@@ -87,14 +99,20 @@ control_statement ::= if_statement
 					| do_while_statement
 					| switch_statement
 					
-if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | block))?
+if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | statement_body))?
+
 for_statement ::= CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE statement_body
 for_variable_declaration ::= precision? type variable_declarator_list
+
 do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
+
 while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body
+
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
 case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON statement_body*
+
 return_statement ::= CF_RETURN expression? SEMICOLON
+
 simple_statement ::= CF_BREAK SEMICOLON
 					| CF_CONTINUE SEMICOLON
 					| CF_DISCARD SEMICOLON
@@ -104,7 +122,7 @@ statement_body ::= block
 				 | return_statement
 				 | simple_statement
 				 | expression_statement
-				 | const_variable_declaration
+				 | constant_declaration
 				 | local_variable_declaration
 				 | SEMICOLON
 				 | LINE_COMMENT
@@ -129,6 +147,7 @@ additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
 multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
 unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)? postfix_expr
 postfix_expr ::= primary (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+
 primary ::= literal
 		  | function_call
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
@@ -152,9 +171,6 @@ preprocessor_directive ::= PP_DEFINE_LINE
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH
-
-assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
-                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
 
 type ::= primitive_type
        | TYPE_SAMPLER2D
@@ -195,6 +211,10 @@ literal ::= TRUE
 		  | INT_CONSTANT
 		  | UINT_CONSTANT
 		  | STRING_CONSTANT
+
+// Operators
+assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
+                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
 		  
 // Hints
 hints ::= hint (COMMA hint)*

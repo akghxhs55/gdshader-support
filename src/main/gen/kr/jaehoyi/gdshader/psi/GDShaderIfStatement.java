@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderIfStatement extends PsiElement {
 
-  @Nullable
-  GDShaderBlock getBlock();
-
   @NotNull
   GDShaderExpression getExpression();
 
@@ -17,6 +14,6 @@ public interface GDShaderIfStatement extends PsiElement {
   GDShaderIfStatement getIfStatement();
 
   @NotNull
-  GDShaderStatementBody getStatementBody();
+  List<GDShaderStatementBody> getStatementBodyList();
 
 }

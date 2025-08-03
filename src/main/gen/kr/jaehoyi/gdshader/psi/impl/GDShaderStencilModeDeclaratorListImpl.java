@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderConstVariableDeclarationImpl extends ASTWrapperPsiElement implements GDShaderConstVariableDeclaration {
+public class GDShaderStencilModeDeclaratorListImpl extends ASTWrapperPsiElement implements GDShaderStencilModeDeclaratorList {
 
-  public GDShaderConstVariableDeclarationImpl(@NotNull ASTNode node) {
+  public GDShaderStencilModeDeclaratorListImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitConstVariableDeclaration(this);
+    visitor.visitStencilModeDeclaratorList(this);
   }
 
   @Override
@@ -28,21 +28,9 @@ public class GDShaderConstVariableDeclarationImpl extends ASTWrapperPsiElement i
   }
 
   @Override
-  @Nullable
-  public GDShaderPrecision getPrecision() {
-    return findChildByClass(GDShaderPrecision.class);
-  }
-
-  @Override
   @NotNull
-  public GDShaderType getType() {
-    return findNotNullChildByClass(GDShaderType.class);
-  }
-
-  @Override
-  @NotNull
-  public GDShaderVariableDeclaratorList getVariableDeclaratorList() {
-    return findNotNullChildByClass(GDShaderVariableDeclaratorList.class);
+  public List<GDShaderStencilModeName> getStencilModeNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderStencilModeName.class);
   }
 
 }

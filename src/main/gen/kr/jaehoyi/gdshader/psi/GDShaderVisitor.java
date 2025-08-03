@@ -51,7 +51,7 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitConstVariableDeclaration(@NotNull GDShaderConstVariableDeclaration o) {
+  public void visitConstantDeclaration(@NotNull GDShaderConstantDeclaration o) {
     visitPsiElement(o);
   }
 
@@ -199,6 +199,14 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitRenderModeDeclaratorList(@NotNull GDShaderRenderModeDeclaratorList o) {
+    visitPsiElement(o);
+  }
+
+  public void visitRenderModeName(@NotNull GDShaderRenderModeName o) {
+    visitPsiElement(o);
+  }
+
   public void visitReturnStatement(@NotNull GDShaderReturnStatement o) {
     visitPsiElement(o);
   }
@@ -228,6 +236,14 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitStencilModeDeclaration(@NotNull GDShaderStencilModeDeclaration o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStencilModeDeclaratorList(@NotNull GDShaderStencilModeDeclaratorList o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStencilModeName(@NotNull GDShaderStencilModeName o) {
     visitPsiElement(o);
   }
 
@@ -264,6 +280,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitUniformGroupDeclaration(@NotNull GDShaderUniformGroupDeclaration o) {
+    visitPsiElement(o);
+  }
+
+  public void visitUniformGroupName(@NotNull GDShaderUniformGroupName o) {
     visitPsiElement(o);
   }
 

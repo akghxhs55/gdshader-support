@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderRenderModeDeclaration extends PsiElement {
+public interface GDShaderStencilModeDeclaratorList extends PsiElement {
 
   @NotNull
-  GDShaderRenderModeDeclaratorList getRenderModeDeclaratorList();
+  List<GDShaderStencilModeName> getStencilModeNameList();
 
 }

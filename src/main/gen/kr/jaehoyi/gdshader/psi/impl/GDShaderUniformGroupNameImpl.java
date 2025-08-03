@@ -11,26 +11,20 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderRenderModeDeclarationImpl extends ASTWrapperPsiElement implements GDShaderRenderModeDeclaration {
+public class GDShaderUniformGroupNameImpl extends ASTWrapperPsiElement implements GDShaderUniformGroupName {
 
-  public GDShaderRenderModeDeclarationImpl(@NotNull ASTNode node) {
+  public GDShaderUniformGroupNameImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitRenderModeDeclaration(this);
+    visitor.visitUniformGroupName(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GDShaderVisitor) accept((GDShaderVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public GDShaderRenderModeDeclaratorList getRenderModeDeclaratorList() {
-    return findNotNullChildByClass(GDShaderRenderModeDeclaratorList.class);
   }
 
 }

@@ -29,8 +29,8 @@ public class GDShaderTopLevelDeclarationImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
-  public GDShaderConstVariableDeclaration getConstVariableDeclaration() {
-    return findChildByClass(GDShaderConstVariableDeclaration.class);
+  public GDShaderConstantDeclaration getConstantDeclaration() {
+    return findChildByClass(GDShaderConstantDeclaration.class);
   }
 
   @Override

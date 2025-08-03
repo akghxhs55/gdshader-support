@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderTopLevelDeclaration extends PsiElement {
 
   @Nullable
-  GDShaderConstVariableDeclaration getConstVariableDeclaration();
+  GDShaderConstantDeclaration getConstantDeclaration();
 
   @Nullable
   GDShaderFunctionDeclaration getFunctionDeclaration();

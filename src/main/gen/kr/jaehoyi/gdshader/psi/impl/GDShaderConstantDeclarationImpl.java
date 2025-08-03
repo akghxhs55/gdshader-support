@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderRenderModeDeclarationImpl extends ASTWrapperPsiElement implements GDShaderRenderModeDeclaration {
+public class GDShaderConstantDeclarationImpl extends ASTWrapperPsiElement implements GDShaderConstantDeclaration {
 
-  public GDShaderRenderModeDeclarationImpl(@NotNull ASTNode node) {
+  public GDShaderConstantDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitRenderModeDeclaration(this);
+    visitor.visitConstantDeclaration(this);
   }
 
   @Override
@@ -28,9 +28,21 @@ public class GDShaderRenderModeDeclarationImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
+  @Nullable
+  public GDShaderPrecision getPrecision() {
+    return findChildByClass(GDShaderPrecision.class);
+  }
+
+  @Override
   @NotNull
-  public GDShaderRenderModeDeclaratorList getRenderModeDeclaratorList() {
-    return findNotNullChildByClass(GDShaderRenderModeDeclaratorList.class);
+  public GDShaderType getType() {
+    return findNotNullChildByClass(GDShaderType.class);
+  }
+
+  @Override
+  @NotNull
+  public GDShaderVariableDeclaratorList getVariableDeclaratorList() {
+    return findNotNullChildByClass(GDShaderVariableDeclaratorList.class);
   }
 
 }

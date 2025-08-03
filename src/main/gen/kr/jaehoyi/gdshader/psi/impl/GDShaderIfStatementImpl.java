@@ -28,12 +28,6 @@ public class GDShaderIfStatementImpl extends ASTWrapperPsiElement implements GDS
   }
 
   @Override
-  @Nullable
-  public GDShaderBlock getBlock() {
-    return findChildByClass(GDShaderBlock.class);
-  }
-
-  @Override
   @NotNull
   public GDShaderExpression getExpression() {
     return findNotNullChildByClass(GDShaderExpression.class);
@@ -47,8 +41,8 @@ public class GDShaderIfStatementImpl extends ASTWrapperPsiElement implements GDS
 
   @Override
   @NotNull
-  public GDShaderStatementBody getStatementBody() {
-    return findNotNullChildByClass(GDShaderStatementBody.class);
+  public List<GDShaderStatementBody> getStatementBodyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderStatementBody.class);
   }
 
 }

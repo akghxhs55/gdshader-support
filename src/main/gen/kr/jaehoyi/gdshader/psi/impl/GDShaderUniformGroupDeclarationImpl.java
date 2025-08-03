@@ -27,4 +27,10 @@ public class GDShaderUniformGroupDeclarationImpl extends ASTWrapperPsiElement im
     else super.accept(visitor);
   }
 
+  @Override
+  @Nullable
+  public GDShaderUniformGroupName getUniformGroupName() {
+    return findChildByClass(GDShaderUniformGroupName.class);
+  }
+
 }
