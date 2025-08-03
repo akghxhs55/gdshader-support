@@ -24,10 +24,7 @@ repositories {
 }
 
 dependencies {
-    intellijPlatform {
-        rider("2025.1.2")
-//        bundledPlugin("com.intellij.java")
-    }
+    intellijPlatform.rider("2025.1.2")
 }
 
 intellijPlatform {
