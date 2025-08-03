@@ -5,7 +5,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter
-import kr.jaehoyi.gdshader.psi.GDShaderConstVariableDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderUniformVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingVariableDeclaration
@@ -14,7 +14,7 @@ class GDShaderVariableAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
             is GDShaderUniformVariableDeclaration -> annotateUniformVariableDeclaration(element, holder)
-            is GDShaderConstVariableDeclaration -> annotateConstVariableDeclaration(element, holder)
+            is GDShaderConstantDeclaration -> annotateConstVariableDeclaration(element, holder)
             is GDShaderVaryingVariableDeclaration -> annotateVaryingVariableDeclaration(element, holder)
             is GDShaderLocalVariableDeclaration -> annotateLocalVariableDeclaration(element, holder)
             else -> return
@@ -30,7 +30,7 @@ class GDShaderVariableAnnotator : Annotator {
             .create()
     }
     
-    private fun annotateConstVariableDeclaration(element: GDShaderConstVariableDeclaration, holder: AnnotationHolder) {
+    private fun annotateConstVariableDeclaration(element: GDShaderConstantDeclaration, holder: AnnotationHolder) {
         val variableNames = element.variableDeclaratorList.variableDeclaratorList
         
         for (variableName in variableNames) {

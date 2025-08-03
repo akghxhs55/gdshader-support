@@ -914,7 +914,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // 		  | FLOAT_CONSTANT
   // 		  | INT_CONSTANT
   // 		  | UINT_CONSTANT
-  // 		  | STRING_CONSTANT
   public static boolean literal(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "literal")) return false;
     boolean r;
@@ -924,7 +923,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, FLOAT_CONSTANT);
     if (!r) r = consumeToken(b, INT_CONSTANT);
     if (!r) r = consumeToken(b, UINT_CONSTANT);
-    if (!r) r = consumeToken(b, STRING_CONSTANT);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

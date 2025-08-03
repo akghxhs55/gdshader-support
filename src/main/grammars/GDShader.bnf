@@ -210,7 +210,6 @@ literal ::= TRUE
 		  | FLOAT_CONSTANT
 		  | INT_CONSTANT
 		  | UINT_CONSTANT
-		  | STRING_CONSTANT
 
 // Operators
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
