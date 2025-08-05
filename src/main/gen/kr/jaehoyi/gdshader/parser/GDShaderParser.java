@@ -32,19 +32,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   static boolean parse_root_(IElementType t, PsiBuilder b, int l) {
-    return GDShaderFile(b, l + 1);
-  }
-
-  /* ********************************************************** */
-  // item*
-  static boolean GDShaderFile(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "GDShaderFile")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!item(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "GDShaderFile", c)) break;
-    }
-    return true;
+    return gd_shader_file(b, l + 1);
   }
 
   /* ********************************************************** */
@@ -675,6 +663,18 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, FUNCTION_NAME, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // item*
+  static boolean gd_shader_file(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "gd_shader_file")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!item(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "gd_shader_file", c)) break;
+    }
+    return true;
   }
 
   /* ********************************************************** */
