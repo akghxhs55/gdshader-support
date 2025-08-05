@@ -15,7 +15,7 @@
   psiImplUtilClass="kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil"
 }
 
-GDShaderFile ::= item*
+gd_shader_file ::= item*
 
 item ::= top_level_declaration
 	   | SEMICOLON
