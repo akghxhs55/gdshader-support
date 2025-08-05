@@ -5,7 +5,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
 
 object GDShaderPsiImplUtil {
     // Shader Type Declaration
-    @JvmStatic fun getShaderType(element: GDShaderShaderTypeDeclaration): String = element.shaderTypeName.text
+    @JvmStatic fun getShaderType(element: GDShaderShaderTypeDeclaration): String = element.shaderTypeName?.text ?: ""
     
     // Primary
     @JvmStatic fun isLiteral(element: GDShaderPrimary): Boolean = element.literal != null

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderShaderTypeDeclaration extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderShaderTypeName getShaderTypeName();
 
   @NotNull String getShaderType();

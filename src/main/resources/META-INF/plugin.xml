@@ -43,6 +43,11 @@
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderStructAnnotator" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderParameterAnnotator" />
         
+        <!-- Completions -->
+        <completion.contributor
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderShaderTypeCompletionContributor" />
+        
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
         <internalFileTemplate name="Canvas Item" />

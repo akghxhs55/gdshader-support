@@ -28,9 +28,9 @@ public class GDShaderShaderTypeDeclarationImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderShaderTypeName getShaderTypeName() {
-    return findNotNullChildByClass(GDShaderShaderTypeName.class);
+    return findChildByClass(GDShaderShaderTypeName.class);
   }
 
   @Override

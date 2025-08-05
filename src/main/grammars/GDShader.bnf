@@ -36,7 +36,8 @@ top_level_declaration ::= shader_type_declaration
 
 // Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
-	methods = [ getShaderType ]
+	methods=[ getShaderType ]
+	pin=1
 }
 shader_type_name ::= IDENTIFIER
 
