@@ -43,6 +43,10 @@ shader_type_name ::= IDENTIFIER
 
 // Render Mode Declaration
 render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON
+{
+	methods = [ getRenderModes ]
+	pin = 1
+}
 render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
 render_mode_name ::= IDENTIFIER
 

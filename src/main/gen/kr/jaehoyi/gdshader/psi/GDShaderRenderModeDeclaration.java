@@ -7,7 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderRenderModeDeclaration extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderRenderModeDeclaratorList getRenderModeDeclaratorList();
+
+  @NotNull List<@NotNull String> getRenderModes();
 
 }
