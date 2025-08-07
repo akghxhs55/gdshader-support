@@ -11,7 +11,7 @@ public interface GDShaderUniformVariableDeclaration extends PsiElement {
   GDShaderExpression getExpression();
 
   @Nullable
-  GDShaderHints getHints();
+  GDShaderHintList getHintList();
 
   @Nullable
   GDShaderPrecision getPrecision();

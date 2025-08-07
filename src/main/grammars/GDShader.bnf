@@ -60,11 +60,11 @@ uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFI
 uniform_group_name ::= IDENTIFIER
 
 // Variable Declarations
-uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
+uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hint_list)? (OP_ASSIGN expression)? SEMICOLON
 
 constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
 
-varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hints)? SEMICOLON
+varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON
 
 local_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
@@ -223,8 +223,8 @@ literal ::= TRUE
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
 		  
-// Hints
-hints ::= hint (COMMA hint)*
+// Uniform Hints
+hint_list ::= hint (COMMA hint)*
 hint ::= simple_hint
 	   | range_hint
 	   | enum_hint

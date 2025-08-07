@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderHintsImpl extends ASTWrapperPsiElement implements GDShaderHints {
+public class GDShaderHintListImpl extends ASTWrapperPsiElement implements GDShaderHintList {
 
-  public GDShaderHintsImpl(@NotNull ASTNode node) {
+  public GDShaderHintListImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitHints(this);
+    visitor.visitHintList(this);
   }
 
   @Override

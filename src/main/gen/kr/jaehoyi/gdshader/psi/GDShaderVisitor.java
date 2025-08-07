@@ -107,7 +107,7 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitHints(@NotNull GDShaderHints o) {
+  public void visitHintList(@NotNull GDShaderHintList o) {
     visitPsiElement(o);
   }
 

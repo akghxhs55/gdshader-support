@@ -753,30 +753,30 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // hint (COMMA hint)*
-  public static boolean hints(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "hints")) return false;
+  public static boolean hint_list(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "hint_list")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, HINTS, "<hints>");
+    Marker m = enter_section_(b, l, _NONE_, HINT_LIST, "<hint list>");
     r = hint(b, l + 1);
-    r = r && hints_1(b, l + 1);
+    r = r && hint_list_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // (COMMA hint)*
-  private static boolean hints_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "hints_1")) return false;
+  private static boolean hint_list_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "hint_list_1")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!hints_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "hints_1", c)) break;
+      if (!hint_list_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "hint_list_1", c)) break;
     }
     return true;
   }
 
   // COMMA hint
-  private static boolean hints_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "hints_1_0")) return false;
+  private static boolean hint_list_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "hint_list_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
@@ -2011,7 +2011,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hints)? (OP_ASSIGN expression)? SEMICOLON
+  // (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hint_list)? (OP_ASSIGN expression)? SEMICOLON
   public static boolean uniform_variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_variable_declaration")) return false;
     boolean r;
@@ -2051,20 +2051,20 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (COLON hints)?
+  // (COLON hint_list)?
   private static boolean uniform_variable_declaration_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_variable_declaration_5")) return false;
     uniform_variable_declaration_5_0(b, l + 1);
     return true;
   }
 
-  // COLON hints
+  // COLON hint_list
   private static boolean uniform_variable_declaration_5_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_variable_declaration_5_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COLON);
-    r = r && hints(b, l + 1);
+    r = r && hint_list(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2174,7 +2174,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hints)? SEMICOLON
+  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON
   public static boolean varying_variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_variable_declaration")) return false;
     if (!nextTokenIs(b, VARYING)) return false;
@@ -2222,20 +2222,20 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (COLON hints)?
+  // (COLON hint_list)?
   private static boolean varying_variable_declaration_6(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_variable_declaration_6")) return false;
     varying_variable_declaration_6_0(b, l + 1);
     return true;
   }
 
-  // COLON hints
+  // COLON hint_list
   private static boolean varying_variable_declaration_6_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_variable_declaration_6_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COLON);
-    r = r && hints(b, l + 1);
+    r = r && hint_list(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

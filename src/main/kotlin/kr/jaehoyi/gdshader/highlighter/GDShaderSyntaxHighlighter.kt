@@ -21,7 +21,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
             "GDSHADER_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
         val KEYWORD = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
-        val HINT = TextAttributesKey.createTextAttributesKey(
+        val UNIFORM_HINT = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_HINT", DefaultLanguageHighlighterColors.METADATA)
         val STRING = TextAttributesKey.createTextAttributesKey(
             "GDSHADER_STRING", DefaultLanguageHighlighterColors.STRING)
@@ -69,7 +69,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
         private val IDENTIFIER_KEYS = arrayOf(IDENTIFIER)
         private val NUMBER_KEYS = arrayOf(NUMBER)
         private val KEYWORD_KEYS = arrayOf(KEYWORD)
-        private val HINT_KEYS = arrayOf(HINT)
+        private val UNIFORM_HINT_KEYS = arrayOf(UNIFORM_HINT)
         private val STRING_KEYS = arrayOf(STRING)
         private val BLOCK_COMMENT_KEYS = arrayOf(BLOCK_COMMENT)
         private val LINE_COMMENT_KEYS = arrayOf(LINE_COMMENT)
@@ -135,7 +135,7 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
                 GDShaderTypes.FILTER_LINEAR, GDShaderTypes.FILTER_NEAREST_MIPMAP, GDShaderTypes.FILTER_LINEAR_MIPMAP,
                 GDShaderTypes.FILTER_NEAREST_MIPMAP_ANISOTROPIC, GDShaderTypes.FILTER_LINEAR_MIPMAP_ANISOTROPIC,
                 GDShaderTypes.REPEAT_ENABLE, GDShaderTypes.REPEAT_DISABLE
-                    -> HINT_KEYS
+                    -> UNIFORM_HINT_KEYS
 
                 GDShaderTypes.OP_EQUAL, GDShaderTypes.OP_NOT_EQUAL, GDShaderTypes.OP_LESS, GDShaderTypes.OP_LESS_EQUAL,
                 GDShaderTypes.OP_GREATER, GDShaderTypes.OP_GREATER_EQUAL, GDShaderTypes.OP_AND, GDShaderTypes.OP_OR,

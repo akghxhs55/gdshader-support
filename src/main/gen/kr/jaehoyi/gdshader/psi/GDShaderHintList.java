@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderHints extends PsiElement {
+public interface GDShaderHintList extends PsiElement {
 
   @NotNull
   List<GDShaderHint> getHintList();

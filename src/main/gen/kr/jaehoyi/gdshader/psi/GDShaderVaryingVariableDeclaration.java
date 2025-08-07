@@ -11,7 +11,7 @@ public interface GDShaderVaryingVariableDeclaration extends PsiElement {
   GDShaderArraySize getArraySize();
 
   @Nullable
-  GDShaderHints getHints();
+  GDShaderHintList getHintList();
 
   @Nullable
   GDShaderPrecision getPrecision();

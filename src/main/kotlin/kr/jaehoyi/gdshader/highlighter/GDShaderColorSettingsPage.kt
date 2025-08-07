@@ -61,7 +61,7 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Identifier", GDShaderSyntaxHighlighter.IDENTIFIER),
     AttributesDescriptor("Keyword", GDShaderSyntaxHighlighter.KEYWORD),
     AttributesDescriptor("Number", GDShaderSyntaxHighlighter.NUMBER),
-    AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.HINT),
+    AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.UNIFORM_HINT),
     AttributesDescriptor("String", GDShaderSyntaxHighlighter.STRING),
     AttributesDescriptor("Block Comment", GDShaderSyntaxHighlighter.BLOCK_COMMENT),
     AttributesDescriptor("Line Comment", GDShaderSyntaxHighlighter.LINE_COMMENT),

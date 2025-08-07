@@ -32,8 +32,8 @@ public interface GDShaderTypes {
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
   IElementType FUNCTION_NAME = new GDShaderElementType("FUNCTION_NAME");
   IElementType HINT = new GDShaderElementType("HINT");
-  IElementType HINTS = new GDShaderElementType("HINTS");
   IElementType HINT_IDENTIFIER = new GDShaderElementType("HINT_IDENTIFIER");
+  IElementType HINT_LIST = new GDShaderElementType("HINT_LIST");
   IElementType IF_STATEMENT = new GDShaderElementType("IF_STATEMENT");
   IElementType INITIALIZER = new GDShaderElementType("INITIALIZER");
   IElementType INITIALIZER_LIST = new GDShaderElementType("INITIALIZER_LIST");
@@ -309,11 +309,11 @@ public interface GDShaderTypes {
       else if (type == HINT) {
         return new GDShaderHintImpl(node);
       }
-      else if (type == HINTS) {
-        return new GDShaderHintsImpl(node);
-      }
       else if (type == HINT_IDENTIFIER) {
         return new GDShaderHintIdentifierImpl(node);
+      }
+      else if (type == HINT_LIST) {
+        return new GDShaderHintListImpl(node);
       }
       else if (type == IF_STATEMENT) {
         return new GDShaderIfStatementImpl(node);
