@@ -26,12 +26,12 @@ public interface GDShaderTopLevelDeclaration extends PsiElement {
   GDShaderStructDeclaration getStructDeclaration();
 
   @Nullable
+  GDShaderUniformDeclaration getUniformDeclaration();
+
+  @Nullable
   GDShaderUniformGroupDeclaration getUniformGroupDeclaration();
 
   @Nullable
-  GDShaderUniformVariableDeclaration getUniformVariableDeclaration();
-
-  @Nullable
-  GDShaderVaryingVariableDeclaration getVaryingVariableDeclaration();
+  GDShaderVaryingDeclaration getVaryingDeclaration();
 
 }

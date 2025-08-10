@@ -5,13 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderUniformVariableDeclaration extends PsiElement {
+public interface GDShaderUniformDeclaration extends PsiElement {
 
   @Nullable
   GDShaderExpression getExpression();
 
   @Nullable
-  GDShaderHintList getHintList();
+  GDShaderHintSection getHintSection();
 
   @Nullable
   GDShaderPrecision getPrecision();
@@ -21,5 +21,9 @@ public interface GDShaderUniformVariableDeclaration extends PsiElement {
 
   @NotNull
   GDShaderVariableName getVariableName();
+
+  //WARNING: getUniformHints(...) is skipped
+  //matching getUniformHints(GDShaderUniformDeclaration, ...)
+  //methods are not found in GDShaderPsiImplUtil
 
 }

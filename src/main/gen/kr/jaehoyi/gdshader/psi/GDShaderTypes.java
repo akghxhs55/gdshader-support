@@ -34,6 +34,7 @@ public interface GDShaderTypes {
   IElementType HINT = new GDShaderElementType("HINT");
   IElementType HINT_IDENTIFIER = new GDShaderElementType("HINT_IDENTIFIER");
   IElementType HINT_LIST = new GDShaderElementType("HINT_LIST");
+  IElementType HINT_SECTION = new GDShaderElementType("HINT_SECTION");
   IElementType IF_STATEMENT = new GDShaderElementType("IF_STATEMENT");
   IElementType INITIALIZER = new GDShaderElementType("INITIALIZER");
   IElementType INITIALIZER_LIST = new GDShaderElementType("INITIALIZER_LIST");
@@ -76,13 +77,13 @@ public interface GDShaderTypes {
   IElementType TOP_LEVEL_DECLARATION = new GDShaderElementType("TOP_LEVEL_DECLARATION");
   IElementType TYPE = new GDShaderElementType("TYPE");
   IElementType UNARY_EXPR = new GDShaderElementType("UNARY_EXPR");
+  IElementType UNIFORM_DECLARATION = new GDShaderElementType("UNIFORM_DECLARATION");
   IElementType UNIFORM_GROUP_DECLARATION = new GDShaderElementType("UNIFORM_GROUP_DECLARATION");
   IElementType UNIFORM_GROUP_NAME = new GDShaderElementType("UNIFORM_GROUP_NAME");
-  IElementType UNIFORM_VARIABLE_DECLARATION = new GDShaderElementType("UNIFORM_VARIABLE_DECLARATION");
   IElementType VARIABLE_DECLARATOR = new GDShaderElementType("VARIABLE_DECLARATOR");
   IElementType VARIABLE_DECLARATOR_LIST = new GDShaderElementType("VARIABLE_DECLARATOR_LIST");
   IElementType VARIABLE_NAME = new GDShaderElementType("VARIABLE_NAME");
-  IElementType VARYING_VARIABLE_DECLARATION = new GDShaderElementType("VARYING_VARIABLE_DECLARATION");
+  IElementType VARYING_DECLARATION = new GDShaderElementType("VARYING_DECLARATION");
   IElementType WHILE_STATEMENT = new GDShaderElementType("WHILE_STATEMENT");
 
   IElementType ARG_IN = new GDShaderTokenType("ARG_IN");
@@ -315,6 +316,9 @@ public interface GDShaderTypes {
       else if (type == HINT_LIST) {
         return new GDShaderHintListImpl(node);
       }
+      else if (type == HINT_SECTION) {
+        return new GDShaderHintSectionImpl(node);
+      }
       else if (type == IF_STATEMENT) {
         return new GDShaderIfStatementImpl(node);
       }
@@ -441,14 +445,14 @@ public interface GDShaderTypes {
       else if (type == UNARY_EXPR) {
         return new GDShaderUnaryExprImpl(node);
       }
+      else if (type == UNIFORM_DECLARATION) {
+        return new GDShaderUniformDeclarationImpl(node);
+      }
       else if (type == UNIFORM_GROUP_DECLARATION) {
         return new GDShaderUniformGroupDeclarationImpl(node);
       }
       else if (type == UNIFORM_GROUP_NAME) {
         return new GDShaderUniformGroupNameImpl(node);
-      }
-      else if (type == UNIFORM_VARIABLE_DECLARATION) {
-        return new GDShaderUniformVariableDeclarationImpl(node);
       }
       else if (type == VARIABLE_DECLARATOR) {
         return new GDShaderVariableDeclaratorImpl(node);
@@ -459,8 +463,8 @@ public interface GDShaderTypes {
       else if (type == VARIABLE_NAME) {
         return new GDShaderVariableNameImpl(node);
       }
-      else if (type == VARYING_VARIABLE_DECLARATION) {
-        return new GDShaderVaryingVariableDeclarationImpl(node);
+      else if (type == VARYING_DECLARATION) {
+        return new GDShaderVaryingDeclarationImpl(node);
       }
       else if (type == WHILE_STATEMENT) {
         return new GDShaderWhileStatementImpl(node);

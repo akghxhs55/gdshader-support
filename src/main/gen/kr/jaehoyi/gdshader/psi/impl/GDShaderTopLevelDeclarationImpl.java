@@ -65,20 +65,20 @@ public class GDShaderTopLevelDeclarationImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
+  public GDShaderUniformDeclaration getUniformDeclaration() {
+    return findChildByClass(GDShaderUniformDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderUniformGroupDeclaration getUniformGroupDeclaration() {
     return findChildByClass(GDShaderUniformGroupDeclaration.class);
   }
 
   @Override
   @Nullable
-  public GDShaderUniformVariableDeclaration getUniformVariableDeclaration() {
-    return findChildByClass(GDShaderUniformVariableDeclaration.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderVaryingVariableDeclaration getVaryingVariableDeclaration() {
-    return findChildByClass(GDShaderVaryingVariableDeclaration.class);
+  public GDShaderVaryingDeclaration getVaryingDeclaration() {
+    return findChildByClass(GDShaderVaryingDeclaration.class);
   }
 
 }

@@ -8,20 +8,20 @@ import kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
-import kr.jaehoyi.gdshader.psi.GDShaderVaryingVariableDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderVariableAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
-            is GDShaderUniformDeclaration -> annotateUniformVariableDeclaration(element, holder)
-            is GDShaderConstantDeclaration -> annotateConstVariableDeclaration(element, holder)
-            is GDShaderVaryingVariableDeclaration -> annotateVaryingVariableDeclaration(element, holder)
+            is GDShaderUniformDeclaration -> annotateUniformDeclaration(element, holder)
+            is GDShaderConstantDeclaration -> annotateConstantDeclaration(element, holder)
+            is GDShaderVaryingDeclaration -> annotateVaryingDeclaration(element, holder)
             is GDShaderLocalVariableDeclaration -> annotateLocalVariableDeclaration(element, holder)
             else -> return
         }
     }
     
-    private fun annotateUniformVariableDeclaration(element: GDShaderUniformDeclaration, holder: AnnotationHolder) {
+    private fun annotateUniformDeclaration(element: GDShaderUniformDeclaration, holder: AnnotationHolder) {
         val variableName = element.variableName
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
@@ -30,7 +30,7 @@ class GDShaderVariableAnnotator : Annotator {
             .create()
     }
     
-    private fun annotateConstVariableDeclaration(element: GDShaderConstantDeclaration, holder: AnnotationHolder) {
+    private fun annotateConstantDeclaration(element: GDShaderConstantDeclaration, holder: AnnotationHolder) {
         val variableNames = element.variableDeclaratorList.variableDeclaratorList
         
         for (variableName in variableNames) {
@@ -43,7 +43,7 @@ class GDShaderVariableAnnotator : Annotator {
         }
     }
     
-    private fun annotateVaryingVariableDeclaration(element: GDShaderVaryingVariableDeclaration, holder: AnnotationHolder) {
+    private fun annotateVaryingDeclaration(element: GDShaderVaryingDeclaration, holder: AnnotationHolder) {
         val variableName = element.variableName
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)

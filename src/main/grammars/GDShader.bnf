@@ -15,7 +15,7 @@
   psiImplUtilClass="kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil"
 }
 
-gd_shader_file ::= item*
+gdShaderFile ::= item*
 
 item ::= top_level_declaration
 	   | SEMICOLON
@@ -28,9 +28,9 @@ top_level_declaration ::= shader_type_declaration
 		    		    | render_mode_declaration
 		    		    | stencil_mode_declaration
 		    		    | uniform_group_declaration
-		    		    | uniform_variable_declaration
+		    		    | uniform_declaration
 		    		    | constant_declaration
-		    		    | varying_variable_declaration
+		    		    | varying_declaration
 		    		    | function_declaration
 		    		    | struct_declaration
 
@@ -42,10 +42,9 @@ shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
 shader_type_name ::= IDENTIFIER
 
 // Render Mode Declaration
-render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON
-{
+render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON {
 	methods = [ getRenderModes ]
-	pin = 1
+	pin=1
 }
 render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
 render_mode_name ::= IDENTIFIER
@@ -59,15 +58,61 @@ stencil_mode_name ::= IDENTIFIER
 uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON
 uniform_group_name ::= IDENTIFIER
 
-// Variable Declarations
-uniform_variable_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name (COLON hint_list)? (OP_ASSIGN expression)? SEMICOLON
+// Uniform Declaration
+uniform_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON {
+	methods=[ getUniformHints ]
+	pin=5
+}
+hint_section ::= COLON hint_list {
+	pin=1
+	recoverWhile=hint_section_recover
+}
+private hint_section_recover ::= !(SEMICOLON | OP_ASSIGN)
+hint_list ::= hint (COMMA hint)*
+hint ::= simple_hint
+	   | range_hint
+	   | enum_hint
+	   | instance_index_hint
+simple_hint ::= hint_identifier (COMMA hint_identifier)*
+range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
+enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
+instance_index_hint ::= HINT_INSTANCE_INDEX PARENTHESIS_OPEN INT_CONSTANT PARENTHESIS_CLOSE
 
+hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
+			      | HINT_DEFAULT_BLACK_TEXTURE
+			      | HINT_DEFAULT_TRANSPARENT_TEXTURE
+			      | HINT_NORMAL_TEXTURE
+			      | HINT_ROUGHNESS_NORMAL_TEXTURE
+			      | HINT_ROUGHNESS_R
+			      | HINT_ROUGHNESS_G
+			      | HINT_ROUGHNESS_B
+			      | HINT_ROUGHNESS_A
+			      | HINT_ROUGHNESS_GRAY
+			      | HINT_ANISOTROPY_TEXTURE
+			      | HINT_SOURCE_COLOR
+			      | HINT_COLOR_CONVERSION_DISABLED	
+			      | HINT_SCREEN_TEXTURE
+			      | HINT_NORMAL_ROUGHNESS_TEXTURE
+			      | HINT_DEPTH_TEXTURE
+			      | FILTER_NEAREST
+			      | FILTER_LINEAR
+			      | FILTER_NEAREST_MIPMAP
+			      | FILTER_LINEAR_MIPMAP
+			      | FILTER_NEAREST_MIPMAP_ANISOTROPIC
+			      | FILTER_LINEAR_MIPMAP_ANISOTROPIC
+			      | REPEAT_ENABLE
+			      | REPEAT_DISABLE
+
+// Constant Declaration
 constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
 
-varying_variable_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON
+// Varying Declaration
+varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON
 
+// Local Variable Declaration
 local_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
 
+// Variable Declarations
 variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
 variable_declarator ::= variable_name array_size? (OP_ASSIGN initializer)?
 
@@ -222,43 +267,7 @@ literal ::= TRUE
 // Operators
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
-		  
-// Uniform Hints
-hint_list ::= hint (COMMA hint)*
-hint ::= simple_hint
-	   | range_hint
-	   | enum_hint
-	   | instance_index_hint
-simple_hint ::= hint_identifier (COMMA hint_identifier)*
-range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
-enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
-instance_index_hint ::= HINT_INSTANCE_INDEX PARENTHESIS_OPEN INT_CONSTANT PARENTHESIS_CLOSE
 
 number ::= (OP_SUB)? FLOAT_CONSTANT
 		 | (OP_SUB)? INT_CONSTANT
 		 | UINT_CONSTANT
-		  
-hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
-			      | HINT_DEFAULT_BLACK_TEXTURE
-			      | HINT_DEFAULT_TRANSPARENT_TEXTURE
-			      | HINT_NORMAL_TEXTURE
-			      | HINT_ROUGHNESS_NORMAL_TEXTURE
-			      | HINT_ROUGHNESS_R
-			      | HINT_ROUGHNESS_G
-			      | HINT_ROUGHNESS_B
-			      | HINT_ROUGHNESS_A
-			      | HINT_ROUGHNESS_GRAY
-			      | HINT_ANISOTROPY_TEXTURE
-			      | HINT_SOURCE_COLOR
-			      | HINT_COLOR_CONVERSION_DISABLED	
-			      | HINT_SCREEN_TEXTURE
-			      | HINT_NORMAL_ROUGHNESS_TEXTURE
-			      | HINT_DEPTH_TEXTURE
-			      | FILTER_NEAREST
-			      | FILTER_LINEAR
-			      | FILTER_NEAREST_MIPMAP
-			      | FILTER_LINEAR_MIPMAP
-			      | FILTER_NEAREST_MIPMAP_ANISOTROPIC
-			      | FILTER_LINEAR_MIPMAP_ANISOTROPIC
-			      | REPEAT_ENABLE
-			      | REPEAT_DISABLE
