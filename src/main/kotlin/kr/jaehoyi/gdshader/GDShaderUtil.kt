@@ -20,6 +20,19 @@ object GDShaderUtil {
         "fog" to setOf()
     )
     
+    val uniformHintMap = mapOf(
+        "vec3" to setOf("instance_index", "source_color", "color_conversion_disabled"),
+        "vec4" to setOf("instance_index", "source_color", "color_conversion_disabled"),
+        "int" to setOf("instance_index", "hint_enum", "hint_range"),
+        "float" to setOf("instance_index", "hint_range"),
+        "sampler2D" to setOf("instance_index", "source_color", "hint_normal", "hint_default_white",
+            "hint_default_black", "hint_default_transparent", "hint_anisotropy", "hint_roughness_r", "hint_roughness_g",
+            "hint_roughness_b", "hint_roughness_a", "hint_roughness_normal", "hint_roughness_gray", "filter_nearest",
+            "filter_linear", "filter_nearest_mipmap", "filter_linear_mipmap", "hint_nearest_mipmap_anisotropic",
+            "hint_linear_mipmap_anisotropic", "repeat_enabled", "repeat_disabled", "hint_screen_texture",
+            "hint_depth_texture", "hint_normal_roughness_texture")
+    )
+    
     fun getAvailableShaderTypes(): Set<String> = shaderTypes
     fun validateShaderName(element: GDShaderShaderTypeDeclaration): Boolean = element.shaderType in shaderTypes
 }

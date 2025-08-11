@@ -159,7 +159,7 @@ PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
 "hint_roughness_gray" 		{ return GDShaderTypes.HINT_ROUGHNESS_GRAY; }
 "hint_anisotropy" 			{ return GDShaderTypes.HINT_ANISOTROPY_TEXTURE; }
 "source_color" 				{ return GDShaderTypes.HINT_SOURCE_COLOR; }
-"color_coversion_disabled"  { return GDShaderTypes.HINT_COLOR_CONVERSION_DISABLED; }
+"color_conversion_disabled"  { return GDShaderTypes.HINT_COLOR_CONVERSION_DISABLED; }
 "hint_range" 				{ return GDShaderTypes.HINT_RANGE; }
 "hint_enum" 				{ return GDShaderTypes.HINT_ENUM; }
 "instance_index" 			{ return GDShaderTypes.HINT_INSTANCE_INDEX; }
