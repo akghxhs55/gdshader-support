@@ -303,7 +303,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_CASE expression COLON statement* | CF_DEFAULT COLON statement_body*
+  // CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body*
   public static boolean case_clause(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause")) return false;
     if (!nextTokenIs(b, "<case clause>", CF_CASE, CF_DEFAULT)) return false;
@@ -315,7 +315,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // CF_CASE expression COLON statement*
+  // CF_CASE expression COLON statement_body*
   private static boolean case_clause_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause_0")) return false;
     boolean r;
@@ -328,12 +328,12 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // statement*
+  // statement_body*
   private static boolean case_clause_0_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause_0_3")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!consumeToken(b, STATEMENT)) break;
+      if (!statement_body(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "case_clause_0_3", c)) break;
     }
     return true;

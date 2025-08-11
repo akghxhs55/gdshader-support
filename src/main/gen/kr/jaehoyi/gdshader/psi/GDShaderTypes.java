@@ -196,7 +196,6 @@ public interface GDShaderTypes {
   IElementType REPEAT_ENABLE = new GDShaderTokenType("REPEAT_ENABLE");
   IElementType SEMICOLON = new GDShaderTokenType("SEMICOLON");
   IElementType SHADER_TYPE = new GDShaderTokenType("SHADER_TYPE");
-  IElementType STATEMENT = new GDShaderTokenType("statement");
   IElementType STENCIL_MODE = new GDShaderTokenType("STENCIL_MODE");
   IElementType STRING_CONSTANT = new GDShaderTokenType("STRING_CONSTANT");
   IElementType STRUCT = new GDShaderTokenType("STRUCT");

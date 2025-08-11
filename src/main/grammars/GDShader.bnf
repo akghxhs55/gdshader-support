@@ -159,7 +159,7 @@ do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression
 while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body
 
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
-case_clause ::= CF_CASE expression COLON statement* | CF_DEFAULT COLON statement_body*
+case_clause ::= CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body*
 
 return_statement ::= CF_RETURN expression? SEMICOLON
 
