@@ -33,11 +33,17 @@ top_level_declaration ::= shader_type_declaration
 		    		    | varying_declaration
 		    		    | function_declaration
 		    		    | struct_declaration
+		    		    
+private top_level_recover ::= !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | CONST | VARYING
+							  | STRUCT | SEMICOLON | LINE_COMMENT | BLOCK_COMMENT | PP_DEFINE_LINE | PP_UNDEF_LINE
+							  | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
+							  | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type)
 
 // Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
 	methods=[ getShaderType ]
 	pin=1
+	recoverWhile=top_level_recover
 }
 shader_type_name ::= IDENTIFIER
 
@@ -45,6 +51,7 @@ shader_type_name ::= IDENTIFIER
 render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON {
 	methods = [ getRenderModes ]
 	pin=1
+	recoverWhile=top_level_recover
 }
 render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
 render_mode_name ::= IDENTIFIER
@@ -62,6 +69,7 @@ uniform_group_name ::= IDENTIFIER
 uniform_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON {
 	methods=[ getUniformHints ]
 	pin=5
+	recoverWhile=top_level_recover
 }
 hint_section ::= COLON hint_list {
 	pin=1
