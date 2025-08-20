@@ -10,10 +10,10 @@ public interface GDShaderConstantDeclaration extends PsiElement {
   @Nullable
   GDShaderPrecision getPrecision();
 
-  @NotNull
+  @Nullable
   GDShaderType getType();
 
-  @NotNull
+  @Nullable
   GDShaderVariableDeclaratorList getVariableDeclaratorList();
 
 }

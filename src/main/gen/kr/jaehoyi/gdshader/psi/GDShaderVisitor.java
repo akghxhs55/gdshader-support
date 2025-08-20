@@ -295,6 +295,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitUniformHeader(@NotNull GDShaderUniformHeader o) {
+    visitPsiElement(o);
+  }
+
   public void visitVariableDeclarator(@NotNull GDShaderVariableDeclarator o) {
     visitPsiElement(o);
   }

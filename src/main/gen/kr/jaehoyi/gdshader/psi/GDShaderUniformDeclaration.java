@@ -16,10 +16,13 @@ public interface GDShaderUniformDeclaration extends PsiElement {
   @Nullable
   GDShaderPrecision getPrecision();
 
-  @NotNull
+  @Nullable
   GDShaderType getType();
 
   @NotNull
+  GDShaderUniformHeader getUniformHeader();
+
+  @Nullable
   GDShaderVariableName getVariableName();
 
   //WARNING: getUniformHints(...) is skipped

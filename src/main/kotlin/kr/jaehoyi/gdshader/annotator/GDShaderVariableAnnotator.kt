@@ -22,8 +22,8 @@ class GDShaderVariableAnnotator : Annotator {
     }
     
     private fun annotateUniformDeclaration(element: GDShaderUniformDeclaration, holder: AnnotationHolder) {
-        val variableName = element.variableName
-        
+        val variableName = element.variableName ?: return
+
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(variableName.textRange)
             .textAttributes(GDShaderSyntaxHighlighter.UNIFORM_VARIABLE)
@@ -31,7 +31,7 @@ class GDShaderVariableAnnotator : Annotator {
     }
     
     private fun annotateConstantDeclaration(element: GDShaderConstantDeclaration, holder: AnnotationHolder) {
-        val variableNames = element.variableDeclaratorList.variableDeclaratorList
+        val variableNames = element.variableDeclaratorList?.variableDeclaratorList ?: return
         
         for (variableName in variableNames) {
             val nameElement = variableName.variableName
@@ -44,7 +44,7 @@ class GDShaderVariableAnnotator : Annotator {
     }
     
     private fun annotateVaryingDeclaration(element: GDShaderVaryingDeclaration, holder: AnnotationHolder) {
-        val variableName = element.variableName
+        val variableName = element.variableName ?: return
         
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(variableName.textRange)

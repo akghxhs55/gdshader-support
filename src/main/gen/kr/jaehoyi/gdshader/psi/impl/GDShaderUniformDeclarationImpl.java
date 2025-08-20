@@ -46,15 +46,21 @@ public class GDShaderUniformDeclarationImpl extends ASTWrapperPsiElement impleme
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderType getType() {
-    return findNotNullChildByClass(GDShaderType.class);
+    return findChildByClass(GDShaderType.class);
   }
 
   @Override
   @NotNull
+  public GDShaderUniformHeader getUniformHeader() {
+    return findNotNullChildByClass(GDShaderUniformHeader.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderVariableName getVariableName() {
-    return findNotNullChildByClass(GDShaderVariableName.class);
+    return findChildByClass(GDShaderVariableName.class);
   }
 
 }

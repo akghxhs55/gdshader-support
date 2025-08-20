@@ -11,30 +11,38 @@ import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.GDShaderUtil
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderType
-import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderTypeCompletionContributor : CompletionContributor() {
+    private val typeProvider = object : CompletionProvider<CompletionParameters>() {
+        override fun addCompletions(
+            parameters: CompletionParameters,
+            context: ProcessingContext,
+            result: CompletionResultSet
+        ) {
+            for (type in GDShaderUtil.builtinTypes) {
+                result.addElement(
+                    LookupElementBuilder.create(type)
+                        .withBoldness(true)
+                        .withTypeText("type")
+                )
+            }
+        }
+    }
+    
     init {
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
-                .withParent(GDShaderFile::class.java),
-            object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(
-                    parameters: CompletionParameters,
-                    context: ProcessingContext,
-                    result: CompletionResultSet
-                ) {
-                    for (type in GDShaderUtil.builtinTypes) {
-                        result.addElement(
-                            LookupElementBuilder.create(type)
-                                .withBoldness(true)
-                                .withTypeText("type")
-                        )
-                    }
-                }
-            }
-                
+                .inside(GDShaderType::class.java),
+            typeProvider
         )
+        
+        extend(
+            CompletionType.BASIC,
+            PlatformPatterns.psiElement()
+                .withParent(GDShaderFile::class.java),
+            typeProvider
+        )
+        
     }
 }

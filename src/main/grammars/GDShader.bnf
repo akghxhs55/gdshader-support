@@ -37,7 +37,8 @@ top_level_declaration ::= shader_type_declaration
 private top_level_recover ::= !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | CONST | VARYING
 							  | STRUCT | SEMICOLON | LINE_COMMENT | BLOCK_COMMENT | PP_DEFINE_LINE | PP_UNDEF_LINE
 							  | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
-							  | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type)
+							  | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
+							  | GLOBAL | INSTANCE)
 
 // Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
@@ -66,11 +67,12 @@ uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFI
 uniform_group_name ::= IDENTIFIER
 
 // Uniform Declaration
-uniform_declaration ::= (GLOBAL | INSTANCE)? UNIFORM precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON {
+uniform_declaration ::= uniform_header precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON {
 	methods=[ getUniformHints ]
-	pin=5
+	pin=1
 	recoverWhile=top_level_recover
 }
+uniform_header ::= (GLOBAL | INSTANCE) UNIFORM | UNIFORM { pin=1 }
 hint_section ::= COLON hint_list {
 	pin=1
 	recoverWhile=hint_section_recover
@@ -112,10 +114,16 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 			      | REPEAT_DISABLE
 
 // Constant Declaration
-constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON
+constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON {
+	pin=1
+	recoverWhile=top_level_recover
+}
 
 // Varying Declaration
-varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON
+varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON {
+	pin=1
+	recoverWhile=top_level_recover
+}
 
 // Local Variable Declaration
 local_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
@@ -137,7 +145,7 @@ function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PAR
 function_name ::= IDENTIFIER
 
 parameter_list ::= parameter (COMMA parameter)*
-parameter ::= (ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
+parameter ::= (CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
 parameter_name ::= IDENTIFIER
 
 block ::= CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
@@ -167,7 +175,7 @@ do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression
 while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body
 
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
-case_clause ::= CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body*
+case_clause ::= CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body* 
 
 return_statement ::= CF_RETURN expression? SEMICOLON
 
@@ -179,9 +187,9 @@ statement_body ::= block
 				 | control_statement
 				 | return_statement
 				 | simple_statement
+				 | local_variable_declaration
 				 | expression_statement
 				 | constant_declaration
-				 | local_variable_declaration
 				 | SEMICOLON
 				 | LINE_COMMENT
 				 | BLOCK_COMMENT

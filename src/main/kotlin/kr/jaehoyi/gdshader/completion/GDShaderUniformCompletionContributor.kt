@@ -51,7 +51,7 @@ class GDShaderUniformCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val uniformDeclaration = parameters.position.parentOfType<GDShaderUniformDeclaration>() ?: return
-                    val typeName = uniformDeclaration.type.text
+                    val typeName = uniformDeclaration.type?.text
                     
                     for (hint in GDShaderUtil.uniformHintMap[typeName] ?: emptySet()) {
                         result.addElement(

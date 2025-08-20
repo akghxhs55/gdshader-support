@@ -33,6 +33,13 @@ object GDShaderUtil {
             "hint_depth_texture", "hint_normal_roughness_texture")
     )
     
+    val builtinTypes = setOf(
+        "void", "bool", "bvec2", "bvec3", "bvec4", "int", "ivec2", "ivec3", "ivec4", "uint", "uvec2", "uvec3", "uvec4",
+        "float", "vec2", "vec3", "vec4", "mat2", "mat3", "mat4", "sampler2D", "isampler2D", "usampler2D",
+        "sampler2DArray", "isampler2DArray", "usampler2DArray", "sampler3D", "isampler3D", "usampler3D",
+        "samplerCube", "samplerCubeArray", "samplerExternalOES"
+    )
+    
     fun getAvailableShaderTypes(): Set<String> = shaderTypes
     fun validateShaderName(element: GDShaderShaderTypeDeclaration): Boolean = element.shaderType in shaderTypes
 }
