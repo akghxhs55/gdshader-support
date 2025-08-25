@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.GDShaderUtil
+import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderType
 
@@ -43,6 +44,12 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
                 .withParent(GDShaderFile::class.java),
             typeProvider
         )
-        
+
+        extend(
+            CompletionType.BASIC,
+            PlatformPatterns.psiElement()
+                .inside(GDShaderBlock::class.java),
+            typeProvider
+        )
     }
 }

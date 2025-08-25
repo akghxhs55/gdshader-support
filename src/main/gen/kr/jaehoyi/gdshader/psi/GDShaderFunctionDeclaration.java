@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderFunctionDeclaration extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderBlock getBlock();
 
   @NotNull

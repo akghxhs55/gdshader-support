@@ -28,9 +28,9 @@ public class GDShaderFunctionDeclarationImpl extends ASTWrapperPsiElement implem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderBlock getBlock() {
-    return findNotNullChildByClass(GDShaderBlock.class);
+    return findChildByClass(GDShaderBlock.class);
   }
 
   @Override

@@ -40,9 +40,9 @@ public class GDShaderForVariableDeclarationImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderVariableDeclaratorList getVariableDeclaratorList() {
-    return findNotNullChildByClass(GDShaderVariableDeclaratorList.class);
+    return findChildByClass(GDShaderVariableDeclaratorList.class);
   }
 
 }

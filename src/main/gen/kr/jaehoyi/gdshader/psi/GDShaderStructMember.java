@@ -10,7 +10,7 @@ public interface GDShaderStructMember extends PsiElement {
   @Nullable
   GDShaderArraySize getArraySize();
 
-  @NotNull
+  @Nullable
   GDShaderStructMemberName getStructMemberName();
 
   @NotNull

@@ -278,28 +278,42 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
+  // CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
   public static boolean block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block")) return false;
     if (!nextTokenIs(b, CURLY_BRACKET_OPEN)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, CURLY_BRACKET_OPEN);
-    r = r && block_1(b, l + 1);
+    r = r && block_body(b, l + 1);
     r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
     exit_section_(b, m, BLOCK, r);
     return r;
   }
 
+  /* ********************************************************** */
   // statement_body*
-  private static boolean block_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "block_1")) return false;
+  static boolean block_body(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "block_body")) return false;
+    Marker m = enter_section_(b, l, _NONE_);
     while (true) {
       int c = current_position_(b);
       if (!statement_body(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "block_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "block_body", c)) break;
     }
+    exit_section_(b, l, m, true, false, GDShaderParser::block_body_recover);
     return true;
+  }
+
+  /* ********************************************************** */
+  // !(CURLY_BRACKET_CLOSE)
+  static boolean block_body_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "block_body_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, CURLY_BRACKET_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -584,13 +598,14 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // precision? type variable_declarator_list
   public static boolean for_variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_variable_declaration")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, FOR_VARIABLE_DECLARATION, "<for variable declaration>");
     r = for_variable_declaration_0(b, l + 1);
     r = r && type(b, l + 1);
+    p = r; // pin = 2
     r = r && variable_declarator_list(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // precision?
@@ -634,16 +649,17 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
   public static boolean function_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_DECLARATION, "<function declaration>");
     r = type(b, l + 1);
     r = r && function_name(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
-    r = r && function_declaration_3(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && block(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = 3
+    r = r && report_error_(b, function_declaration_3(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, PARENTHESIS_CLOSE)) && r;
+    r = p && block(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // parameter_list?
@@ -1840,14 +1856,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // type struct_member_name (array_size)? SEMICOLON
   public static boolean struct_member(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, STRUCT_MEMBER, "<struct member>");
     r = type(b, l + 1);
-    r = r && struct_member_name(b, l + 1);
-    r = r && struct_member_2(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, struct_member_name(b, l + 1));
+    r = p && report_error_(b, struct_member_2(b, l + 1)) && r;
+    r = p && consumeToken(b, SEMICOLON) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // (array_size)?
@@ -1948,9 +1965,9 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | CONST | VARYING
   // 							  | STRUCT | SEMICOLON | LINE_COMMENT | BLOCK_COMMENT | PP_DEFINE_LINE | PP_UNDEF_LINE
-  // 							  | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
-  // 							  | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
-  // 							  | GLOBAL | INSTANCE)
+  // 						      | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
+  // 						      | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
+  // 						      | GLOBAL | INSTANCE)
   static boolean top_level_recover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover")) return false;
     boolean r;
@@ -1962,9 +1979,9 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   // SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | CONST | VARYING
   // 							  | STRUCT | SEMICOLON | LINE_COMMENT | BLOCK_COMMENT | PP_DEFINE_LINE | PP_UNDEF_LINE
-  // 							  | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
-  // 							  | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
-  // 							  | GLOBAL | INSTANCE
+  // 						      | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
+  // 						      | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
+  // 						      | GLOBAL | INSTANCE
   private static boolean top_level_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "top_level_recover_0")) return false;
     boolean r;

@@ -36,9 +36,9 @@ top_level_declaration ::= shader_type_declaration
 		    		    
 private top_level_recover ::= !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | CONST | VARYING
 							  | STRUCT | SEMICOLON | LINE_COMMENT | BLOCK_COMMENT | PP_DEFINE_LINE | PP_UNDEF_LINE
-							  | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
-							  | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
-							  | GLOBAL | INSTANCE)
+						      | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
+						      | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
+						      | GLOBAL | INSTANCE)
 
 // Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
@@ -140,7 +140,9 @@ initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRA
 array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
        
 // Function Declaration
-function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block {
+	pin=3
+}
 
 function_name ::= IDENTIFIER
 
@@ -148,14 +150,20 @@ parameter_list ::= parameter (COMMA parameter)*
 parameter ::= (CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
 parameter_name ::= IDENTIFIER
 
-block ::= CURLY_BRACKET_OPEN statement_body* CURLY_BRACKET_CLOSE
+block ::= CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
+private block_body ::= statement_body* {
+	recoverWhile=block_body_recover
+}
+private block_body_recover ::= !(CURLY_BRACKET_CLOSE) 
 
 // Struct Declarations
 struct_declaration ::= STRUCT struct_name CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
 
 struct_name ::= IDENTIFIER
 
-struct_member ::= type struct_member_name (array_size)? SEMICOLON
+struct_member ::= type struct_member_name (array_size)? SEMICOLON {
+	pin=1
+}
 struct_member_name ::= IDENTIFIER
 
 // Control Statements
@@ -168,7 +176,9 @@ control_statement ::= if_statement
 if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | statement_body))?
 
 for_statement ::= CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE statement_body
-for_variable_declaration ::= precision? type variable_declarator_list
+for_variable_declaration ::= precision? type variable_declarator_list {
+	pin=2
+}
 
 do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
 

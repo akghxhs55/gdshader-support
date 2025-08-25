@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
     intellijPlatform.rider("2025.1.2")
+    intellijPlatform.plugin("PsiViewer", "2025.1")
 }
 
 intellijPlatform {
