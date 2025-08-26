@@ -1169,7 +1169,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = parameter_0(b, l + 1);
     r = r && type(b, l + 1);
     r = r && parameter_name(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, l, m, r, false, GDShaderParser::parameter_recover);
     return r;
   }
 
@@ -1219,7 +1219,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, PARAMETER_LIST, "<parameter list>");
     r = parameter(b, l + 1);
     r = r && parameter_list_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, l, m, r, false, GDShaderParser::parameter_list_recover);
     return r;
   }
 
@@ -1246,6 +1246,17 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !(PARENTHESIS_CLOSE)
+  static boolean parameter_list_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_list_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, PARENTHESIS_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // IDENTIFIER
   public static boolean parameter_name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_name")) return false;
@@ -1254,6 +1265,26 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, PARAMETER_NAME, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // !(COMMA | PARENTHESIS_CLOSE)
+  static boolean parameter_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !parameter_recover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // COMMA | PARENTHESIS_CLOSE
+  private static boolean parameter_recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_recover_0")) return false;
+    boolean r;
+    r = consumeToken(b, COMMA);
+    if (!r) r = consumeToken(b, PARENTHESIS_CLOSE);
     return r;
   }
 
@@ -1853,30 +1884,38 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // type struct_member_name (array_size)? SEMICOLON
+  // precision? type struct_member_name (array_size)? SEMICOLON
   public static boolean struct_member(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, STRUCT_MEMBER, "<struct member>");
-    r = type(b, l + 1);
-    p = r; // pin = 1
+    r = struct_member_0(b, l + 1);
+    r = r && type(b, l + 1);
+    p = r; // pin = 2
     r = r && report_error_(b, struct_member_name(b, l + 1));
-    r = p && report_error_(b, struct_member_2(b, l + 1)) && r;
+    r = p && report_error_(b, struct_member_3(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // precision?
+  private static boolean struct_member_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_0")) return false;
+    precision(b, l + 1);
+    return true;
+  }
+
   // (array_size)?
-  private static boolean struct_member_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "struct_member_2")) return false;
-    struct_member_2_0(b, l + 1);
+  private static boolean struct_member_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_3")) return false;
+    struct_member_3_0(b, l + 1);
     return true;
   }
 
   // (array_size)
-  private static boolean struct_member_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "struct_member_2_0")) return false;
+  private static boolean struct_member_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = array_size(b, l + 1);

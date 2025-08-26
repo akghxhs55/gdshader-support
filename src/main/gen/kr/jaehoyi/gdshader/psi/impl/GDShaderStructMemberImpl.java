@@ -35,6 +35,12 @@ public class GDShaderStructMemberImpl extends ASTWrapperPsiElement implements GD
 
   @Override
   @Nullable
+  public GDShaderPrecision getPrecision() {
+    return findChildByClass(GDShaderPrecision.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderStructMemberName getStructMemberName() {
     return findChildByClass(GDShaderStructMemberName.class);
   }

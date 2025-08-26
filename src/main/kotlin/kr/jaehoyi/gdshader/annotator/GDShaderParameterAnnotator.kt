@@ -19,7 +19,7 @@ class GDShaderParameterAnnotator : Annotator {
         val parameters = element.parameterList?.parameterList
         if (parameters != null) {
             for (parameter in parameters) {
-                val parameterName = parameter.parameterName
+                val parameterName = parameter.parameterName ?: continue
                 
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(parameterName)

@@ -146,8 +146,14 @@ function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PAR
 
 function_name ::= IDENTIFIER
 
-parameter_list ::= parameter (COMMA parameter)*
-parameter ::= (CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
+parameter_list ::= parameter (COMMA parameter)* {
+	recoverWhile=parameter_list_recover
+}
+private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
+parameter ::= (CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name {
+	recoverWhile=parameter_recover
+}
+private parameter_recover ::= !(COMMA | PARENTHESIS_CLOSE)
 parameter_name ::= IDENTIFIER
 
 block ::= CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
@@ -158,11 +164,9 @@ private block_body_recover ::= !(CURLY_BRACKET_CLOSE)
 
 // Struct Declarations
 struct_declaration ::= STRUCT struct_name CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
-
 struct_name ::= IDENTIFIER
-
-struct_member ::= type struct_member_name (array_size)? SEMICOLON {
-	pin=1
+struct_member ::= precision? type struct_member_name (array_size)? SEMICOLON {
+	pin=2
 }
 struct_member_name ::= IDENTIFIER
 
