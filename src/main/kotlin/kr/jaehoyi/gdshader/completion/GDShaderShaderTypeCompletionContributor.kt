@@ -17,25 +17,6 @@ class GDShaderShaderTypeCompletionContributor : CompletionContributor() {
     init {
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement()
-                .withParent(GDShaderFile::class.java),
-            object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(
-                    parameters: CompletionParameters,
-                    context: ProcessingContext,
-                    result: CompletionResultSet
-                ) {
-                    result.addElement(LookupElementBuilder
-                        .create("shader_type")
-                        .withBoldness(true)
-                        .withTypeText("Keyword")
-                    )
-                }
-            }
-        )
-        
-        extend(
-            CompletionType.BASIC,
             PlatformPatterns.psiElement(GDShaderTypes.IDENTIFIER)
                 .withParent(GDShaderShaderTypeName::class.java),
             object : CompletionProvider<CompletionParameters>() {

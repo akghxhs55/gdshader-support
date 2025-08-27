@@ -20,25 +20,6 @@ class GDShaderUniformCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
-                .withParent(GDShaderFile::class.java),
-            object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(
-                    parameters: CompletionParameters,
-                    context: ProcessingContext,
-                    result: CompletionResultSet
-                ) {
-                    result.addElement(
-                        LookupElementBuilder.create("uniform")
-                            .withBoldness(true)
-                            .withTypeText("Keyword")
-                    )
-                }
-            }
-        )
-        
-        extend(
-            CompletionType.BASIC,
-            PlatformPatterns.psiElement()
                 .inside(GDShaderHintSection::class.java)
                 .afterLeaf(PlatformPatterns.or(
                     PlatformPatterns.psiElement(GDShaderTypes.COLON),

@@ -56,6 +56,9 @@
         <completion.contributor
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderTypeCompletionContributor" />
+        <completion.contributor
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderKeywordCompletionContributor" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />

@@ -14,26 +14,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderRenderModeName
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderRenderModeCompletionContributor : CompletionContributor() {
-    init {
-        extend(
-            CompletionType.BASIC,
-            PlatformPatterns.psiElement()
-                .withParent(GDShaderFile::class.java),
-            object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(
-                    parameters: CompletionParameters,
-                    context: ProcessingContext,
-                    result: CompletionResultSet
-                ) {
-                    result.addElement(
-                        LookupElementBuilder.create("render_mode")
-                            .withBoldness(true)
-                            .withTypeText("Keyword")
-                    )
-                }
-            }
-        )
-        
+    init { 
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement(GDShaderTypes.IDENTIFIER)
