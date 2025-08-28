@@ -9,6 +9,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderFile
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
+import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderKeywordCompletionContributor : CompletionContributor() {
     init {
@@ -39,14 +41,21 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
-                .withParent(GDShaderFile::class.java),
+                .inside(GDShaderVaryingDeclaration::class.java)
+                .afterLeaf(PlatformPatterns.psiElement(GDShaderTypes.VARYING)),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
                     result: CompletionResultSet
                 ) {
+                    val qualifiers = listOf("flat", "smooth")
                     
+                    result.addAllElements(qualifiers.map { 
+                        LookupElementBuilder.create(it)
+                            .withTypeText("Keyword")
+                            .withBoldness(true)
+                    })
                 }
             }
         )
