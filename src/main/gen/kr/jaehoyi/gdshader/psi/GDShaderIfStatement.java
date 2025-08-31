@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderIfStatement extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderExpression getExpression();
 
   @Nullable

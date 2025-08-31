@@ -35,14 +35,14 @@ public class GDShaderForStatementImpl extends ASTWrapperPsiElement implements GD
 
   @Override
   @Nullable
-  public GDShaderForVariableDeclaration getForVariableDeclaration() {
-    return findChildByClass(GDShaderForVariableDeclaration.class);
+  public GDShaderLocalVariableDeclaration getLocalVariableDeclaration() {
+    return findChildByClass(GDShaderLocalVariableDeclaration.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderStatementBody getStatementBody() {
-    return findNotNullChildByClass(GDShaderStatementBody.class);
+    return findChildByClass(GDShaderStatementBody.class);
   }
 
 }

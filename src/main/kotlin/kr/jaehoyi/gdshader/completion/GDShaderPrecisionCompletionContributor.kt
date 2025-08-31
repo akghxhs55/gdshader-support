@@ -1,0 +1,113 @@
+package kr.jaehoyi.gdshader.completion
+
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.util.ProcessingContext
+import kr.jaehoyi.gdshader.psi.GDShaderBlock
+import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderForStatement
+import kr.jaehoyi.gdshader.psi.GDShaderParameter
+import kr.jaehoyi.gdshader.psi.GDShaderStructMember
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
+import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
+
+class GDShaderPrecisionCompletionContributor : CompletionContributor() {
+    private val precisionProvider = object : CompletionProvider<CompletionParameters>() {
+        override fun addCompletions(
+            parameters: CompletionParameters,
+            context: ProcessingContext,
+            result: CompletionResultSet
+        ) {
+            val precisions = listOf("lowp", "mediump", "highp")
+
+            result.addAllElements(precisions.map {
+                LookupElementBuilder.create(it)
+                    .withTypeText("Keyword")
+                    .withBoldness(true)
+            })
+        }
+    }
+    
+    init {
+        // Uniform Declaration
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .inside(GDShaderUniformDeclaration::class.java)
+                .afterLeaf(psiElement(GDShaderTypes.UNIFORM)),
+            precisionProvider
+        )
+
+        // Constant Declaration
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .inside(GDShaderConstantDeclaration::class.java)
+                .afterLeaf(psiElement(GDShaderTypes.CONST)),
+            precisionProvider
+        )
+
+        // Varying Declaration
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .inside(GDShaderVaryingDeclaration::class.java)
+                .afterLeaf(PlatformPatterns.or(
+                    psiElement(GDShaderTypes.VARYING),
+                    psiElement(GDShaderTypes.INTERPOLATION_FLAT),
+                    psiElement(GDShaderTypes.INTERPOLATION_SMOOTH)
+                )),
+            precisionProvider
+        )
+
+        // Local Variable Declaration
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .withParent(GDShaderBlock::class.java),
+            precisionProvider
+        )
+        
+        // Function Parameter
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .inside(GDShaderParameter::class.java)
+                .and(
+                    PlatformPatterns.or(
+                        psiElement().afterLeaf(psiElement(GDShaderTypes.PARENTHESIS_OPEN)),
+                        psiElement().afterLeaf(psiElement(GDShaderTypes.COMMA)),
+                        psiElement().afterLeaf(psiElement(GDShaderTypes.CONST)),
+                        psiElement().afterLeaf(psiElement(GDShaderTypes.ARG_IN)),
+                        psiElement().afterLeaf(psiElement(GDShaderTypes.ARG_OUT)),
+                        psiElement().afterLeaf(psiElement(GDShaderTypes.ARG_INOUT))
+                    )
+                ),
+            precisionProvider
+        )
+
+        // Struct Member
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .inside(GDShaderStructMember::class.java),
+            precisionProvider
+        )
+
+        // For statement initializer
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .inside(GDShaderForStatement::class.java)
+                .afterLeaf(psiElement(GDShaderTypes.PARENTHESIS_OPEN)),
+            precisionProvider
+        )
+    }
+}

@@ -454,15 +454,16 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   public static boolean do_while_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "do_while_statement")) return false;
     if (!nextTokenIs(b, CF_DO)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, DO_WHILE_STATEMENT, null);
     r = consumeToken(b, CF_DO);
-    r = r && statement_body(b, l + 1);
-    r = r && consumeTokens(b, 0, CF_WHILE, PARENTHESIS_OPEN);
-    r = r && expression(b, l + 1);
-    r = r && consumeTokens(b, 0, PARENTHESIS_CLOSE, SEMICOLON);
-    exit_section_(b, m, DO_WHILE_STATEMENT, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, statement_body(b, l + 1));
+    r = p && report_error_(b, consumeTokens(b, -1, CF_WHILE, PARENTHESIS_OPEN)) && r;
+    r = p && report_error_(b, expression(b, l + 1)) && r;
+    r = p && report_error_(b, consumeTokens(b, -1, PARENTHESIS_CLOSE, SEMICOLON)) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -567,52 +568,44 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_FOR PARENTHESIS_OPEN (expression | for_variable_declaration) SEMICOLON expression SEMICOLON expression PARENTHESIS_CLOSE statement_body
+  // CF_FOR PARENTHESIS_OPEN (expression SEMICOLON | local_variable_declaration) expression SEMICOLON expression PARENTHESIS_CLOSE statement_body
   public static boolean for_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_statement")) return false;
     if (!nextTokenIs(b, CF_FOR)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, CF_FOR, PARENTHESIS_OPEN);
-    r = r && for_statement_2(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && statement_body(b, l + 1);
-    exit_section_(b, m, FOR_STATEMENT, r);
-    return r;
-  }
-
-  // expression | for_variable_declaration
-  private static boolean for_statement_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_statement_2")) return false;
-    boolean r;
-    r = expression(b, l + 1);
-    if (!r) r = for_variable_declaration(b, l + 1);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // precision? type variable_declarator_list
-  public static boolean for_variable_declaration(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_variable_declaration")) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, FOR_VARIABLE_DECLARATION, "<for variable declaration>");
-    r = for_variable_declaration_0(b, l + 1);
-    r = r && type(b, l + 1);
-    p = r; // pin = 2
-    r = r && variable_declarator_list(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, FOR_STATEMENT, null);
+    r = consumeTokens(b, 1, CF_FOR, PARENTHESIS_OPEN);
+    p = r; // pin = 1
+    r = r && report_error_(b, for_statement_2(b, l + 1));
+    r = p && report_error_(b, expression(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, SEMICOLON)) && r;
+    r = p && report_error_(b, expression(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, PARENTHESIS_CLOSE)) && r;
+    r = p && statement_body(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // precision?
-  private static boolean for_variable_declaration_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_variable_declaration_0")) return false;
-    precision(b, l + 1);
-    return true;
+  // expression SEMICOLON | local_variable_declaration
+  private static boolean for_statement_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_statement_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = for_statement_2_0(b, l + 1);
+    if (!r) r = local_variable_declaration(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // expression SEMICOLON
+  private static boolean for_statement_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_statement_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = expression(b, l + 1);
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -839,15 +832,16 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   public static boolean if_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "if_statement")) return false;
     if (!nextTokenIs(b, CF_IF)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, CF_IF, PARENTHESIS_OPEN);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && statement_body(b, l + 1);
-    r = r && if_statement_5(b, l + 1);
-    exit_section_(b, m, IF_STATEMENT, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, IF_STATEMENT, null);
+    r = consumeTokens(b, 1, CF_IF, PARENTHESIS_OPEN);
+    p = r; // pin = 1
+    r = r && report_error_(b, expression(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, PARENTHESIS_CLOSE)) && r;
+    r = p && report_error_(b, statement_body(b, l + 1)) && r;
+    r = p && if_statement_5(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // (CF_ELSE (if_statement | statement_body))?
@@ -1161,53 +1155,31 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT)? type parameter_name
+  // parameter_qualifier? precision? type parameter_name
   public static boolean parameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, PARAMETER, "<parameter>");
     r = parameter_0(b, l + 1);
+    r = r && parameter_1(b, l + 1);
     r = r && type(b, l + 1);
+    p = r; // pin = 3
     r = r && parameter_name(b, l + 1);
-    exit_section_(b, l, m, r, false, GDShaderParser::parameter_recover);
-    return r;
+    exit_section_(b, l, m, r, p, GDShaderParser::parameter_recover);
+    return r || p;
   }
 
-  // (CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT)?
+  // parameter_qualifier?
   private static boolean parameter_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_0")) return false;
-    parameter_0_0(b, l + 1);
+    parameter_qualifier(b, l + 1);
     return true;
   }
 
-  // CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT
-  private static boolean parameter_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, CONST);
-    if (!r) r = parameter_0_0_1(b, l + 1);
-    if (!r) r = consumeToken(b, ARG_OUT);
-    if (!r) r = consumeToken(b, ARG_INOUT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // CONST? ARG_IN
-  private static boolean parameter_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_0_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = parameter_0_0_1_0(b, l + 1);
-    r = r && consumeToken(b, ARG_IN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // CONST?
-  private static boolean parameter_0_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_0_0_1_0")) return false;
-    consumeToken(b, CONST);
+  // precision?
+  private static boolean parameter_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_1")) return false;
+    precision(b, l + 1);
     return true;
   }
 
@@ -1266,6 +1238,38 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, PARAMETER_NAME, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT
+  public static boolean parameter_qualifier(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_qualifier")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, PARAMETER_QUALIFIER, "<parameter qualifier>");
+    r = consumeToken(b, CONST);
+    if (!r) r = parameter_qualifier_1(b, l + 1);
+    if (!r) r = consumeToken(b, ARG_OUT);
+    if (!r) r = consumeToken(b, ARG_INOUT);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // CONST? ARG_IN
+  private static boolean parameter_qualifier_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_qualifier_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parameter_qualifier_1_0(b, l + 1);
+    r = r && consumeToken(b, ARG_IN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // CONST?
+  private static boolean parameter_qualifier_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_qualifier_1_0")) return false;
+    consumeToken(b, CONST);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1857,30 +1861,20 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // STRUCT struct_name CURLY_BRACKET_OPEN struct_member* CURLY_BRACKET_CLOSE SEMICOLON
+  // STRUCT struct_name CURLY_BRACKET_OPEN struct_member_list CURLY_BRACKET_CLOSE SEMICOLON
   public static boolean struct_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_declaration")) return false;
     if (!nextTokenIs(b, STRUCT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, STRUCT_DECLARATION, null);
     r = consumeToken(b, STRUCT);
-    r = r && struct_name(b, l + 1);
-    r = r && consumeToken(b, CURLY_BRACKET_OPEN);
-    r = r && struct_declaration_3(b, l + 1);
-    r = r && consumeTokens(b, 0, CURLY_BRACKET_CLOSE, SEMICOLON);
-    exit_section_(b, m, STRUCT_DECLARATION, r);
-    return r;
-  }
-
-  // struct_member*
-  private static boolean struct_declaration_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "struct_declaration_3")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!struct_member(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "struct_declaration_3", c)) break;
-    }
-    return true;
+    p = r; // pin = 1
+    r = r && report_error_(b, struct_name(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, CURLY_BRACKET_OPEN)) && r;
+    r = p && report_error_(b, struct_member_list(b, l + 1)) && r;
+    r = p && report_error_(b, consumeTokens(b, -1, CURLY_BRACKET_CLOSE, SEMICOLON)) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1924,6 +1918,31 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // struct_member*
+  static boolean struct_member_list(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_list")) return false;
+    Marker m = enter_section_(b, l, _NONE_);
+    while (true) {
+      int c = current_position_(b);
+      if (!struct_member(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "struct_member_list", c)) break;
+    }
+    exit_section_(b, l, m, true, false, GDShaderParser::struct_member_list_recover);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // !(CURLY_BRACKET_CLOSE)
+  static boolean struct_member_list_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_list_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, CURLY_BRACKET_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // IDENTIFIER
   public static boolean struct_member_name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member_name")) return false;
@@ -1952,15 +1971,16 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   public static boolean switch_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switch_statement")) return false;
     if (!nextTokenIs(b, CF_SWITCH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, CF_SWITCH, PARENTHESIS_OPEN);
-    r = r && expression(b, l + 1);
-    r = r && consumeTokens(b, 0, PARENTHESIS_CLOSE, CURLY_BRACKET_OPEN);
-    r = r && switch_statement_5(b, l + 1);
-    r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
-    exit_section_(b, m, SWITCH_STATEMENT, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SWITCH_STATEMENT, null);
+    r = consumeTokens(b, 1, CF_SWITCH, PARENTHESIS_OPEN);
+    p = r; // pin = 1
+    r = r && report_error_(b, expression(b, l + 1));
+    r = p && report_error_(b, consumeTokens(b, -1, PARENTHESIS_CLOSE, CURLY_BRACKET_OPEN)) && r;
+    r = p && report_error_(b, switch_statement_5(b, l + 1)) && r;
+    r = p && consumeToken(b, CURLY_BRACKET_CLOSE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // case_clause*
@@ -2409,14 +2429,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   public static boolean while_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "while_statement")) return false;
     if (!nextTokenIs(b, CF_WHILE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, CF_WHILE, PARENTHESIS_OPEN);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    r = r && statement_body(b, l + 1);
-    exit_section_(b, m, WHILE_STATEMENT, r);
-    return r;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, WHILE_STATEMENT, null);
+    r = consumeTokens(b, 1, CF_WHILE, PARENTHESIS_OPEN);
+    p = r; // pin = 1
+    r = r && report_error_(b, expression(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, PARENTHESIS_CLOSE)) && r;
+    r = p && statement_body(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
 }

@@ -27,7 +27,6 @@ public interface GDShaderTypes {
   IElementType EXPRESSION = new GDShaderElementType("EXPRESSION");
   IElementType EXPRESSION_STATEMENT = new GDShaderElementType("EXPRESSION_STATEMENT");
   IElementType FOR_STATEMENT = new GDShaderElementType("FOR_STATEMENT");
-  IElementType FOR_VARIABLE_DECLARATION = new GDShaderElementType("FOR_VARIABLE_DECLARATION");
   IElementType FUNCTION_CALL = new GDShaderElementType("FUNCTION_CALL");
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
   IElementType FUNCTION_NAME = new GDShaderElementType("FUNCTION_NAME");
@@ -49,6 +48,7 @@ public interface GDShaderTypes {
   IElementType PARAMETER = new GDShaderElementType("PARAMETER");
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
   IElementType PARAMETER_NAME = new GDShaderElementType("PARAMETER_NAME");
+  IElementType PARAMETER_QUALIFIER = new GDShaderElementType("PARAMETER_QUALIFIER");
   IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
   IElementType PRECISION = new GDShaderElementType("PRECISION");
   IElementType PREPROCESSOR_DIRECTIVE = new GDShaderElementType("PREPROCESSOR_DIRECTIVE");
@@ -295,9 +295,6 @@ public interface GDShaderTypes {
       else if (type == FOR_STATEMENT) {
         return new GDShaderForStatementImpl(node);
       }
-      else if (type == FOR_VARIABLE_DECLARATION) {
-        return new GDShaderForVariableDeclarationImpl(node);
-      }
       else if (type == FUNCTION_CALL) {
         return new GDShaderFunctionCallImpl(node);
       }
@@ -360,6 +357,9 @@ public interface GDShaderTypes {
       }
       else if (type == PARAMETER_NAME) {
         return new GDShaderParameterNameImpl(node);
+      }
+      else if (type == PARAMETER_QUALIFIER) {
+        return new GDShaderParameterQualifierImpl(node);
       }
       else if (type == POSTFIX_EXPR) {
         return new GDShaderPostfixExprImpl(node);

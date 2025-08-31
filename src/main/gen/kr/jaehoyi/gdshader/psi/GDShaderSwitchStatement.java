@@ -10,7 +10,7 @@ public interface GDShaderSwitchStatement extends PsiElement {
   @NotNull
   List<GDShaderCaseClause> getCaseClauseList();
 
-  @NotNull
+  @Nullable
   GDShaderExpression getExpression();
 
 }

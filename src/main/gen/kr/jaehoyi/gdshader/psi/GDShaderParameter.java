@@ -7,8 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderParameter extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderParameterName getParameterName();
+
+  @Nullable
+  GDShaderParameterQualifier getParameterQualifier();
+
+  @Nullable
+  GDShaderPrecision getPrecision();
 
   @NotNull
   GDShaderType getType();

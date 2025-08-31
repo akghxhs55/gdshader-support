@@ -28,15 +28,15 @@ public class GDShaderWhileStatementImpl extends ASTWrapperPsiElement implements 
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderExpression getExpression() {
-    return findNotNullChildByClass(GDShaderExpression.class);
+    return findChildByClass(GDShaderExpression.class);
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderStatementBody getStatementBody() {
-    return findNotNullChildByClass(GDShaderStatementBody.class);
+    return findChildByClass(GDShaderStatementBody.class);
   }
 
 }

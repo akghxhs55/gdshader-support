@@ -28,9 +28,21 @@ public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDSha
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderParameterName getParameterName() {
-    return findNotNullChildByClass(GDShaderParameterName.class);
+    return findChildByClass(GDShaderParameterName.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderParameterQualifier getParameterQualifier() {
+    return findChildByClass(GDShaderParameterQualifier.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderPrecision getPrecision() {
+    return findChildByClass(GDShaderPrecision.class);
   }
 
   @Override

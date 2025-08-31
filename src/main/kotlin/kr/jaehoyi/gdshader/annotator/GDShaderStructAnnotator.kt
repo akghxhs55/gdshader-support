@@ -14,7 +14,7 @@ class GDShaderStructAnnotator : Annotator {
     }
     
     private fun annotateStructDeclaration(element: GDShaderStructDeclaration, holder: AnnotationHolder) {
-        val structName = element.structName
+        val structName = element.structName ?: return
         holder.newSilentAnnotation(com.intellij.lang.annotation.HighlightSeverity.INFORMATION)
             .range(structName)
             .textAttributes(kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter.STRUCT)

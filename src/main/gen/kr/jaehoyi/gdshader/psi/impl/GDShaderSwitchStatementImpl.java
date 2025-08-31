@@ -34,9 +34,9 @@ public class GDShaderSwitchStatementImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderExpression getExpression() {
-    return findNotNullChildByClass(GDShaderExpression.class);
+    return findChildByClass(GDShaderExpression.class);
   }
 
 }

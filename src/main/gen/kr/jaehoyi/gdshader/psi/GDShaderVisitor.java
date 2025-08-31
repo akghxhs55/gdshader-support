@@ -83,10 +83,6 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitForVariableDeclaration(@NotNull GDShaderForVariableDeclaration o) {
-    visitPsiElement(o);
-  }
-
   public void visitFunctionCall(@NotNull GDShaderFunctionCall o) {
     visitPsiElement(o);
   }
@@ -168,6 +164,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitParameterName(@NotNull GDShaderParameterName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitParameterQualifier(@NotNull GDShaderParameterQualifier o) {
     visitPsiElement(o);
   }
 

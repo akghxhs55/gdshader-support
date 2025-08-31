@@ -11,7 +11,9 @@ import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.GDShaderUtil
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderFile
+import kr.jaehoyi.gdshader.psi.GDShaderForStatement
 import kr.jaehoyi.gdshader.psi.GDShaderType
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderTypeCompletionContributor : CompletionContributor() {
     private val typeProvider = object : CompletionProvider<CompletionParameters>() {
@@ -31,6 +33,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
     }
     
     init {
+        // Various contexts
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
@@ -38,6 +41,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
             typeProvider
         )
         
+        // Global context
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
@@ -45,10 +49,20 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
             typeProvider
         )
 
+        // Local variable declaration
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement()
-                .inside(GDShaderBlock::class.java),
+                .withParent(GDShaderBlock::class.java),
+            typeProvider
+        )
+        
+        // For statement initializer
+        extend(
+            CompletionType.BASIC,
+            PlatformPatterns.psiElement()
+                .inside(GDShaderForStatement::class.java)
+                .afterLeaf(PlatformPatterns.psiElement(GDShaderTypes.PARENTHESIS_OPEN)),
             typeProvider
         )
     }

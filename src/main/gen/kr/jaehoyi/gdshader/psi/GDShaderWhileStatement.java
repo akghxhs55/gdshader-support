@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderWhileStatement extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderExpression getExpression();
 
-  @NotNull
+  @Nullable
   GDShaderStatementBody getStatementBody();
 
 }
