@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.GDShaderUtil
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
@@ -36,7 +36,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
         // Various contexts
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement()
+            psiElement()
                 .inside(GDShaderType::class.java),
             typeProvider
         )
@@ -44,7 +44,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
         // Global context
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement()
+            psiElement()
                 .withParent(GDShaderFile::class.java),
             typeProvider
         )
@@ -52,7 +52,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
         // Local variable declaration
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement()
+            psiElement()
                 .withParent(GDShaderBlock::class.java),
             typeProvider
         )
@@ -60,9 +60,9 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
         // For statement initializer
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement()
+            psiElement()
                 .inside(GDShaderForStatement::class.java)
-                .afterLeaf(PlatformPatterns.psiElement(GDShaderTypes.PARENTHESIS_OPEN)),
+                .afterLeaf(psiElement(GDShaderTypes.PARENTHESIS_OPEN)),
             typeProvider
         )
     }

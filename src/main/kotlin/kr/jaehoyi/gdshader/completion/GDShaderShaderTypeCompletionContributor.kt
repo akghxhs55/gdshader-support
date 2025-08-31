@@ -6,10 +6,9 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.GDShaderUtil
-import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeName
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
@@ -17,7 +16,7 @@ class GDShaderShaderTypeCompletionContributor : CompletionContributor() {
     init {
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement(GDShaderTypes.IDENTIFIER)
+            psiElement(GDShaderTypes.IDENTIFIER)
                 .withParent(GDShaderShaderTypeName::class.java),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
