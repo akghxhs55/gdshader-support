@@ -185,9 +185,11 @@ control_statement ::= if_statement
 					| do_while_statement
 					| switch_statement
 					
-if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | statement_body))? {
+if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body else_clause? {
 	pin=1
 }
+
+else_clause ::= CF_ELSE (if_statement | statement_body)
 
 for_statement ::= CF_FOR PARENTHESIS_OPEN (expression SEMICOLON | local_variable_declaration) expression SEMICOLON expression PARENTHESIS_CLOSE statement_body {
 	pin=1
@@ -201,9 +203,14 @@ while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE state
 	pin=1
 }
 
-switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE {
+switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE switch_block {
 	pin=1
 }
+switch_block ::= CURLY_BRACKET_OPEN case_body CURLY_BRACKET_CLOSE
+private case_body ::= case_clause* {
+	recoverWhile=case_body_recover
+}
+private case_body_recover ::= !(CURLY_BRACKET_CLOSE)
 case_clause ::= CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body* {
 	pin=1
 }

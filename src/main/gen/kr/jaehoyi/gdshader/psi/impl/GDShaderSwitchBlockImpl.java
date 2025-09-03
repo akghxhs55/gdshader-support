@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderIfStatementImpl extends ASTWrapperPsiElement implements GDShaderIfStatement {
+public class GDShaderSwitchBlockImpl extends ASTWrapperPsiElement implements GDShaderSwitchBlock {
 
-  public GDShaderIfStatementImpl(@NotNull ASTNode node) {
+  public GDShaderSwitchBlockImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitIfStatement(this);
+    visitor.visitSwitchBlock(this);
   }
 
   @Override
@@ -28,21 +28,9 @@ public class GDShaderIfStatementImpl extends ASTWrapperPsiElement implements GDS
   }
 
   @Override
-  @Nullable
-  public GDShaderElseClause getElseClause() {
-    return findChildByClass(GDShaderElseClause.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderExpression getExpression() {
-    return findChildByClass(GDShaderExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderStatementBody getStatementBody() {
-    return findChildByClass(GDShaderStatementBody.class);
+  @NotNull
+  public List<GDShaderCaseClause> getCaseClauseList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderCaseClause.class);
   }
 
 }

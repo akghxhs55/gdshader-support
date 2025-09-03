@@ -317,6 +317,31 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // case_clause*
+  static boolean case_body(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "case_body")) return false;
+    Marker m = enter_section_(b, l, _NONE_);
+    while (true) {
+      int c = current_position_(b);
+      if (!case_clause(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "case_body", c)) break;
+    }
+    exit_section_(b, l, m, true, false, GDShaderParser::case_body_recover);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // !(CURLY_BRACKET_CLOSE)
+  static boolean case_body_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "case_body_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, CURLY_BRACKET_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body*
   public static boolean case_clause(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause")) return false;
@@ -464,6 +489,28 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeTokens(b, -1, PARENTHESIS_CLOSE, SEMICOLON)) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // CF_ELSE (if_statement | statement_body)
+  public static boolean else_clause(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "else_clause")) return false;
+    if (!nextTokenIs(b, CF_ELSE)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CF_ELSE);
+    r = r && else_clause_1(b, l + 1);
+    exit_section_(b, m, ELSE_CLAUSE, r);
+    return r;
+  }
+
+  // if_statement | statement_body
+  private static boolean else_clause_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "else_clause_1")) return false;
+    boolean r;
+    r = if_statement(b, l + 1);
+    if (!r) r = statement_body(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */
@@ -828,7 +875,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body (CF_ELSE (if_statement | statement_body))?
+  // CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_body else_clause?
   public static boolean if_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "if_statement")) return false;
     if (!nextTokenIs(b, CF_IF)) return false;
@@ -844,31 +891,11 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (CF_ELSE (if_statement | statement_body))?
+  // else_clause?
   private static boolean if_statement_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "if_statement_5")) return false;
-    if_statement_5_0(b, l + 1);
+    else_clause(b, l + 1);
     return true;
-  }
-
-  // CF_ELSE (if_statement | statement_body)
-  private static boolean if_statement_5_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "if_statement_5_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, CF_ELSE);
-    r = r && if_statement_5_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // if_statement | statement_body
-  private static boolean if_statement_5_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "if_statement_5_0_1")) return false;
-    boolean r;
-    r = if_statement(b, l + 1);
-    if (!r) r = statement_body(b, l + 1);
-    return r;
   }
 
   /* ********************************************************** */
@@ -1967,7 +1994,21 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE CURLY_BRACKET_OPEN case_clause* CURLY_BRACKET_CLOSE
+  // CURLY_BRACKET_OPEN case_body CURLY_BRACKET_CLOSE
+  public static boolean switch_block(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switch_block")) return false;
+    if (!nextTokenIs(b, CURLY_BRACKET_OPEN)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CURLY_BRACKET_OPEN);
+    r = r && case_body(b, l + 1);
+    r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
+    exit_section_(b, m, SWITCH_BLOCK, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE switch_block
   public static boolean switch_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switch_statement")) return false;
     if (!nextTokenIs(b, CF_SWITCH)) return false;
@@ -1976,22 +2017,10 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeTokens(b, 1, CF_SWITCH, PARENTHESIS_OPEN);
     p = r; // pin = 1
     r = r && report_error_(b, expression(b, l + 1));
-    r = p && report_error_(b, consumeTokens(b, -1, PARENTHESIS_CLOSE, CURLY_BRACKET_OPEN)) && r;
-    r = p && report_error_(b, switch_statement_5(b, l + 1)) && r;
-    r = p && consumeToken(b, CURLY_BRACKET_CLOSE) && r;
+    r = p && report_error_(b, consumeToken(b, PARENTHESIS_CLOSE)) && r;
+    r = p && switch_block(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // case_clause*
-  private static boolean switch_statement_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switch_statement_5")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!case_clause(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "switch_statement_5", c)) break;
-    }
-    return true;
   }
 
   /* ********************************************************** */

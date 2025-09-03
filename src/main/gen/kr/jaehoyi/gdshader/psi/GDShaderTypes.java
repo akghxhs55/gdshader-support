@@ -22,6 +22,7 @@ public interface GDShaderTypes {
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
   IElementType DO_WHILE_STATEMENT = new GDShaderElementType("DO_WHILE_STATEMENT");
+  IElementType ELSE_CLAUSE = new GDShaderElementType("ELSE_CLAUSE");
   IElementType ENUM_HINT = new GDShaderElementType("ENUM_HINT");
   IElementType EQUALITY_EXPR = new GDShaderElementType("EQUALITY_EXPR");
   IElementType EXPRESSION = new GDShaderElementType("EXPRESSION");
@@ -73,6 +74,7 @@ public interface GDShaderTypes {
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
   IElementType STRUCT_MEMBER_NAME = new GDShaderElementType("STRUCT_MEMBER_NAME");
   IElementType STRUCT_NAME = new GDShaderElementType("STRUCT_NAME");
+  IElementType SWITCH_BLOCK = new GDShaderElementType("SWITCH_BLOCK");
   IElementType SWITCH_STATEMENT = new GDShaderElementType("SWITCH_STATEMENT");
   IElementType TOP_LEVEL_DECLARATION = new GDShaderElementType("TOP_LEVEL_DECLARATION");
   IElementType TYPE = new GDShaderElementType("TYPE");
@@ -280,6 +282,9 @@ public interface GDShaderTypes {
       else if (type == DO_WHILE_STATEMENT) {
         return new GDShaderDoWhileStatementImpl(node);
       }
+      else if (type == ELSE_CLAUSE) {
+        return new GDShaderElseClauseImpl(node);
+      }
       else if (type == ENUM_HINT) {
         return new GDShaderEnumHintImpl(node);
       }
@@ -432,6 +437,9 @@ public interface GDShaderTypes {
       }
       else if (type == STRUCT_NAME) {
         return new GDShaderStructNameImpl(node);
+      }
+      else if (type == SWITCH_BLOCK) {
+        return new GDShaderSwitchBlockImpl(node);
       }
       else if (type == SWITCH_STATEMENT) {
         return new GDShaderSwitchStatementImpl(node);

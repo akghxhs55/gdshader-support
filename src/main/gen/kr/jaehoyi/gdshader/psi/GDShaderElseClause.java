@@ -5,13 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderIfStatement extends PsiElement {
+public interface GDShaderElseClause extends PsiElement {
 
   @Nullable
-  GDShaderElseClause getElseClause();
-
-  @Nullable
-  GDShaderExpression getExpression();
+  GDShaderIfStatement getIfStatement();
 
   @Nullable
   GDShaderStatementBody getStatementBody();

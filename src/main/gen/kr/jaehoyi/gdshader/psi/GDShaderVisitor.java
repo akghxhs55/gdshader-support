@@ -63,6 +63,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitElseClause(@NotNull GDShaderElseClause o) {
+    visitPsiElement(o);
+  }
+
   public void visitEnumHint(@NotNull GDShaderEnumHint o) {
     visitPsiElement(o);
   }
@@ -264,6 +268,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitStructName(@NotNull GDShaderStructName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSwitchBlock(@NotNull GDShaderSwitchBlock o) {
     visitPsiElement(o);
   }
 

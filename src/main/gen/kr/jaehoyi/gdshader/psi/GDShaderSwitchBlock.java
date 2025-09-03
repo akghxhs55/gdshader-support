@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderSwitchStatement extends PsiElement {
+public interface GDShaderSwitchBlock extends PsiElement {
 
-  @Nullable
-  GDShaderExpression getExpression();
-
-  @Nullable
-  GDShaderSwitchBlock getSwitchBlock();
+  @NotNull
+  List<GDShaderCaseClause> getCaseClauseList();
 
 }

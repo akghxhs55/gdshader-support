@@ -28,15 +28,15 @@ public class GDShaderSwitchStatementImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
-  @NotNull
-  public List<GDShaderCaseClause> getCaseClauseList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderCaseClause.class);
+  @Nullable
+  public GDShaderExpression getExpression() {
+    return findChildByClass(GDShaderExpression.class);
   }
 
   @Override
   @Nullable
-  public GDShaderExpression getExpression() {
-    return findChildByClass(GDShaderExpression.class);
+  public GDShaderSwitchBlock getSwitchBlock() {
+    return findChildByClass(GDShaderSwitchBlock.class);
   }
 
 }
