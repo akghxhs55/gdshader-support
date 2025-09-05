@@ -12,9 +12,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
+import kr.jaehoyi.gdshader.psi.GDShaderCaseClause
 import kr.jaehoyi.gdshader.psi.GDShaderControlStatement
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
 import kr.jaehoyi.gdshader.psi.GDShaderStatementBody
+import kr.jaehoyi.gdshader.psi.GDShaderSwitchBlock
 
 class GDShaderControlFlowCompletionContributor : CompletionContributor() {
     init {
@@ -81,6 +83,35 @@ class GDShaderControlFlowCompletionContributor : CompletionContributor() {
                     result.addElement(LookupElementBuilder.create("else")
                         .withBoldness(true)
                     )
+                }
+            }
+        )
+        
+        // "case", "default" keyword
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .with(
+                    object : PatternCondition<PsiElement>("afterCaseClause" ) {
+                        override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
+                            val previousSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(element)
+                            return previousSibling == null || previousSibling is GDShaderCaseClause
+                        }
+                    }
+                )
+                .inside(GDShaderSwitchBlock::class.java),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val keywords = listOf("case", "default")
+                    
+                    result.addAllElements(keywords.map { 
+                        LookupElementBuilder.create(it)
+                            .withBoldness(true)
+                    })
                 }
             }
         )
