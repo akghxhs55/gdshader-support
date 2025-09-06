@@ -29,7 +29,6 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
 
             result.addAllElements(precisions.map {
                 LookupElementBuilder.create(it)
-                    .withTypeText("Keyword")
                     .withBoldness(true)
             })
         }

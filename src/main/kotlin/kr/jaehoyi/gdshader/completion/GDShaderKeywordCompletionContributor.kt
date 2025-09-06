@@ -35,7 +35,6 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
                     
                     result.addAllElements(globalKeywords.map { 
                         LookupElementBuilder.create(it)
-                            .withTypeText("Keyword")
                             .withBoldness(true)
                     })
                 }
@@ -58,7 +57,6 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
                     
                     result.addAllElements(qualifiers.map { 
                         LookupElementBuilder.create(it)
-                            .withTypeText("Keyword")
                             .withBoldness(true)
                     })
                 }
@@ -88,7 +86,6 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
                     if (previousLeaf != null && previousLeaf.node.elementType == GDShaderTypes.CONST) {
                         result.addElement(
                             LookupElementBuilder.create("in")
-                                .withTypeText("Keyword")
                                 .withBoldness(true)
                         )
                     }
@@ -96,7 +93,6 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
                         val paramQualifiers = listOf("const", "in", "out", "inout")
                         result.addAllElements(paramQualifiers.map {
                             LookupElementBuilder.create(it)
-                                .withTypeText("Keyword")
                                 .withBoldness(true)
                         })
                     }
