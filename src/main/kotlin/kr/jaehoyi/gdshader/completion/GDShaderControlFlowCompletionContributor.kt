@@ -14,7 +14,6 @@ import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderCaseClause
 import kr.jaehoyi.gdshader.psi.GDShaderControlStatement
-import kr.jaehoyi.gdshader.psi.GDShaderExpression
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
 import kr.jaehoyi.gdshader.psi.GDShaderStatementBody
 import kr.jaehoyi.gdshader.psi.GDShaderSwitchBlock
