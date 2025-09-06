@@ -191,7 +191,8 @@ if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_b
 
 else_clause ::= CF_ELSE (if_statement | statement_body)
 
-for_statement ::= CF_FOR PARENTHESIS_OPEN (expression SEMICOLON | local_variable_declaration) expression SEMICOLON expression PARENTHESIS_CLOSE statement_body {
+for_statement ::= CF_FOR PARENTHESIS_OPEN (expression_statement | local_variable_declaration | SEMICOLON)
+ expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body {
 	pin=1
 }
 

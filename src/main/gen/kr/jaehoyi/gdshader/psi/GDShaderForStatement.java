@@ -11,6 +11,9 @@ public interface GDShaderForStatement extends PsiElement {
   List<GDShaderExpression> getExpressionList();
 
   @Nullable
+  GDShaderExpressionStatement getExpressionStatement();
+
+  @Nullable
   GDShaderLocalVariableDeclaration getLocalVariableDeclaration();
 
   @Nullable
