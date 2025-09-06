@@ -19,7 +19,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderPrecisionCompletionContributor : CompletionContributor() {
-    private val precisionProvider = object : CompletionProvider<CompletionParameters>() {
+    private val provider = object : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
             context: ProcessingContext,
@@ -42,7 +42,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
             psiElement()
                 .inside(GDShaderUniformDeclaration::class.java)
                 .afterLeaf(psiElement(GDShaderTypes.UNIFORM)),
-            precisionProvider
+            provider
         )
 
         // Constant Declaration
@@ -51,7 +51,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
             psiElement()
                 .inside(GDShaderConstantDeclaration::class.java)
                 .afterLeaf(psiElement(GDShaderTypes.CONST)),
-            precisionProvider
+            provider
         )
 
         // Varying Declaration
@@ -64,7 +64,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
                     psiElement(GDShaderTypes.INTERPOLATION_FLAT),
                     psiElement(GDShaderTypes.INTERPOLATION_SMOOTH)
                 )),
-            precisionProvider
+            provider
         )
 
         // Local Variable Declaration
@@ -72,7 +72,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             psiElement()
                 .withParent(GDShaderBlock::class.java),
-            precisionProvider
+            provider
         )
         
         // Function Parameter
@@ -90,7 +90,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
                         psiElement().afterLeaf(psiElement(GDShaderTypes.ARG_INOUT))
                     )
                 ),
-            precisionProvider
+            provider
         )
 
         // Struct Member
@@ -98,7 +98,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             psiElement()
                 .inside(GDShaderStructMember::class.java),
-            precisionProvider
+            provider
         )
 
         // For statement initializer
@@ -107,7 +107,7 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
             psiElement()
                 .inside(GDShaderForStatement::class.java)
                 .afterLeaf(psiElement(GDShaderTypes.PARENTHESIS_OPEN)),
-            precisionProvider
+            provider
         )
     }
 }
