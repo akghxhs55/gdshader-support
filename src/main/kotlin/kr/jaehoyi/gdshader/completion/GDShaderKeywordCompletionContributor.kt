@@ -100,10 +100,7 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
                     val previousLeaf = PsiTreeUtil.prevVisibleLeaf(parameters.position)
                     
                     if (previousLeaf != null && previousLeaf.node.elementType == GDShaderTypes.CONST) {
-                        result.addElement(
-                            LookupElementBuilder.create("in")
-                                .withBoldness(true)
-                        )
+                        result.addElement(LookupElementBuilder.create("in").withBoldness(true))
                     }
                     else {
                         val paramQualifiers = listOf("const", "in", "out", "inout")

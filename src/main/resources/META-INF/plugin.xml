@@ -55,7 +55,7 @@
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderRenderModeCompletionContributor" />
         <completion.contributor
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderUniformCompletionContributor" />
+            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderUniformHintCompletionContributor" />
         <completion.contributor
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderTypeCompletionContributor" />

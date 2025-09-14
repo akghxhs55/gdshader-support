@@ -15,7 +15,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderHintSection
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 
-class GDShaderUniformCompletionContributor : CompletionContributor() {
+class GDShaderUniformHintCompletionContributor : CompletionContributor() {
     init {
         extend(
             CompletionType.BASIC,
