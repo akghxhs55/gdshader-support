@@ -30,7 +30,7 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val globalKeywords = listOf(
-                        "shader_type", "render_mode", "uniform_group", "uniform", "const", "varying", "struct",
+                        "shader_type", "render_mode", "group_uniforms", "uniform", "const", "varying", "struct",
                         "global", "instance"
                     )
                     
