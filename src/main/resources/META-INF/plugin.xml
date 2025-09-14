@@ -36,6 +36,9 @@
             implementationClass="kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighterFactory" />
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.highlighter.GDShaderColorSettingsPage" />
+        <lang.braceMatcher
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.GDShaderBraceMatcher" />
         
         <!-- Annotators -->
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderFunctionAnnotator" />

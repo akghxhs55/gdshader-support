@@ -11,38 +11,20 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderForStatementImpl extends ASTWrapperPsiElement implements GDShaderForStatement {
+public class GDShaderCommentsImpl extends ASTWrapperPsiElement implements GDShaderComments {
 
-  public GDShaderForStatementImpl(@NotNull ASTNode node) {
+  public GDShaderCommentsImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitForStatement(this);
+    visitor.visitComments(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GDShaderVisitor) accept((GDShaderVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public List<GDShaderExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderLocalVariableDeclaration getLocalVariableDeclaration() {
-    return findChildByClass(GDShaderLocalVariableDeclaration.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderStatementBody getStatementBody() {
-    return findChildByClass(GDShaderStatementBody.class);
   }
 
 }

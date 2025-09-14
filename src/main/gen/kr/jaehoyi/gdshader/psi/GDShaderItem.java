@@ -13,4 +13,7 @@ public interface GDShaderItem extends PsiElement {
   @Nullable
   GDShaderTopLevelDeclaration getTopLevelDeclaration();
 
+  @Nullable
+  GDShaderWhileStatement getWhileStatement();
+
 }

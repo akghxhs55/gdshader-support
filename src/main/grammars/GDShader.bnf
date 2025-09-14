@@ -19,9 +19,8 @@ gdShaderFile ::= item*
 
 item ::= top_level_declaration
 	   | SEMICOLON
-	   | LINE_COMMENT
-	   | BLOCK_COMMENT
 	   | preprocessor_directive
+	   | while_statement
 	   
 // Top Level Declarations
 top_level_declaration ::= shader_type_declaration
@@ -33,18 +32,11 @@ top_level_declaration ::= shader_type_declaration
 		    		    | varying_declaration
 		    		    | function_declaration
 		    		    | struct_declaration
-		    		    
-private top_level_recover ::= !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | CONST | VARYING
-							  | STRUCT | SEMICOLON | LINE_COMMENT | BLOCK_COMMENT | PP_DEFINE_LINE | PP_UNDEF_LINE
-						      | PP_IF_LINE | PP_ELSE_LINE | PP_ELIF_LINE | PP_ENDIF_LINE | PP_IFDEF_LINE
-						      | PP_IFNDEF_LINE | PP_ERROR_LINE | PP_INCLUDE_LINE | PP_PRAGMA_LINE | type
-						      | GLOBAL | INSTANCE)
 
 // Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
 	methods=[ getShaderType ]
 	pin=1
-	recoverWhile=top_level_recover
 }
 shader_type_name ::= IDENTIFIER
 
@@ -52,7 +44,6 @@ shader_type_name ::= IDENTIFIER
 render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON {
 	methods = [ getRenderModes ]
 	pin=1
-	recoverWhile=top_level_recover
 }
 render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
 render_mode_name ::= IDENTIFIER
@@ -68,9 +59,7 @@ uniform_group_name ::= IDENTIFIER
 
 // Uniform Declaration
 uniform_declaration ::= uniform_header precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON {
-	methods=[ getUniformHints ]
 	pin=1
-	recoverWhile=top_level_recover
 }
 uniform_header ::= (GLOBAL | INSTANCE) UNIFORM | UNIFORM { pin=1 }
 hint_section ::= COLON hint_list {
@@ -116,13 +105,11 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 // Constant Declaration
 constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON {
 	pin=1
-	recoverWhile=top_level_recover
 }
 
 // Varying Declaration
 varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON {
 	pin=1
-	recoverWhile=top_level_recover
 }
 
 // Local Variable Declaration
@@ -189,10 +176,11 @@ if_statement ::= CF_IF PARENTHESIS_OPEN expression PARENTHESIS_CLOSE statement_b
 	pin=1
 }
 
-else_clause ::= CF_ELSE (if_statement | statement_body)
+else_clause ::= CF_ELSE (if_statement | statement_body) {
+	pin=1
+}
 
-for_statement ::= CF_FOR PARENTHESIS_OPEN (expression_statement | local_variable_declaration | SEMICOLON)
- expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body {
+for_statement ::= CF_FOR PARENTHESIS_OPEN (expression? SEMICOLON | local_variable_declaration) expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body {
 	pin=1
 }
 
@@ -230,8 +218,6 @@ statement_body ::= block
 				 | expression_statement
 				 | constant_declaration
 				 | SEMICOLON
-				 | LINE_COMMENT
-				 | BLOCK_COMMENT
 				 | preprocessor_directive
 
 // Expressions
@@ -326,3 +312,6 @@ assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MU
 number ::= (OP_SUB)? FLOAT_CONSTANT
 		 | (OP_SUB)? INT_CONSTANT
 		 | UINT_CONSTANT
+		 
+comments ::= LINE_COMMENT
+		   | BLOCK_COMMENT

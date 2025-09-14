@@ -25,8 +25,4 @@ public interface GDShaderUniformDeclaration extends PsiElement {
   @Nullable
   GDShaderVariableName getVariableName();
 
-  //WARNING: getUniformHints(...) is skipped
-  //matching getUniformHints(GDShaderUniformDeclaration, ...)
-  //methods are not found in GDShaderPsiImplUtil
-
 }
