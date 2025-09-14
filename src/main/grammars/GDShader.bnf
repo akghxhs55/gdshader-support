@@ -18,9 +18,7 @@
 gdShaderFile ::= item*
 
 item ::= top_level_declaration
-	   | SEMICOLON
 	   | preprocessor_directive
-	   | while_statement
 	   
 // Top Level Declarations
 top_level_declaration ::= shader_type_declaration

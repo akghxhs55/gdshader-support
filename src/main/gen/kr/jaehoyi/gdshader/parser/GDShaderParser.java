@@ -998,17 +998,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // top_level_declaration
-  // 	   | SEMICOLON
   // 	   | preprocessor_directive
-  // 	   | while_statement
   public static boolean item(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ITEM, "<item>");
     r = top_level_declaration(b, l + 1);
-    if (!r) r = consumeToken(b, SEMICOLON);
     if (!r) r = preprocessor_directive(b, l + 1);
-    if (!r) r = while_statement(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
