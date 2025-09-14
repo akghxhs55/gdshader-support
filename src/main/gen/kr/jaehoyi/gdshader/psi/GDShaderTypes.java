@@ -18,7 +18,6 @@ public interface GDShaderTypes {
   IElementType BITWISE_XOR_EXPR = new GDShaderElementType("BITWISE_XOR_EXPR");
   IElementType BLOCK = new GDShaderElementType("BLOCK");
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
-  IElementType COMMENTS = new GDShaderElementType("COMMENTS");
   IElementType CONDITIONAL_EXPR = new GDShaderElementType("CONDITIONAL_EXPR");
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
@@ -93,7 +92,7 @@ public interface GDShaderTypes {
   IElementType ARG_IN = new GDShaderTokenType("ARG_IN");
   IElementType ARG_INOUT = new GDShaderTokenType("ARG_INOUT");
   IElementType ARG_OUT = new GDShaderTokenType("ARG_OUT");
-  IElementType BLOCK_COMMENT = new GDShaderTokenType("BLOCK_COMMENT");
+  IElementType BLOCK_COMMENT = new GDShaderTokenType("Block comment");
   IElementType BRACKET_CLOSE = new GDShaderTokenType("BRACKET_CLOSE");
   IElementType BRACKET_OPEN = new GDShaderTokenType("BRACKET_OPEN");
   IElementType CF_BREAK = new GDShaderTokenType("CF_BREAK");
@@ -146,7 +145,7 @@ public interface GDShaderTypes {
   IElementType INTERPOLATION_FLAT = new GDShaderTokenType("INTERPOLATION_FLAT");
   IElementType INTERPOLATION_SMOOTH = new GDShaderTokenType("INTERPOLATION_SMOOTH");
   IElementType INT_CONSTANT = new GDShaderTokenType("INT_CONSTANT");
-  IElementType LINE_COMMENT = new GDShaderTokenType("LINE_COMMENT");
+  IElementType LINE_COMMENT = new GDShaderTokenType("Line commnet");
   IElementType OP_ADD = new GDShaderTokenType("OP_ADD");
   IElementType OP_AND = new GDShaderTokenType("OP_AND");
   IElementType OP_ASSIGN = new GDShaderTokenType("OP_ASSIGN");
@@ -236,6 +235,7 @@ public interface GDShaderTypes {
   IElementType UINT_CONSTANT = new GDShaderTokenType("UINT_CONSTANT");
   IElementType UNIFORM = new GDShaderTokenType("UNIFORM");
   IElementType UNIFORM_GROUP = new GDShaderTokenType("UNIFORM_GROUP");
+  IElementType UNTERMINATED_STRING_CONSTANT = new GDShaderTokenType("Unterminated string");
   IElementType VARYING = new GDShaderTokenType("VARYING");
 
   class Factory {
@@ -270,9 +270,6 @@ public interface GDShaderTypes {
       }
       else if (type == CASE_CLAUSE) {
         return new GDShaderCaseClauseImpl(node);
-      }
-      else if (type == COMMENTS) {
-        return new GDShaderCommentsImpl(node);
       }
       else if (type == CONDITIONAL_EXPR) {
         return new GDShaderConditionalExprImpl(node);

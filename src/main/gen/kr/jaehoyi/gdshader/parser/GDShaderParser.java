@@ -401,20 +401,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // LINE_COMMENT
-  // 		   | BLOCK_COMMENT
-  public static boolean comments(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "comments")) return false;
-    if (!nextTokenIs(b, "<comments>", BLOCK_COMMENT, LINE_COMMENT)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, COMMENTS, "<comments>");
-    r = consumeToken(b, LINE_COMMENT);
-    if (!r) r = consumeToken(b, BLOCK_COMMENT);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
   // assign_expr (QUESTION expression COLON expression)?
   public static boolean conditional_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_expr")) return false;
@@ -2196,14 +2182,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   public static boolean uniform_group_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_group_declaration")) return false;
     if (!nextTokenIs(b, UNIFORM_GROUP)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, UNIFORM_GROUP_DECLARATION, null);
     r = consumeToken(b, UNIFORM_GROUP);
-    r = r && uniform_group_declaration_1(b, l + 1);
-    r = r && uniform_group_declaration_2(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, m, UNIFORM_GROUP_DECLARATION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, uniform_group_declaration_1(b, l + 1));
+    r = p && report_error_(b, uniform_group_declaration_2(b, l + 1)) && r;
+    r = p && consumeToken(b, SEMICOLON) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // uniform_group_name?

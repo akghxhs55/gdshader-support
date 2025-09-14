@@ -13,6 +13,12 @@
   tokenTypeClass="kr.jaehoyi.gdshader.psi.GDShaderTokenType"
   
   psiImplUtilClass="kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil"
+  
+  tokens=[
+  	UNTERMINATED_STRING_CONSTANT = "Unterminated string"
+  	LINE_COMMENT = "Line commnet"
+  	BLOCK_COMMENT = "Block comment"
+  ]
 }
 
 gdShaderFile ::= item*
@@ -52,7 +58,9 @@ stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)*
 stencil_mode_name ::= IDENTIFIER
 
 // Uniform Group Declaration
-uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON
+uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON {
+	pin=1
+}
 uniform_group_name ::= IDENTIFIER
 
 // Uniform Declaration
@@ -310,6 +318,3 @@ assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MU
 number ::= (OP_SUB)? FLOAT_CONSTANT
 		 | (OP_SUB)? INT_CONSTANT
 		 | UINT_CONSTANT
-		 
-comments ::= LINE_COMMENT
-		   | BLOCK_COMMENT

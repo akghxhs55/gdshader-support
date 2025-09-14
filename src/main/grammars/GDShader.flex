@@ -27,6 +27,7 @@ FloatConstant =
 IntConstant = 0|[1-9][0-9]*
 UintConstant = 0|[1-9][0-9]*[uU]
 StringConstant = \"([^\\\"\n]|\\.)*\"
+UnterminatedStringConstant = \"([^\\\"\n]|\\.)*
 
 PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
 
@@ -41,6 +42,7 @@ PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
 {IntConstant} 				{ return GDShaderTypes.INT_CONSTANT; }
 {UintConstant} 				{ return GDShaderTypes.UINT_CONSTANT; }
 {StringConstant} 			{ return GDShaderTypes.STRING_CONSTANT; }
+{UnterminatedStringConstant} { return GDShaderTypes.UNTERMINATED_STRING_CONSTANT; }
 
 "[" 						{ return GDShaderTypes.BRACKET_OPEN; }
 "]" 						{ return GDShaderTypes.BRACKET_CLOSE; }

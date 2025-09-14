@@ -47,10 +47,6 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitComments(@NotNull GDShaderComments o) {
-    visitPsiElement(o);
-  }
-
   public void visitConditionalExpr(@NotNull GDShaderConditionalExpr o) {
     visitPsiElement(o);
   }
