@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderSwitchBlock extends PsiElement {
 
   @NotNull
-  List<GDShaderCaseClause> getCaseClauseList();
+  GDShaderSwitchBody getSwitchBody();
 
 }

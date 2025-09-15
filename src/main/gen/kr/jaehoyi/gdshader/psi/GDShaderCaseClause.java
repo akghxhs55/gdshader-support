@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderCaseClause extends PsiElement {
 
+  @NotNull
+  GDShaderCaseBody getCaseBody();
+
   @Nullable
   GDShaderExpression getExpression();
-
-  @NotNull
-  List<GDShaderStatementBody> getStatementBodyList();
 
 }

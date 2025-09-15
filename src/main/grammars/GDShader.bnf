@@ -162,7 +162,7 @@ struct_declaration ::= STRUCT struct_name CURLY_BRACKET_OPEN struct_member_list 
 	pin=1
 }
 struct_name ::= IDENTIFIER
-private struct_member_list ::= struct_member* {
+struct_member_list ::= struct_member* {
 	recoverWhile=struct_member_list_recover
 }
 private struct_member_list_recover ::= !(CURLY_BRACKET_CLOSE)
@@ -201,14 +201,15 @@ while_statement ::= CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE state
 switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE switch_block {
 	pin=1
 }
-switch_block ::= CURLY_BRACKET_OPEN case_body CURLY_BRACKET_CLOSE
-private case_body ::= case_clause* {
-	recoverWhile=case_body_recover
+switch_block ::= CURLY_BRACKET_OPEN switch_body CURLY_BRACKET_CLOSE
+switch_body ::= case_clause* {
+	recoverWhile=switch_body_recover
 }
-private case_body_recover ::= !(CURLY_BRACKET_CLOSE)
-case_clause ::= CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body* {
+private switch_body_recover ::= !(CURLY_BRACKET_CLOSE)
+case_clause ::= CF_CASE expression COLON case_body | CF_DEFAULT COLON case_body {
 	pin=1
 }
+case_body ::= statement_body*
 
 return_statement ::= CF_RETURN expression? SEMICOLON
 

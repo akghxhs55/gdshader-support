@@ -18,6 +18,7 @@ public interface GDShaderTypes {
   IElementType BITWISE_XOR_EXPR = new GDShaderElementType("BITWISE_XOR_EXPR");
   IElementType BLOCK = new GDShaderElementType("BLOCK");
   IElementType BLOCK_BODY = new GDShaderElementType("BLOCK_BODY");
+  IElementType CASE_BODY = new GDShaderElementType("CASE_BODY");
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
   IElementType CONDITIONAL_EXPR = new GDShaderElementType("CONDITIONAL_EXPR");
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
@@ -73,9 +74,11 @@ public interface GDShaderTypes {
   IElementType STENCIL_MODE_NAME = new GDShaderElementType("STENCIL_MODE_NAME");
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
+  IElementType STRUCT_MEMBER_LIST = new GDShaderElementType("STRUCT_MEMBER_LIST");
   IElementType STRUCT_MEMBER_NAME = new GDShaderElementType("STRUCT_MEMBER_NAME");
   IElementType STRUCT_NAME = new GDShaderElementType("STRUCT_NAME");
   IElementType SWITCH_BLOCK = new GDShaderElementType("SWITCH_BLOCK");
+  IElementType SWITCH_BODY = new GDShaderElementType("SWITCH_BODY");
   IElementType SWITCH_STATEMENT = new GDShaderElementType("SWITCH_STATEMENT");
   IElementType TOP_LEVEL_DECLARATION = new GDShaderElementType("TOP_LEVEL_DECLARATION");
   IElementType TYPE = new GDShaderElementType("TYPE");
@@ -272,6 +275,9 @@ public interface GDShaderTypes {
       else if (type == BLOCK_BODY) {
         return new GDShaderBlockBodyImpl(node);
       }
+      else if (type == CASE_BODY) {
+        return new GDShaderCaseBodyImpl(node);
+      }
       else if (type == CASE_CLAUSE) {
         return new GDShaderCaseClauseImpl(node);
       }
@@ -437,6 +443,9 @@ public interface GDShaderTypes {
       else if (type == STRUCT_MEMBER) {
         return new GDShaderStructMemberImpl(node);
       }
+      else if (type == STRUCT_MEMBER_LIST) {
+        return new GDShaderStructMemberListImpl(node);
+      }
       else if (type == STRUCT_MEMBER_NAME) {
         return new GDShaderStructMemberNameImpl(node);
       }
@@ -445,6 +454,9 @@ public interface GDShaderTypes {
       }
       else if (type == SWITCH_BLOCK) {
         return new GDShaderSwitchBlockImpl(node);
+      }
+      else if (type == SWITCH_BODY) {
+        return new GDShaderSwitchBodyImpl(node);
       }
       else if (type == SWITCH_STATEMENT) {
         return new GDShaderSwitchStatementImpl(node);

@@ -47,6 +47,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCaseBody(@NotNull GDShaderCaseBody o) {
+    visitPsiElement(o);
+  }
+
   public void visitCaseClause(@NotNull GDShaderCaseClause o) {
     visitPsiElement(o);
   }
@@ -267,6 +271,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitStructMemberList(@NotNull GDShaderStructMemberList o) {
+    visitPsiElement(o);
+  }
+
   public void visitStructMemberName(@NotNull GDShaderStructMemberName o) {
     visitPsiElement(o);
   }
@@ -276,6 +284,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitSwitchBlock(@NotNull GDShaderSwitchBlock o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSwitchBody(@NotNull GDShaderSwitchBody o) {
     visitPsiElement(o);
   }
 

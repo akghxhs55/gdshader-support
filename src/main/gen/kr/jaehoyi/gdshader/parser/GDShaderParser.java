@@ -317,32 +317,21 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // case_clause*
-  static boolean case_body(PsiBuilder b, int l) {
+  // statement_body*
+  public static boolean case_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_body")) return false;
-    Marker m = enter_section_(b, l, _NONE_);
+    Marker m = enter_section_(b, l, _NONE_, CASE_BODY, "<case body>");
     while (true) {
       int c = current_position_(b);
-      if (!case_clause(b, l + 1)) break;
+      if (!statement_body(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "case_body", c)) break;
     }
-    exit_section_(b, l, m, true, false, GDShaderParser::case_body_recover);
+    exit_section_(b, l, m, true, false, null);
     return true;
   }
 
   /* ********************************************************** */
-  // !(CURLY_BRACKET_CLOSE)
-  static boolean case_body_recover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "case_body_recover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !consumeToken(b, CURLY_BRACKET_CLOSE);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // CF_CASE expression COLON statement_body* | CF_DEFAULT COLON statement_body*
+  // CF_CASE expression COLON case_body | CF_DEFAULT COLON case_body
   public static boolean case_clause(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause")) return false;
     if (!nextTokenIs(b, "<case clause>", CF_CASE, CF_DEFAULT)) return false;
@@ -354,7 +343,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // CF_CASE expression COLON statement_body*
+  // CF_CASE expression COLON case_body
   private static boolean case_clause_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause_0")) return false;
     boolean r;
@@ -362,42 +351,20 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, CF_CASE);
     r = r && expression(b, l + 1);
     r = r && consumeToken(b, COLON);
-    r = r && case_clause_0_3(b, l + 1);
+    r = r && case_body(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // statement_body*
-  private static boolean case_clause_0_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "case_clause_0_3")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!statement_body(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "case_clause_0_3", c)) break;
-    }
-    return true;
-  }
-
-  // CF_DEFAULT COLON statement_body*
+  // CF_DEFAULT COLON case_body
   private static boolean case_clause_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_clause_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeTokens(b, 0, CF_DEFAULT, COLON);
-    r = r && case_clause_1_2(b, l + 1);
+    r = r && case_body(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
-  }
-
-  // statement_body*
-  private static boolean case_clause_1_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "case_clause_1_2")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!statement_body(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "case_clause_1_2", c)) break;
-    }
-    return true;
   }
 
   /* ********************************************************** */
@@ -1961,9 +1928,9 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // struct_member*
-  static boolean struct_member_list(PsiBuilder b, int l) {
+  public static boolean struct_member_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member_list")) return false;
-    Marker m = enter_section_(b, l, _NONE_);
+    Marker m = enter_section_(b, l, _NONE_, STRUCT_MEMBER_LIST, "<struct member list>");
     while (true) {
       int c = current_position_(b);
       if (!struct_member(b, l + 1)) break;
@@ -2009,16 +1976,41 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CURLY_BRACKET_OPEN case_body CURLY_BRACKET_CLOSE
+  // CURLY_BRACKET_OPEN switch_body CURLY_BRACKET_CLOSE
   public static boolean switch_block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switch_block")) return false;
     if (!nextTokenIs(b, CURLY_BRACKET_OPEN)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, CURLY_BRACKET_OPEN);
-    r = r && case_body(b, l + 1);
+    r = r && switch_body(b, l + 1);
     r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
     exit_section_(b, m, SWITCH_BLOCK, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // case_clause*
+  public static boolean switch_body(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switch_body")) return false;
+    Marker m = enter_section_(b, l, _NONE_, SWITCH_BODY, "<switch body>");
+    while (true) {
+      int c = current_position_(b);
+      if (!case_clause(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "switch_body", c)) break;
+    }
+    exit_section_(b, l, m, true, false, GDShaderParser::switch_body_recover);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // !(CURLY_BRACKET_CLOSE)
+  static boolean switch_body_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "switch_body_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, CURLY_BRACKET_CLOSE);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

@@ -35,9 +35,9 @@ class GDShaderBlock(
             return Indent.getNoneIndent()
         }
         
-        if (myNode.treeParent?.elementType == GDShaderTypes.BLOCK ||
-            myNode.treeParent?.elementType == GDShaderTypes.STRUCT_DECLARATION ||
-            myNode.treeParent?.elementType == GDShaderTypes.SWITCH_BLOCK) {
+        if (myNode.treeParent?.elementType == GDShaderTypes.BLOCK_BODY ||
+            myNode.treeParent?.elementType == GDShaderTypes.STRUCT_MEMBER_LIST ||
+            myNode.treeParent?.elementType == GDShaderTypes.SWITCH_BODY) {
             return Indent.getNormalIndent()
         }
         

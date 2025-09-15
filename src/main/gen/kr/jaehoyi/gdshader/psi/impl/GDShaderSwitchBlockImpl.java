@@ -29,8 +29,8 @@ public class GDShaderSwitchBlockImpl extends ASTWrapperPsiElement implements GDS
 
   @Override
   @NotNull
-  public List<GDShaderCaseClause> getCaseClauseList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderCaseClause.class);
+  public GDShaderSwitchBody getSwitchBody() {
+    return findNotNullChildByClass(GDShaderSwitchBody.class);
   }
 
 }
