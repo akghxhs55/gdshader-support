@@ -10,5 +10,5 @@ object GDShaderFileType : LanguageFileType(GDShaderLanguage) {
 
     override fun getDefaultExtension(): String = "gdshader"
 
-    override fun getIcon(): Icon = GDShaderIcons.Companion.FILE
+    override fun getIcon(): Icon = GDShaderIcons.FILE
 }

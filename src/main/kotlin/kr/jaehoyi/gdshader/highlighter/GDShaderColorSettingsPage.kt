@@ -9,7 +9,7 @@ import javax.swing.Icon
 
 class GDShaderColorSettingsPage : ColorSettingsPage {
 
-    override fun getIcon(): Icon? = GDShaderIcons.Companion.FILE
+    override fun getIcon(): Icon = GDShaderIcons.FILE
     override fun getHighlighter() = GDShaderSyntaxHighlighter()
     override fun getDemoText(): String = """
         // This is a comment

@@ -1,7 +1,5 @@
 package kr.jaehoyi.gdshader
 
-import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
-
 object GDShaderUtil {
     val shaderTypes = setOf("spatial", "canvas_item", "particles", "sky", "fog")
     
@@ -39,7 +37,4 @@ object GDShaderUtil {
         "sampler2DArray", "isampler2DArray", "usampler2DArray", "sampler3D", "isampler3D", "usampler3D",
         "samplerCube", "samplerCubeArray", "samplerExternalOES"
     )
-    
-    fun getAvailableShaderTypes(): Set<String> = shaderTypes
-    fun validateShaderName(element: GDShaderShaderTypeDeclaration): Boolean = element.shaderType in shaderTypes
 }
