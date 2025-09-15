@@ -35,21 +35,11 @@ intellijPlatform {
         }
 
         changeNotes = """
-            <h2>0.2.1-beta</h2>
+            <h2>0.3.0-beta</h2>
             <ul>
-              <li>Lowered minimum required IDE version to 2023.1</li>
-            </ul>
-
-            <h2>0.2.0-beta</h2>
-            <ul>
-              <li>Added creation of new GDShader files from templates</li>
-              <li>Improved syntax highlighting</li>
-              <li>Improved grammar support</li>
-            </ul>
-
-            <h2>0.1.0-beta</h2>
-            <ul>
-              <li>Initial release</li>
+              <li>Added basic code completion for keywords</li>
+              <li>Added code formatting support</li>
+              <li>Improved grammar</li>
             </ul>
         """.trimIndent()
     }

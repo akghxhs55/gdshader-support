@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 0.3.0-beta (2024-09-15)
+- Added basic code completion for keywords
+- Added code formatting support
+- Improved grammar
+
 ## 0.2.1-beta (2024-08-01)
 - Lowered minimum supported IDE version to 2023.1
 

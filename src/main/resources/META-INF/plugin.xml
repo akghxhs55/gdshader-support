@@ -12,6 +12,8 @@
                 <li>Syntax highlighting for GDShader files</li>
                 <li>Indexing of .gdshader files for file search</li>
                 <li>Creation of new GDShader files from templates</li>
+                <li>Code completion for basic keywords</li>
+                <li>Code formatting</li>
             </ul>
         ]]>
     </description>
