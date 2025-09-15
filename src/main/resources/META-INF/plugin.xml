@@ -42,6 +42,9 @@
         <lang.quoteHandler
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderQuoteHandler" />
+        <lang.formatter
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.formatter.GDShaderFormattingModelBuilder" />
         
         <!-- Annotators -->
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderFunctionAnnotator" />

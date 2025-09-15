@@ -152,7 +152,7 @@ parameter_qualifier ::= CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT
 parameter_name ::= IDENTIFIER
 
 block ::= CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
-private block_body ::= statement_body* {
+block_body ::= statement_body* {
 	recoverWhile=block_body_recover
 }
 private block_body_recover ::= !(CURLY_BRACKET_CLOSE) 

@@ -43,6 +43,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitBlockBody(@NotNull GDShaderBlockBody o) {
+    visitPsiElement(o);
+  }
+
   public void visitCaseClause(@NotNull GDShaderCaseClause o) {
     visitPsiElement(o);
   }

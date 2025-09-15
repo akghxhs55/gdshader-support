@@ -17,6 +17,7 @@ public interface GDShaderTypes {
   IElementType BITWISE_OR_EXPR = new GDShaderElementType("BITWISE_OR_EXPR");
   IElementType BITWISE_XOR_EXPR = new GDShaderElementType("BITWISE_XOR_EXPR");
   IElementType BLOCK = new GDShaderElementType("BLOCK");
+  IElementType BLOCK_BODY = new GDShaderElementType("BLOCK_BODY");
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
   IElementType CONDITIONAL_EXPR = new GDShaderElementType("CONDITIONAL_EXPR");
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
@@ -267,6 +268,9 @@ public interface GDShaderTypes {
       }
       else if (type == BLOCK) {
         return new GDShaderBlockImpl(node);
+      }
+      else if (type == BLOCK_BODY) {
+        return new GDShaderBlockBodyImpl(node);
       }
       else if (type == CASE_CLAUSE) {
         return new GDShaderCaseClauseImpl(node);

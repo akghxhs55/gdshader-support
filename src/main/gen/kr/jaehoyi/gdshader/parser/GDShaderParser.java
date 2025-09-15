@@ -293,9 +293,9 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // statement_body*
-  static boolean block_body(PsiBuilder b, int l) {
+  public static boolean block_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block_body")) return false;
-    Marker m = enter_section_(b, l, _NONE_);
+    Marker m = enter_section_(b, l, _NONE_, BLOCK_BODY, "<block body>");
     while (true) {
       int c = current_position_(b);
       if (!statement_body(b, l + 1)) break;
