@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.2.1-beta"
+version = "0.3.0-beta"
 
 sourceSets {
     main {
