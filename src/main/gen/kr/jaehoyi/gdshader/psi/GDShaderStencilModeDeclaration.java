@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderStencilModeDeclaration extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderStencilModeDeclaratorList getStencilModeDeclaratorList();
 
 }

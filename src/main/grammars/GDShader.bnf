@@ -53,7 +53,9 @@ render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
 render_mode_name ::= IDENTIFIER
 
 // Stencil Mode Declaration
-stencil_mode_declaration ::= STENCIL_MODE stencil_mode_declarator_list SEMICOLON
+stencil_mode_declaration ::= STENCIL_MODE stencil_mode_declarator_list SEMICOLON {
+	pin=1
+}
 stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)*
 stencil_mode_name ::= IDENTIFIER
 

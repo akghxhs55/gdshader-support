@@ -1813,13 +1813,14 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   public static boolean stencil_mode_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stencil_mode_declaration")) return false;
     if (!nextTokenIs(b, STENCIL_MODE)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, STENCIL_MODE_DECLARATION, null);
     r = consumeToken(b, STENCIL_MODE);
-    r = r && stencil_mode_declarator_list(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, m, STENCIL_MODE_DECLARATION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, stencil_mode_declarator_list(b, l + 1));
+    r = p && consumeToken(b, SEMICOLON) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */

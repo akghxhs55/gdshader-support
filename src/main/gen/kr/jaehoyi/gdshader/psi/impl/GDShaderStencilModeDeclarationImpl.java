@@ -28,9 +28,9 @@ public class GDShaderStencilModeDeclarationImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderStencilModeDeclaratorList getStencilModeDeclaratorList() {
-    return findNotNullChildByClass(GDShaderStencilModeDeclaratorList.class);
+    return findChildByClass(GDShaderStencilModeDeclaratorList.class);
   }
 
 }
