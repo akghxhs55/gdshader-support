@@ -63,6 +63,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitConstructorCall(@NotNull GDShaderConstructorCall o) {
+    visitPsiElement(o);
+  }
+
   public void visitControlStatement(@NotNull GDShaderControlStatement o) {
     visitPsiElement(o);
   }

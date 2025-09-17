@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderPrimary extends PsiElement {
 
   @Nullable
+  GDShaderConstructorCall getConstructorCall();
+
+  @Nullable
   GDShaderExpression getExpression();
 
   @Nullable

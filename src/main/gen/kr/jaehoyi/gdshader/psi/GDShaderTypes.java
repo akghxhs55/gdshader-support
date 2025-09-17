@@ -22,6 +22,7 @@ public interface GDShaderTypes {
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
   IElementType CONDITIONAL_EXPR = new GDShaderElementType("CONDITIONAL_EXPR");
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
+  IElementType CONSTRUCTOR_CALL = new GDShaderElementType("CONSTRUCTOR_CALL");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
   IElementType DO_WHILE_STATEMENT = new GDShaderElementType("DO_WHILE_STATEMENT");
   IElementType ELSE_CLAUSE = new GDShaderElementType("ELSE_CLAUSE");
@@ -286,6 +287,9 @@ public interface GDShaderTypes {
       }
       else if (type == CONSTANT_DECLARATION) {
         return new GDShaderConstantDeclarationImpl(node);
+      }
+      else if (type == CONSTRUCTOR_CALL) {
+        return new GDShaderConstructorCallImpl(node);
       }
       else if (type == CONTROL_STATEMENT) {
         return new GDShaderControlStatementImpl(node);

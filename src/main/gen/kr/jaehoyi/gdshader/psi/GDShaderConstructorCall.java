@@ -5,19 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderParameter extends PsiElement {
+public interface GDShaderConstructorCall extends PsiElement {
+
+  @Nullable
+  GDShaderArgumentList getArgumentList();
 
   @Nullable
   GDShaderExpression getExpression();
-
-  @Nullable
-  GDShaderParameterName getParameterName();
-
-  @Nullable
-  GDShaderParameterQualifier getParameterQualifier();
-
-  @Nullable
-  GDShaderPrecision getPrecision();
 
   @NotNull
   GDShaderType getType();

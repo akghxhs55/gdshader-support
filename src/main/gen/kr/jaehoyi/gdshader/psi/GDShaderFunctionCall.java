@@ -10,10 +10,7 @@ public interface GDShaderFunctionCall extends PsiElement {
   @Nullable
   GDShaderArgumentList getArgumentList();
 
-  @Nullable
+  @NotNull
   GDShaderFunctionName getFunctionName();
-
-  @Nullable
-  GDShaderPrimitiveType getPrimitiveType();
 
 }

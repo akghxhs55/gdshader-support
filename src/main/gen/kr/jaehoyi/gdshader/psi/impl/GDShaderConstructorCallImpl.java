@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDShaderParameter {
+public class GDShaderConstructorCallImpl extends ASTWrapperPsiElement implements GDShaderConstructorCall {
 
-  public GDShaderParameterImpl(@NotNull ASTNode node) {
+  public GDShaderConstructorCallImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitParameter(this);
+    visitor.visitConstructorCall(this);
   }
 
   @Override
@@ -29,26 +29,14 @@ public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDSha
 
   @Override
   @Nullable
+  public GDShaderArgumentList getArgumentList() {
+    return findChildByClass(GDShaderArgumentList.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderExpression getExpression() {
     return findChildByClass(GDShaderExpression.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderParameterName getParameterName() {
-    return findChildByClass(GDShaderParameterName.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderParameterQualifier getParameterQualifier() {
-    return findChildByClass(GDShaderParameterQualifier.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderPrecision getPrecision() {
-    return findChildByClass(GDShaderPrecision.class);
   }
 
   @Override

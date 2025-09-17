@@ -8,7 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderPostfixExpr extends PsiElement {
 
   @NotNull
+  List<GDShaderArgumentList> getArgumentListList();
+
+  @NotNull
   List<GDShaderExpression> getExpressionList();
+
+  @NotNull
+  List<GDShaderFunctionName> getFunctionNameList();
 
   @NotNull
   GDShaderPrimary getPrimary();

@@ -424,6 +424,54 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  public static boolean constructor_call(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "constructor_call")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, CONSTRUCTOR_CALL, "<constructor call>");
+    r = type(b, l + 1);
+    r = r && constructor_call_1(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_OPEN);
+    r = r && constructor_call_3(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (BRACKET_OPEN expression? BRACKET_CLOSE)?
+  private static boolean constructor_call_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "constructor_call_1")) return false;
+    constructor_call_1_0(b, l + 1);
+    return true;
+  }
+
+  // BRACKET_OPEN expression? BRACKET_CLOSE
+  private static boolean constructor_call_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "constructor_call_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, BRACKET_OPEN);
+    r = r && constructor_call_1_0_1(b, l + 1);
+    r = r && consumeToken(b, BRACKET_CLOSE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // expression?
+  private static boolean constructor_call_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "constructor_call_1_0_1")) return false;
+    expression(b, l + 1);
+    return true;
+  }
+
+  // argument_list?
+  private static boolean constructor_call_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "constructor_call_3")) return false;
+    argument_list(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // if_statement
   // 					| for_statement
   // 					| while_statement
@@ -646,25 +694,17 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (primitive_type | function_name) PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  // function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
   public static boolean function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL, "<function call>");
-    r = function_call_0(b, l + 1);
+    Marker m = enter_section_(b);
+    r = function_name(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
     r = r && function_call_2(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // primitive_type | function_name
-  private static boolean function_call_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_call_0")) return false;
-    boolean r;
-    r = primitive_type(b, l + 1);
-    if (!r) r = function_name(b, l + 1);
+    exit_section_(b, m, FUNCTION_CALL, r);
     return r;
   }
 
@@ -1166,7 +1206,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // parameter_qualifier? precision? type parameter_name
+  // parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name
   public static boolean parameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter")) return false;
     boolean r, p;
@@ -1175,7 +1215,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && parameter_1(b, l + 1);
     r = r && type(b, l + 1);
     p = r; // pin = 3
-    r = r && parameter_name(b, l + 1);
+    r = r && report_error_(b, parameter_3(b, l + 1));
+    r = p && parameter_name(b, l + 1) && r;
     exit_section_(b, l, m, r, p, GDShaderParser::parameter_recover);
     return r || p;
   }
@@ -1192,6 +1233,25 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "parameter_1")) return false;
     precision(b, l + 1);
     return true;
+  }
+
+  // (BRACKET_OPEN expression BRACKET_CLOSE)?
+  private static boolean parameter_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_3")) return false;
+    parameter_3_0(b, l + 1);
+    return true;
+  }
+
+  // BRACKET_OPEN expression BRACKET_CLOSE
+  private static boolean parameter_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, BRACKET_OPEN);
+    r = r && expression(b, l + 1);
+    r = r && consumeToken(b, BRACKET_CLOSE);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1304,7 +1364,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // primary (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+  // primary (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
   public static boolean postfix_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr")) return false;
     boolean r;
@@ -1316,7 +1376,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)*
+  // (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)*
   private static boolean postfix_expr_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1")) return false;
     while (true) {
@@ -1327,20 +1387,42 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE
+  // PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE
   private static boolean postfix_expr_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = postfix_expr_1_0_0(b, l + 1);
     if (!r) r = postfix_expr_1_0_1(b, l + 1);
+    if (!r) r = postfix_expr_1_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // PERIOD struct_member_name
+  // PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
   private static boolean postfix_expr_1_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, PERIOD);
+    r = r && function_name(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_OPEN);
+    r = r && postfix_expr_1_0_0_3(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_CLOSE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // argument_list?
+  private static boolean postfix_expr_1_0_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "postfix_expr_1_0_0_3")) return false;
+    argument_list(b, l + 1);
+    return true;
+  }
+
+  // PERIOD struct_member_name
+  private static boolean postfix_expr_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "postfix_expr_1_0_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PERIOD);
@@ -1350,8 +1432,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   // BRACKET_OPEN expression BRACKET_CLOSE
-  private static boolean postfix_expr_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "postfix_expr_1_0_1")) return false;
+  private static boolean postfix_expr_1_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "postfix_expr_1_0_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, BRACKET_OPEN);
@@ -1423,6 +1505,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // literal
+  // 		  | constructor_call
   // 		  | function_call
   // 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
   // 		  | variable_name
@@ -1431,16 +1514,17 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PRIMARY, "<primary>");
     r = literal(b, l + 1);
+    if (!r) r = constructor_call(b, l + 1);
     if (!r) r = function_call(b, l + 1);
-    if (!r) r = primary_2(b, l + 1);
+    if (!r) r = primary_3(b, l + 1);
     if (!r) r = variable_name(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-  private static boolean primary_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primary_2")) return false;
+  private static boolean primary_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PARENTHESIS_OPEN);
@@ -1452,25 +1536,25 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // TYPE_VOID
-  // 			   | TYPE_BOOL
-  // 			   | TYPE_BVEC2
-  // 			   | TYPE_BVEC3
-  // 			   | TYPE_BVEC4
-  // 			   | TYPE_INT
-  // 			   | TYPE_IVEC2
-  // 			   | TYPE_IVEC3
-  // 			   | TYPE_IVEC4
-  // 			   | TYPE_UINT
-  // 			   | TYPE_UVEC2
-  // 			   | TYPE_UVEC3
-  // 			   | TYPE_UVEC4
-  // 			   | TYPE_FLOAT
-  // 			   | TYPE_VEC2
-  // 			   | TYPE_VEC3
-  // 			   | TYPE_VEC4
-  // 			   | TYPE_MAT2
-  // 			   | TYPE_MAT3
-  // 			   | TYPE_MAT4
+  // 			     | TYPE_BOOL
+  // 			     | TYPE_BVEC2
+  // 			     | TYPE_BVEC3
+  // 			     | TYPE_BVEC4
+  // 			     | TYPE_INT
+  // 			     | TYPE_IVEC2
+  // 			     | TYPE_IVEC3
+  // 			     | TYPE_IVEC4
+  // 			     | TYPE_UINT
+  // 			     | TYPE_UVEC2
+  // 			     | TYPE_UVEC3
+  // 			     | TYPE_UVEC4
+  // 			     | TYPE_FLOAT
+  // 			     | TYPE_VEC2
+  // 			     | TYPE_VEC3
+  // 			     | TYPE_VEC4
+  // 			     | TYPE_MAT2
+  // 			     | TYPE_MAT3
+  // 			     | TYPE_MAT4
   public static boolean primitive_type(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primitive_type")) return false;
     boolean r;

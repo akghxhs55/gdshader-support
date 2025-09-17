@@ -34,15 +34,9 @@ public class GDShaderFunctionCallImpl extends ASTWrapperPsiElement implements GD
   }
 
   @Override
-  @Nullable
+  @NotNull
   public GDShaderFunctionName getFunctionName() {
-    return findChildByClass(GDShaderFunctionName.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderPrimitiveType getPrimitiveType() {
-    return findChildByClass(GDShaderPrimitiveType.class);
+    return findNotNullChildByClass(GDShaderFunctionName.class);
   }
 
 }

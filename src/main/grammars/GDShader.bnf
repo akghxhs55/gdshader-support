@@ -145,7 +145,7 @@ parameter_list ::= parameter (COMMA parameter)* {
 	recoverWhile=parameter_list_recover
 }
 private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
-parameter ::= parameter_qualifier? precision? type parameter_name {
+parameter ::= parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name {
 	pin=3
 	recoverWhile=parameter_recover
 }
@@ -246,9 +246,10 @@ shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
 additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
 multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
 unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)? postfix_expr
-postfix_expr ::= primary (PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+postfix_expr ::= primary (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
 
 primary ::= literal
+		  | constructor_call
 		  | function_call
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 		  | variable_name
@@ -256,7 +257,8 @@ primary ::= literal
 	methods = [ isLiteral isFunctionCall isExpression isVariableName ]
 }
 		  
-function_call ::= (primitive_type | function_name) PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+constructor_call ::= type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= expression (COMMA expression)*
 
 // Preprocessor Directives
@@ -288,25 +290,25 @@ type ::= primitive_type
        | struct_name
        
 primitive_type ::= TYPE_VOID
-			   | TYPE_BOOL
-			   | TYPE_BVEC2
-			   | TYPE_BVEC3
-			   | TYPE_BVEC4
-			   | TYPE_INT
-			   | TYPE_IVEC2
-			   | TYPE_IVEC3
-			   | TYPE_IVEC4
-			   | TYPE_UINT
-			   | TYPE_UVEC2
-			   | TYPE_UVEC3
-			   | TYPE_UVEC4
-			   | TYPE_FLOAT
-			   | TYPE_VEC2
-			   | TYPE_VEC3
-			   | TYPE_VEC4
-			   | TYPE_MAT2
-			   | TYPE_MAT3
-			   | TYPE_MAT4
+			     | TYPE_BOOL
+			     | TYPE_BVEC2
+			     | TYPE_BVEC3
+			     | TYPE_BVEC4
+			     | TYPE_INT
+			     | TYPE_IVEC2
+			     | TYPE_IVEC3
+			     | TYPE_IVEC4
+			     | TYPE_UINT
+			     | TYPE_UVEC2
+			     | TYPE_UVEC3
+			     | TYPE_UVEC4
+			     | TYPE_FLOAT
+			     | TYPE_VEC2
+			     | TYPE_VEC3
+			     | TYPE_VEC4
+			     | TYPE_MAT2
+			     | TYPE_MAT3
+			     | TYPE_MAT4
 
 literal ::= TRUE
 		  | FALSE
