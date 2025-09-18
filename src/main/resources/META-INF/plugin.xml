@@ -29,7 +29,14 @@
             implementationClass="kr.jaehoyi.gdshader.GDShaderFileType"
             fieldName="INSTANCE"
             language="GDShader"
-            extensions="gdshader" />
+            extensions="gdshader;gdshaderinc" />
+        <fileType
+            name="GDShader Include File"
+            implementationClass="kr.jaehoyi.gdshader.GDShaderIncludeFileType"
+            fieldName="INSTANCE"
+            language="GDShader"
+            extensions="gdshaderinc" />
+        
         <lang.parserDefinition
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.GDShaderParserDefinition" />
@@ -89,6 +96,7 @@
         <internalFileTemplate name="Particles" />
         <internalFileTemplate name="Sky" />
         <internalFileTemplate name="Fog" />
+        <internalFileTemplate name="Shader Include" />
         
     </extensions>
     
@@ -99,7 +107,16 @@
             text="GDShader File"
             description="Create a new GDShader file"
             class="kr.jaehoyi.gdshader.action.GDShaderNewFileAction"
-            icon="kr.jaehoyi.gdshader.GDShaderIcons.FILE">
+            icon="kr.jaehoyi.gdshader.GDShaderIcons.GDSHADER">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
+        </action>
+        
+        <action
+            id="GDShaderInclude.NewFile"
+            text="GDShader Include File"
+            description="Create a new GDShader Include file"
+            class="kr.jaehoyi.gdshader.action.GDShaderIncludeNewFileAction"
+            icon="kr.jaehoyi.gdshader.GDShaderIcons.GDSHADER">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
         </action>
         
