@@ -24,8 +24,9 @@ repositories {
 }
 
 dependencies {
-    intellijPlatform.rider("2025.1.2")
+    intellijPlatform.rider("2025.2")
     intellijPlatform.plugin("PsiViewer", "2025.1")
+    intellijPlatform.bundledPlugin("org.jetbrains.plugins.textmate")
 }
 
 intellijPlatform {
@@ -43,6 +44,7 @@ intellijPlatform {
             </ul>
         """.trimIndent()
     }
+    
 }
 
 tasks {
