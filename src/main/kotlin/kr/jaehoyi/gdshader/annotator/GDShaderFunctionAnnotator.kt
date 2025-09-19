@@ -28,12 +28,10 @@ class GDShaderFunctionAnnotator : Annotator {
     
     private fun annotateFunctionCall(element: GDShaderFunctionCall, holder: AnnotationHolder) {
         val functionNameElement = element.functionName
-        
-        if (functionNameElement != null) {
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                .range(functionNameElement)
-                .textAttributes(GDShaderSyntaxHighlighter.FUNCTION)
-                .create()
-        }
+
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+            .range(functionNameElement)
+            .textAttributes(GDShaderSyntaxHighlighter.FUNCTION)
+            .create()
     }
 }
