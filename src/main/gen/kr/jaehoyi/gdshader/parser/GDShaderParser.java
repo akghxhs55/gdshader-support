@@ -1911,12 +1911,12 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // stencil_mode_name (COMMA stencil_mode_name)*
   public static boolean stencil_mode_declarator_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stencil_mode_declarator_list")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<stencil mode declarator list>", IDENTIFIER, INT_CONSTANT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, STENCIL_MODE_DECLARATOR_LIST, "<stencil mode declarator list>");
     r = stencil_mode_name(b, l + 1);
     r = r && stencil_mode_declarator_list_1(b, l + 1);
-    exit_section_(b, m, STENCIL_MODE_DECLARATOR_LIST, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -1943,14 +1943,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // IDENTIFIER
+  // IDENTIFIER | INT_CONSTANT
   public static boolean stencil_mode_name(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stencil_mode_name")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<stencil mode name>", IDENTIFIER, INT_CONSTANT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, STENCIL_MODE_NAME, "<stencil mode name>");
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, STENCIL_MODE_NAME, r);
+    if (!r) r = consumeToken(b, INT_CONSTANT);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -2205,7 +2206,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // uniform_header precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON
+  // uniform_header precision? type variable_name array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON
   public static boolean uniform_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_declaration")) return false;
     boolean r, p;
@@ -2217,6 +2218,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, variable_name(b, l + 1)) && r;
     r = p && report_error_(b, uniform_declaration_4(b, l + 1)) && r;
     r = p && report_error_(b, uniform_declaration_5(b, l + 1)) && r;
+    r = p && report_error_(b, uniform_declaration_6(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -2229,23 +2231,30 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // hint_section?
+  // array_size?
   private static boolean uniform_declaration_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_declaration_4")) return false;
+    array_size(b, l + 1);
+    return true;
+  }
+
+  // hint_section?
+  private static boolean uniform_declaration_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "uniform_declaration_5")) return false;
     hint_section(b, l + 1);
     return true;
   }
 
   // (OP_ASSIGN expression)?
-  private static boolean uniform_declaration_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "uniform_declaration_5")) return false;
-    uniform_declaration_5_0(b, l + 1);
+  private static boolean uniform_declaration_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "uniform_declaration_6")) return false;
+    uniform_declaration_6_0(b, l + 1);
     return true;
   }
 
   // OP_ASSIGN expression
-  private static boolean uniform_declaration_5_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "uniform_declaration_5_0")) return false;
+  private static boolean uniform_declaration_6_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "uniform_declaration_6_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_ASSIGN);

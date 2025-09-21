@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderUniformDeclaration extends PsiElement {
 
   @Nullable
+  GDShaderArraySize getArraySize();
+
+  @Nullable
   GDShaderExpression getExpression();
 
   @Nullable

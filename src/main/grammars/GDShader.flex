@@ -19,13 +19,15 @@ LineComment = "//"[^\r\n]*
 BlockComment = "/*"([^*]|\*+[^*/])*"*/"
 
 Identifier = [a-zA-Z_][a-zA-Z0-9_]*
+HexUintConstant = 0[xX][0-9a-fA-F]+[uU]
+HexIntConstant = 0[xX][0-9a-fA-F]+
+DecimalUintConstant = [0-9]+[uU]
+DecimalIntConstant = [0-9]+
 FloatConstant =
 	([0-9]+\.[0-9]*([eE][+-]?[0-9]+)?[fF]?) |
     (\.[0-9]+([eE][+-]?[0-9]+)?[fF]?) |
     ([0-9]+[eE][+-]?[0-9]+[fF]?) |
     ([0-9]+[fF])
-IntConstant = 0|[1-9][0-9]*
-UintConstant = 0|[1-9][0-9]*[uU]
 StringConstant = \"([^\\\"\n]|\\.)*\"
 UnterminatedStringConstant = \"([^\\\"\n]|\\.)*
 
@@ -39,8 +41,10 @@ PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
 "true" 						{ return GDShaderTypes.TRUE; }
 "false" 					{ return GDShaderTypes.FALSE; }
 {FloatConstant} 			{ return GDShaderTypes.FLOAT_CONSTANT; }
-{IntConstant} 				{ return GDShaderTypes.INT_CONSTANT; }
-{UintConstant} 				{ return GDShaderTypes.UINT_CONSTANT; }
+{HexUintConstant} 			{ return GDShaderTypes.UINT_CONSTANT; }
+{HexIntConstant} 			{ return GDShaderTypes.INT_CONSTANT; }
+{DecimalUintConstant} 		{ return GDShaderTypes.UINT_CONSTANT; }
+{DecimalIntConstant} 		{ return GDShaderTypes.INT_CONSTANT; }
 {StringConstant} 			{ return GDShaderTypes.STRING_CONSTANT; }
 {UnterminatedStringConstant} { return GDShaderTypes.UNTERMINATED_STRING_CONSTANT; }
 

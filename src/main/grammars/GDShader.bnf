@@ -57,7 +57,7 @@ stencil_mode_declaration ::= STENCIL_MODE stencil_mode_declarator_list SEMICOLON
 	pin=1
 }
 stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)*
-stencil_mode_name ::= IDENTIFIER
+stencil_mode_name ::= IDENTIFIER | INT_CONSTANT
 
 // Uniform Group Declaration
 uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON {
@@ -66,7 +66,7 @@ uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFI
 uniform_group_name ::= IDENTIFIER
 
 // Uniform Declaration
-uniform_declaration ::= uniform_header precision? type variable_name hint_section? (OP_ASSIGN expression)? SEMICOLON {
+uniform_declaration ::= uniform_header precision? type variable_name array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON {
 	pin=1
 }
 uniform_header ::= (GLOBAL | INSTANCE) UNIFORM | UNIFORM { pin=1 }
