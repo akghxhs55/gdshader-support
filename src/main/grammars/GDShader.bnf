@@ -249,8 +249,8 @@ unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)? 
 postfix_expr ::= primary (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
 
 primary ::= literal
-		  | constructor_call
 		  | function_call
+		  | constructor_call
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 		  | variable_name
 {
