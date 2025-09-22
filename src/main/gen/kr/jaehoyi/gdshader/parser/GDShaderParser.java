@@ -1505,8 +1505,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // literal
-  // 		  | constructor_call
   // 		  | function_call
+  // 		  | constructor_call
   // 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
   // 		  | variable_name
   public static boolean primary(PsiBuilder b, int l) {
@@ -1514,8 +1514,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PRIMARY, "<primary>");
     r = literal(b, l + 1);
-    if (!r) r = constructor_call(b, l + 1);
     if (!r) r = function_call(b, l + 1);
+    if (!r) r = constructor_call(b, l + 1);
     if (!r) r = primary_3(b, l + 1);
     if (!r) r = variable_name(b, l + 1);
     exit_section_(b, l, m, r, false, null);
