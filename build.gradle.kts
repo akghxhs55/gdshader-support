@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.3.0-beta"
+version = "0.3.1-beta"
 
 sourceSets {
     main {
@@ -35,11 +35,12 @@ intellijPlatform {
         }
 
         changeNotes = """
-            <h2>0.3.0-beta</h2>
             <ul>
-              <li>Added basic code completion for keywords</li>
-              <li>Added code formatting support</li>
-              <li>Improved grammar</li>
+              <li>Added support for Godot 4.5 (Stencil Mode)</li>
+              <li>Added file type support for GDShader include files (.gdshaderinc)</li>
+              <li>Improved grammar for various contexts</li>
+              <li>Improved syntax highlighting</li>
+              <li>Fix bugs</li>
             </ul>
         """.trimIndent()
     }
