@@ -259,7 +259,7 @@ primary ::= literal
 		  
 function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 constructor_call ::= type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
-argument_list ::= expression (COMMA expression)*
+argument_list ::= initializer (COMMA initializer)*
 
 // Preprocessor Directives
 preprocessor_directive ::= PP_DEFINE_LINE

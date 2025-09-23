@@ -79,18 +79,18 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expression (COMMA expression)*
+  // initializer (COMMA initializer)*
   public static boolean argument_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "argument_list")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ARGUMENT_LIST, "<argument list>");
-    r = expression(b, l + 1);
+    r = initializer(b, l + 1);
     r = r && argument_list_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // (COMMA expression)*
+  // (COMMA initializer)*
   private static boolean argument_list_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "argument_list_1")) return false;
     while (true) {
@@ -101,13 +101,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // COMMA expression
+  // COMMA initializer
   private static boolean argument_list_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "argument_list_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
-    r = r && expression(b, l + 1);
+    r = r && initializer(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

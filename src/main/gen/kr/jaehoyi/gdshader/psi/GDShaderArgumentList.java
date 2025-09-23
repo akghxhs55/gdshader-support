@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderArgumentList extends PsiElement {
 
   @NotNull
-  List<GDShaderExpression> getExpressionList();
+  List<GDShaderInitializer> getInitializerList();
 
 }

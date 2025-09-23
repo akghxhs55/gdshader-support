@@ -29,8 +29,8 @@ public class GDShaderArgumentListImpl extends ASTWrapperPsiElement implements GD
 
   @Override
   @NotNull
-  public List<GDShaderExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderExpression.class);
+  public List<GDShaderInitializer> getInitializerList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderInitializer.class);
   }
 
 }
