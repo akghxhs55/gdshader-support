@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderStructMemberName
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
@@ -17,6 +18,7 @@ class GDShaderVariableAnnotator : Annotator {
             is GDShaderConstantDeclaration -> annotateConstantDeclaration(element, holder)
             is GDShaderVaryingDeclaration -> annotateVaryingDeclaration(element, holder)
             is GDShaderLocalVariableDeclaration -> annotateLocalVariableDeclaration(element, holder)
+            is GDShaderStructMemberName -> annotateStructMemberName(element, holder)
             else -> return
         }
     }
@@ -53,7 +55,7 @@ class GDShaderVariableAnnotator : Annotator {
     }
     
     private fun annotateLocalVariableDeclaration(element: GDShaderLocalVariableDeclaration, holder: AnnotationHolder) {
-        val variableNames = element.variableDeclaratorList?.variableDeclaratorList ?: return
+        val variableNames = element.variableDeclaratorList.variableDeclaratorList
         
         for (variableName in variableNames) {
             val nameElement = variableName.variableName
@@ -63,5 +65,12 @@ class GDShaderVariableAnnotator : Annotator {
                 .textAttributes(GDShaderSyntaxHighlighter.LOCAL_VARIABLE)
                 .create()
         }
+    }
+    
+    private fun annotateStructMemberName(element: GDShaderStructMemberName, holder: AnnotationHolder) {
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+            .range(element.textRange)
+            .textAttributes(GDShaderSyntaxHighlighter.STRUCT_MEMBER)
+            .create()
     }
 }

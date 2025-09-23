@@ -76,6 +76,7 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Local Variable", GDShaderSyntaxHighlighter.LOCAL_VARIABLE),
     AttributesDescriptor("Uniform Variable", GDShaderSyntaxHighlighter.UNIFORM_VARIABLE),
     AttributesDescriptor("Varying Variable", GDShaderSyntaxHighlighter.VARYING_VARIABLE),
+    AttributesDescriptor("Struct Member", GDShaderSyntaxHighlighter.STRUCT_MEMBER),
     AttributesDescriptor("Function", GDShaderSyntaxHighlighter.FUNCTION),
     AttributesDescriptor("Parameter", GDShaderSyntaxHighlighter.PARAMETER),
     AttributesDescriptor("Struct", GDShaderSyntaxHighlighter.STRUCT),
