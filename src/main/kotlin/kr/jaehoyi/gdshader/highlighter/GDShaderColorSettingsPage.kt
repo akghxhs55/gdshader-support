@@ -6,6 +6,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import kr.jaehoyi.gdshader.GDShaderIcons
 import javax.swing.Icon
+import kotlin.collections.mapOf
 
 class GDShaderColorSettingsPage : ColorSettingsPage {
 
@@ -17,29 +18,29 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
         
         #define MY_CONSTANT 42
 
-        uniform vec4 color : source_color;
-        uniform int name : hint_enum("Option1", "Option2", "Option3");
-        uniform sampler2D image : hint_default_white;
+        uniform vec4 <uvar>color</uvar> : source_color;
+        uniform int <uvar>name</uvar> : hint_enum("Option1", "Option2", "Option3");
+        uniform sampler2D <uvar>image</uvar> : hint_default_white;
         
-        const float offset = 0.5;
+        const float <const>offset</const> = 0.5;
         
-        varying vec2 uv;
+        varying vec2 <vvar>uv</vvar>;
         
-        int foo(int a, float b) {
+        int <func>foo</func>(int <param>a</param>, float <param>b</param>) {
             return a + int(b);
         }
         
-        struct MyStruct {
-            vec2 position;
-            vec3 color;
+        struct <struct>MyStruct</struct> {
+            vec2 <member>position</member>;
+            vec3 <member>color</member>;
         };
 
         void fragment() {
-            vec4 texColor = texture(image, UV);
+            vec4 <lvar>texColor</lvar> = texture(image, UV);
             COLOR = texColor * color;
-            int values[3] = { 1, 2, 3 };
+            int <lvar>values</lvar>[3] = { 1, 2, 3 };
             
-            for (int i = 0; i < 10; i++) {
+            for (int <lvar>i</lvar> = 0; i < 10; i++) {
                 COLOR.rgb += vec3(float(i) / 10.0);
                 if (i % 2 == 0) {
                     values[i % 3] += foo(i, 0.5);
@@ -51,35 +52,45 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
                that spans multiple lines */
         }
     """.trimIndent()
-    override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String?, TextAttributesKey?>? = null
+    
+    override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> = mapOf(
+        "lvar" to GDShaderSyntaxHighlighter.LOCAL_VARIABLE,
+        "uvar" to GDShaderSyntaxHighlighter.UNIFORM_VARIABLE,
+        "const" to GDShaderSyntaxHighlighter.CONSTANT,
+        "vvar" to GDShaderSyntaxHighlighter.VARYING_VARIABLE,
+        "func" to GDShaderSyntaxHighlighter.FUNCTION,
+        "param" to GDShaderSyntaxHighlighter.PARAMETER,
+        "struct" to GDShaderSyntaxHighlighter.STRUCT,
+        "member" to GDShaderSyntaxHighlighter.STRUCT_MEMBER
+    )
+    
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> = DESCRIPTORS
     override fun getColorDescriptors(): Array<out ColorDescriptor?> = ColorDescriptor.EMPTY_ARRAY
     override fun getDisplayName(): String = "GDShader"
 }
 
 private val DESCRIPTORS = arrayOf(
-    AttributesDescriptor("Identifier", GDShaderSyntaxHighlighter.IDENTIFIER),
+    AttributesDescriptor("Identifiers//Local Variable", GDShaderSyntaxHighlighter.LOCAL_VARIABLE),
+    AttributesDescriptor("Identifiers//Uniform Variable", GDShaderSyntaxHighlighter.UNIFORM_VARIABLE),
+    AttributesDescriptor("Identifiers//Constant", GDShaderSyntaxHighlighter.CONSTANT),
+    AttributesDescriptor("Identifiers//Varying Variable", GDShaderSyntaxHighlighter.VARYING_VARIABLE),
+    AttributesDescriptor("Identifiers//Function", GDShaderSyntaxHighlighter.FUNCTION),
+    AttributesDescriptor("Identifiers//Parameter", GDShaderSyntaxHighlighter.PARAMETER),
+    AttributesDescriptor("Identifiers//Struct", GDShaderSyntaxHighlighter.STRUCT),
+    AttributesDescriptor("Identifiers//Struct Member", GDShaderSyntaxHighlighter.STRUCT_MEMBER),
     AttributesDescriptor("Keyword", GDShaderSyntaxHighlighter.KEYWORD),
-    AttributesDescriptor("Number", GDShaderSyntaxHighlighter.NUMBER),
-    AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.UNIFORM_HINT),
-    AttributesDescriptor("String", GDShaderSyntaxHighlighter.STRING),
-    AttributesDescriptor("Block Comment", GDShaderSyntaxHighlighter.BLOCK_COMMENT),
-    AttributesDescriptor("Line Comment", GDShaderSyntaxHighlighter.LINE_COMMENT),
-    AttributesDescriptor("Operator", GDShaderSyntaxHighlighter.OPERATOR),
-    AttributesDescriptor("Colon", GDShaderSyntaxHighlighter.COLON),
-    AttributesDescriptor("Curly Bracket", GDShaderSyntaxHighlighter.CURLY_BRACKET),
-    AttributesDescriptor("Period", GDShaderSyntaxHighlighter.PERIOD),
-    AttributesDescriptor("Semicolon", GDShaderSyntaxHighlighter.SEMICOLON),
-    AttributesDescriptor("Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
-    AttributesDescriptor("Bracket", GDShaderSyntaxHighlighter.BRACKET),
-    AttributesDescriptor("Constant", GDShaderSyntaxHighlighter.CONSTANT),
-    AttributesDescriptor("Local Variable", GDShaderSyntaxHighlighter.LOCAL_VARIABLE),
-    AttributesDescriptor("Uniform Variable", GDShaderSyntaxHighlighter.UNIFORM_VARIABLE),
-    AttributesDescriptor("Varying Variable", GDShaderSyntaxHighlighter.VARYING_VARIABLE),
-    AttributesDescriptor("Struct Member", GDShaderSyntaxHighlighter.STRUCT_MEMBER),
-    AttributesDescriptor("Function", GDShaderSyntaxHighlighter.FUNCTION),
-    AttributesDescriptor("Parameter", GDShaderSyntaxHighlighter.PARAMETER),
-    AttributesDescriptor("Struct", GDShaderSyntaxHighlighter.STRUCT),
-    AttributesDescriptor("Primitive Type", GDShaderSyntaxHighlighter.TYPE),
     AttributesDescriptor("Preprocessor", GDShaderSyntaxHighlighter.PREPROCESSOR),
+    AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.UNIFORM_HINT),
+    AttributesDescriptor("Number", GDShaderSyntaxHighlighter.NUMBER),
+    AttributesDescriptor("String", GDShaderSyntaxHighlighter.STRING),
+    AttributesDescriptor("Primitive Type", GDShaderSyntaxHighlighter.TYPE),
+    AttributesDescriptor("Comments//Line Comment", GDShaderSyntaxHighlighter.LINE_COMMENT),
+    AttributesDescriptor("Comments//Block Comment", GDShaderSyntaxHighlighter.BLOCK_COMMENT),
+    AttributesDescriptor("Braces and Operators//Operator", GDShaderSyntaxHighlighter.OPERATOR),
+    AttributesDescriptor("Braces and Operators//Period", GDShaderSyntaxHighlighter.PERIOD),
+    AttributesDescriptor("Braces and Operators//Colon", GDShaderSyntaxHighlighter.COLON),
+    AttributesDescriptor("Braces and Operators//Semicolon", GDShaderSyntaxHighlighter.SEMICOLON),
+    AttributesDescriptor("Braces and Operators//Parenthesis", GDShaderSyntaxHighlighter.PARENTHESIS),
+    AttributesDescriptor("Braces and Operators//Curly Bracket", GDShaderSyntaxHighlighter.CURLY_BRACKET),
+    AttributesDescriptor("Braces and Operators//Bracket", GDShaderSyntaxHighlighter.BRACKET),
 )
