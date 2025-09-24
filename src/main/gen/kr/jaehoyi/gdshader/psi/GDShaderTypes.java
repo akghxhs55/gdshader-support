@@ -55,7 +55,6 @@ public interface GDShaderTypes {
   IElementType PARAMETER_QUALIFIER = new GDShaderElementType("PARAMETER_QUALIFIER");
   IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
   IElementType PRECISION = new GDShaderElementType("PRECISION");
-  IElementType PREPROCESSOR_DIRECTIVE = new GDShaderElementType("PREPROCESSOR_DIRECTIVE");
   IElementType PRIMARY = new GDShaderElementType("PRIMARY");
   IElementType PRIMITIVE_TYPE = new GDShaderElementType("PRIMITIVE_TYPE");
   IElementType RANGE_HINT = new GDShaderElementType("RANGE_HINT");
@@ -184,17 +183,17 @@ public interface GDShaderTypes {
   IElementType PARENTHESIS_CLOSE = new GDShaderTokenType("PARENTHESIS_CLOSE");
   IElementType PARENTHESIS_OPEN = new GDShaderTokenType("PARENTHESIS_OPEN");
   IElementType PERIOD = new GDShaderTokenType("PERIOD");
-  IElementType PP_DEFINE_LINE = new GDShaderTokenType("PP_DEFINE_LINE");
-  IElementType PP_ELIF_LINE = new GDShaderTokenType("PP_ELIF_LINE");
-  IElementType PP_ELSE_LINE = new GDShaderTokenType("PP_ELSE_LINE");
-  IElementType PP_ENDIF_LINE = new GDShaderTokenType("PP_ENDIF_LINE");
-  IElementType PP_ERROR_LINE = new GDShaderTokenType("PP_ERROR_LINE");
-  IElementType PP_IFDEF_LINE = new GDShaderTokenType("PP_IFDEF_LINE");
-  IElementType PP_IFNDEF_LINE = new GDShaderTokenType("PP_IFNDEF_LINE");
-  IElementType PP_IF_LINE = new GDShaderTokenType("PP_IF_LINE");
-  IElementType PP_INCLUDE_LINE = new GDShaderTokenType("PP_INCLUDE_LINE");
-  IElementType PP_PRAGMA_LINE = new GDShaderTokenType("PP_PRAGMA_LINE");
-  IElementType PP_UNDEF_LINE = new GDShaderTokenType("PP_UNDEF_LINE");
+  IElementType PP_DEFINE_LINE = new GDShaderTokenType("Preprocessor define line");
+  IElementType PP_ELIF_LINE = new GDShaderTokenType("Preprocessor elif line");
+  IElementType PP_ELSE_LINE = new GDShaderTokenType("Preprocessor else line");
+  IElementType PP_ENDIF_LINE = new GDShaderTokenType("Preprocessor endif line");
+  IElementType PP_ERROR_LINE = new GDShaderTokenType("Preprocessor error line");
+  IElementType PP_IFDEF_LINE = new GDShaderTokenType("Preprocessor ifdef line");
+  IElementType PP_IFNDEF_LINE = new GDShaderTokenType("Preprocessor ifndef line");
+  IElementType PP_IF_LINE = new GDShaderTokenType("Preprocessor if line");
+  IElementType PP_INCLUDE_LINE = new GDShaderTokenType("Preprocessor include line");
+  IElementType PP_PRAGMA_LINE = new GDShaderTokenType("Preprocessor pragma line");
+  IElementType PP_UNDEF_LINE = new GDShaderTokenType("Preprocessor undef line");
   IElementType PRECISION_HIGH = new GDShaderTokenType("PRECISION_HIGH");
   IElementType PRECISION_LOW = new GDShaderTokenType("PRECISION_LOW");
   IElementType PRECISION_MEDIUM = new GDShaderTokenType("PRECISION_MEDIUM");
@@ -386,9 +385,6 @@ public interface GDShaderTypes {
       }
       else if (type == PRECISION) {
         return new GDShaderPrecisionImpl(node);
-      }
-      else if (type == PREPROCESSOR_DIRECTIVE) {
-        return new GDShaderPreprocessorDirectiveImpl(node);
       }
       else if (type == PRIMARY) {
         return new GDShaderPrimaryImpl(node);

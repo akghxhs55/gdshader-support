@@ -23,9 +23,6 @@ public interface GDShaderStatementBody extends PsiElement {
   GDShaderLocalVariableDeclaration getLocalVariableDeclaration();
 
   @Nullable
-  GDShaderPreprocessorDirective getPreprocessorDirective();
-
-  @Nullable
   GDShaderReturnStatement getReturnStatement();
 
   @Nullable

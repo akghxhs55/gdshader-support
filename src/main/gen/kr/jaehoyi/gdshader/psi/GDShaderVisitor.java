@@ -195,10 +195,6 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitPreprocessorDirective(@NotNull GDShaderPreprocessorDirective o) {
-    visitPsiElement(o);
-  }
-
   public void visitPrimary(@NotNull GDShaderPrimary o) {
     visitPsiElement(o);
   }

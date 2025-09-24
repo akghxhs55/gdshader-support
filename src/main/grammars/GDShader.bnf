@@ -18,13 +18,23 @@
   	UNTERMINATED_STRING_CONSTANT = "Unterminated string"
   	LINE_COMMENT = "Line commnet"
   	BLOCK_COMMENT = "Block comment"
+  	PP_DEFINE_LINE = "Preprocessor define line"
+    PP_UNDEF_LINE = "Preprocessor undef line"
+    PP_ELSE_LINE = "Preprocessor else line"
+    PP_ELIF_LINE = "Preprocessor elif line"
+    PP_ENDIF_LINE = "Preprocessor endif line"
+    PP_IFDEF_LINE = "Preprocessor ifdef line"
+    PP_IFNDEF_LINE = "Preprocessor ifndef line"
+    PP_IF_LINE = "Preprocessor if line"
+    PP_ERROR_LINE = "Preprocessor error line"
+    PP_INCLUDE_LINE = "Preprocessor include line"
+    PP_PRAGMA_LINE = "Preprocessor pragma line"
   ]
 }
 
 gdShaderFile ::= item*
 
 item ::= top_level_declaration
-	   | preprocessor_directive
 	   
 // Top Level Declarations
 top_level_declaration ::= shader_type_declaration
@@ -227,7 +237,6 @@ statement_body ::= block
 				 | expression_statement
 				 | constant_declaration
 				 | SEMICOLON
-				 | preprocessor_directive
 
 // Expressions
 expression_statement ::= expression SEMICOLON
@@ -260,19 +269,6 @@ primary ::= literal
 function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 constructor_call ::= type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= initializer (COMMA initializer)*
-
-// Preprocessor Directives
-preprocessor_directive ::= PP_DEFINE_LINE
-                         | PP_UNDEF_LINE
-                         | PP_IF_LINE
-                         | PP_ELSE_LINE
-                         | PP_ELIF_LINE
-                         | PP_ENDIF_LINE
-                         | PP_IFDEF_LINE
-                         | PP_IFNDEF_LINE
-                         | PP_ERROR_LINE
-                         | PP_INCLUDE_LINE
-                         | PP_PRAGMA_LINE
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH

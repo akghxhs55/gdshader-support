@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderItem extends PsiElement {
 
-  @Nullable
-  GDShaderPreprocessorDirective getPreprocessorDirective();
-
-  @Nullable
+  @NotNull
   GDShaderTopLevelDeclaration getTopLevelDeclaration();
 
 }

@@ -59,12 +59,6 @@ public class GDShaderStatementBodyImpl extends ASTWrapperPsiElement implements G
 
   @Override
   @Nullable
-  public GDShaderPreprocessorDirective getPreprocessorDirective() {
-    return findChildByClass(GDShaderPreprocessorDirective.class);
-  }
-
-  @Override
-  @Nullable
   public GDShaderReturnStatement getReturnStatement() {
     return findChildByClass(GDShaderReturnStatement.class);
   }

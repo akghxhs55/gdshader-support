@@ -28,15 +28,9 @@ public class GDShaderItemImpl extends ASTWrapperPsiElement implements GDShaderIt
   }
 
   @Override
-  @Nullable
-  public GDShaderPreprocessorDirective getPreprocessorDirective() {
-    return findChildByClass(GDShaderPreprocessorDirective.class);
-  }
-
-  @Override
-  @Nullable
+  @NotNull
   public GDShaderTopLevelDeclaration getTopLevelDeclaration() {
-    return findChildByClass(GDShaderTopLevelDeclaration.class);
+    return findNotNullChildByClass(GDShaderTopLevelDeclaration.class);
   }
 
 }
