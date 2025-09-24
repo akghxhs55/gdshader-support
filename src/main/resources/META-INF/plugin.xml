@@ -116,7 +116,7 @@
             text="GDShader Include File"
             description="Create a new GDShader Include file"
             class="kr.jaehoyi.gdshader.action.GDShaderIncludeNewFileAction"
-            icon="kr.jaehoyi.gdshader.GDShaderIcons.GDSHADER">
+            icon="kr.jaehoyi.gdshader.GDShaderIcons.GDSHADERINC">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
         </action>
         
