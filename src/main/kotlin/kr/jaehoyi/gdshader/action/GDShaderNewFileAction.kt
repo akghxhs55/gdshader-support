@@ -7,7 +7,6 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import kr.jaehoyi.gdshader.GDShaderFileType
-import org.jetbrains.annotations.NonNls
 
 class GDShaderNewFileAction : CreateFileFromTemplateAction(), DumbAware {
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
@@ -28,6 +27,6 @@ class GDShaderNewFileAction : CreateFileFromTemplateAction(), DumbAware {
             .addKind("Fog", GDShaderFileType.icon, "Fog")
     }
 
-    override fun getActionName(directory: PsiDirectory?, newName: @NonNls String, templateName: @NonNls String?): String
-        = "GDShader File"
+    override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String
+        = "Create GDShader File $newName"
 }
