@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -24,8 +25,17 @@ repositories {
 }
 
 dependencies {
-    intellijPlatform.rider("2025.1.2")
-    intellijPlatform.plugin("PsiViewer", "2025.1")
+    intellijPlatform {
+        rider("2025.1.2")
+        plugin("PsiViewer", "2025.1")
+        
+        testFramework(TestFrameworkType.Platform)
+        testFramework(TestFrameworkType.Plugin.Java)
+    }
+    
+    testImplementation(kotlin("test"))
+    testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.13.4")
 }
 
 intellijPlatform {
@@ -51,7 +61,12 @@ tasks {
         sourceCompatibility = "21"
         targetCompatibility = "21"
     }
+    
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    }
+    
+    withType<Test> {
+        useJUnitPlatform()
     }
 }

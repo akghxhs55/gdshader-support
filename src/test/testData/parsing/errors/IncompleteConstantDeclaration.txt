@@ -1,0 +1,12 @@
+GDShader File(0,10)
+  GDShaderItemImpl(ITEM)(0,10)
+    GDShaderTopLevelDeclarationImpl(TOP_LEVEL_DECLARATION)(0,10)
+      GDShaderConstantDeclarationImpl(CONSTANT_DECLARATION)(0,10)
+        PsiElement(GDShaderTokenType.CONST)('const')(0,5)
+        PsiWhiteSpace(' ')(5,6)
+        GDShaderTypeImpl(TYPE)(6,9)
+          GDShaderPrimitiveTypeImpl(PRIMITIVE_TYPE)(6,9)
+            PsiElement(GDShaderTokenType.TYPE_INT)('int')(6,9)
+        PsiErrorElement:GDShaderTokenType.IDENTIFIER expected, got ';'(9,9)
+          <empty list>
+        PsiElement(GDShaderTokenType.SEMICOLON)(';')(9,10)
