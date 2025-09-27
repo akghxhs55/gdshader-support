@@ -31,7 +31,7 @@ FloatConstant =
 StringConstant = \"([^\\\"\n]|\\.)*\"
 UnterminatedStringConstant = \"([^\\\"\n]|\\.)*
 
-PreprocessorLine = ([^\\\r\n]*(\\[ \t]*[\r\n])?)*
+PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
 
 %%
 
