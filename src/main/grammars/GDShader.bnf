@@ -314,7 +314,8 @@ literal ::= TRUE
 
 // Operators
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
-                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
+                        | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT | OP_ASSIGN_BIT_AND
+                        | OP_ASSIGN_BIT_OR | OP_ASSIGN_BIT_XOR
 
 number ::= (OP_SUB)? FLOAT_CONSTANT
 		 | (OP_SUB)? INT_CONSTANT

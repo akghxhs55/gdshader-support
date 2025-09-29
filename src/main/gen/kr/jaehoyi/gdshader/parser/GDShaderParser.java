@@ -158,7 +158,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
-  //                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT
+  //                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT | OP_ASSIGN_BIT_AND
+  //                         | OP_ASSIGN_BIT_OR | OP_ASSIGN_BIT_XOR
   public static boolean assignment_operator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignment_operator")) return false;
     boolean r;
@@ -171,6 +172,9 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, OP_ASSIGN_MOD);
     if (!r) r = consumeToken(b, OP_ASSIGN_SHIFT_LEFT);
     if (!r) r = consumeToken(b, OP_ASSIGN_SHIFT_RIGHT);
+    if (!r) r = consumeToken(b, OP_ASSIGN_BIT_AND);
+    if (!r) r = consumeToken(b, OP_ASSIGN_BIT_OR);
+    if (!r) r = consumeToken(b, OP_ASSIGN_BIT_XOR);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

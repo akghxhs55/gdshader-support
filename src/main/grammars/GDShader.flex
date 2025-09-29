@@ -84,6 +84,9 @@ PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
 "%=" 						{ return GDShaderTypes.OP_ASSIGN_MOD; }
 "<<="	 					{ return GDShaderTypes.OP_ASSIGN_SHIFT_LEFT; }
 ">>="	 					{ return GDShaderTypes.OP_ASSIGN_SHIFT_RIGHT; }
+"&=" 						{ return GDShaderTypes.OP_ASSIGN_BIT_AND; }
+"|=" 						{ return GDShaderTypes.OP_ASSIGN_BIT_OR; }
+"^=" 						{ return GDShaderTypes.OP_ASSIGN_BIT_XOR; }
 "&" 						{ return GDShaderTypes.OP_BIT_AND; }
 "|" 						{ return GDShaderTypes.OP_BIT_OR; }
 "^" 						{ return GDShaderTypes.OP_BIT_XOR; }

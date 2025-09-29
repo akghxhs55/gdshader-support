@@ -154,6 +154,9 @@ public interface GDShaderTypes {
   IElementType OP_AND = new GDShaderTokenType("OP_AND");
   IElementType OP_ASSIGN = new GDShaderTokenType("OP_ASSIGN");
   IElementType OP_ASSIGN_ADD = new GDShaderTokenType("OP_ASSIGN_ADD");
+  IElementType OP_ASSIGN_BIT_AND = new GDShaderTokenType("OP_ASSIGN_BIT_AND");
+  IElementType OP_ASSIGN_BIT_OR = new GDShaderTokenType("OP_ASSIGN_BIT_OR");
+  IElementType OP_ASSIGN_BIT_XOR = new GDShaderTokenType("OP_ASSIGN_BIT_XOR");
   IElementType OP_ASSIGN_DIV = new GDShaderTokenType("OP_ASSIGN_DIV");
   IElementType OP_ASSIGN_MOD = new GDShaderTokenType("OP_ASSIGN_MOD");
   IElementType OP_ASSIGN_MUL = new GDShaderTokenType("OP_ASSIGN_MUL");
