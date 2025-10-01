@@ -1,6 +1,6 @@
 package kr.jaehoyi.gdshader
 
-import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.testFramework.ParsingTestCase
 
 class GDShaderExpressionParsingTest : ParsingTestCase(
     "parsing/expressions",
@@ -56,6 +56,14 @@ class GDShaderExpressionParsingTest : ParsingTestCase(
     }
     
     fun testMultiplicativeExpression() {
+        doTest(true)
+    }
+    
+    fun testUnaryExpression() {
+        doTest(true)
+    }
+    
+    fun testPostfixExpression() {
         doTest(true)
     }
 }
