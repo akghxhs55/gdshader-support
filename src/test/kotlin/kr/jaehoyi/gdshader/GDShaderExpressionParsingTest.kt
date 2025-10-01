@@ -70,4 +70,8 @@ class GDShaderExpressionParsingTest : ParsingTestCase(
     fun testPrecedence() {
         doTest(true)
     }
+    
+    fun testComplexContext() {
+        doTest(true)
+    }
 }
