@@ -254,7 +254,7 @@ relational_expr ::= shift_expr ((OP_LESS | OP_LESS_EQUAL | OP_GREATER | OP_GREAT
 shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
 additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
 multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
-unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)? postfix_expr
+unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB) unary_expr | (OP_INCREMENT | OP_DECREMENT)? postfix_expr
 postfix_expr ::= primary (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
 
 primary ::= literal

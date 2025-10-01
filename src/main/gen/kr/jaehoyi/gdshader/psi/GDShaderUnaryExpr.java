@@ -7,7 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderUnaryExpr extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderPostfixExpr getPostfixExpr();
+
+  @Nullable
+  GDShaderUnaryExpr getUnaryExpr();
 
 }

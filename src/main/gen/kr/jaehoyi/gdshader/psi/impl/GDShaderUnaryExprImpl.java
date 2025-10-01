@@ -28,9 +28,15 @@ public class GDShaderUnaryExprImpl extends ASTWrapperPsiElement implements GDSha
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderPostfixExpr getPostfixExpr() {
-    return findNotNullChildByClass(GDShaderPostfixExpr.class);
+    return findChildByClass(GDShaderPostfixExpr.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderUnaryExpr getUnaryExpr() {
+    return findChildByClass(GDShaderUnaryExpr.class);
   }
 
 }

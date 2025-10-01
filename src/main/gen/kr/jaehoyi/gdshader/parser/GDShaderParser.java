@@ -2144,33 +2144,63 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)? postfix_expr
+  // (OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB) unary_expr | (OP_INCREMENT | OP_DECREMENT)? postfix_expr
   public static boolean unary_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unary_expr")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, UNARY_EXPR, "<unary expr>");
+    Marker m = enter_section_(b, l, _COLLAPSE_, UNARY_EXPR, "<unary expr>");
     r = unary_expr_0(b, l + 1);
-    r = r && postfix_expr(b, l + 1);
+    if (!r) r = unary_expr_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // (OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB)?
+  // (OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB) unary_expr
   private static boolean unary_expr_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unary_expr_0")) return false;
-    unary_expr_0_0(b, l + 1);
-    return true;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = unary_expr_0_0(b, l + 1);
+    r = r && unary_expr(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
-  // OP_NOT | OP_BIT_INVERT | OP_INCREMENT | OP_DECREMENT | OP_SUB
+  // OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB
   private static boolean unary_expr_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unary_expr_0_0")) return false;
     boolean r;
     r = consumeToken(b, OP_NOT);
     if (!r) r = consumeToken(b, OP_BIT_INVERT);
-    if (!r) r = consumeToken(b, OP_INCREMENT);
-    if (!r) r = consumeToken(b, OP_DECREMENT);
+    if (!r) r = consumeToken(b, OP_ADD);
     if (!r) r = consumeToken(b, OP_SUB);
+    return r;
+  }
+
+  // (OP_INCREMENT | OP_DECREMENT)? postfix_expr
+  private static boolean unary_expr_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unary_expr_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = unary_expr_1_0(b, l + 1);
+    r = r && postfix_expr(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (OP_INCREMENT | OP_DECREMENT)?
+  private static boolean unary_expr_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unary_expr_1_0")) return false;
+    unary_expr_1_0_0(b, l + 1);
+    return true;
+  }
+
+  // OP_INCREMENT | OP_DECREMENT
+  private static boolean unary_expr_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unary_expr_1_0_0")) return false;
+    boolean r;
+    r = consumeToken(b, OP_INCREMENT);
+    if (!r) r = consumeToken(b, OP_DECREMENT);
     return r;
   }
 

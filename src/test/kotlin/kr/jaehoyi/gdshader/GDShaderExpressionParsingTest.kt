@@ -1,0 +1,61 @@
+package kr.jaehoyi.gdshader
+
+import com.intellij.testFramework.ParsingTestCase;
+
+class GDShaderExpressionParsingTest : ParsingTestCase(
+    "parsing/expressions",
+    "gdshader",
+    GDShaderParserDefinition()
+) {
+    override fun getTestDataPath(): String = "src/test/testData"
+
+    override fun includeRanges(): Boolean = true
+
+    fun testConditionalExpression() {
+        doTest(true)
+    }
+    
+    fun testAssignExpression() {
+        doTest(true)
+    }
+    
+    fun testLogicalOrExpression() {
+        doTest(true)
+    }
+    
+    fun testLogicalAndExpression() {
+        doTest(true)
+    }
+    
+    fun testBitwiseOrExpression() {
+        doTest(true)
+    }
+    
+    fun testBitwiseXorExpression() {
+        doTest(true)
+    }
+    
+    fun testBitwiseAndExpression() {
+        doTest(true)
+    }
+    
+    fun testEqualityExpression() {
+        doTest(true)
+    }
+    
+    fun testRelationalExpression() {
+        doTest(true)
+    }
+    
+    fun testShiftExpression() {
+        doTest(true)
+    }
+    
+    fun testAdditiveExpression() {
+        doTest(true)
+    }
+    
+    fun testMultiplicativeExpression() {
+        doTest(true)
+    }
+}
