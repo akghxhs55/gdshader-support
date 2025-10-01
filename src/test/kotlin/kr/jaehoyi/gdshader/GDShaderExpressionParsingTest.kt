@@ -66,4 +66,8 @@ class GDShaderExpressionParsingTest : ParsingTestCase(
     fun testPostfixExpression() {
         doTest(true)
     }
+    
+    fun testPrecedence() {
+        doTest(true)
+    }
 }
