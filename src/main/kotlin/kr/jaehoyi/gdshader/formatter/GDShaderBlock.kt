@@ -30,23 +30,11 @@ class GDShaderBlock(
     }
 
     override fun getIndent(): Indent? {
-        if (myNode.elementType == GDShaderTypes.CURLY_BRACKET_OPEN ||
-            myNode.elementType == GDShaderTypes.CURLY_BRACKET_CLOSE) {
-            return Indent.getNoneIndent()
-        }
-        
         val parentType = myNode.treeParent?.elementType
         
         if (parentType == GDShaderTypes.BLOCK_BODY ||
             parentType == GDShaderTypes.STRUCT_MEMBER_LIST ||
-            parentType == GDShaderTypes.SWITCH_BODY) {
-            return Indent.getNormalIndent()
-        }
-        
-        if (parentType == GDShaderTypes.IF_STATEMENT ||
-            parentType == GDShaderTypes.FOR_STATEMENT ||
-            parentType == GDShaderTypes.DO_WHILE_STATEMENT ||
-            parentType == GDShaderTypes.WHILE_STATEMENT) {
+            parentType == GDShaderTypes.SWITCH_BLOCK) {
             return Indent.getNormalIndent()
         }
         
@@ -57,15 +45,9 @@ class GDShaderBlock(
         val nodeType = myNode.elementType
         
         if (nodeType == GDShaderTypes.BLOCK ||
+            nodeType == GDShaderTypes.BLOCK_BODY ||
             nodeType == GDShaderTypes.STRUCT_DECLARATION ||
             nodeType == GDShaderTypes.SWITCH_BLOCK) {
-            return ChildAttributes(Indent.getNormalIndent(), null)
-        }
-        
-        if (nodeType == GDShaderTypes.IF_STATEMENT ||
-            nodeType == GDShaderTypes.FOR_STATEMENT ||
-            nodeType == GDShaderTypes.DO_WHILE_STATEMENT ||
-            nodeType == GDShaderTypes.WHILE_STATEMENT) {
             return ChildAttributes(Indent.getNormalIndent(), null)
         }
         
