@@ -35,9 +35,18 @@ class GDShaderBlock(
             return Indent.getNoneIndent()
         }
         
-        if (myNode.treeParent?.elementType == GDShaderTypes.BLOCK_BODY ||
-            myNode.treeParent?.elementType == GDShaderTypes.STRUCT_MEMBER_LIST ||
-            myNode.treeParent?.elementType == GDShaderTypes.SWITCH_BODY) {
+        val parentType = myNode.treeParent?.elementType
+        
+        if (parentType == GDShaderTypes.BLOCK_BODY ||
+            parentType == GDShaderTypes.STRUCT_MEMBER_LIST ||
+            parentType == GDShaderTypes.SWITCH_BODY) {
+            return Indent.getNormalIndent()
+        }
+        
+        if (parentType == GDShaderTypes.IF_STATEMENT ||
+            parentType == GDShaderTypes.FOR_STATEMENT ||
+            parentType == GDShaderTypes.DO_WHILE_STATEMENT ||
+            parentType == GDShaderTypes.WHILE_STATEMENT) {
             return Indent.getNormalIndent()
         }
         
@@ -45,11 +54,21 @@ class GDShaderBlock(
     }
 
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
-        if (myNode.elementType == GDShaderTypes.BLOCK ||
-            myNode.elementType == GDShaderTypes.STRUCT_DECLARATION ||
-            myNode.elementType == GDShaderTypes.SWITCH_BLOCK) {
+        val nodeType = myNode.elementType
+        
+        if (nodeType == GDShaderTypes.BLOCK ||
+            nodeType == GDShaderTypes.STRUCT_DECLARATION ||
+            nodeType == GDShaderTypes.SWITCH_BLOCK) {
             return ChildAttributes(Indent.getNormalIndent(), null)
         }
+        
+        if (nodeType == GDShaderTypes.IF_STATEMENT ||
+            nodeType == GDShaderTypes.FOR_STATEMENT ||
+            nodeType == GDShaderTypes.DO_WHILE_STATEMENT ||
+            nodeType == GDShaderTypes.WHILE_STATEMENT) {
+            return ChildAttributes(Indent.getNormalIndent(), null)
+        }
+        
         return ChildAttributes(Indent.getNoneIndent(), null)
     }
 
