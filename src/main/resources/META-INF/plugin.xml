@@ -51,9 +51,12 @@
         <lang.quoteHandler
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderQuoteHandler" />
+        
+        <!-- Formatting -->
         <lang.formatter
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.formatter.GDShaderFormattingModelBuilder" />
+        <typedHandler implementation="kr.jaehoyi.gdshader.formatter.GDShaderTypedHandler" />
         
         <!-- Annotators -->
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderFunctionAnnotator" />

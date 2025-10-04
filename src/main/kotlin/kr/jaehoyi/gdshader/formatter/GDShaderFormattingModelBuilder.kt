@@ -13,7 +13,8 @@ class GDShaderFormattingModelBuilder : FormattingModelBuilder {
             element.node,
             Wrap.createWrap(WrapType.NONE, false),
             Alignment.createAlignment(),
-            createSpacingBuilder(codeStyleSettings)
+            createSpacingBuilder(codeStyleSettings),
+            Indent.getNoneIndent()
         )
         
         return FormattingModelProvider.createFormattingModelForPsiFile(
