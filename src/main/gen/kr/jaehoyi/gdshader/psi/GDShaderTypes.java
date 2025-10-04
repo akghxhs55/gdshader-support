@@ -68,10 +68,12 @@ public interface GDShaderTypes {
   IElementType SHIFT_EXPR = new GDShaderElementType("SHIFT_EXPR");
   IElementType SIMPLE_HINT = new GDShaderElementType("SIMPLE_HINT");
   IElementType SIMPLE_STATEMENT = new GDShaderElementType("SIMPLE_STATEMENT");
+  IElementType STATEMENT = new GDShaderElementType("STATEMENT");
   IElementType STATEMENT_BODY = new GDShaderElementType("STATEMENT_BODY");
   IElementType STENCIL_MODE_DECLARATION = new GDShaderElementType("STENCIL_MODE_DECLARATION");
   IElementType STENCIL_MODE_DECLARATOR_LIST = new GDShaderElementType("STENCIL_MODE_DECLARATOR_LIST");
   IElementType STENCIL_MODE_NAME = new GDShaderElementType("STENCIL_MODE_NAME");
+  IElementType STRUCT_BLOCK = new GDShaderElementType("STRUCT_BLOCK");
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
   IElementType STRUCT_MEMBER_LIST = new GDShaderElementType("STRUCT_MEMBER_LIST");
@@ -428,6 +430,9 @@ public interface GDShaderTypes {
       else if (type == SIMPLE_STATEMENT) {
         return new GDShaderSimpleStatementImpl(node);
       }
+      else if (type == STATEMENT) {
+        return new GDShaderStatementImpl(node);
+      }
       else if (type == STATEMENT_BODY) {
         return new GDShaderStatementBodyImpl(node);
       }
@@ -439,6 +444,9 @@ public interface GDShaderTypes {
       }
       else if (type == STENCIL_MODE_NAME) {
         return new GDShaderStencilModeNameImpl(node);
+      }
+      else if (type == STRUCT_BLOCK) {
+        return new GDShaderStructBlockImpl(node);
       }
       else if (type == STRUCT_DECLARATION) {
         return new GDShaderStructDeclarationImpl(node);

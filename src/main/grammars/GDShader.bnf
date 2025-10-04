@@ -170,10 +170,11 @@ block_body ::= statement_body* {
 private block_body_recover ::= !(CURLY_BRACKET_CLOSE) 
 
 // Struct Declarations
-struct_declaration ::= STRUCT struct_name CURLY_BRACKET_OPEN struct_member_list CURLY_BRACKET_CLOSE SEMICOLON {
+struct_declaration ::= STRUCT struct_name struct_block SEMICOLON {
 	pin=1
 }
 struct_name ::= IDENTIFIER
+struct_block ::= CURLY_BRACKET_OPEN struct_member_list CURLY_BRACKET_CLOSE
 struct_member_list ::= struct_member* {
 	recoverWhile=struct_member_list_recover
 }
@@ -229,14 +230,16 @@ simple_statement ::= CF_BREAK SEMICOLON
 					| CF_CONTINUE SEMICOLON
 					| CF_DISCARD SEMICOLON
 					
-statement_body ::= block
-				 | control_statement
-				 | return_statement
-				 | simple_statement
-				 | local_variable_declaration
-				 | expression_statement
-				 | constant_declaration
-				 | SEMICOLON
+statement_body ::= statement
+				 | block
+				 
+statement ::= control_statement
+			| return_statement
+			| simple_statement
+			| local_variable_declaration
+			| expression_statement
+			| constant_declaration
+			| SEMICOLON
 
 // Expressions
 expression_statement ::= expression SEMICOLON

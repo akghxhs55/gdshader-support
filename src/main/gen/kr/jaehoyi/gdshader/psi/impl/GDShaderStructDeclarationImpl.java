@@ -29,8 +29,8 @@ public class GDShaderStructDeclarationImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public GDShaderStructMemberList getStructMemberList() {
-    return findChildByClass(GDShaderStructMemberList.class);
+  public GDShaderStructBlock getStructBlock() {
+    return findChildByClass(GDShaderStructBlock.class);
   }
 
   @Override

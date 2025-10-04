@@ -30,7 +30,6 @@ dependencies {
         plugin("PsiViewer", "2025.1")
         
         testFramework(TestFrameworkType.Platform)
-        testFramework(TestFrameworkType.Plugin.Java)
     }
     
     testImplementation(kotlin("test"))
@@ -41,7 +40,6 @@ dependencies {
 intellijPlatform {
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = "231"
         }
 
         changeNotes = """

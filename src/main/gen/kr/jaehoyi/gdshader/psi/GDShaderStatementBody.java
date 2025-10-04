@@ -11,21 +11,6 @@ public interface GDShaderStatementBody extends PsiElement {
   GDShaderBlock getBlock();
 
   @Nullable
-  GDShaderConstantDeclaration getConstantDeclaration();
-
-  @Nullable
-  GDShaderControlStatement getControlStatement();
-
-  @Nullable
-  GDShaderExpressionStatement getExpressionStatement();
-
-  @Nullable
-  GDShaderLocalVariableDeclaration getLocalVariableDeclaration();
-
-  @Nullable
-  GDShaderReturnStatement getReturnStatement();
-
-  @Nullable
-  GDShaderSimpleStatement getSimpleStatement();
+  GDShaderStatement getStatement();
 
 }

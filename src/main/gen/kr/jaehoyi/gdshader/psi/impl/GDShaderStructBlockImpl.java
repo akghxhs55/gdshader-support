@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderStatementBodyImpl extends ASTWrapperPsiElement implements GDShaderStatementBody {
+public class GDShaderStructBlockImpl extends ASTWrapperPsiElement implements GDShaderStructBlock {
 
-  public GDShaderStatementBodyImpl(@NotNull ASTNode node) {
+  public GDShaderStructBlockImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitStatementBody(this);
+    visitor.visitStructBlock(this);
   }
 
   @Override
@@ -28,15 +28,9 @@ public class GDShaderStatementBodyImpl extends ASTWrapperPsiElement implements G
   }
 
   @Override
-  @Nullable
-  public GDShaderBlock getBlock() {
-    return findChildByClass(GDShaderBlock.class);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderStatement getStatement() {
-    return findChildByClass(GDShaderStatement.class);
+  @NotNull
+  public GDShaderStructMemberList getStructMemberList() {
+    return findNotNullChildByClass(GDShaderStructMemberList.class);
   }
 
 }

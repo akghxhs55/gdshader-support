@@ -247,6 +247,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitStatement(@NotNull GDShaderStatement o) {
+    visitPsiElement(o);
+  }
+
   public void visitStatementBody(@NotNull GDShaderStatementBody o) {
     visitPsiElement(o);
   }
@@ -260,6 +264,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitStencilModeName(@NotNull GDShaderStencilModeName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStructBlock(@NotNull GDShaderStructBlock o) {
     visitPsiElement(o);
   }
 

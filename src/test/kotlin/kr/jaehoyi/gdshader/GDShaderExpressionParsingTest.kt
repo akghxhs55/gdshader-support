@@ -9,8 +9,6 @@ class GDShaderExpressionParsingTest : ParsingTestCase(
 ) {
     override fun getTestDataPath(): String = "src/test/testData"
 
-    override fun includeRanges(): Boolean = true
-
     fun testConditionalExpression() {
         doTest(true)
     }

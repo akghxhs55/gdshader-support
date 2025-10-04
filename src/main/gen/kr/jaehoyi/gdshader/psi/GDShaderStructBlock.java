@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderStructDeclaration extends PsiElement {
+public interface GDShaderStructBlock extends PsiElement {
 
-  @Nullable
-  GDShaderStructBlock getStructBlock();
-
-  @Nullable
-  GDShaderStructName getStructName();
+  @NotNull
+  GDShaderStructMemberList getStructMemberList();
 
 }
