@@ -20,4 +20,24 @@ class GDShaderStatementParsingTest : ParsingTestCase(
     fun testForStatement() {
         doTest(true)
     }
+    
+    fun testWhileStatement() {
+        doTest(true)
+    }
+    
+    fun testDoWhileStatement() {
+        doTest(true)
+    }
+    
+    fun testSwitchStatement() {
+        doTest(true)
+    }
+    
+    fun testReturnStatement() {
+        doTest(true)
+    }
+    
+    fun testSimpleStatement() {
+        doTest(true)
+    }
 }

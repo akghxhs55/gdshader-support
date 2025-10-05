@@ -1,0 +1,16 @@
+void f() {
+	while (true);
+	
+	while (true) {
+		
+	}
+	
+	while (true) {
+		while (true) {
+			
+		}
+	}
+	
+	while (true)
+		while (true);
+}
