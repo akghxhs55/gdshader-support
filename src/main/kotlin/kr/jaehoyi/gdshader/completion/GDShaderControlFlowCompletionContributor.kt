@@ -9,6 +9,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
@@ -16,7 +17,8 @@ import kr.jaehoyi.gdshader.psi.GDShaderCaseClause
 import kr.jaehoyi.gdshader.psi.GDShaderControlStatement
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
 import kr.jaehoyi.gdshader.psi.GDShaderStatementBody
-import kr.jaehoyi.gdshader.psi.GDShaderSwitchBlock
+import kr.jaehoyi.gdshader.psi.GDShaderSwitchBody
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderControlFlowCompletionContributor : CompletionContributor() {
     init {
@@ -91,15 +93,18 @@ class GDShaderControlFlowCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
+                .andNot(psiElement().afterLeaf(psiElement(GDShaderTypes.CF_CASE)))
+                .andNot(psiElement().afterLeaf(psiElement(GDShaderTypes.CF_DEFAULT)))
+                .inside(GDShaderSwitchBody::class.java)
                 .with(
                     object : PatternCondition<PsiElement>("afterCaseClause" ) {
                         override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
-                            val previousSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(element)
+                            val contextElement = element.parent as? PsiErrorElement ?: element
+                            val previousSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(contextElement)
                             return previousSibling == null || previousSibling is GDShaderCaseClause
                         }
                     }
-                )
-                .inside(GDShaderSwitchBlock::class.java),
+                ),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
