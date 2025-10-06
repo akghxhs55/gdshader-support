@@ -72,4 +72,20 @@ class GDShaderExpressionParsingTest : ParsingTestCase(
     fun testComplexContext() {
         doTest(true)
     }
+    
+    fun testTrueAndFalse() {
+        doTest(true)
+    }
+    
+    fun testFloatConstant() {
+        doTest(true)
+    }
+    
+    fun testIntConstant() {
+        doTest(true)
+    }
+    
+    fun testUintConstant() {
+        doTest(true)
+    }
 }
