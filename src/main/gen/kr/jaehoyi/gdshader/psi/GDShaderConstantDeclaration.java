@@ -8,12 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderConstantDeclaration extends PsiElement {
 
   @Nullable
+  GDShaderConstantDeclaratorList getConstantDeclaratorList();
+
+  @Nullable
   GDShaderPrecision getPrecision();
 
   @Nullable
   GDShaderType getType();
-
-  @Nullable
-  GDShaderVariableDeclaratorList getVariableDeclaratorList();
 
 }

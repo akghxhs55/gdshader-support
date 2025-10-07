@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderVariableDeclaratorList extends PsiElement {
+public interface GDShaderLocalVariableDeclaratorList extends PsiElement {
 
   @NotNull
-  List<GDShaderVariableDeclarator> getVariableDeclaratorList();
+  List<GDShaderLocalVariableDeclarator> getLocalVariableDeclaratorList();
 
 }

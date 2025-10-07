@@ -9,7 +9,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
-import kr.jaehoyi.gdshader.psi.GDShaderVariableName
+import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
+import kr.jaehoyi.gdshader.psi.GDShaderPrimary
 
 class GDShaderLiteralCompletionContributor : CompletionContributor() {
     private val provider = object : CompletionProvider<CompletionParameters>() {
@@ -31,7 +32,14 @@ class GDShaderLiteralCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
-                .withParent(GDShaderVariableName::class.java),
+                .withParent(GDShaderBlockBody::class.java),
+            provider
+        )
+        
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .withSuperParent(2, GDShaderPrimary::class.java),
             provider
         )
         

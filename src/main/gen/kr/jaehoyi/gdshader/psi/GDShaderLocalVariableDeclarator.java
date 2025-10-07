@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderVariableDeclarator extends PsiElement {
+public interface GDShaderLocalVariableDeclarator extends PsiElement {
 
   @Nullable
   GDShaderArraySize getArraySize();

@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderVariableDeclaratorListImpl extends ASTWrapperPsiElement implements GDShaderVariableDeclaratorList {
+public class GDShaderLocalVariableDeclaratorImpl extends ASTWrapperPsiElement implements GDShaderLocalVariableDeclarator {
 
-  public GDShaderVariableDeclaratorListImpl(@NotNull ASTNode node) {
+  public GDShaderLocalVariableDeclaratorImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitVariableDeclaratorList(this);
+    visitor.visitLocalVariableDeclarator(this);
   }
 
   @Override
@@ -28,9 +28,21 @@ public class GDShaderVariableDeclaratorListImpl extends ASTWrapperPsiElement imp
   }
 
   @Override
+  @Nullable
+  public GDShaderArraySize getArraySize() {
+    return findChildByClass(GDShaderArraySize.class);
+  }
+
+  @Override
+  @Nullable
+  public GDShaderInitializer getInitializer() {
+    return findChildByClass(GDShaderInitializer.class);
+  }
+
+  @Override
   @NotNull
-  public List<GDShaderVariableDeclarator> getVariableDeclaratorList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderVariableDeclarator.class);
+  public GDShaderVariableName getVariableName() {
+    return findNotNullChildByClass(GDShaderVariableName.class);
   }
 
 }

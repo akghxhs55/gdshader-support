@@ -33,7 +33,7 @@ class GDShaderVariableAnnotator : Annotator {
     }
     
     private fun annotateConstantDeclaration(element: GDShaderConstantDeclaration, holder: AnnotationHolder) {
-        val variableNames = element.variableDeclaratorList?.variableDeclaratorList ?: return
+        val variableNames = element.constantDeclaratorList?.constantDeclaratorList ?: return
         
         for (variableName in variableNames) {
             val nameElement = variableName.variableName
@@ -55,7 +55,7 @@ class GDShaderVariableAnnotator : Annotator {
     }
     
     private fun annotateLocalVariableDeclaration(element: GDShaderLocalVariableDeclaration, holder: AnnotationHolder) {
-        val variableNames = element.variableDeclaratorList.variableDeclaratorList
+        val variableNames = element.localVariableDeclaratorList.localVariableDeclaratorList
         
         for (variableName in variableNames) {
             val nameElement = variableName.variableName

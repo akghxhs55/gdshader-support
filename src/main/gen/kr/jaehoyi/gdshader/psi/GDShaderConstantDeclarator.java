@@ -5,15 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderLocalVariableDeclaration extends PsiElement {
-
-  @NotNull
-  GDShaderLocalVariableDeclaratorList getLocalVariableDeclaratorList();
+public interface GDShaderConstantDeclarator extends PsiElement {
 
   @Nullable
-  GDShaderPrecision getPrecision();
+  GDShaderArraySize getArraySize();
+
+  @Nullable
+  GDShaderInitializer getInitializer();
 
   @NotNull
-  GDShaderType getType();
+  GDShaderVariableName getVariableName();
 
 }

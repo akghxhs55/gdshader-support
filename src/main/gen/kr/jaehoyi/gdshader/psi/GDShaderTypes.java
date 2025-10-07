@@ -22,6 +22,8 @@ public interface GDShaderTypes {
   IElementType CASE_CLAUSE = new GDShaderElementType("CASE_CLAUSE");
   IElementType CONDITIONAL_EXPR = new GDShaderElementType("CONDITIONAL_EXPR");
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
+  IElementType CONSTANT_DECLARATOR = new GDShaderElementType("CONSTANT_DECLARATOR");
+  IElementType CONSTANT_DECLARATOR_LIST = new GDShaderElementType("CONSTANT_DECLARATOR_LIST");
   IElementType CONSTRUCTOR_CALL = new GDShaderElementType("CONSTRUCTOR_CALL");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
   IElementType DO_WHILE_STATEMENT = new GDShaderElementType("DO_WHILE_STATEMENT");
@@ -45,6 +47,8 @@ public interface GDShaderTypes {
   IElementType ITEM = new GDShaderElementType("ITEM");
   IElementType LITERAL = new GDShaderElementType("LITERAL");
   IElementType LOCAL_VARIABLE_DECLARATION = new GDShaderElementType("LOCAL_VARIABLE_DECLARATION");
+  IElementType LOCAL_VARIABLE_DECLARATOR = new GDShaderElementType("LOCAL_VARIABLE_DECLARATOR");
+  IElementType LOCAL_VARIABLE_DECLARATOR_LIST = new GDShaderElementType("LOCAL_VARIABLE_DECLARATOR_LIST");
   IElementType LOGIC_AND_EXPR = new GDShaderElementType("LOGIC_AND_EXPR");
   IElementType LOGIC_OR_EXPR = new GDShaderElementType("LOGIC_OR_EXPR");
   IElementType MULTIPLICATIVE_EXPR = new GDShaderElementType("MULTIPLICATIVE_EXPR");
@@ -89,8 +93,6 @@ public interface GDShaderTypes {
   IElementType UNIFORM_GROUP_DECLARATION = new GDShaderElementType("UNIFORM_GROUP_DECLARATION");
   IElementType UNIFORM_GROUP_NAME = new GDShaderElementType("UNIFORM_GROUP_NAME");
   IElementType UNIFORM_HEADER = new GDShaderElementType("UNIFORM_HEADER");
-  IElementType VARIABLE_DECLARATOR = new GDShaderElementType("VARIABLE_DECLARATOR");
-  IElementType VARIABLE_DECLARATOR_LIST = new GDShaderElementType("VARIABLE_DECLARATOR_LIST");
   IElementType VARIABLE_NAME = new GDShaderElementType("VARIABLE_NAME");
   IElementType VARYING_DECLARATION = new GDShaderElementType("VARYING_DECLARATION");
   IElementType WHILE_STATEMENT = new GDShaderElementType("WHILE_STATEMENT");
@@ -292,6 +294,12 @@ public interface GDShaderTypes {
       else if (type == CONSTANT_DECLARATION) {
         return new GDShaderConstantDeclarationImpl(node);
       }
+      else if (type == CONSTANT_DECLARATOR) {
+        return new GDShaderConstantDeclaratorImpl(node);
+      }
+      else if (type == CONSTANT_DECLARATOR_LIST) {
+        return new GDShaderConstantDeclaratorListImpl(node);
+      }
       else if (type == CONSTRUCTOR_CALL) {
         return new GDShaderConstructorCallImpl(node);
       }
@@ -360,6 +368,12 @@ public interface GDShaderTypes {
       }
       else if (type == LOCAL_VARIABLE_DECLARATION) {
         return new GDShaderLocalVariableDeclarationImpl(node);
+      }
+      else if (type == LOCAL_VARIABLE_DECLARATOR) {
+        return new GDShaderLocalVariableDeclaratorImpl(node);
+      }
+      else if (type == LOCAL_VARIABLE_DECLARATOR_LIST) {
+        return new GDShaderLocalVariableDeclaratorListImpl(node);
       }
       else if (type == LOGIC_AND_EXPR) {
         return new GDShaderLogicAndExprImpl(node);
@@ -492,12 +506,6 @@ public interface GDShaderTypes {
       }
       else if (type == UNIFORM_HEADER) {
         return new GDShaderUniformHeaderImpl(node);
-      }
-      else if (type == VARIABLE_DECLARATOR) {
-        return new GDShaderVariableDeclaratorImpl(node);
-      }
-      else if (type == VARIABLE_DECLARATOR_LIST) {
-        return new GDShaderVariableDeclaratorListImpl(node);
       }
       else if (type == VARIABLE_NAME) {
         return new GDShaderVariableNameImpl(node);

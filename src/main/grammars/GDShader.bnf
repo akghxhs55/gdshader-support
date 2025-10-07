@@ -121,7 +121,12 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 			      | REPEAT_DISABLE
 
 // Constant Declaration
-constant_declaration ::= CONST precision? type variable_declarator_list SEMICOLON {
+constant_declaration ::= CONST precision? type constant_declarator_list SEMICOLON {
+	pin=1
+}
+
+constant_declarator_list ::= constant_declarator (COMMA constant_declarator)*
+constant_declarator ::= variable_name array_size? OP_ASSIGN initializer {
 	pin=1
 }
 
@@ -131,11 +136,11 @@ varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? pre
 }
 
 // Local Variable Declaration
-local_variable_declaration ::= precision? type variable_declarator_list SEMICOLON
+local_variable_declaration ::= precision? type local_variable_declarator_list SEMICOLON
 
 // Variable Declarations
-variable_declarator_list ::= variable_declarator (COMMA variable_declarator)*
-variable_declarator ::= variable_name array_size? (OP_ASSIGN initializer)?
+local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)*
+local_variable_declarator ::= variable_name array_size? (OP_ASSIGN initializer)?
 
 variable_name ::= IDENTIFIER
 
