@@ -37,7 +37,7 @@ object GDShaderUtil {
             "hint_default_black", "hint_default_transparent", "hint_anisotropy", "hint_roughness_r", "hint_roughness_g",
             "hint_roughness_b", "hint_roughness_a", "hint_roughness_normal", "hint_roughness_gray", "filter_nearest",
             "filter_linear", "filter_nearest_mipmap", "filter_linear_mipmap", "hint_nearest_mipmap_anisotropic",
-            "hint_linear_mipmap_anisotropic", "repeat_enabled", "repeat_disabled", "hint_screen_texture",
+            "hint_linear_mipmap_anisotropic", "repeat_enable", "repeat_disable", "hint_screen_texture",
             "hint_depth_texture", "hint_normal_roughness_texture")
     )
     
