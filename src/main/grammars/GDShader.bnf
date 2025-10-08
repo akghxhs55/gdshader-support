@@ -150,7 +150,7 @@ initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRA
 array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
        
 // Function Declaration
-function_declaration ::= type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block {
+function_declaration ::= (precision? type) function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block {
 	pin=3
 }
 

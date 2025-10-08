@@ -16,6 +16,9 @@ public interface GDShaderFunctionDeclaration extends PsiElement {
   @Nullable
   GDShaderParameterList getParameterList();
 
+  @Nullable
+  GDShaderPrecision getPrecision();
+
   @NotNull
   GDShaderType getType();
 

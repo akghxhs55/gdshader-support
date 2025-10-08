@@ -46,6 +46,12 @@ public class GDShaderFunctionDeclarationImpl extends ASTWrapperPsiElement implem
   }
 
   @Override
+  @Nullable
+  public GDShaderPrecision getPrecision() {
+    return findChildByClass(GDShaderPrecision.class);
+  }
+
+  @Override
   @NotNull
   public GDShaderType getType() {
     return findNotNullChildByClass(GDShaderType.class);

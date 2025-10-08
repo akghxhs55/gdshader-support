@@ -778,12 +778,12 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // type function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+  // (precision? type) function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
   public static boolean function_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_DECLARATION, "<function declaration>");
-    r = type(b, l + 1);
+    r = function_declaration_0(b, l + 1);
     r = r && function_name(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
     p = r; // pin = 3
@@ -792,6 +792,24 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = p && block(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // precision? type
+  private static boolean function_declaration_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_declaration_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = function_declaration_0_0(b, l + 1);
+    r = r && type(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // precision?
+  private static boolean function_declaration_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_declaration_0_0")) return false;
+    precision(b, l + 1);
+    return true;
   }
 
   // parameter_list?
