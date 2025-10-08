@@ -1340,7 +1340,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name
+  // parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name (BRACKET_OPEN expression BRACKET_CLOSE)?
   public static boolean parameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter")) return false;
     boolean r, p;
@@ -1350,7 +1350,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && type(b, l + 1);
     p = r; // pin = 3
     r = r && report_error_(b, parameter_3(b, l + 1));
-    r = p && parameter_name(b, l + 1) && r;
+    r = p && report_error_(b, parameter_name(b, l + 1)) && r;
+    r = p && parameter_5(b, l + 1) && r;
     exit_section_(b, l, m, r, p, GDShaderParser::parameter_recover);
     return r || p;
   }
@@ -1379,6 +1380,25 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // BRACKET_OPEN expression BRACKET_CLOSE
   private static boolean parameter_3_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, BRACKET_OPEN);
+    r = r && expression(b, l + 1);
+    r = r && consumeToken(b, BRACKET_CLOSE);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (BRACKET_OPEN expression BRACKET_CLOSE)?
+  private static boolean parameter_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_5")) return false;
+    parameter_5_0(b, l + 1);
+    return true;
+  }
+
+  // BRACKET_OPEN expression BRACKET_CLOSE
+  private static boolean parameter_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_5_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, BRACKET_OPEN);

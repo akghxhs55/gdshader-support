@@ -160,7 +160,7 @@ parameter_list ::= parameter (COMMA parameter)* {
 	recoverWhile=parameter_list_recover
 }
 private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
-parameter ::= parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name {
+parameter ::= parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name (BRACKET_OPEN expression BRACKET_CLOSE)? {
 	pin=3
 	recoverWhile=parameter_recover
 }

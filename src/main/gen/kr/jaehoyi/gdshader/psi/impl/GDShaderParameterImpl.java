@@ -28,9 +28,9 @@ public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDSha
   }
 
   @Override
-  @Nullable
-  public GDShaderExpression getExpression() {
-    return findChildByClass(GDShaderExpression.class);
+  @NotNull
+  public List<GDShaderExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderExpression.class);
   }
 
   @Override
