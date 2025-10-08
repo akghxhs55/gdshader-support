@@ -35,12 +35,6 @@ public class GDShaderVaryingDeclarationImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public GDShaderHintList getHintList() {
-    return findChildByClass(GDShaderHintList.class);
-  }
-
-  @Override
-  @Nullable
   public GDShaderPrecision getPrecision() {
     return findChildByClass(GDShaderPrecision.class);
   }

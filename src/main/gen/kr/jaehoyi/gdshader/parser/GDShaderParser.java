@@ -2519,7 +2519,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON
+  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? SEMICOLON
   public static boolean varying_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_declaration")) return false;
     if (!nextTokenIs(b, VARYING)) return false;
@@ -2532,7 +2532,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, type(b, l + 1)) && r;
     r = p && report_error_(b, variable_name(b, l + 1)) && r;
     r = p && report_error_(b, varying_declaration_5(b, l + 1)) && r;
-    r = p && report_error_(b, varying_declaration_6(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -2566,24 +2565,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "varying_declaration_5")) return false;
     array_size(b, l + 1);
     return true;
-  }
-
-  // (COLON hint_list)?
-  private static boolean varying_declaration_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varying_declaration_6")) return false;
-    varying_declaration_6_0(b, l + 1);
-    return true;
-  }
-
-  // COLON hint_list
-  private static boolean varying_declaration_6_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varying_declaration_6_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COLON);
-    r = r && hint_list(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */

@@ -131,7 +131,7 @@ constant_declarator ::= variable_name array_size? OP_ASSIGN initializer {
 }
 
 // Varying Declaration
-varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? (COLON hint_list)? SEMICOLON {
+varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? SEMICOLON {
 	pin=1
 }
 
