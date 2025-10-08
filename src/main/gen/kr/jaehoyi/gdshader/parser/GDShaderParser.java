@@ -1484,13 +1484,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CONST | CONST? ARG_IN | ARG_OUT | ARG_INOUT
+  // CONST? ARG_IN | CONST | ARG_OUT | ARG_INOUT
   public static boolean parameter_qualifier(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_qualifier")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PARAMETER_QUALIFIER, "<parameter qualifier>");
-    r = consumeToken(b, CONST);
-    if (!r) r = parameter_qualifier_1(b, l + 1);
+    r = parameter_qualifier_0(b, l + 1);
+    if (!r) r = consumeToken(b, CONST);
     if (!r) r = consumeToken(b, ARG_OUT);
     if (!r) r = consumeToken(b, ARG_INOUT);
     exit_section_(b, l, m, r, false, null);
@@ -1498,19 +1498,19 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   // CONST? ARG_IN
-  private static boolean parameter_qualifier_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_qualifier_1")) return false;
+  private static boolean parameter_qualifier_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_qualifier_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = parameter_qualifier_1_0(b, l + 1);
+    r = parameter_qualifier_0_0(b, l + 1);
     r = r && consumeToken(b, ARG_IN);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // CONST?
-  private static boolean parameter_qualifier_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_qualifier_1_0")) return false;
+  private static boolean parameter_qualifier_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_qualifier_0_0")) return false;
     consumeToken(b, CONST);
     return true;
   }
