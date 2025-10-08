@@ -1,6 +1,7 @@
-package kr.jaehoyi.gdshader
+package kr.jaehoyi.gdshader.parsing
 
 import com.intellij.testFramework.ParsingTestCase
+import kr.jaehoyi.gdshader.GDShaderParserDefinition
 
 class GDShaderExpressionParsingTest : ParsingTestCase(
     "parsing/expressions",
