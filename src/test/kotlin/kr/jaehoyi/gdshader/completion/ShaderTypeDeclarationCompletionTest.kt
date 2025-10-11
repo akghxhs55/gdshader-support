@@ -25,6 +25,7 @@ class ShaderTypeDeclarationCompletionTest : BasePlatformTestCase() {
         val completions = myFixture.lookupElementStrings
         assertNotNull(completions)
         assertContainsElements(completions!!, GDShaderUtil.shaderTypes)
+        assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     
 }
