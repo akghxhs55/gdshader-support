@@ -1,15 +1,13 @@
 package kr.jaehoyi.gdshader.completion
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase
-import org.junit.Test
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
+class ToplevelCompletionTest : BasePlatformTestCase() {
     
     override fun getTestDataPath(): String = "src/test/testData"
     
     private val testPath = "completion/toplevel"
     
-    @Test
     fun testInEmptyFile() {
         myFixture.configureByFile("$testPath/InEmptyFile.gdshader")
         myFixture.completeBasic()
@@ -18,7 +16,6 @@ class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
         assertTopLevelKeywords(completions)
     }
     
-    @Test
     fun testBeforeToplevelDeclaration() {
         myFixture.configureByFile("$testPath/BeforeToplevelDeclaration.gdshader")
         myFixture.completeBasic()
@@ -27,7 +24,6 @@ class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
         assertTopLevelKeywords(completions)
     }
     
-    @Test
     fun testAfterToplevelDeclaration() {
         myFixture.configureByFile("$testPath/AfterToplevelDeclaration.gdshader")
         myFixture.completeBasic()
@@ -36,7 +32,6 @@ class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
         assertTopLevelKeywords(completions)
     }
     
-    @Test
     fun testBetweenToplevelDeclaration() {
         myFixture.configureByFile("$testPath/BetweenToplevelDeclaration.gdshader")
         myFixture.completeBasic()
