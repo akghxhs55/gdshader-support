@@ -3,7 +3,7 @@ package kr.jaehoyi.gdshader.parsing
 import com.intellij.testFramework.ParsingTestCase
 import kr.jaehoyi.gdshader.GDShaderParserDefinition
 
-class GDShaderStatementParsingTest : ParsingTestCase(
+class StatementParsingTest : ParsingTestCase(
     "parsing/statements",
     "gdshader",
     GDShaderParserDefinition()

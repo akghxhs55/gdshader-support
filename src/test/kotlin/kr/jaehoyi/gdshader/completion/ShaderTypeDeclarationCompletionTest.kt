@@ -4,12 +4,14 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestC
 import kr.jaehoyi.gdshader.GDShaderUtil
 import org.junit.Test
 
-class GDShaderShaderTypeDeclarationCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
+class ShaderTypeDeclarationCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
     override fun getTestDataPath(): String = "src/test/testData"
+    
+    private val testPath = "completion/shaderTypeDeclaration"
     
     @Test
     fun testShaderTypeKeyword() {
-        myFixture.configureByFile("completion/shaderType/ShaderTypeKeyword.gdshader")
+        myFixture.configureByFile("$testPath/ShaderTypeKeyword.gdshader")
         myFixture.completeBasic()
         
         val completions = myFixture.lookupElementStrings
@@ -19,7 +21,7 @@ class GDShaderShaderTypeDeclarationCompletionTest : LightPlatformCodeInsightFixt
     
     @Test
     fun testShaderTypeValues() {
-        myFixture.configureByFile("completion/shaderType/ShaderTypeValues.gdshader")
+        myFixture.configureByFile("$testPath/ShaderTypeValues.gdshader")
         myFixture.completeBasic()
         
         val completions = myFixture.lookupElementStrings

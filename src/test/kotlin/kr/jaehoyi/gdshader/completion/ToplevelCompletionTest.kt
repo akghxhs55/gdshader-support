@@ -3,12 +3,14 @@ package kr.jaehoyi.gdshader.completion
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase
 import org.junit.Test
 
-class GDShaderToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
+class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
     override fun getTestDataPath(): String = "src/test/testData"
+    
+    private val testPath = "completion/toplevel"
     
     @Test
     fun testInEmptyFile() {
-        myFixture.configureByFile("completion/toplevel/InEmptyFile.gdshader")
+        myFixture.configureByFile("$testPath/InEmptyFile.gdshader")
         myFixture.completeBasic()
         
         val completions = myFixture.lookupElementStrings
@@ -17,7 +19,7 @@ class GDShaderToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase(
     
     @Test
     fun testBeforeToplevelDeclaration() {
-        myFixture.configureByFile("completion/toplevel/BeforeToplevelDeclaration.gdshader")
+        myFixture.configureByFile("$testPath/BeforeToplevelDeclaration.gdshader")
         myFixture.completeBasic()
         
         val completions = myFixture.lookupElementStrings
@@ -26,7 +28,7 @@ class GDShaderToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase(
     
     @Test
     fun testAfterToplevelDeclaration() {
-        myFixture.configureByFile("completion/toplevel/AfterToplevelDeclaration.gdshader")
+        myFixture.configureByFile("$testPath/AfterToplevelDeclaration.gdshader")
         myFixture.completeBasic()
         
         val completions = myFixture.lookupElementStrings
@@ -35,7 +37,7 @@ class GDShaderToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase(
     
     @Test
     fun testBetweenToplevelDeclaration() {
-        myFixture.configureByFile("completion/toplevel/BetweenToplevelDeclaration.gdshader")
+        myFixture.configureByFile("$testPath/BetweenToplevelDeclaration.gdshader")
         myFixture.completeBasic()
         
         val completions = myFixture.lookupElementStrings
