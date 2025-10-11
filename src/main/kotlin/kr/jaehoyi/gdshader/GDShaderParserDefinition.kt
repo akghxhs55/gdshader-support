@@ -32,6 +32,7 @@ class GDShaderParserDefinition : ParserDefinition {
     override fun createFile(viewProvider: FileViewProvider): PsiFile = GDShaderFile(viewProvider)
 
     override fun createElement(node: ASTNode): PsiElement = GDShaderTypes.Factory.createElement(node) 
+    
 }
 
 val FILE: IFileElementType = IFileElementType(GDShaderLanguage)

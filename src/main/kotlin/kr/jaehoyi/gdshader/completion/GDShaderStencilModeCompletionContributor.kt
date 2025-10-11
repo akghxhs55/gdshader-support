@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderStencilModeName
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderStencilModeCompletionContributor : CompletionContributor() {
+    
     init {
         extend(
             CompletionType.BASIC,
@@ -35,4 +36,5 @@ class GDShaderStencilModeCompletionContributor : CompletionContributor() {
             }
         )
     }
+    
 }

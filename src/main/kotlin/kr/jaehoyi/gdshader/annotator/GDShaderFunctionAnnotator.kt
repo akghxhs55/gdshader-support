@@ -8,6 +8,7 @@ import kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionName
 
 class GDShaderFunctionAnnotator : Annotator {
+    
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
             is GDShaderFunctionName -> annotateFunctionName(element, holder)
@@ -21,4 +22,5 @@ class GDShaderFunctionAnnotator : Annotator {
             .textAttributes(GDShaderSyntaxHighlighter.FUNCTION)
             .create()
     }
+    
 }

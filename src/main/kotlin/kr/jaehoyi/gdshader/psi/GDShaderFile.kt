@@ -7,7 +7,9 @@ import kr.jaehoyi.gdshader.GDShaderFileType
 import kr.jaehoyi.gdshader.GDShaderLanguage
 
 class GDShaderFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, GDShaderLanguage) {
+    
     override fun getFileType(): FileType = GDShaderFileType
     
     override fun toString(): String = "GDShader File"
+    
 }

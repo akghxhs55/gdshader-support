@@ -9,6 +9,7 @@ import com.intellij.psi.PsiDirectory
 import kr.jaehoyi.gdshader.GDShaderIncludeFileType
 
 class GDShaderIncludeNewFileAction : CreateFileFromTemplateAction(), DumbAware {
+    
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
         builder.setTitle("GDShader Include")
         FileTemplateManager.getInstance(project)
@@ -25,4 +26,5 @@ class GDShaderIncludeNewFileAction : CreateFileFromTemplateAction(), DumbAware {
 
     override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String
         = "Create GDShader Include File $newName"
+    
 }

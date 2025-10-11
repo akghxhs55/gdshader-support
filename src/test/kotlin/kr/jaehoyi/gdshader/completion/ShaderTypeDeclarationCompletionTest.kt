@@ -5,6 +5,7 @@ import kr.jaehoyi.gdshader.GDShaderUtil
 import org.junit.Test
 
 class ShaderTypeDeclarationCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
+    
     override fun getTestDataPath(): String = "src/test/testData"
     
     private val testPath = "completion/shaderTypeDeclaration"
@@ -28,4 +29,5 @@ class ShaderTypeDeclarationCompletionTest : LightPlatformCodeInsightFixture4Test
         assertNotNull(completions)
         assertContainsElements(completions!!, GDShaderUtil.shaderTypes)
     }
+    
 }

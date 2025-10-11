@@ -8,6 +8,7 @@ class ExpressionParsingTest : ParsingTestCase(
     "gdshader",
     GDShaderParserDefinition()
 ) {
+    
     override fun getTestDataPath(): String = "src/test/testData"
 
     fun testConditionalExpression() {
@@ -89,4 +90,5 @@ class ExpressionParsingTest : ParsingTestCase(
     fun testUintConstant() {
         doTest(true)
     }
+    
 }

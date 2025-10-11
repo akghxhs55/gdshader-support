@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.psi.GDShaderStructDeclaration
 
 class GDShaderStructAnnotator : Annotator {
+    
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
             is GDShaderStructDeclaration -> annotateStructDeclaration(element, holder)
@@ -20,4 +21,5 @@ class GDShaderStructAnnotator : Annotator {
             .textAttributes(kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter.STRUCT)
             .create()
     }
+    
 }

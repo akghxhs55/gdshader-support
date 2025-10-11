@@ -24,6 +24,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderPrecisionCompletionContributor : CompletionContributor() {
+    
     private val provider = object : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -128,4 +129,5 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
             provider
         )
     }
+    
 }

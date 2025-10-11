@@ -8,6 +8,7 @@ class DeclarationParsingTest : ParsingTestCase(
     "gdshader",
     GDShaderParserDefinition()
 ) {
+    
     override fun getTestDataPath(): String = "src/test/testData"
 
     fun testShaderTypeDeclaration() {
@@ -45,4 +46,5 @@ class DeclarationParsingTest : ParsingTestCase(
     fun testStructDeclaration() {
         doTest(true)
     }
+    
 }

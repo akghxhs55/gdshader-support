@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader
 
 object GDShaderUtil {
+    
     val shaderTypes = setOf("spatial", "canvas_item", "particles", "sky", "fog")
     
     val renderModeMap = mapOf(
@@ -47,4 +48,5 @@ object GDShaderUtil {
         "sampler2DArray", "isampler2DArray", "usampler2DArray", "sampler3D", "isampler3D", "usampler3D",
         "samplerCube", "samplerCubeArray", "samplerExternalOES"
     )
+    
 }

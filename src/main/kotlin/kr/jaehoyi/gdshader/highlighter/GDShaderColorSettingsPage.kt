@@ -67,6 +67,7 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> = DESCRIPTORS
     override fun getColorDescriptors(): Array<out ColorDescriptor?> = ColorDescriptor.EMPTY_ARRAY
     override fun getDisplayName(): String = "GDShader"
+    
 }
 
 private val DESCRIPTORS = arrayOf(

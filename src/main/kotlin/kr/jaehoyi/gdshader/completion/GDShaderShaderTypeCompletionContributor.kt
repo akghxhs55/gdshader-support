@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeName
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderShaderTypeCompletionContributor : CompletionContributor() {
+    
     init {
         extend(
             CompletionType.BASIC,
@@ -35,4 +36,5 @@ class GDShaderShaderTypeCompletionContributor : CompletionContributor() {
             }
         )
     }
+    
 }

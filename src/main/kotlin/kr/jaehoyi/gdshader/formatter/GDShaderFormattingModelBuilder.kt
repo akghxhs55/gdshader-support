@@ -5,6 +5,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import kr.jaehoyi.gdshader.GDShaderLanguage
 
 class GDShaderFormattingModelBuilder : FormattingModelBuilder {
+    
     override fun createModel(formattingContext: FormattingContext): FormattingModel {
         val codeStyleSettings = formattingContext.codeStyleSettings
         val element = formattingContext.psiElement
@@ -26,4 +27,5 @@ class GDShaderFormattingModelBuilder : FormattingModelBuilder {
     
     private fun createSpacingBuilder(settings: CodeStyleSettings): SpacingBuilder
         = SpacingBuilder(settings, GDShaderLanguage)
+    
 }

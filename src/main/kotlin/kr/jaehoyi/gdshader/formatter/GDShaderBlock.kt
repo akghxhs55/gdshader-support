@@ -13,6 +13,7 @@ class GDShaderBlock(
     private val spacingBuilder: SpacingBuilder,
     private val myIndent: Indent
 ) : AbstractBlock(node, wrap, alignment) {
+    
     override fun buildChildren(): MutableList<Block> {
         val blocks = mutableListOf<Block>()
         var child = myNode.firstChildNode
@@ -79,6 +80,7 @@ class GDShaderBlock(
         
         return Indent.getNoneIndent()
     }
+    
 }
 
 private val INDENT_TRIGGER_BLOCKS = TokenSet.create(

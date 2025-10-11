@@ -20,6 +20,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderType
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderTypeCompletionContributor : CompletionContributor() {
+    
     private val typeProvider = object : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -76,4 +77,5 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
             typeProvider
         )
     }
+    
 }

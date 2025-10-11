@@ -12,6 +12,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderVariableAnnotator : Annotator {
+    
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
             is GDShaderUniformDeclaration -> annotateUniformDeclaration(element, holder)
@@ -73,4 +74,5 @@ class GDShaderVariableAnnotator : Annotator {
             .textAttributes(GDShaderSyntaxHighlighter.STRUCT_MEMBER)
             .create()
     }
+    
 }

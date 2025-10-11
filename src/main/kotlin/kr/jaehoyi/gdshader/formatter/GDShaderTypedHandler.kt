@@ -9,6 +9,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import kr.jaehoyi.gdshader.GDShaderLanguage
 
 class GDShaderTypedHandler : TypedHandlerDelegate() {
+    
     override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
         if (file.language !is GDShaderLanguage) {
             return Result.CONTINUE
@@ -27,4 +28,5 @@ class GDShaderTypedHandler : TypedHandlerDelegate() {
         
         return Result.CONTINUE
     }
+    
 }

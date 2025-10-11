@@ -9,6 +9,7 @@ import com.intellij.psi.tree.TokenSet
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderBraceMatcher : PairedBraceMatcher {
+    
     private val pairs = arrayOf(
         BracePair(GDShaderTypes.PARENTHESIS_OPEN, GDShaderTypes.PARENTHESIS_CLOSE, false),
         BracePair(GDShaderTypes.CURLY_BRACKET_OPEN, GDShaderTypes.CURLY_BRACKET_CLOSE, true),
@@ -31,4 +32,5 @@ class GDShaderBraceMatcher : PairedBraceMatcher {
         contextType == null || pairingAllowedTokenSet.contains(contextType)
 
     override fun getCodeConstructStart(file: PsiFile, openingBraceOffset: Int): Int = openingBraceOffset
+    
 }

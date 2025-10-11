@@ -20,6 +20,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderKeywordCompletionContributor : CompletionContributor() {
+    
     init {
         // Global Keywords
         extend(
@@ -122,4 +123,5 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
             }
         )
     }
+    
 }

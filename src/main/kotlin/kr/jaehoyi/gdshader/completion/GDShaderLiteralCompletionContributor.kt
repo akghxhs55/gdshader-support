@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderPrimary
 
 class GDShaderLiteralCompletionContributor : CompletionContributor() {
+    
     private val provider = object : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
             parameters: CompletionParameters,
@@ -50,4 +51,5 @@ class GDShaderLiteralCompletionContributor : CompletionContributor() {
             provider
         )
     }
+    
 }

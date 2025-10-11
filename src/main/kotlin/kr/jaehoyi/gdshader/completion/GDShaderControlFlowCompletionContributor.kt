@@ -21,6 +21,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderSwitchBody
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderControlFlowCompletionContributor : CompletionContributor() {
+    
     init {
         // Basic control flow keywords
         extend(
@@ -121,4 +122,5 @@ class GDShaderControlFlowCompletionContributor : CompletionContributor() {
             }
         )
     }
+    
 }

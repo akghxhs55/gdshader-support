@@ -8,6 +8,7 @@ class ErrorParsingTest : ParsingTestCase(
     "gdshader",
     GDShaderParserDefinition()
 ) {
+    
     override fun getTestDataPath(): String = "src/test/testData"
 
     fun testExpressionStatementInTopLevel() {
@@ -21,4 +22,5 @@ class ErrorParsingTest : ParsingTestCase(
     fun testIncompleteConstantDeclaration() {
         doTest(true)
     }
+    
 }

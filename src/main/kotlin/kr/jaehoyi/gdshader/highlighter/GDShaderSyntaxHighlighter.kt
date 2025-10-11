@@ -12,6 +12,7 @@ import kr.jaehoyi.gdshader.GDShaderLexerAdapter
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 
 class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
+    
     companion object {
         private val log = Logger.getInstance("kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter")
         
@@ -193,4 +194,5 @@ class GDShaderSyntaxHighlighter : SyntaxHighlighterBase() {
             EMPTY_KEYS
         }
     }
+    
 }

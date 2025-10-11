@@ -4,6 +4,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestC
 import org.junit.Test
 
 class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
+    
     override fun getTestDataPath(): String = "src/test/testData"
     
     private val testPath = "completion/toplevel"
@@ -50,4 +51,5 @@ class ToplevelCompletionTest : LightPlatformCodeInsightFixture4TestCase() {
             "shader_type", "render_mode", "stencil_mode", "group_uniforms", "uniform", "const", "varying",
             "struct", "highp", "mediump", "lowp", "void", "bool", "int", "float", "vec2", "vec3", "vec4")
     }
+    
 }
