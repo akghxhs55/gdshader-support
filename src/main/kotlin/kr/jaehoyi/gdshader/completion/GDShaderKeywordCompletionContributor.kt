@@ -55,6 +55,26 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
+                .withSuperParent(2, GDShaderFile::class.java)
+                .andOr(
+                    psiElement().afterLeaf(psiElement(GDShaderTypes.GLOBAL)),
+                    psiElement().afterLeaf(psiElement(GDShaderTypes.INSTANCE))
+                ),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    result.addElement(LookupElementBuilder.create("uniform").withBoldness(true))
+                }
+            }
+        )
+        
+        // Const Keyword
+        extend(
+            CompletionType.BASIC,
+            psiElement()
                 .withParent(GDShaderBlock::class.java),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
