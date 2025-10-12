@@ -46,7 +46,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
             typeProvider
         )
         
-        // Global context
+        // Function declaration return type
         extend(
             CompletionType.BASIC,
             psiElement()
@@ -59,7 +59,20 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
                 }),
             typeProvider
         )
-
+        
+        // Function declaration return type after precision
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .withParent(GDShaderFile::class.java)
+                .andOr(
+                    psiElement().afterLeaf(psiElement(GDShaderTypes.PRECISION_HIGH)),
+                    psiElement().afterLeaf(psiElement(GDShaderTypes.PRECISION_MEDIUM)),
+                    psiElement().afterLeaf(psiElement(GDShaderTypes.PRECISION_LOW))
+                ),
+            typeProvider
+        )
+        
         // Local variable declaration
         extend(
             CompletionType.BASIC,
@@ -68,7 +81,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
             typeProvider
         )
         
-        // For statement initializer
+        // Statement initializer
         extend(
             CompletionType.BASIC,
             psiElement()
