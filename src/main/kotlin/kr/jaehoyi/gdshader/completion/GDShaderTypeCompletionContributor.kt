@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.GDShaderUtil
-import kr.jaehoyi.gdshader.psi.GDShaderBlock
+import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderForStatement
 import kr.jaehoyi.gdshader.psi.GDShaderItem
@@ -64,7 +64,7 @@ class GDShaderTypeCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
-                .withParent(GDShaderBlock::class.java),
+                .withParent(GDShaderBlockBody::class.java),
             typeProvider
         )
         

@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
+import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderItem
 import kr.jaehoyi.gdshader.psi.GDShaderParameter
@@ -76,6 +77,21 @@ class GDShaderKeywordCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             psiElement()
                 .withParent(GDShaderBlock::class.java),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    result.addElement(LookupElementBuilder.create("const").withBoldness(true))
+                }
+            }
+        )
+
+        extend(
+            CompletionType.BASIC,
+            psiElement()
+                .withParent(GDShaderBlockBody::class.java),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
