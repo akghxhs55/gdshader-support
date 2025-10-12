@@ -1,0 +1,1 @@
+uniform int myVar : <caret>
