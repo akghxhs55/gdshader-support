@@ -3,11 +3,11 @@ package kr.jaehoyi.gdshader.completion
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.GDShaderUtil
 
-class StencilModeDeclarationCompletionTest : BasePlatformTestCase() {
+class StencilModeCompletionTest : BasePlatformTestCase() {
 
     override fun getTestDataPath(): String = "src/test/testData"
     
-    private val testPath = "completion/stencilModeDeclaration"
+    private val testPath = "completion/stencilMode"
     
     fun testStencilModeKeyword() {
         myFixture.configureByFile("$testPath/StencilModeKeyword.gdshader")

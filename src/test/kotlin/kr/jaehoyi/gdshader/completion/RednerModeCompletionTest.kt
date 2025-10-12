@@ -3,11 +3,11 @@ package kr.jaehoyi.gdshader.completion
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.GDShaderUtil
 
-class RednerModeDeclarationCompletionTest : BasePlatformTestCase() {
+class RednerModeCompletionTest : BasePlatformTestCase() {
 
     override fun getTestDataPath(): String = "src/test/testData"
     
-    private val testPath = "completion/renderModeDeclaration"
+    private val testPath = "completion/renderMode"
     
     fun testRenderModeKeyword() {
         myFixture.configureByFile("$testPath/RenderModeKeyword.gdshader")

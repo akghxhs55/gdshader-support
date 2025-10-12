@@ -3,11 +3,11 @@ package kr.jaehoyi.gdshader.completion
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.GDShaderUtil
 
-class ShaderTypeDeclarationCompletionTest : BasePlatformTestCase() {
+class ShaderTypeCompletionTest : BasePlatformTestCase() {
     
     override fun getTestDataPath(): String = "src/test/testData"
     
-    private val testPath = "completion/shaderTypeDeclaration"
+    private val testPath = "completion/shaderType"
     
     fun testShaderTypeKeyword() {
         myFixture.configureByFile("$testPath/ShaderTypeKeyword.gdshader")
