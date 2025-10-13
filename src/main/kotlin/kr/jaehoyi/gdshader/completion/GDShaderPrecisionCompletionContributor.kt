@@ -11,6 +11,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.isAncestor
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
@@ -116,7 +117,14 @@ class GDShaderPrecisionCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
-                .inside(GDShaderStructMember::class.java),
+                .inside(GDShaderStructMember::class.java)
+                .with(object : PatternCondition<PsiElement>("firstKeywordInMember") {
+                    override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
+                        val parent = PsiTreeUtil.getParentOfType(element, GDShaderStructMember::class.java)
+                            ?: return false
+                        return parent.firstChild.isAncestor(element)
+                    }
+                }),
             provider
         )
 
