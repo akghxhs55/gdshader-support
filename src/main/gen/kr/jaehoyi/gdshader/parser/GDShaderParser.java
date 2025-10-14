@@ -2176,19 +2176,17 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // struct_member+
+  // struct_member*
   public static boolean struct_member_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member_list")) return false;
-    boolean r;
     Marker m = enter_section_(b, l, _NONE_, STRUCT_MEMBER_LIST, "<struct member list>");
-    r = struct_member(b, l + 1);
-    while (r) {
+    while (true) {
       int c = current_position_(b);
       if (!struct_member(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "struct_member_list", c)) break;
     }
-    exit_section_(b, l, m, r, false, GDShaderParser::struct_member_list_recover);
-    return r;
+    exit_section_(b, l, m, true, false, GDShaderParser::struct_member_list_recover);
+    return true;
   }
 
   /* ********************************************************** */
