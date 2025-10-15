@@ -24,6 +24,11 @@ class ToplevelCompletionTest : BaseCompletionTest() {
         val completions = getCompletionsForTestFile()
         assertTopLevelKeywords(completions)
     }
+    
+    fun testInFunctionBody() {
+        val completions = getCompletionsForTestFile()
+        assertDoesntContain(completions, "shader_type", "render_mode", "stencil_mode", "group_uniforms")
+    }
 
     private fun assertTopLevelKeywords(completions: List<String>) {
         assertContainsElements(completions, 
