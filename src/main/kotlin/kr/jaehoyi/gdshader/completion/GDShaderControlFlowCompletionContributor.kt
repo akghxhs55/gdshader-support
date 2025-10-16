@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import kr.jaehoyi.gdshader.psi.GDShaderBlock
+import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderCaseClause
 import kr.jaehoyi.gdshader.psi.GDShaderControlStatement
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
@@ -27,7 +27,7 @@ class GDShaderControlFlowCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             psiElement()
-                .withParent(psiElement(GDShaderBlock::class.java)),
+                .withParent(psiElement(GDShaderBlockBody::class.java)),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
