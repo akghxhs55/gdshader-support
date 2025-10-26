@@ -38,9 +38,6 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        ideaVersion {
-        }
-
         changeNotes = """
             <ul>
               <li>Added support for Godot 4.5 (Stencil Mode)</li>
