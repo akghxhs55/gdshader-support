@@ -41,8 +41,8 @@ public class GDShaderConstantDeclaratorImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
-  public GDShaderVariableName getVariableName() {
-    return findNotNullChildByClass(GDShaderVariableName.class);
+  public GDShaderVariableNameDecl getVariableNameDecl() {
+    return findNotNullChildByClass(GDShaderVariableNameDecl.class);
   }
 
 }

@@ -428,13 +428,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable_name array_size? OP_ASSIGN initializer
+  // variable_name_decl array_size? OP_ASSIGN initializer
   public static boolean constant_declarator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constant_declarator")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CONSTANT_DECLARATOR, null);
-    r = variable_name(b, l + 1);
+    r = variable_name_decl(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, constant_declarator_1(b, l + 1));
     r = p && report_error_(b, consumeToken(b, OP_ASSIGN)) && r;
@@ -1121,13 +1121,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable_name array_size? (OP_ASSIGN initializer)?
+  // variable_name_decl array_size? (OP_ASSIGN initializer)?
   public static boolean local_variable_declarator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "local_variable_declarator")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = variable_name(b, l + 1);
+    r = variable_name_decl(b, l + 1);
     r = r && local_variable_declarator_1(b, l + 1);
     r = r && local_variable_declarator_2(b, l + 1);
     exit_section_(b, m, LOCAL_VARIABLE_DECLARATOR, r);
@@ -1648,8 +1648,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // literal
   // 		  | function_call
   // 		  | constructor_call
+  // 		  | variable_name_ref
   // 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-  // 		  | variable_name
   public static boolean primary(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary")) return false;
     boolean r;
@@ -1657,15 +1657,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = literal(b, l + 1);
     if (!r) r = function_call(b, l + 1);
     if (!r) r = constructor_call(b, l + 1);
-    if (!r) r = primary_3(b, l + 1);
-    if (!r) r = variable_name(b, l + 1);
+    if (!r) r = variable_name_ref(b, l + 1);
+    if (!r) r = primary_4(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-  private static boolean primary_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primary_3")) return false;
+  private static boolean primary_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_4")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PARENTHESIS_OPEN);
@@ -2399,7 +2399,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // uniform_header precision? type variable_name array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON
+  // uniform_header precision? type variable_name_decl array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON
   public static boolean uniform_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_declaration")) return false;
     boolean r, p;
@@ -2408,7 +2408,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, uniform_declaration_1(b, l + 1));
     r = p && report_error_(b, type(b, l + 1)) && r;
-    r = p && report_error_(b, variable_name(b, l + 1)) && r;
+    r = p && report_error_(b, variable_name_decl(b, l + 1)) && r;
     r = p && report_error_(b, uniform_declaration_4(b, l + 1)) && r;
     r = p && report_error_(b, uniform_declaration_5(b, l + 1)) && r;
     r = p && report_error_(b, uniform_declaration_6(b, l + 1)) && r;
@@ -2546,18 +2546,30 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // IDENTIFIER
-  public static boolean variable_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_name")) return false;
+  public static boolean variable_name_decl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_name_decl")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, VARIABLE_NAME, r);
+    exit_section_(b, m, VARIABLE_NAME_DECL, r);
     return r;
   }
 
   /* ********************************************************** */
-  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? SEMICOLON
+  // IDENTIFIER
+  public static boolean variable_name_ref(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_name_ref")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, VARIABLE_NAME_REF, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name_decl array_size? SEMICOLON
   public static boolean varying_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_declaration")) return false;
     if (!nextTokenIs(b, VARYING)) return false;
@@ -2568,7 +2580,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && report_error_(b, varying_declaration_1(b, l + 1));
     r = p && report_error_(b, varying_declaration_2(b, l + 1)) && r;
     r = p && report_error_(b, type(b, l + 1)) && r;
-    r = p && report_error_(b, variable_name(b, l + 1)) && r;
+    r = p && report_error_(b, variable_name_decl(b, l + 1)) && r;
     r = p && report_error_(b, varying_declaration_5(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);

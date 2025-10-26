@@ -26,6 +26,6 @@ public interface GDShaderUniformDeclaration extends PsiElement {
   GDShaderUniformHeader getUniformHeader();
 
   @Nullable
-  GDShaderVariableName getVariableName();
+  GDShaderVariableNameDecl getVariableNameDecl();
 
 }

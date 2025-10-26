@@ -49,14 +49,12 @@ top_level_declaration ::= shader_type_declaration
 
 // Shader Type Declaration
 shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON {
-	methods=[ getShaderType ]
 	pin=1
 }
 shader_type_name ::= IDENTIFIER
 
 // Render Mode Declaration
 render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON {
-	methods = [ getRenderModes ]
 	pin=1
 }
 render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
@@ -76,7 +74,7 @@ uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFI
 uniform_group_name ::= IDENTIFIER
 
 // Uniform Declaration
-uniform_declaration ::= uniform_header precision? type variable_name array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON {
+uniform_declaration ::= uniform_header precision? type variable_name_decl array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON {
 	pin=1
 }
 uniform_header ::= (GLOBAL | INSTANCE) UNIFORM | UNIFORM { pin=1 }
@@ -126,12 +124,12 @@ constant_declaration ::= CONST precision? type constant_declarator_list SEMICOLO
 }
 
 constant_declarator_list ::= constant_declarator (COMMA constant_declarator)*
-constant_declarator ::= variable_name array_size? OP_ASSIGN initializer {
+constant_declarator ::= variable_name_decl array_size? OP_ASSIGN initializer {
 	pin=1
 }
 
 // Varying Declaration
-varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name array_size? SEMICOLON {
+varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type variable_name_decl array_size? SEMICOLON {
 	pin=1
 }
 
@@ -140,9 +138,9 @@ local_variable_declaration ::= precision? type local_variable_declarator_list SE
 
 // Variable Declarations
 local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)*
-local_variable_declarator ::= variable_name array_size? (OP_ASSIGN initializer)?
+local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initializer)?
 
-variable_name ::= IDENTIFIER
+variable_name_decl ::= IDENTIFIER
 
 initializer ::= expression | initializer_list
 initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
@@ -268,15 +266,13 @@ postfix_expr ::= primary (PERIOD function_name PARENTHESIS_OPEN argument_list? P
 primary ::= literal
 		  | function_call
 		  | constructor_call
+		  | variable_name_ref
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-		  | variable_name
-{
-	methods = [ isLiteral isFunctionCall isExpression isVariableName ]
-}
-		  
+
 function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 constructor_call ::= type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= initializer (COMMA initializer)*
+variable_name_ref ::= IDENTIFIER
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH

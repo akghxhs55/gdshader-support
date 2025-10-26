@@ -151,7 +151,7 @@ GDShader File
                                             GDShaderUnaryExprImpl(UNARY_EXPR)
                                               GDShaderPostfixExprImpl(POSTFIX_EXPR)
                                                 GDShaderPrimaryImpl(PRIMARY)
-                                                  GDShaderVariableNameImpl(VARIABLE_NAME)
+                                                  GDShaderVariableNameRefImpl(VARIABLE_NAME_REF)
                                                     PsiElement(GDShaderTokenType.IDENTIFIER)('a')
                   PsiElement(GDShaderTokenType.SEMICOLON)(';')
           PsiWhiteSpace('\n')

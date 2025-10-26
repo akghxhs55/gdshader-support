@@ -33,9 +33,4 @@ public class GDShaderRenderModeDeclarationImpl extends ASTWrapperPsiElement impl
     return findChildByClass(GDShaderRenderModeDeclaratorList.class);
   }
 
-  @Override
-  public @NotNull List<@NotNull String> getRenderModes() {
-    return GDShaderPsiImplUtil.getRenderModes(this);
-  }
-
 }

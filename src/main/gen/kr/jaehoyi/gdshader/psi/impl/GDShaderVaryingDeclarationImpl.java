@@ -47,8 +47,8 @@ public class GDShaderVaryingDeclarationImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public GDShaderVariableName getVariableName() {
-    return findChildByClass(GDShaderVariableName.class);
+  public GDShaderVariableNameDecl getVariableNameDecl() {
+    return findChildByClass(GDShaderVariableNameDecl.class);
   }
 
 }

@@ -11,14 +11,14 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderVariableNameImpl extends ASTWrapperPsiElement implements GDShaderVariableName {
+public class GDShaderVariableNameRefImpl extends ASTWrapperPsiElement implements GDShaderVariableNameRef {
 
-  public GDShaderVariableNameImpl(@NotNull ASTNode node) {
+  public GDShaderVariableNameRefImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitVariableName(this);
+    visitor.visitVariableNameRef(this);
   }
 
   @Override

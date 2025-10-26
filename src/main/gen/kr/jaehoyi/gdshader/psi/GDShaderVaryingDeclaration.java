@@ -17,6 +17,6 @@ public interface GDShaderVaryingDeclaration extends PsiElement {
   GDShaderType getType();
 
   @Nullable
-  GDShaderVariableName getVariableName();
+  GDShaderVariableNameDecl getVariableNameDecl();
 
 }

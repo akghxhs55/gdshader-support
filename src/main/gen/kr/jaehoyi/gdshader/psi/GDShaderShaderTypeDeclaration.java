@@ -10,6 +10,4 @@ public interface GDShaderShaderTypeDeclaration extends PsiElement {
   @Nullable
   GDShaderShaderTypeName getShaderTypeName();
 
-  @NotNull String getShaderType();
-
 }
