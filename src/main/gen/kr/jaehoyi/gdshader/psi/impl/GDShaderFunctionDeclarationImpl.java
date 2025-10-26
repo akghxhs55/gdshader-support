@@ -35,8 +35,8 @@ public class GDShaderFunctionDeclarationImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
-  public GDShaderFunctionName getFunctionName() {
-    return findNotNullChildByClass(GDShaderFunctionName.class);
+  public GDShaderFunctionNameDecl getFunctionNameDecl() {
+    return findNotNullChildByClass(GDShaderFunctionNameDecl.class);
   }
 
   @Override

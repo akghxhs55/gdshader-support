@@ -11,6 +11,6 @@ public interface GDShaderFunctionCall extends PsiElement {
   GDShaderArgumentList getArgumentList();
 
   @NotNull
-  GDShaderFunctionName getFunctionName();
+  GDShaderFunctionNameRef getFunctionNameRef();
 
 }

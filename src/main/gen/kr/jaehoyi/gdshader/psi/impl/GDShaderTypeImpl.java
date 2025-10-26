@@ -35,8 +35,8 @@ public class GDShaderTypeImpl extends ASTWrapperPsiElement implements GDShaderTy
 
   @Override
   @Nullable
-  public GDShaderStructName getStructName() {
-    return findChildByClass(GDShaderStructName.class);
+  public GDShaderStructNameRef getStructNameRef() {
+    return findChildByClass(GDShaderStructNameRef.class);
   }
 
 }

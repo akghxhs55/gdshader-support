@@ -5,12 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderType extends PsiElement {
-
-  @Nullable
-  GDShaderPrimitiveType getPrimitiveType();
-
-  @Nullable
-  GDShaderStructNameRef getStructNameRef();
+public interface GDShaderFunctionNameDecl extends PsiElement {
 
 }

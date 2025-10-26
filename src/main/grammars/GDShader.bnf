@@ -148,23 +148,22 @@ initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRA
 array_size ::= BRACKET_OPEN expression BRACKET_CLOSE
        
 // Function Declaration
-function_declaration ::= (precision? type) function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block {
+function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block {
 	pin=3
 }
 
-function_name ::= IDENTIFIER
+function_name_decl ::= IDENTIFIER
 
 parameter_list ::= parameter (COMMA parameter)* {
 	recoverWhile=parameter_list_recover
 }
 private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
-parameter ::= parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name (BRACKET_OPEN expression BRACKET_CLOSE)? {
+parameter ::= parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? variable_name_decl (BRACKET_OPEN expression BRACKET_CLOSE)? {
 	pin=3
 	recoverWhile=parameter_recover
 }
 private parameter_recover ::= !(COMMA | PARENTHESIS_CLOSE)
 parameter_qualifier ::= CONST? ARG_IN | CONST | ARG_OUT | ARG_INOUT
-parameter_name ::= IDENTIFIER
 
 block ::= CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
 block_body ::= statement_body* {
@@ -173,19 +172,19 @@ block_body ::= statement_body* {
 private block_body_recover ::= !(CURLY_BRACKET_CLOSE) 
 
 // Struct Declarations
-struct_declaration ::= STRUCT struct_name struct_block SEMICOLON {
+struct_declaration ::= STRUCT struct_name_decl struct_block SEMICOLON {
 	pin=1
 }
-struct_name ::= IDENTIFIER
+struct_name_decl ::= IDENTIFIER
 struct_block ::= CURLY_BRACKET_OPEN struct_member_list CURLY_BRACKET_CLOSE
 struct_member_list ::= struct_member* {
 	recoverWhile=struct_member_list_recover
 }
 private struct_member_list_recover ::= !(CURLY_BRACKET_CLOSE)
-struct_member ::= precision? type struct_member_name (array_size)? SEMICOLON {
+struct_member ::= precision? type struct_member_name_decl (array_size)? SEMICOLON {
 	pin=2
 }
-struct_member_name ::= IDENTIFIER
+struct_member_name_decl ::= IDENTIFIER
 
 // Control Statements
 control_statement ::= if_statement
@@ -261,7 +260,7 @@ shift_expr ::= additive_expr ((OP_SHIFT_LEFT | OP_SHIFT_RIGHT) additive_expr)*
 additive_expr ::= multiplicative_expr ((OP_ADD | OP_SUB) multiplicative_expr)*
 multiplicative_expr ::= unary_expr ((OP_MUL | OP_DIV | OP_MOD) unary_expr)*
 unary_expr ::= (OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB) unary_expr | (OP_INCREMENT | OP_DECREMENT)? postfix_expr
-postfix_expr ::= primary (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+postfix_expr ::= primary (PERIOD function_call | PERIOD struct_member_name_ref | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
 
 primary ::= literal
 		  | function_call
@@ -269,10 +268,14 @@ primary ::= literal
 		  | variable_name_ref
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 
-function_call ::= function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+function_call ::= function_name_ref PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 constructor_call ::= type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= initializer (COMMA initializer)*
+
 variable_name_ref ::= IDENTIFIER
+function_name_ref ::= IDENTIFIER
+struct_name_ref ::= IDENTIFIER
+struct_member_name_ref ::= IDENTIFIER
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH
@@ -287,7 +290,7 @@ type ::= primitive_type
        | TYPE_SAMPLERCUBE
        | TYPE_SAMPLERCUBEARRAY
        | TYPE_SAMPLEREXT
-       | struct_name
+       | struct_name_ref
        
 primitive_type ::= TYPE_VOID
 			     | TYPE_BOOL

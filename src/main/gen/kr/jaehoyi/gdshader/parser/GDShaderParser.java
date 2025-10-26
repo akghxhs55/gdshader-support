@@ -756,13 +756,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  // function_name_ref PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
   public static boolean function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = function_name(b, l + 1);
+    r = function_name_ref(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
     r = r && function_call_2(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
@@ -778,13 +778,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (precision? type) function_name PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+  // (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
   public static boolean function_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_DECLARATION, "<function declaration>");
     r = function_declaration_0(b, l + 1);
-    r = r && function_name(b, l + 1);
+    r = r && function_name_decl(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
     p = r; // pin = 3
     r = r && report_error_(b, function_declaration_3(b, l + 1));
@@ -821,13 +821,25 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // IDENTIFIER
-  public static boolean function_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_name")) return false;
+  public static boolean function_name_decl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_name_decl")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, FUNCTION_NAME, r);
+    exit_section_(b, m, FUNCTION_NAME_DECL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean function_name_ref(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_name_ref")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, FUNCTION_NAME_REF, r);
     return r;
   }
 
@@ -1358,7 +1370,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? parameter_name (BRACKET_OPEN expression BRACKET_CLOSE)?
+  // parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? variable_name_decl (BRACKET_OPEN expression BRACKET_CLOSE)?
   public static boolean parameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter")) return false;
     boolean r, p;
@@ -1368,7 +1380,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = r && type(b, l + 1);
     p = r; // pin = 3
     r = r && report_error_(b, parameter_3(b, l + 1));
-    r = p && report_error_(b, parameter_name(b, l + 1)) && r;
+    r = p && report_error_(b, variable_name_decl(b, l + 1)) && r;
     r = p && parameter_5(b, l + 1) && r;
     exit_section_(b, l, m, r, p, GDShaderParser::parameter_recover);
     return r || p;
@@ -1472,18 +1484,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // IDENTIFIER
-  public static boolean parameter_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_name")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, PARAMETER_NAME, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // CONST? ARG_IN | CONST | ARG_OUT | ARG_INOUT
   public static boolean parameter_qualifier(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_qualifier")) return false;
@@ -1536,7 +1536,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // primary (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
+  // primary (PERIOD function_call | PERIOD struct_member_name_ref | BRACKET_OPEN expression BRACKET_CLOSE)* (OP_INCREMENT | OP_DECREMENT)?
   public static boolean postfix_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr")) return false;
     boolean r;
@@ -1548,7 +1548,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE)*
+  // (PERIOD function_call | PERIOD struct_member_name_ref | BRACKET_OPEN expression BRACKET_CLOSE)*
   private static boolean postfix_expr_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1")) return false;
     while (true) {
@@ -1559,7 +1559,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE | PERIOD struct_member_name | BRACKET_OPEN expression BRACKET_CLOSE
+  // PERIOD function_call | PERIOD struct_member_name_ref | BRACKET_OPEN expression BRACKET_CLOSE
   private static boolean postfix_expr_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1_0")) return false;
     boolean r;
@@ -1571,34 +1571,24 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // PERIOD function_name PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  // PERIOD function_call
   private static boolean postfix_expr_1_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PERIOD);
-    r = r && function_name(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_OPEN);
-    r = r && postfix_expr_1_0_0_3(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
+    r = r && function_call(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // argument_list?
-  private static boolean postfix_expr_1_0_0_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "postfix_expr_1_0_0_3")) return false;
-    argument_list(b, l + 1);
-    return true;
-  }
-
-  // PERIOD struct_member_name
+  // PERIOD struct_member_name_ref
   private static boolean postfix_expr_1_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "postfix_expr_1_0_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PERIOD);
-    r = r && struct_member_name(b, l + 1);
+    r = r && struct_member_name_ref(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2120,7 +2110,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // STRUCT struct_name struct_block SEMICOLON
+  // STRUCT struct_name_decl struct_block SEMICOLON
   public static boolean struct_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_declaration")) return false;
     if (!nextTokenIs(b, STRUCT)) return false;
@@ -2128,7 +2118,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, STRUCT_DECLARATION, null);
     r = consumeToken(b, STRUCT);
     p = r; // pin = 1
-    r = r && report_error_(b, struct_name(b, l + 1));
+    r = r && report_error_(b, struct_name_decl(b, l + 1));
     r = p && report_error_(b, struct_block(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
@@ -2136,7 +2126,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // precision? type struct_member_name (array_size)? SEMICOLON
+  // precision? type struct_member_name_decl (array_size)? SEMICOLON
   public static boolean struct_member(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member")) return false;
     boolean r, p;
@@ -2144,7 +2134,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = struct_member_0(b, l + 1);
     r = r && type(b, l + 1);
     p = r; // pin = 2
-    r = r && report_error_(b, struct_member_name(b, l + 1));
+    r = r && report_error_(b, struct_member_name_decl(b, l + 1));
     r = p && report_error_(b, struct_member_3(b, l + 1)) && r;
     r = p && consumeToken(b, SEMICOLON) && r;
     exit_section_(b, l, m, r, p, null);
@@ -2202,25 +2192,49 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // IDENTIFIER
-  public static boolean struct_member_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "struct_member_name")) return false;
+  public static boolean struct_member_name_decl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_name_decl")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, STRUCT_MEMBER_NAME, r);
+    exit_section_(b, m, STRUCT_MEMBER_NAME_DECL, r);
     return r;
   }
 
   /* ********************************************************** */
   // IDENTIFIER
-  public static boolean struct_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "struct_name")) return false;
+  public static boolean struct_member_name_ref(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_name_ref")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, STRUCT_NAME, r);
+    exit_section_(b, m, STRUCT_MEMBER_NAME_REF, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean struct_name_decl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_name_decl")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, STRUCT_NAME_DECL, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER
+  public static boolean struct_name_ref(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_name_ref")) return false;
+    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, STRUCT_NAME_REF, r);
     return r;
   }
 
@@ -2317,7 +2331,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   //        | TYPE_SAMPLERCUBE
   //        | TYPE_SAMPLERCUBEARRAY
   //        | TYPE_SAMPLEREXT
-  //        | struct_name
+  //        | struct_name_ref
   public static boolean type(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "type")) return false;
     boolean r;
@@ -2332,7 +2346,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, TYPE_SAMPLERCUBE);
     if (!r) r = consumeToken(b, TYPE_SAMPLERCUBEARRAY);
     if (!r) r = consumeToken(b, TYPE_SAMPLEREXT);
-    if (!r) r = struct_name(b, l + 1);
+    if (!r) r = struct_name_ref(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

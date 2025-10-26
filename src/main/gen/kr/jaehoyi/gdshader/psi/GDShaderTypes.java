@@ -35,7 +35,8 @@ public interface GDShaderTypes {
   IElementType FOR_STATEMENT = new GDShaderElementType("FOR_STATEMENT");
   IElementType FUNCTION_CALL = new GDShaderElementType("FUNCTION_CALL");
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
-  IElementType FUNCTION_NAME = new GDShaderElementType("FUNCTION_NAME");
+  IElementType FUNCTION_NAME_DECL = new GDShaderElementType("FUNCTION_NAME_DECL");
+  IElementType FUNCTION_NAME_REF = new GDShaderElementType("FUNCTION_NAME_REF");
   IElementType HINT = new GDShaderElementType("HINT");
   IElementType HINT_IDENTIFIER = new GDShaderElementType("HINT_IDENTIFIER");
   IElementType HINT_LIST = new GDShaderElementType("HINT_LIST");
@@ -55,7 +56,6 @@ public interface GDShaderTypes {
   IElementType NUMBER = new GDShaderElementType("NUMBER");
   IElementType PARAMETER = new GDShaderElementType("PARAMETER");
   IElementType PARAMETER_LIST = new GDShaderElementType("PARAMETER_LIST");
-  IElementType PARAMETER_NAME = new GDShaderElementType("PARAMETER_NAME");
   IElementType PARAMETER_QUALIFIER = new GDShaderElementType("PARAMETER_QUALIFIER");
   IElementType POSTFIX_EXPR = new GDShaderElementType("POSTFIX_EXPR");
   IElementType PRECISION = new GDShaderElementType("PRECISION");
@@ -81,8 +81,10 @@ public interface GDShaderTypes {
   IElementType STRUCT_DECLARATION = new GDShaderElementType("STRUCT_DECLARATION");
   IElementType STRUCT_MEMBER = new GDShaderElementType("STRUCT_MEMBER");
   IElementType STRUCT_MEMBER_LIST = new GDShaderElementType("STRUCT_MEMBER_LIST");
-  IElementType STRUCT_MEMBER_NAME = new GDShaderElementType("STRUCT_MEMBER_NAME");
-  IElementType STRUCT_NAME = new GDShaderElementType("STRUCT_NAME");
+  IElementType STRUCT_MEMBER_NAME_DECL = new GDShaderElementType("STRUCT_MEMBER_NAME_DECL");
+  IElementType STRUCT_MEMBER_NAME_REF = new GDShaderElementType("STRUCT_MEMBER_NAME_REF");
+  IElementType STRUCT_NAME_DECL = new GDShaderElementType("STRUCT_NAME_DECL");
+  IElementType STRUCT_NAME_REF = new GDShaderElementType("STRUCT_NAME_REF");
   IElementType SWITCH_BLOCK = new GDShaderElementType("SWITCH_BLOCK");
   IElementType SWITCH_BODY = new GDShaderElementType("SWITCH_BODY");
   IElementType SWITCH_STATEMENT = new GDShaderElementType("SWITCH_STATEMENT");
@@ -334,8 +336,11 @@ public interface GDShaderTypes {
       else if (type == FUNCTION_DECLARATION) {
         return new GDShaderFunctionDeclarationImpl(node);
       }
-      else if (type == FUNCTION_NAME) {
-        return new GDShaderFunctionNameImpl(node);
+      else if (type == FUNCTION_NAME_DECL) {
+        return new GDShaderFunctionNameDeclImpl(node);
+      }
+      else if (type == FUNCTION_NAME_REF) {
+        return new GDShaderFunctionNameRefImpl(node);
       }
       else if (type == HINT) {
         return new GDShaderHintImpl(node);
@@ -393,9 +398,6 @@ public interface GDShaderTypes {
       }
       else if (type == PARAMETER_LIST) {
         return new GDShaderParameterListImpl(node);
-      }
-      else if (type == PARAMETER_NAME) {
-        return new GDShaderParameterNameImpl(node);
       }
       else if (type == PARAMETER_QUALIFIER) {
         return new GDShaderParameterQualifierImpl(node);
@@ -472,11 +474,17 @@ public interface GDShaderTypes {
       else if (type == STRUCT_MEMBER_LIST) {
         return new GDShaderStructMemberListImpl(node);
       }
-      else if (type == STRUCT_MEMBER_NAME) {
-        return new GDShaderStructMemberNameImpl(node);
+      else if (type == STRUCT_MEMBER_NAME_DECL) {
+        return new GDShaderStructMemberNameDeclImpl(node);
       }
-      else if (type == STRUCT_NAME) {
-        return new GDShaderStructNameImpl(node);
+      else if (type == STRUCT_MEMBER_NAME_REF) {
+        return new GDShaderStructMemberNameRefImpl(node);
+      }
+      else if (type == STRUCT_NAME_DECL) {
+        return new GDShaderStructNameDeclImpl(node);
+      }
+      else if (type == STRUCT_NAME_REF) {
+        return new GDShaderStructNameRefImpl(node);
       }
       else if (type == SWITCH_BLOCK) {
         return new GDShaderSwitchBlockImpl(node);

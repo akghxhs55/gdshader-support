@@ -11,9 +11,6 @@ public interface GDShaderParameter extends PsiElement {
   List<GDShaderExpression> getExpressionList();
 
   @Nullable
-  GDShaderParameterName getParameterName();
-
-  @Nullable
   GDShaderParameterQualifier getParameterQualifier();
 
   @Nullable
@@ -21,5 +18,8 @@ public interface GDShaderParameter extends PsiElement {
 
   @NotNull
   GDShaderType getType();
+
+  @Nullable
+  GDShaderVariableNameDecl getVariableNameDecl();
 
 }

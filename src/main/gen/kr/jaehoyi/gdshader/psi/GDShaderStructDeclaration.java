@@ -11,6 +11,6 @@ public interface GDShaderStructDeclaration extends PsiElement {
   GDShaderStructBlock getStructBlock();
 
   @Nullable
-  GDShaderStructName getStructName();
+  GDShaderStructNameDecl getStructNameDecl();
 
 }

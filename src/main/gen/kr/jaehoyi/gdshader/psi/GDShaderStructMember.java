@@ -14,7 +14,7 @@ public interface GDShaderStructMember extends PsiElement {
   GDShaderPrecision getPrecision();
 
   @Nullable
-  GDShaderStructMemberName getStructMemberName();
+  GDShaderStructMemberNameDecl getStructMemberNameDecl();
 
   @NotNull
   GDShaderType getType();

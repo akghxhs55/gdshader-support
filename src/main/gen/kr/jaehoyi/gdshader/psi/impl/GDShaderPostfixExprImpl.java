@@ -29,20 +29,14 @@ public class GDShaderPostfixExprImpl extends ASTWrapperPsiElement implements GDS
 
   @Override
   @NotNull
-  public List<GDShaderArgumentList> getArgumentListList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderArgumentList.class);
-  }
-
-  @Override
-  @NotNull
   public List<GDShaderExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderExpression.class);
   }
 
   @Override
   @NotNull
-  public List<GDShaderFunctionName> getFunctionNameList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderFunctionName.class);
+  public List<GDShaderFunctionCall> getFunctionCallList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderFunctionCall.class);
   }
 
   @Override
@@ -53,8 +47,8 @@ public class GDShaderPostfixExprImpl extends ASTWrapperPsiElement implements GDS
 
   @Override
   @NotNull
-  public List<GDShaderStructMemberName> getStructMemberNameList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderStructMemberName.class);
+  public List<GDShaderStructMemberNameRef> getStructMemberNameRefList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderStructMemberNameRef.class);
   }
 
 }

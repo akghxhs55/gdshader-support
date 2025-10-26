@@ -115,7 +115,11 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitFunctionName(@NotNull GDShaderFunctionName o) {
+  public void visitFunctionNameDecl(@NotNull GDShaderFunctionNameDecl o) {
+    visitPsiElement(o);
+  }
+
+  public void visitFunctionNameRef(@NotNull GDShaderFunctionNameRef o) {
     visitPsiElement(o);
   }
 
@@ -192,10 +196,6 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitParameterList(@NotNull GDShaderParameterList o) {
-    visitPsiElement(o);
-  }
-
-  public void visitParameterName(@NotNull GDShaderParameterName o) {
     visitPsiElement(o);
   }
 
@@ -299,11 +299,19 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitStructMemberName(@NotNull GDShaderStructMemberName o) {
+  public void visitStructMemberNameDecl(@NotNull GDShaderStructMemberNameDecl o) {
     visitPsiElement(o);
   }
 
-  public void visitStructName(@NotNull GDShaderStructName o) {
+  public void visitStructMemberNameRef(@NotNull GDShaderStructMemberNameRef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStructNameDecl(@NotNull GDShaderStructNameDecl o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStructNameRef(@NotNull GDShaderStructNameRef o) {
     visitPsiElement(o);
   }
 
