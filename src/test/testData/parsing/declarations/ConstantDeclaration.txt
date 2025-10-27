@@ -436,7 +436,7 @@ GDShader File
           GDShaderPrimitiveTypeImpl(PRIMITIVE_TYPE)
             PsiElement(GDShaderTokenType.TYPE_VOID)('void')
         PsiWhiteSpace(' ')
-        GDShaderFunctionNameImpl(FUNCTION_NAME)
+        GDShaderFunctionNameDeclImpl(FUNCTION_NAME_DECL)
           PsiElement(GDShaderTokenType.IDENTIFIER)('f')
         PsiElement(GDShaderTokenType.PARENTHESIS_OPEN)('(')
         PsiElement(GDShaderTokenType.PARENTHESIS_CLOSE)(')')

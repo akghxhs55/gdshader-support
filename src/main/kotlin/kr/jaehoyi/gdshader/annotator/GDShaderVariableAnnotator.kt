@@ -7,7 +7,8 @@ import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighter
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclaration
-import kr.jaehoyi.gdshader.psi.GDShaderStructMemberName
+import kr.jaehoyi.gdshader.psi.GDShaderStructMemberNameDecl
+import kr.jaehoyi.gdshader.psi.GDShaderStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
@@ -19,7 +20,8 @@ class GDShaderVariableAnnotator : Annotator {
             is GDShaderConstantDeclaration -> annotateConstantDeclaration(element, holder)
             is GDShaderVaryingDeclaration -> annotateVaryingDeclaration(element, holder)
             is GDShaderLocalVariableDeclaration -> annotateLocalVariableDeclaration(element, holder)
-            is GDShaderStructMemberName -> annotateStructMemberName(element, holder)
+            is GDShaderStructMemberNameDecl -> annotateStructMemberNameDecl(element, holder)
+            is GDShaderStructMemberNameRef -> annotateStructMemberNameRef(element, holder)
             else -> return
         }
     }
@@ -68,7 +70,14 @@ class GDShaderVariableAnnotator : Annotator {
         }
     }
     
-    private fun annotateStructMemberName(element: GDShaderStructMemberName, holder: AnnotationHolder) {
+    private fun annotateStructMemberNameDecl(element: GDShaderStructMemberNameDecl, holder: AnnotationHolder) {
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+            .range(element.textRange)
+            .textAttributes(GDShaderSyntaxHighlighter.STRUCT_MEMBER)
+            .create()
+    }
+    
+    private fun annotateStructMemberNameRef(element: GDShaderStructMemberNameRef, holder: AnnotationHolder) {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
             .range(element.textRange)
             .textAttributes(GDShaderSyntaxHighlighter.STRUCT_MEMBER)
