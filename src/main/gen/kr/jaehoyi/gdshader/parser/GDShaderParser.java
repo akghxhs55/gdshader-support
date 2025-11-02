@@ -694,7 +694,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_FOR PARENTHESIS_OPEN (expression? SEMICOLON | local_variable_declaration) expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body
+  // CF_FOR PARENTHESIS_OPEN local_variable_declaration expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body
   public static boolean for_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_statement")) return false;
     if (!nextTokenIs(b, CF_FOR)) return false;
@@ -702,7 +702,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, FOR_STATEMENT, null);
     r = consumeTokens(b, 1, CF_FOR, PARENTHESIS_OPEN);
     p = r; // pin = 1
-    r = r && report_error_(b, for_statement_2(b, l + 1));
+    r = r && report_error_(b, local_variable_declaration(b, l + 1));
     r = p && report_error_(b, for_statement_3(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, SEMICOLON)) && r;
     r = p && report_error_(b, for_statement_5(b, l + 1)) && r;
@@ -710,35 +710,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     r = p && statement_body(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  // expression? SEMICOLON | local_variable_declaration
-  private static boolean for_statement_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_statement_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = for_statement_2_0(b, l + 1);
-    if (!r) r = local_variable_declaration(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // expression? SEMICOLON
-  private static boolean for_statement_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_statement_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = for_statement_2_0_0(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // expression?
-  private static boolean for_statement_2_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_statement_2_0_0")) return false;
-    expression(b, l + 1);
-    return true;
   }
 
   // expression?
