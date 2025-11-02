@@ -88,7 +88,7 @@
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderKeywordCompletionContributor" />
         <completion.contributor
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderControlFlowCompletionContributor" />
+            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderStatementCompletionContributor" />
         <completion.contributor
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderLiteralCompletionContributor" />
