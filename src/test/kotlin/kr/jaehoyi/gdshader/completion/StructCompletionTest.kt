@@ -1,8 +1,8 @@
 package kr.jaehoyi.gdshader.completion
 
-class StructDeclarationCompletionTest : BaseCompletionTest() {
+class StructCompletionTest : BaseCompletionTest() {
 
-    override val testPath = "completion/structDeclaration"
+    override val testPath = "completion/struct"
     
     fun testStructKeyword() {
         val completions = getCompletionsForTestFile()
