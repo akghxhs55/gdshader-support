@@ -32,6 +32,9 @@ public interface GDShaderTypes {
   IElementType EQUALITY_EXPR = new GDShaderElementType("EQUALITY_EXPR");
   IElementType EXPRESSION = new GDShaderElementType("EXPRESSION");
   IElementType EXPRESSION_STATEMENT = new GDShaderElementType("EXPRESSION_STATEMENT");
+  IElementType FOR_CONDITION = new GDShaderElementType("FOR_CONDITION");
+  IElementType FOR_INIT = new GDShaderElementType("FOR_INIT");
+  IElementType FOR_ITERATION = new GDShaderElementType("FOR_ITERATION");
   IElementType FOR_STATEMENT = new GDShaderElementType("FOR_STATEMENT");
   IElementType FUNCTION_CALL = new GDShaderElementType("FUNCTION_CALL");
   IElementType FUNCTION_DECLARATION = new GDShaderElementType("FUNCTION_DECLARATION");
@@ -326,6 +329,15 @@ public interface GDShaderTypes {
       }
       else if (type == EXPRESSION_STATEMENT) {
         return new GDShaderExpressionStatementImpl(node);
+      }
+      else if (type == FOR_CONDITION) {
+        return new GDShaderForConditionImpl(node);
+      }
+      else if (type == FOR_INIT) {
+        return new GDShaderForInitImpl(node);
+      }
+      else if (type == FOR_ITERATION) {
+        return new GDShaderForIterationImpl(node);
       }
       else if (type == FOR_STATEMENT) {
         return new GDShaderForStatementImpl(node);

@@ -694,7 +694,49 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_FOR PARENTHESIS_OPEN local_variable_declaration expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body
+  // expression
+  public static boolean for_condition(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_condition")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FOR_CONDITION, "<for condition>");
+    r = expression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // precision? type local_variable_declarator_list
+  public static boolean for_init(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_init")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FOR_INIT, "<for init>");
+    r = for_init_0(b, l + 1);
+    r = r && type(b, l + 1);
+    r = r && local_variable_declarator_list(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // precision?
+  private static boolean for_init_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_init_0")) return false;
+    precision(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // expression
+  public static boolean for_iteration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_iteration")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FOR_ITERATION, "<for iteration>");
+    r = expression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // CF_FOR PARENTHESIS_OPEN for_init? SEMICOLON for_condition? SEMICOLON for_iteration? PARENTHESIS_CLOSE statement_body
   public static boolean for_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_statement")) return false;
     if (!nextTokenIs(b, CF_FOR)) return false;
@@ -702,27 +744,35 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, FOR_STATEMENT, null);
     r = consumeTokens(b, 1, CF_FOR, PARENTHESIS_OPEN);
     p = r; // pin = 1
-    r = r && report_error_(b, local_variable_declaration(b, l + 1));
-    r = p && report_error_(b, for_statement_3(b, l + 1)) && r;
+    r = r && report_error_(b, for_statement_2(b, l + 1));
     r = p && report_error_(b, consumeToken(b, SEMICOLON)) && r;
-    r = p && report_error_(b, for_statement_5(b, l + 1)) && r;
+    r = p && report_error_(b, for_statement_4(b, l + 1)) && r;
+    r = p && report_error_(b, consumeToken(b, SEMICOLON)) && r;
+    r = p && report_error_(b, for_statement_6(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, PARENTHESIS_CLOSE)) && r;
     r = p && statement_body(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // expression?
-  private static boolean for_statement_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_statement_3")) return false;
-    expression(b, l + 1);
+  // for_init?
+  private static boolean for_statement_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_statement_2")) return false;
+    for_init(b, l + 1);
     return true;
   }
 
-  // expression?
-  private static boolean for_statement_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "for_statement_5")) return false;
-    expression(b, l + 1);
+  // for_condition?
+  private static boolean for_statement_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_statement_4")) return false;
+    for_condition(b, l + 1);
+    return true;
+  }
+
+  // for_iteration?
+  private static boolean for_statement_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_statement_6")) return false;
+    for_iteration(b, l + 1);
     return true;
   }
 

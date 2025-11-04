@@ -201,9 +201,12 @@ else_clause ::= CF_ELSE (if_statement | statement_body) {
 	pin=1
 }
 
-for_statement ::= CF_FOR PARENTHESIS_OPEN local_variable_declaration expression? SEMICOLON expression? PARENTHESIS_CLOSE statement_body {
+for_statement ::= CF_FOR PARENTHESIS_OPEN for_init? SEMICOLON for_condition? SEMICOLON for_iteration? PARENTHESIS_CLOSE statement_body {
 	pin=1
 }
+for_init ::= precision? type local_variable_declarator_list
+for_condition ::= expression
+for_iteration ::= expression
 
 do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON {
 	pin=1

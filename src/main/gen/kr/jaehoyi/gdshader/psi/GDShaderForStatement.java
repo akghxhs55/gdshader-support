@@ -7,11 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderForStatement extends PsiElement {
 
-  @NotNull
-  List<GDShaderExpression> getExpressionList();
+  @Nullable
+  GDShaderForCondition getForCondition();
 
   @Nullable
-  GDShaderLocalVariableDeclaration getLocalVariableDeclaration();
+  GDShaderForInit getForInit();
+
+  @Nullable
+  GDShaderForIteration getForIteration();
 
   @Nullable
   GDShaderStatementBody getStatementBody();

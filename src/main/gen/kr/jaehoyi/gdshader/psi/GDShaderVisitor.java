@@ -103,6 +103,18 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitForCondition(@NotNull GDShaderForCondition o) {
+    visitPsiElement(o);
+  }
+
+  public void visitForInit(@NotNull GDShaderForInit o) {
+    visitPsiElement(o);
+  }
+
+  public void visitForIteration(@NotNull GDShaderForIteration o) {
+    visitPsiElement(o);
+  }
+
   public void visitForStatement(@NotNull GDShaderForStatement o) {
     visitPsiElement(o);
   }
