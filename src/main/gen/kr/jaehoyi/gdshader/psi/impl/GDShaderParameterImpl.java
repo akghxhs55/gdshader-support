@@ -28,9 +28,9 @@ public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDSha
   }
 
   @Override
-  @NotNull
-  public List<GDShaderExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderExpression.class);
+  @Nullable
+  public GDShaderExpression getExpression() {
+    return findChildByClass(GDShaderExpression.class);
   }
 
   @Override
@@ -52,9 +52,9 @@ public class GDShaderParameterImpl extends ASTWrapperPsiElement implements GDSha
   }
 
   @Override
-  @Nullable
+  @NotNull
   public GDShaderVariableNameDecl getVariableNameDecl() {
-    return findChildByClass(GDShaderVariableNameDecl.class);
+    return findNotNullChildByClass(GDShaderVariableNameDecl.class);
   }
 
 }
