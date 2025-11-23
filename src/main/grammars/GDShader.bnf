@@ -172,13 +172,9 @@ parameter_list ::= parameter (COMMA parameter)*
 	recoverWhile=parameter_list_recover
 }
 private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
-parameter ::= parameter_qualifier? precision? type (BRACKET_OPEN expression BRACKET_CLOSE)? variable_name_decl |
-			  parameter_qualifier? precision? type variable_name_decl (BRACKET_OPEN expression BRACKET_CLOSE)?
-{
-	pin=3
-	recoverWhile=parameter_recover
-}
-private parameter_recover ::= !(COMMA | PARENTHESIS_CLOSE)
+parameter ::= parameter_qualifier? precision? type variable_name_decl array_size? |
+			  parameter_qualifier? precision? type array_size? variable_name_decl
+			  
 parameter_qualifier ::= CONST? ARG_IN | CONST | ARG_OUT | ARG_INOUT
 
 block ::= CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
