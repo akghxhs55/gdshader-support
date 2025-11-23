@@ -1,0 +1,1 @@
+uniform int test = <caret>

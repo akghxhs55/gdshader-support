@@ -1,0 +1,3 @@
+void f() {
+	for (;;<caret>)
+}
