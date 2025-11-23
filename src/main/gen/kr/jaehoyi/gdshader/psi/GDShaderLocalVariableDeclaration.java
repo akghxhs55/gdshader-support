@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderLocalVariableDeclaration extends PsiElement {
 
+  @Nullable
+  GDShaderArraySize getArraySize();
+
   @NotNull
   GDShaderLocalVariableDeclaratorList getLocalVariableDeclaratorList();
 

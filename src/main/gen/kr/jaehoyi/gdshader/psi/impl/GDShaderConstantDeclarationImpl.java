@@ -29,6 +29,12 @@ public class GDShaderConstantDeclarationImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
+  public GDShaderArraySize getArraySize() {
+    return findChildByClass(GDShaderArraySize.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderConstantDeclaratorList getConstantDeclaratorList() {
     return findChildByClass(GDShaderConstantDeclaratorList.class);
   }

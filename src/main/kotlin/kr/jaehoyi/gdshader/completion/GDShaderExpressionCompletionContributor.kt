@@ -9,7 +9,13 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
+import kr.jaehoyi.gdshader.psi.GDShaderBlock
+import kr.jaehoyi.gdshader.psi.GDShaderParameterList
+import kr.jaehoyi.gdshader.psi.GDShaderSwitchBody
+import kr.jaehoyi.gdshader.psi.GDShaderTokenSets
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 
 class GDShaderExpressionCompletionContributor : CompletionContributor() {
@@ -27,12 +33,42 @@ class GDShaderExpressionCompletionContributor : CompletionContributor() {
         override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
             val position = parameters.position
             
-            val ref = PsiTreeUtil.getParentOfType(position, GDShaderVariableNameRef::class.java)
-            if (ref != null) {
+            if (PsiTreeUtil.getParentOfType(position, GDShaderVariableNameRef::class.java) != null) {
                 result.addAllElements(booleanLookupElements)
                 return
             }
             
+            val originalPosition = parameters.originalPosition ?: position
+            val prevLeaf = PsiTreeUtil.prevVisibleLeaf(originalPosition)
+            println("originalPosition: $originalPosition, prevLeaf: $prevLeaf, parent: ${originalPosition.parent}")
+            
+            if (GDShaderTokenSets.OPERATORS.contains(prevLeaf.elementType)) {
+                result.addAllElements(booleanLookupElements)
+                return
+            }
+            
+            when (prevLeaf.elementType) {
+                GDShaderTypes.CURLY_BRACKET_OPEN, GDShaderTypes.SEMICOLON, GDShaderTypes.CF_RETURN -> {
+                    if (PsiTreeUtil.getParentOfType(originalPosition, GDShaderBlock::class.java) != null) {
+                        result.addAllElements(booleanLookupElements)
+                        return
+                    }
+                }
+
+                GDShaderTypes.PARENTHESIS_OPEN -> {
+                    if (PsiTreeUtil.getParentOfType(originalPosition, GDShaderParameterList::class.java) == null) {
+                        result.addAllElements(booleanLookupElements)
+                        return
+                    }
+                }
+
+                GDShaderTypes.COLON, GDShaderTypes.CF_CASE -> {
+                    if (position.parent is GDShaderSwitchBody) {
+                        result.addAllElements(booleanLookupElements)
+                        return
+                    }
+                }
+            }
         }
     }
     

@@ -28,9 +28,9 @@ public class GDShaderArraySizeImpl extends ASTWrapperPsiElement implements GDSha
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GDShaderExpression getExpression() {
-    return findNotNullChildByClass(GDShaderExpression.class);
+    return findChildByClass(GDShaderExpression.class);
   }
 
 }

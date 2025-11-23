@@ -28,6 +28,12 @@ public class GDShaderLocalVariableDeclarationImpl extends ASTWrapperPsiElement i
   }
 
   @Override
+  @Nullable
+  public GDShaderArraySize getArraySize() {
+    return findChildByClass(GDShaderArraySize.class);
+  }
+
+  @Override
   @NotNull
   public GDShaderLocalVariableDeclaratorList getLocalVariableDeclaratorList() {
     return findNotNullChildByClass(GDShaderLocalVariableDeclaratorList.class);

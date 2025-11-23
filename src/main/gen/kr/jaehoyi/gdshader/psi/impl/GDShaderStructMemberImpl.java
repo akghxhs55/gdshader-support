@@ -28,9 +28,9 @@ public class GDShaderStructMemberImpl extends ASTWrapperPsiElement implements GD
   }
 
   @Override
-  @Nullable
-  public GDShaderArraySize getArraySize() {
-    return findChildByClass(GDShaderArraySize.class);
+  @NotNull
+  public List<GDShaderArraySize> getArraySizeList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderArraySize.class);
   }
 
   @Override

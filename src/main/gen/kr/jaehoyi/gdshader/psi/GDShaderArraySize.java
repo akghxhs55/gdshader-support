@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderArraySize extends PsiElement {
 
-  @NotNull
+  @Nullable
   GDShaderExpression getExpression();
 
 }

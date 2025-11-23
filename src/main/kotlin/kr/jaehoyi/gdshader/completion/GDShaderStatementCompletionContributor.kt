@@ -16,6 +16,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderCaseClause
 import kr.jaehoyi.gdshader.psi.GDShaderControlStatement
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
+import kr.jaehoyi.gdshader.psi.GDShaderStatement
 import kr.jaehoyi.gdshader.psi.GDShaderStatementBody
 import kr.jaehoyi.gdshader.psi.GDShaderSwitchBody
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
@@ -55,7 +56,10 @@ class GDShaderStatementCompletionContributor : CompletionContributor() {
 
                     if (previousSibling !is GDShaderStatementBody) return false
                     
-                    val controlStatement = PsiTreeUtil.getChildOfType(previousSibling, GDShaderControlStatement::class.java)
+                    val statement = PsiTreeUtil.getChildOfType(previousSibling, GDShaderStatement::class.java)
+                        ?: return false
+                    
+                    val controlStatement = PsiTreeUtil.getChildOfType(statement, GDShaderControlStatement::class.java)
                         ?: return false
                     
                     var currentIfStatement = PsiTreeUtil.getChildOfType(controlStatement, GDShaderIfStatement::class.java)

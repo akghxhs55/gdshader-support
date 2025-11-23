@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderStructMember extends PsiElement {
 
-  @Nullable
-  GDShaderArraySize getArraySize();
+  @NotNull
+  List<GDShaderArraySize> getArraySizeList();
 
   @Nullable
   GDShaderPrecision getPrecision();

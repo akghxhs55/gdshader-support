@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GDShaderConstantDeclaration extends PsiElement {
 
   @Nullable
+  GDShaderArraySize getArraySize();
+
+  @Nullable
   GDShaderConstantDeclaratorList getConstantDeclaratorList();
 
   @Nullable
