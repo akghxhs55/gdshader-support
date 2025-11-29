@@ -2515,7 +2515,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON
+  // UNIFORM_GROUP uniform_group_name? (PERIOD uniform_group_name)* SEMICOLON
   public static boolean uniform_group_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_group_declaration")) return false;
     if (!nextTokenIs(b, UNIFORM_GROUP)) return false;
@@ -2537,7 +2537,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (PERIOD IDENTIFIER)*
+  // (PERIOD uniform_group_name)*
   private static boolean uniform_group_declaration_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_group_declaration_2")) return false;
     while (true) {
@@ -2548,12 +2548,13 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // PERIOD IDENTIFIER
+  // PERIOD uniform_group_name
   private static boolean uniform_group_declaration_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_group_declaration_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, PERIOD, IDENTIFIER);
+    r = consumeToken(b, PERIOD);
+    r = r && uniform_group_name(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

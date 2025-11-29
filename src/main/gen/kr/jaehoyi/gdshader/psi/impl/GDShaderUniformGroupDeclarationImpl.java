@@ -28,9 +28,9 @@ public class GDShaderUniformGroupDeclarationImpl extends ASTWrapperPsiElement im
   }
 
   @Override
-  @Nullable
-  public GDShaderUniformGroupName getUniformGroupName() {
-    return findChildByClass(GDShaderUniformGroupName.class);
+  @NotNull
+  public List<GDShaderUniformGroupName> getUniformGroupNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GDShaderUniformGroupName.class);
   }
 
 }

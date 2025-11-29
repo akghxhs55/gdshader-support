@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GDShaderUniformGroupDeclaration extends PsiElement {
 
-  @Nullable
-  GDShaderUniformGroupName getUniformGroupName();
+  @NotNull
+  List<GDShaderUniformGroupName> getUniformGroupNameList();
 
 }

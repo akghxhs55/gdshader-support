@@ -71,7 +71,7 @@ stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)*
 stencil_mode_name ::= IDENTIFIER | INT_CONSTANT
 
 // Uniform Group Declaration
-uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD IDENTIFIER)* SEMICOLON
+uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD uniform_group_name)* SEMICOLON
 {
 	pin=1
 }
