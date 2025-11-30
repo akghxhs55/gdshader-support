@@ -13,13 +13,13 @@ class StencilModeCompletionTest : BaseCompletionTest() {
     
     fun testStencilModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.stencilModeMap.flatMap { it.value })
+        assertContainsElements(completions, GDShaderUtil.stencilModeKeywords.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "stencil_mode", "void", "uniform")
     }
     
     fun testSecondStencilModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.stencilModeMap.flatMap { it.value })
+        assertContainsElements(completions, GDShaderUtil.stencilModeKeywords.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "stencil_mode", "void", "uniform")
     }
     
