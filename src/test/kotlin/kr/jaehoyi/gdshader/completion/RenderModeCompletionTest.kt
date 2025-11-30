@@ -13,13 +13,13 @@ class RenderModeCompletionTest : BaseCompletionTest() {
     
     fun testRenderModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.renderModeKeywords.flatMap { it.value })
+        assertContainsElements(completions, GDShaderUtil.RenderModeKeywords.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     
     fun testSecondRenderModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.renderModeKeywords.flatMap { it.value })
+        assertContainsElements(completions, GDShaderUtil.RenderModeKeywords.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     
