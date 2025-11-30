@@ -1,7 +1,5 @@
 package kr.jaehoyi.gdshader.completion
 
-import kr.jaehoyi.gdshader.GDShaderUtil
-
 class RenderModeCompletionTest : BaseCompletionTest() {
     
     override val testPath = "completion/renderMode"
@@ -13,13 +11,13 @@ class RenderModeCompletionTest : BaseCompletionTest() {
     
     fun testRenderModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.RenderModeKeywords.flatMap { it.value })
+        assertContainsElements(completions, GDShaderKeywords.RENDER_MODES.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     
     fun testSecondRenderModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.RenderModeKeywords.flatMap { it.value })
+        assertContainsElements(completions, GDShaderKeywords.RENDER_MODES.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     

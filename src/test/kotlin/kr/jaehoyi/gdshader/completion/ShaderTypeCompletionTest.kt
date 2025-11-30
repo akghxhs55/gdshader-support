@@ -1,7 +1,5 @@
 package kr.jaehoyi.gdshader.completion
 
-import kr.jaehoyi.gdshader.GDShaderUtil
-
 class ShaderTypeCompletionTest : BaseCompletionTest() {
     
     override val testPath = "completion/shaderType"
@@ -13,7 +11,7 @@ class ShaderTypeCompletionTest : BaseCompletionTest() {
     
     fun testShaderTypeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.ShaderTypeKeywords)
+        assertContainsElements(completions, GDShaderKeywords.SHADER_TYPES)
         assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     

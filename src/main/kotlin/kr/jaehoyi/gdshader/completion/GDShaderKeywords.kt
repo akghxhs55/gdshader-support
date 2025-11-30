@@ -1,10 +1,10 @@
-package kr.jaehoyi.gdshader
+package kr.jaehoyi.gdshader.completion
 
-object GDShaderUtil {
+object GDShaderKeywords {
     
-    val ShaderTypeKeywords = setOf("spatial", "canvas_item", "particles", "sky", "fog")
+    val SHADER_TYPES = setOf("spatial", "canvas_item", "particles", "sky", "fog")
     
-    val RenderModeKeywords = mapOf(
+    val RENDER_MODES = mapOf(
         "spatial" to setOf("blend_mix", "blend_add", "blend_sub", "blend_mul", "blend_premul_alpha",
             "depth_draw_opaque", "depth_draw_always", "depth_draw_never", "depth_prepass_alpha", "depth_test_default",
             "depth_test_disabled", "depth_test_inverted", "specular_occlusion_disabled", "sss_mode_skin", "cull_back",
@@ -20,7 +20,7 @@ object GDShaderUtil {
         "fog" to setOf()
     )
     
-    val StencilModeKeywords = mapOf(
+    val STENCIL_MODES = mapOf(
         "spatial" to setOf("read", "write", "write_depth_fail", "compare_always", "compare_less", "compare_equal",
             "compare_less_or_equal", "compare_greater", "compare_greater_or_equal"),
         "canvas_item" to setOf(),
@@ -29,7 +29,7 @@ object GDShaderUtil {
         "fog" to setOf()
     )
     
-    val UniformHintKeywords = mapOf(
+    val UNIFORM_HINTS = mapOf(
         "vec3" to setOf("instance_index", "source_color", "color_conversion_disabled"),
         "vec4" to setOf("instance_index", "source_color", "color_conversion_disabled"),
         "int" to setOf("instance_index", "hint_enum", "hint_range"),
@@ -42,13 +42,13 @@ object GDShaderUtil {
             "hint_depth_texture", "hint_normal_roughness_texture")
     )
     
-    val BuiltinTypeKeywords = setOf(
+    val BUILTIN_TYPES = setOf(
         "void", "bool", "bvec2", "bvec3", "bvec4", "int", "ivec2", "ivec3", "ivec4", "uint", "uvec2", "uvec3", "uvec4",
         "float", "vec2", "vec3", "vec4", "mat2", "mat3", "mat4", "sampler2D", "isampler2D", "usampler2D",
         "sampler2DArray", "isampler2DArray", "usampler2DArray", "sampler3D", "isampler3D", "usampler3D",
         "samplerCube", "samplerCubeArray", "samplerExternalOES"
     )
     
-    val PrecisionKeywords = setOf("highp", "mediump", "lowp")
+    val PRECISIONS = setOf("highp", "mediump", "lowp")
     
 }

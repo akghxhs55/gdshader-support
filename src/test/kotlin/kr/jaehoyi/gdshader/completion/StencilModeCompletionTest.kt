@@ -1,7 +1,5 @@
 package kr.jaehoyi.gdshader.completion
 
-import kr.jaehoyi.gdshader.GDShaderUtil
-
 class StencilModeCompletionTest : BaseCompletionTest() {
 
     override val testPath = "completion/stencilMode"
@@ -13,13 +11,13 @@ class StencilModeCompletionTest : BaseCompletionTest() {
     
     fun testStencilModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.StencilModeKeywords.flatMap { it.value })
+        assertContainsElements(completions, GDShaderKeywords.STENCIL_MODES.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "stencil_mode", "void", "uniform")
     }
     
     fun testSecondStencilModeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderUtil.StencilModeKeywords.flatMap { it.value })
+        assertContainsElements(completions, GDShaderKeywords.STENCIL_MODES.flatMap { it.value })
         assertDoesntContain(completions, "shader_type", "stencil_mode", "void", "uniform")
     }
     
