@@ -93,4 +93,8 @@ object GDShaderLookupElements {
         }
     }
     
+    val CONST_KEYWORD = LookupElementBuilder.create("const")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+    
 }
