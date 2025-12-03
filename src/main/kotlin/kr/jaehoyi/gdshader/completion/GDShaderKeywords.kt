@@ -51,4 +51,6 @@ object GDShaderKeywords {
     
     val PRECISIONS = setOf("highp", "mediump", "lowp")
     
+    val INTERPOLATIONS = setOf("flat", "smooth")
+    
 }

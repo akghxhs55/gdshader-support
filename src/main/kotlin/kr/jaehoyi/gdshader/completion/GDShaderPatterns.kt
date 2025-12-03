@@ -12,6 +12,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderStencilModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 object GDShaderPatterns {
     
@@ -53,6 +54,13 @@ object GDShaderPatterns {
                         psiElement().afterLeaf(psiElement(GDShaderTypes.SEMICOLON))
                 ),
             psiElement().inside(GDShaderConstantDeclaration::class.java),
+        )
+    
+    val VARYING_DECLARATION: ElementPattern<PsiElement> =
+        or(
+            psiElement().withParent(GDShaderFile::class.java),
+            psiElement().inside(GDShaderVaryingDeclaration::class.java),
+            
         )
     
 }

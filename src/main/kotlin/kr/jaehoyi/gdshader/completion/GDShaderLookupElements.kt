@@ -97,4 +97,14 @@ object GDShaderLookupElements {
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
     
+    val VARYING_KEYWORD = LookupElementBuilder.create("varying")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+    
+    val INTERPOLATIONS = GDShaderKeywords.INTERPOLATIONS.map {
+        LookupElementBuilder.create(it)
+            .withBoldness(true)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
 }

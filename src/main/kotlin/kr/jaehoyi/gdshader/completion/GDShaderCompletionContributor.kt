@@ -21,11 +21,15 @@ class GDShaderCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             GDShaderPatterns.SHADER_TYPE_DECLARATION,
             object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-                    val position = parameters.position 
-                    
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+
                     // shader_type_declaration ::= SHADER_TYPE shader_type_name SEMICOLON
-                    
+
                     // 1.
                     if (position.parent is GDShaderFile) {
                         result.addElement(GDShaderLookupElements.SHADER_TYPE_KEYWORD)
@@ -67,7 +71,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             GDShaderPatterns.STENCIL_MODE_DECLARATION,
             object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
                     val position = parameters.position
 
                     // stencil_mode_declaration ::= STENCIL_MODE stencil_mode_declarator_list SEMICOLON
@@ -88,7 +96,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             GDShaderPatterns.UNIFORM_GROUP_DECLARATION,
             object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
                     // uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD uniform_group_name)* SEMICOLON
 
                     // 1.
@@ -101,10 +113,14 @@ class GDShaderCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             GDShaderPatterns.UNIFORM_DECLARATION,
             object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
                     val position = parameters.position
                     val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
-                    
+
                     // uniform_declaration ::= uniform_header precision? type array_size? variable_name_decl array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON
 
                     // 1.
@@ -115,38 +131,34 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
                     
+                    if (prevLeaf == null) {
+                        return
+                    }
+
                     // 2. After modifier (GLOBAL / INSTANCE)
-                    if (prevLeaf != null &&
-                        (prevLeaf.elementType == GDShaderTypes.GLOBAL || prevLeaf.elementType == GDShaderTypes.INSTANCE)
-                    ) {
+                    if (prevLeaf.elementType == GDShaderTypes.GLOBAL || prevLeaf.elementType == GDShaderTypes.INSTANCE) {
                         result.addElement(GDShaderLookupElements.UNIFORM_KEYWORD)
                         return
                     }
-                    
+
                     // 3. After UNIFORM
-                    if (prevLeaf != null &&
-                        prevLeaf.elementType == GDShaderTypes.UNIFORM
-                    ) {
+                    if (prevLeaf.elementType == GDShaderTypes.UNIFORM) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 4. After precision
-                    if (prevLeaf != null &&
-                        GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)
-                    ) {
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 5. After COLON / COMMA
-                    if (prevLeaf != null
-                        && (prevLeaf.elementType == GDShaderTypes.COLON || prevLeaf.elementType == GDShaderTypes.COMMA)
-                    ) {
+                    if (prevLeaf.elementType == GDShaderTypes.COLON || prevLeaf.elementType == GDShaderTypes.COMMA) {
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
                         val type = uniformDeclaration?.type?.text
-                        
+
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
                         )
@@ -160,10 +172,14 @@ class GDShaderCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             GDShaderPatterns.CONSTANT_DECLARATION,
             object : CompletionProvider<CompletionParameters>() {
-                override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
                     val position = parameters.position
                     val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
-                    
+
                     // constant_declaration ::= CONST precision? type array_size? constant_declarator_list SEMICOLON
 
                     // 1.
@@ -174,19 +190,67 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
                     
+                    if (prevLeaf == null) {
+                        return
+                    }
+
                     // 2. After CONST
-                    if (prevLeaf != null &&
-                        prevLeaf.elementType == GDShaderTypes.CONST
-                    ) {
+                    if (prevLeaf.elementType == GDShaderTypes.CONST) {
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+
+                    // 3. After precision
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                }
+            }
+        )
+        
+        extend(
+            CompletionType.BASIC,
+            GDShaderPatterns.VARYING_DECLARATION,
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    
+                    // varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type array_size? variable_name_decl array_size? SEMICOLON
+                    
+                    // 1.
+                    if (position.parent is GDShaderFile) {
+                        result.addElement(GDShaderLookupElements.VARYING_KEYWORD)
+                        return
+                    }
+                    
+                    if (prevLeaf == null) {
+                        return
+                    }
+                    
+                    // 2. After VARYING
+                    if (prevLeaf.elementType == GDShaderTypes.VARYING) {
+                        result.addAllElements(GDShaderLookupElements.INTERPOLATIONS)
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
                     
-                    // 3. After precision
-                    if (prevLeaf != null &&
-                        GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)
-                    ) {
+                    // 3. After interpolation modifier
+                    if (GDShaderKeywords.INTERPOLATIONS.contains(prevLeaf.text)) {
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                    
+                    // 4. After precision modifier
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
