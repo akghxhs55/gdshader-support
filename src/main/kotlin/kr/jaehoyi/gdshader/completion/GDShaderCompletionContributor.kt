@@ -206,6 +206,12 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         )
                         return
                     }
+                    
+                    // 6. Inside initializer expression
+                    if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                    }
                 }
             }
         )
@@ -256,6 +262,12 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
+                    }
+                    
+                    // 4. Inside initializer expression
+                    if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
                     }
                 }
             }

@@ -53,4 +53,6 @@ object GDShaderKeywords {
     
     val INTERPOLATIONS = setOf("flat", "smooth")
     
+    val BOOLEAN_LITERALS = setOf("true", "false")
+    
 }

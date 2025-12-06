@@ -64,6 +64,12 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
+    val BOOLEAN_LITERALS = GDShaderKeywords.BOOLEAN_LITERALS.map {
+        LookupElementBuilder.create(it)
+            .withBoldness(true)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
     val UNIFORM_HINTS = GDShaderKeywords.UNIFORM_HINTS.mapValues { entry ->
         entry.value.map { 
             when (it) {
