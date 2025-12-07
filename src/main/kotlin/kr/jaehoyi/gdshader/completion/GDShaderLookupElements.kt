@@ -3,7 +3,6 @@ package kr.jaehoyi.gdshader.completion
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
-import kotlinx.html.P
 
 object GDShaderLookupElements {
     

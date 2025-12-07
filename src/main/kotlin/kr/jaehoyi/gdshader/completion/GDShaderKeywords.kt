@@ -1,7 +1,5 @@
 package kr.jaehoyi.gdshader.completion
 
-import kotlinx.html.P
-
 object GDShaderKeywords {
     
     val SHADER_TYPES = setOf("spatial", "canvas_item", "particles", "sky", "fog")
