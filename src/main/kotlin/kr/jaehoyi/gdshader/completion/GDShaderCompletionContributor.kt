@@ -15,6 +15,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderFile
+import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderRenderModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderStencilModeDeclaration
@@ -23,6 +24,8 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 
 class GDShaderCompletionContributor : CompletionContributor() {
+
+    
 
     init {
         extendShaderTypeDeclaration()
@@ -38,13 +41,15 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extendConstantDeclaration()
 
         extendVaryingDeclaration()
+        
+        extendFunctionDeclaration()
     }
 
     private fun extendShaderTypeDeclaration() =
         extend(
             CompletionType.BASIC,
             or(
-                psiElement().withParent(GDShaderFile::class.java),
+                GDShaderPatterns.TOP_LEVEL,
                 psiElement().inside(GDShaderShaderTypeDeclaration::class.java),
             ),
             object : CompletionProvider<CompletionParameters>() {
@@ -73,7 +78,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             or(
-                psiElement().withParent(GDShaderFile::class.java),
+                GDShaderPatterns.TOP_LEVEL,
                 psiElement().inside(GDShaderRenderModeDeclaration::class.java),
             ),
             object : CompletionProvider<CompletionParameters>() {
@@ -102,7 +107,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             or(
-                psiElement().withParent(GDShaderFile::class.java),
+                GDShaderPatterns.TOP_LEVEL,
                 psiElement().inside(GDShaderStencilModeDeclaration::class.java),
             ),
             object : CompletionProvider<CompletionParameters>() {
@@ -130,7 +135,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
     private fun extendUniformGroupDeclaration() =
         extend(
             CompletionType.BASIC,
-            psiElement().withParent(GDShaderFile::class.java),
+            GDShaderPatterns.TOP_LEVEL,
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
@@ -149,7 +154,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             or(
-                psiElement().withParent(GDShaderFile::class.java),
+                GDShaderPatterns.TOP_LEVEL,
                 psiElement().afterLeaf(psiElement(GDShaderTypes.GLOBAL)),
                 psiElement().afterLeaf(psiElement(GDShaderTypes.INSTANCE)),
                 psiElement().inside(GDShaderUniformDeclaration::class.java),
@@ -220,7 +225,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             or(
-                psiElement().withParent(GDShaderFile::class.java),
+                GDShaderPatterns.TOP_LEVEL,
                 psiElement().inside(GDShaderBlockBody::class.java)
                     .andOr(
                         psiElement().afterLeaf(psiElement(GDShaderTypes.CURLY_BRACKET_OPEN)),
@@ -277,7 +282,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             or(
-                psiElement().withParent(GDShaderFile::class.java),
+                GDShaderPatterns.TOP_LEVEL,
                 psiElement().inside(GDShaderVaryingDeclaration::class.java)
             ),
             object : CompletionProvider<CompletionParameters>() {
@@ -318,6 +323,77 @@ class GDShaderCompletionContributor : CompletionContributor() {
 
                     // 4. After precision modifier
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                }
+            }
+        )
+    
+    private fun extendFunctionDeclaration() =
+        extend(
+            CompletionType.BASIC,
+            or(
+                GDShaderPatterns.TOP_LEVEL,
+                psiElement().withParent(GDShaderFile::class.java).and(GDShaderPatterns.AFTER_PRECISION),
+                psiElement().inside(GDShaderFunctionDeclaration::class.java)
+                    .andNot(psiElement().inside(GDShaderBlock::class.java))
+            ),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+
+                    // function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+
+                    // 1.
+                    if (position.parent is GDShaderFile && !GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text)) {
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                    
+                    // 2. After precision
+                    if (prevLeaf != null && GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                    
+                    if (position.parentOfType<GDShaderFunctionDeclaration>() == null) {
+                        return
+                    }
+                    
+                    // 3. Inside parameter list, after COMMA or PARENTHESIS_OPEN
+                    if (prevLeaf.elementType == GDShaderTypes.COMMA || prevLeaf.elementType == GDShaderTypes.PARENTHESIS_OPEN) {
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.PARAMETER_QUALIFIERS)
+                        result.addElement(GDShaderLookupElements.CONST_KEYWORD)
+                        return
+                    }
+                    
+                    // 4. Inside parameter list, after CONST
+                    if (prevLeaf.elementType == GDShaderTypes.CONST) {
+                        result.addElement(GDShaderLookupElements.IN_KEYWORD)
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                    
+                    // 5. Inside parameter list, after parameter qualifier
+                    if (GDShaderKeywords.PARAMETER_QUALIFIERS.contains(prevLeaf?.text)) {
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                    
+                    // 6. Inside parameter list, after precision
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text))
+                    {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }

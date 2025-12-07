@@ -1,5 +1,7 @@
 package kr.jaehoyi.gdshader.completion
 
+import kotlinx.html.P
+
 object GDShaderKeywords {
     
     val SHADER_TYPES = setOf("spatial", "canvas_item", "particles", "sky", "fog")
@@ -54,5 +56,7 @@ object GDShaderKeywords {
     val INTERPOLATIONS = setOf("flat", "smooth")
     
     val BOOLEAN_LITERALS = setOf("true", "false")
+    
+    val PARAMETER_QUALIFIERS = setOf("in", "out", "inout")
     
 }

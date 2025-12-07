@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.completion
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
+import kotlinx.html.P
 
 object GDShaderLookupElements {
     
@@ -108,6 +109,16 @@ object GDShaderLookupElements {
         .withInsertHandler(AddSpaceInsertHandler(true))
     
     val INTERPOLATIONS = GDShaderKeywords.INTERPOLATIONS.map {
+        LookupElementBuilder.create(it)
+            .withBoldness(true)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
+    val IN_KEYWORD = LookupElementBuilder.create("in")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+    
+    val PARAMETER_QUALIFIERS = GDShaderKeywords.PARAMETER_QUALIFIERS.map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withInsertHandler(AddSpaceInsertHandler(true))
