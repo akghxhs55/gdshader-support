@@ -19,6 +19,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderRenderModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderStencilModeDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderStructDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
@@ -29,20 +30,14 @@ class GDShaderCompletionContributor : CompletionContributor() {
 
     init {
         extendShaderTypeDeclaration()
-        
         extendRenderModeDeclaration()
-
         extendStencilModeDeclaration()
-
         extendUniformGroupDeclaration()
-
         extendUniformDeclaration()
-
         extendConstantDeclaration()
-
         extendVaryingDeclaration()
-        
         extendFunctionDeclaration()
+        extendStructDeclaration()
     }
 
     private fun extendShaderTypeDeclaration() =
@@ -394,6 +389,50 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // 6. Inside parameter list, after precision
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text))
                     {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                }
+            }
+        )
+    
+    private fun extendStructDeclaration() =
+        extend(
+            CompletionType.BASIC,
+            or(
+                GDShaderPatterns.TOP_LEVEL,
+                psiElement().inside(GDShaderStructDeclaration::class.java)
+            ),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    
+                    // struct_declaration ::= STRUCT struct_name_decl struct_block SEMICOLON
+                    
+                    // 1.
+                    if (position.parent is GDShaderFile) {
+                        result.addElement(GDShaderLookupElements.STRUCT_KEYWORD)
+                        return
+                    }
+                    
+                    if (position.parentOfType<GDShaderStructDeclaration>() == null) {
+                        return
+                    }
+                    
+                    // 2. After CURLY_BRACKET_OPEN or SEMICOLON
+                    if (prevLeaf.elementType == GDShaderTypes.CURLY_BRACKET_OPEN || prevLeaf.elementType == GDShaderTypes.SEMICOLON) {
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        return
+                    }
+                    
+                    // 3. After precision
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text)) {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }

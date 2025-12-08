@@ -9,6 +9,41 @@ object GDShaderLookupElements {
     val SHADER_TYPE_KEYWORD = LookupElementBuilder.create("shader_type")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val RENDER_MODE_KEYWORD = LookupElementBuilder.create("render_mode")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val STENCIL_MODE_KEYWORD = LookupElementBuilder.create("stencil_mode")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val UNIFORM_GROUP_KEYWORD = LookupElementBuilder.create("group_uniforms")
+        .withBoldness(true)
+
+    val GLOBAL_KEYWORD = LookupElementBuilder.create("global")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val INSTANCE_KEYWORD = LookupElementBuilder.create("instance")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val UNIFORM_KEYWORD = LookupElementBuilder.create("uniform")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+    
+    val CONST_KEYWORD = LookupElementBuilder.create("const")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val VARYING_KEYWORD = LookupElementBuilder.create("varying")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+
+    val STRUCT_KEYWORD = LookupElementBuilder.create("struct")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
     
     val SHADER_TYPES = GDShaderKeywords.SHADER_TYPES.map {
         LookupElementBuilder.create(it)
@@ -16,41 +51,18 @@ object GDShaderLookupElements {
             .withIcon(AllIcons.Nodes.Enum)
             .withInsertHandler(GDShaderSemicolonInsertHandler)
     }
-    
-    val RENDER_MODE_KEYWORD = LookupElementBuilder.create("render_mode")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
-    
+
     val RENDER_MODES = GDShaderKeywords.RENDER_MODES.values.flatten().map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Enum)
     }
     
-    val STENCIL_MODE_KEYWORD = LookupElementBuilder.create("stencil_mode")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
-    
     val STENCIL_MODES = GDShaderKeywords.STENCIL_MODES.values.flatten().map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Enum)
     }
-    
-    val UNIFORM_GROUP_KEYWORD = LookupElementBuilder.create("group_uniforms")
-        .withBoldness(true)
-    
-    val GLOBAL_KEYWORD = LookupElementBuilder.create("global")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
-    
-    val INSTANCE_KEYWORD = LookupElementBuilder.create("instance")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
-    
-    val UNIFORM_KEYWORD = LookupElementBuilder.create("uniform")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
     
     val PRECISIONS = GDShaderKeywords.PRECISIONS.map {
         LookupElementBuilder.create(it)
@@ -98,14 +110,6 @@ object GDShaderLookupElements {
             }
         }
     }
-    
-    val CONST_KEYWORD = LookupElementBuilder.create("const")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
-    
-    val VARYING_KEYWORD = LookupElementBuilder.create("varying")
-        .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
     
     val INTERPOLATIONS = GDShaderKeywords.INTERPOLATIONS.map {
         LookupElementBuilder.create(it)
