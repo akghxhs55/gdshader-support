@@ -747,16 +747,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
   public static boolean function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL, "<function call>");
     r = function_call_0(b, l + 1);
     r = r && function_call_1(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
-    p = r; // pin = 3
-    r = r && report_error_(b, function_call_3(b, l + 1));
-    r = p && consumeToken(b, PARENTHESIS_CLOSE) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    r = r && function_call_3(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   // function_name_ref | type

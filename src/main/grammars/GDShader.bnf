@@ -294,9 +294,7 @@ primary ::= literal
 		  | variable_name_ref
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 
-function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE {
-	pin=3
-}
+function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= initializer (COMMA initializer)*
 
 variable_name_ref ::= IDENTIFIER
