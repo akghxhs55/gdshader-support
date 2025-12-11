@@ -266,8 +266,8 @@ statement ::= control_statement
 			| return_statement
 			| simple_statement
 			| local_variable_declaration
-			| expression_statement
 			| constant_declaration
+			| expression_statement
 			| SEMICOLON
 
 // Expressions

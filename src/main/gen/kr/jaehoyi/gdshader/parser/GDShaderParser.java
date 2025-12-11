@@ -2039,8 +2039,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   // 			| return_statement
   // 			| simple_statement
   // 			| local_variable_declaration
-  // 			| expression_statement
   // 			| constant_declaration
+  // 			| expression_statement
   // 			| SEMICOLON
   public static boolean statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement")) return false;
@@ -2050,8 +2050,8 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     if (!r) r = return_statement(b, l + 1);
     if (!r) r = simple_statement(b, l + 1);
     if (!r) r = local_variable_declaration(b, l + 1);
-    if (!r) r = expression_statement(b, l + 1);
     if (!r) r = constant_declaration(b, l + 1);
+    if (!r) r = expression_statement(b, l + 1);
     if (!r) r = consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, false, null);
     return r;
