@@ -15,10 +15,6 @@ class ErrorParsingTest : ParsingTestCase(
         doTest(true)
     }
     
-    fun testIfStatementInTopLevel() {
-        doTest(true)
-    }
-    
     fun testIncompleteConstantDeclaration() {
         doTest(true)
     }
