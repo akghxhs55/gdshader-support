@@ -92,7 +92,7 @@ GDShader File
                                   GDShaderUnaryExprImpl(UNARY_EXPR)
                                     GDShaderPostfixExprImpl(POSTFIX_EXPR)
                                       GDShaderPrimaryImpl(PRIMARY)
-                                        GDShaderConstructorCallImpl(CONSTRUCTOR_CALL)
+                                        GDShaderFunctionCallImpl(FUNCTION_CALL)
                                           GDShaderTypeImpl(TYPE)
                                             GDShaderPrimitiveTypeImpl(PRIMITIVE_TYPE)
                                               PsiElement(GDShaderTokenType.TYPE_VEC3)('vec3')

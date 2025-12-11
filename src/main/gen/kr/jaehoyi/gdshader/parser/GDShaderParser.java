@@ -501,54 +501,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
-  public static boolean constructor_call(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constructor_call")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, CONSTRUCTOR_CALL, "<constructor call>");
-    r = type(b, l + 1);
-    r = r && constructor_call_1(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_OPEN);
-    r = r && constructor_call_3(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // (BRACKET_OPEN expression? BRACKET_CLOSE)?
-  private static boolean constructor_call_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constructor_call_1")) return false;
-    constructor_call_1_0(b, l + 1);
-    return true;
-  }
-
-  // BRACKET_OPEN expression? BRACKET_CLOSE
-  private static boolean constructor_call_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constructor_call_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, BRACKET_OPEN);
-    r = r && constructor_call_1_0_1(b, l + 1);
-    r = r && consumeToken(b, BRACKET_CLOSE);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // expression?
-  private static boolean constructor_call_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constructor_call_1_0_1")) return false;
-    expression(b, l + 1);
-    return true;
-  }
-
-  // argument_list?
-  private static boolean constructor_call_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "constructor_call_3")) return false;
-    argument_list(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // if_statement
   // 					| for_statement
   // 					| while_statement
@@ -792,23 +744,39 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // function_name_ref PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  // (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
   public static boolean function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = function_name_ref(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL, "<function call>");
+    r = function_call_0(b, l + 1);
+    r = r && function_call_1(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
-    r = r && function_call_2(b, l + 1);
+    r = r && function_call_3(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    exit_section_(b, m, FUNCTION_CALL, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
+  // function_name_ref | type
+  private static boolean function_call_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_call_0")) return false;
+    boolean r;
+    r = function_name_ref(b, l + 1);
+    if (!r) r = type(b, l + 1);
+    return r;
+  }
+
+  // array_size?
+  private static boolean function_call_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_call_1")) return false;
+    array_size(b, l + 1);
+    return true;
+  }
+
   // argument_list?
-  private static boolean function_call_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_call_2")) return false;
+  private static boolean function_call_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_call_3")) return false;
     argument_list(b, l + 1);
     return true;
   }
@@ -1675,7 +1643,6 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // literal
   // 		  | function_call
-  // 		  | constructor_call
   // 		  | variable_name_ref
   // 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
   public static boolean primary(PsiBuilder b, int l) {
@@ -1684,16 +1651,15 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, PRIMARY, "<primary>");
     r = literal(b, l + 1);
     if (!r) r = function_call(b, l + 1);
-    if (!r) r = constructor_call(b, l + 1);
     if (!r) r = variable_name_ref(b, l + 1);
-    if (!r) r = primary_4(b, l + 1);
+    if (!r) r = primary_3(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
-  private static boolean primary_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "primary_4")) return false;
+  private static boolean primary_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "primary_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, PARENTHESIS_OPEN);

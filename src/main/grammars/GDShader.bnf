@@ -291,12 +291,10 @@ postfix_expr ::= primary (PERIOD function_call | PERIOD struct_member_name_ref |
 
 primary ::= literal
 		  | function_call
-		  | constructor_call
 		  | variable_name_ref
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 
-function_call ::= function_name_ref PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
-constructor_call ::= type (BRACKET_OPEN expression? BRACKET_CLOSE)? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
 argument_list ::= initializer (COMMA initializer)*
 
 variable_name_ref ::= IDENTIFIER

@@ -24,7 +24,6 @@ public interface GDShaderTypes {
   IElementType CONSTANT_DECLARATION = new GDShaderElementType("CONSTANT_DECLARATION");
   IElementType CONSTANT_DECLARATOR = new GDShaderElementType("CONSTANT_DECLARATOR");
   IElementType CONSTANT_DECLARATOR_LIST = new GDShaderElementType("CONSTANT_DECLARATOR_LIST");
-  IElementType CONSTRUCTOR_CALL = new GDShaderElementType("CONSTRUCTOR_CALL");
   IElementType CONTROL_STATEMENT = new GDShaderElementType("CONTROL_STATEMENT");
   IElementType DO_WHILE_STATEMENT = new GDShaderElementType("DO_WHILE_STATEMENT");
   IElementType ELSE_CLAUSE = new GDShaderElementType("ELSE_CLAUSE");
@@ -305,9 +304,6 @@ public interface GDShaderTypes {
       }
       else if (type == CONSTANT_DECLARATOR_LIST) {
         return new GDShaderConstantDeclaratorListImpl(node);
-      }
-      else if (type == CONSTRUCTOR_CALL) {
-        return new GDShaderConstructorCallImpl(node);
       }
       else if (type == CONTROL_STATEMENT) {
         return new GDShaderControlStatementImpl(node);

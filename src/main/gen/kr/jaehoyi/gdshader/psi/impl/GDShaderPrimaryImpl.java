@@ -29,12 +29,6 @@ public class GDShaderPrimaryImpl extends ASTWrapperPsiElement implements GDShade
 
   @Override
   @Nullable
-  public GDShaderConstructorCall getConstructorCall() {
-    return findChildByClass(GDShaderConstructorCall.class);
-  }
-
-  @Override
-  @Nullable
   public GDShaderExpression getExpression() {
     return findChildByClass(GDShaderExpression.class);
   }
