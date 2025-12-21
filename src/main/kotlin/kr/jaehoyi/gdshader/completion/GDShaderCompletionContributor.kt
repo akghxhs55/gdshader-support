@@ -7,6 +7,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.or
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
@@ -14,20 +15,24 @@ import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderDoWhileStatement
 import kr.jaehoyi.gdshader.psi.GDShaderFile
+import kr.jaehoyi.gdshader.psi.GDShaderForStatement
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderRenderModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderStatement
 import kr.jaehoyi.gdshader.psi.GDShaderStencilModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderStructDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderTokenSets
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
 
 class GDShaderCompletionContributor : CompletionContributor() {
-
     
-
     init {
         extendShaderTypeDeclaration()
         extendRenderModeDeclaration()
@@ -38,6 +43,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extendVaryingDeclaration()
         extendFunctionDeclaration()
         extendStructDeclaration()
+        extendStatement()
     }
 
     private fun extendShaderTypeDeclaration() =
@@ -392,6 +398,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
+                    
+                    // Inside array size
+                    if (prevLeaf.elementType == GDShaderTypes.BRACKET_OPEN) {
+                        result.addAllElements(GDShaderLookupElements.INTEGER_TYPES)
+                    }
                 }
             }
         )
@@ -436,8 +447,94 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
+                    
+                    // 4. Inside array size
+                    if (prevLeaf.elementType == GDShaderTypes.BRACKET_OPEN) {
+                        result.addAllElements(GDShaderLookupElements.INTEGER_TYPES)
+                    }
                 }
             }
         )
+
+    private fun extendStatement() =
+        extend(
+            CompletionType.BASIC,
+            or(
+                psiElement().inside(GDShaderBlock::class.java),
+            ),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+
+                    if (position.parentOfType<GDShaderVariableNameRef>() != null) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                        return
+                    }
+
+                    if (prevLeaf == null) {
+                        return
+                    }
+
+                    if (prevLeaf.elementType == GDShaderTypes.CURLY_BRACKET_OPEN || 
+                        prevLeaf.elementType == GDShaderTypes.SEMICOLON
+                    ) {
+                        result.addCommonStatementCompletions(position)
+                    }
+                    
+                    if (prevLeaf.elementType == GDShaderTypes.PARENTHESIS_OPEN ||
+                        prevLeaf.elementType == GDShaderTypes.BRACKET_OPEN ||
+                        prevLeaf.elementType == GDShaderTypes.CF_CASE ||
+                        prevLeaf.elementType == GDShaderTypes.CF_RETURN ||
+                        prevLeaf.elementType == GDShaderTypes.QUESTION ||
+                        GDShaderTokenSets.OPERATORS.contains(prevLeaf.elementType)
+                    ) {
+                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                    }
+                    
+                    if (prevLeaf.elementType == GDShaderTypes.COLON) {
+                        if (prevLeaf.parent?.elementType == GDShaderTypes.CASE_CLAUSE) {
+                            result.addCommonStatementCompletions(position)
+                            result.addElement(GDShaderLookupElements.BREAK_KEYWORD)
+                        }
+                        else {
+                            result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                            result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                        }
+                    }
+                    
+                    if (prevLeaf.elementType == GDShaderTypes.PARENTHESIS_CLOSE) {
+                        if (prevLeaf.parent?.elementType == GDShaderTypes.IF_STATEMENT) {
+                            result.addCommonStatementCompletions(position)
+                        }
+                    }
+                }
+            }
+        )
+    
+    private fun CompletionResultSet.addCommonStatementCompletions(position: PsiElement) {
+        this.addAllElements(GDShaderLookupElements.CONTROL_STATEMENT_STARTERS)
+        this.addElement(GDShaderLookupElements.RETURN_KEYWORD)
+        this.addElement(GDShaderLookupElements.DISCARD_KEYWORD)
+        this.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+        this.addAllElements(GDShaderLookupElements.PRECISIONS)
+        this.addElement(GDShaderLookupElements.CONST_KEYWORD)
+        this.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+
+        
+        if (position.parentOfType<GDShaderForStatement>() != null ||
+            position.parentOfType<GDShaderWhileStatement>() != null ||
+            position.parentOfType<GDShaderDoWhileStatement>() != null
+        ) {
+            this.addElement(GDShaderLookupElements.BREAK_KEYWORD)
+            this.addElement(GDShaderLookupElements.CONTINUE_KEYWORD)
+        }
+    }
     
 }

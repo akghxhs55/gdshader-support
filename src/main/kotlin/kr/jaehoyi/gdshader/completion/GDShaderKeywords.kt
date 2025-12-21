@@ -57,4 +57,8 @@ object GDShaderKeywords {
     
     val PARAMETER_QUALIFIERS = setOf("in", "out", "inout")
     
+    val CONTROL_STATEMENT_STARTERS = setOf(
+        "if", "for", "while", "do", "switch"
+    )
+    
 }

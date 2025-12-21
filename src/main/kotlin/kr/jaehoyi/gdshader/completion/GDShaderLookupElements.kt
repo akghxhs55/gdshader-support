@@ -45,6 +45,27 @@ object GDShaderLookupElements {
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
     
+    val CONTROL_STATEMENT_STARTERS = GDShaderKeywords.CONTROL_STATEMENT_STARTERS.map {
+        LookupElementBuilder.create(it)
+            .withBoldness(true)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
+    val RETURN_KEYWORD = LookupElementBuilder.create("return")
+        .withBoldness(true)
+    
+    val DISCARD_KEYWORD = LookupElementBuilder.create("discard")
+        .withBoldness(true)
+        .withInsertHandler(GDShaderSemicolonInsertHandler)
+    
+    val BREAK_KEYWORD = LookupElementBuilder.create("break")
+        .withBoldness(true)
+        .withInsertHandler(GDShaderSemicolonInsertHandler)
+    
+    val CONTINUE_KEYWORD = LookupElementBuilder.create("continue")
+        .withBoldness(true)
+        .withInsertHandler(GDShaderSemicolonInsertHandler)
+    
     val SHADER_TYPES = GDShaderKeywords.SHADER_TYPES.map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
@@ -76,6 +97,13 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
+    val INTEGER_TYPES = listOf(
+        LookupElementBuilder.create("int")
+            .withBoldness(true),
+        LookupElementBuilder.create("uint")
+            .withBoldness(true)
+    )
+
     val BOOLEAN_LITERALS = GDShaderKeywords.BOOLEAN_LITERALS.map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
