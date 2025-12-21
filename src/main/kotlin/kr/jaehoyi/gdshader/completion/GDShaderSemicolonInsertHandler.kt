@@ -14,7 +14,7 @@ object GDShaderSemicolonInsertHandler : InsertHandler<LookupElement> {
         
         val chars = document.charsSequence
         
-        if (tailOffset < chars.length && chars[tailOffset] != ';') {
+        if (tailOffset < chars.length && chars[tailOffset] == ';') {
             editor.caretModel.moveToOffset(tailOffset + 1)
             return
         }
