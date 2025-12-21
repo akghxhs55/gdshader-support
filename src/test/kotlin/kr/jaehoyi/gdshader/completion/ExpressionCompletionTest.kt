@@ -34,6 +34,11 @@ class ExpressionCompletionTest : BaseCompletionTest() {
         assertContainsElements(completions, "true", "false")
     }
     
+    fun testAfterIfStatementCondition() {
+        val completions = getCompletionsForTestFile()
+        assertContainsElements(completions, "true", "false")
+    }
+    
     fun testInForStatementCondition() {
         val completions = getCompletionsForTestFile()
         assertContainsElements(completions, "true", "false")
@@ -110,11 +115,6 @@ class ExpressionCompletionTest : BaseCompletionTest() {
     }
     
     fun testInConstantDeclarationArraySize() {
-        val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "true", "false")
-    }
-    
-    fun testInParameterArraySize() {
         val completions = getCompletionsForTestFile()
         assertContainsElements(completions, "true", "false")
     }
