@@ -22,7 +22,6 @@ import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
 import kr.jaehoyi.gdshader.psi.GDShaderRenderModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
-import kr.jaehoyi.gdshader.psi.GDShaderStatement
 import kr.jaehoyi.gdshader.psi.GDShaderStencilModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderStructDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderSwitchStatement
@@ -478,68 +477,64 @@ class GDShaderCompletionContributor : CompletionContributor() {
 
                     val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return
                     
-                    if (prevLeaf.elementType == GDShaderTypes.CURLY_BRACKET_OPEN ||
-                        prevLeaf.elementType == GDShaderTypes.CF_ELSE
-                    ) {
-                        result.addCommonStatementCompletions(position)
-                    }
-
-                    if (prevLeaf.elementType == GDShaderTypes.CURLY_BRACKET_CLOSE) {
-                        result.addCommonStatementCompletions(position)
-                        
-                        val prevStatement = prevLeaf.parentOfType<GDShaderIfStatement>() ?: return
-                        
-                        if (position.parentOfType<GDShaderIfStatement>() != prevStatement) {
-                            result.addElement(GDShaderLookupElements.ELSE_KEYWORD)
-                            return
+                    when (prevLeaf.elementType) {
+                        GDShaderTypes.CURLY_BRACKET_OPEN,
+                        GDShaderTypes.CF_ELSE,
+                        GDShaderTypes.CF_DO -> {
+                            result.addCommonStatementCompletions(position)
                         }
-                    }
-                    
-                    if (prevLeaf.elementType == GDShaderTypes.SEMICOLON) {
-                        if (prevLeaf.parent is GDShaderForStatement) {
+
+                        GDShaderTypes.CURLY_BRACKET_CLOSE -> {
+                            val prevStatement = prevLeaf.parentOfType<GDShaderIfStatement>() ?: return
+
+                            if (position.parentOfType<GDShaderIfStatement>() != prevStatement) {
+                                result.addElement(GDShaderLookupElements.ELSE_KEYWORD)
+                                return
+                            }
+                        }
+
+                        GDShaderTypes.SEMICOLON -> {
+                            if (prevLeaf.parent is GDShaderForStatement) {
+                                result.addExpressionCompletions()
+                            } else {
+                                result.addCommonStatementCompletions(position)
+                            }
+                        }
+
+                        GDShaderTypes.COLON -> {
+                            if (prevLeaf.parent.elementType == GDShaderTypes.CASE_CLAUSE) {
+                                result.addCommonStatementCompletions(position)
+                                result.addElement(GDShaderLookupElements.BREAK_KEYWORD)
+                            } else {
+                                result.addExpressionCompletions()
+                            }
+                        }
+
+                        GDShaderTypes.PARENTHESIS_CLOSE -> {
+                            if (prevLeaf.parent.elementType == GDShaderTypes.IF_STATEMENT ||
+                                prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT ||
+                                prevLeaf.parent.elementType == GDShaderTypes.WHILE_STATEMENT
+                            ) {
+                                result.addCommonStatementCompletions(position)
+                            }
+                        }
+
+                        GDShaderTypes.BRACKET_OPEN,
+                        GDShaderTypes.CF_CASE,
+                        GDShaderTypes.CF_RETURN,
+                        GDShaderTypes.QUESTION,
+                        in GDShaderTokenSets.OPERATORS -> {
                             result.addExpressionCompletions()
                         }
-                        else {
-                            result.addCommonStatementCompletions(position)
-                        }
-                    }
 
-                    if (prevLeaf.elementType == GDShaderTypes.COLON) {
-                        if (prevLeaf.parent.elementType == GDShaderTypes.CASE_CLAUSE) {
-                            result.addCommonStatementCompletions(position)
-                            result.addElement(GDShaderLookupElements.BREAK_KEYWORD)
-                        }
-                        else {
-                            result.addExpressionCompletions()
-                        }
-                    }
+                        GDShaderTypes.PARENTHESIS_OPEN -> {
+                            result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
 
-                    if (prevLeaf.elementType == GDShaderTypes.PARENTHESIS_CLOSE) {
-                        if (prevLeaf.parent.elementType == GDShaderTypes.IF_STATEMENT ||
-                            prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT ||
-                            prevLeaf.parent.elementType == GDShaderTypes.WHILE_STATEMENT
-                        ) {
-                            result.addCommonStatementCompletions(position)
-                        }
-                    }
-                    
-                    if (prevLeaf.elementType == GDShaderTypes.BRACKET_OPEN ||
-                        prevLeaf.elementType == GDShaderTypes.CF_CASE ||
-                        prevLeaf.elementType == GDShaderTypes.CF_RETURN ||
-                        prevLeaf.elementType == GDShaderTypes.QUESTION ||
-                        GDShaderTokenSets.OPERATORS.contains(prevLeaf.elementType)
-                    ) {
-                        result.addExpressionCompletions()
-                    }
-                    
-                    if (prevLeaf.elementType == GDShaderTypes.PARENTHESIS_OPEN) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
-                        
-                        if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
-                            result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        }
-                        else {
-                            result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                            if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
+                                result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                            } else {
+                                result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                            }
                         }
                     }
                 }
