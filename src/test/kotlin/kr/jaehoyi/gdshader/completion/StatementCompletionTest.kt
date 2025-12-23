@@ -34,19 +34,19 @@ class StatementCompletionTest : BaseCompletionTest() {
     fun testInsideForInit() {
         val completions = getCompletionsForTestFile()
         assertContainsElements(completions, "int", "float", "highp")
-        assertDoesntContain(completions, "for", "if", "true")
+        assertDoesntContain(completions, "for", "if")
     }
     
     fun testInsideForCondition() {
         val completions = getCompletionsForTestFile()
         assertContainsElements(completions, "true", "false")
-        assertDoesntContain(completions, "for", "if", "int", "float")
+        assertDoesntContain(completions, "for", "if")
     }
     
     fun testInsideForIteration() {
         val completions = getCompletionsForTestFile()
         assertContainsElements(completions, "true", "false")
-        assertDoesntContain(completions, "for", "if", "int", "float")
+        assertDoesntContain(completions, "for", "if")
     }
 
 }

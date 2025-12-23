@@ -51,6 +51,10 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
+    val ELSE_KEYWORD = LookupElementBuilder.create("else")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
+    
     val RETURN_KEYWORD = LookupElementBuilder.create("return")
         .withBoldness(true)
     
