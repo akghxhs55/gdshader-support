@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.completion
 
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
+import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 
@@ -121,16 +122,19 @@ object GDShaderLookupElements {
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
                         .appendTailText("(String1, String2, ...)", true)
+                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
                 
                 "hint_range" ->
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
                         .appendTailText("(min, max[, step])", true)
+                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
                 
                 "instance_index" ->
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
                         .appendTailText("(index)", true)
+                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
                 
                 else ->
                     LookupElementBuilder.create(it)

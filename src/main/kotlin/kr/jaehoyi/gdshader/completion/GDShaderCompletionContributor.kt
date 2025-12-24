@@ -19,6 +19,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderDoWhileStatement
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderForStatement
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderHintList
 import kr.jaehoyi.gdshader.psi.GDShaderIfStatement
 import kr.jaehoyi.gdshader.psi.GDShaderRenderModeDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderShaderTypeDeclaration
@@ -203,11 +204,26 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
 
-                    // 5. After COLON / COMMA
-                    if (prevLeaf.elementType == GDShaderTypes.COLON || prevLeaf.elementType == GDShaderTypes.COMMA) {
+                    // 5. After COLON
+                    if (prevLeaf.elementType == GDShaderTypes.COLON) {
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
                         val type = uniformDeclaration?.type?.text
 
+                        result.addAllElements(
+                            GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
+                        )
+                        return
+                    }
+                    
+                    // 6. After COMMA
+                    if (prevLeaf.elementType == GDShaderTypes.COMMA) {
+                        if (PsiTreeUtil.prevVisibleLeaf(prevLeaf)?.parentOfType<GDShaderHintList>() == null) {
+                            return
+                        }
+                        
+                        val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
+                        val type = uniformDeclaration?.type?.text
+                        
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
                         )
