@@ -89,4 +89,10 @@ class UniformCompletionTest : BaseCompletionTest() {
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
     }
     
+    fun testInsideRangeHintParameter() {
+        val completions = getCompletionsForTestFile()
+        
+        assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp", "hint_range", "hint_enum", "hint_normal", "hint_default_white", "filter_nearest", "filter_linear", "instance_index")
+    }
+    
 }
