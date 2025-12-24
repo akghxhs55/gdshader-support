@@ -120,25 +120,21 @@ object GDShaderLookupElements {
                 "hint_enum" ->
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
-                        .withInsertHandler(AddSpaceInsertHandler(true))
                         .appendTailText("(String1, String2, ...)", true)
                 
                 "hint_range" ->
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
-                        .withInsertHandler(AddSpaceInsertHandler(true))
                         .appendTailText("(min, max[, step])", true)
                 
                 "instance_index" ->
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
-                        .withInsertHandler(AddSpaceInsertHandler(true))
                         .appendTailText("(index)", true)
                 
                 else ->
                     LookupElementBuilder.create(it)
                         .withBoldness(true)
-                        .withInsertHandler(AddSpaceInsertHandler(true))
             }
         }
     }
