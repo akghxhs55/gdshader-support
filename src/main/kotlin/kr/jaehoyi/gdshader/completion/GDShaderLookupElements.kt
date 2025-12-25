@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.AddSpaceInsertHandler
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
+import kr.jaehoyi.gdshader.util.GDShaderBuiltins
 
 object GDShaderLookupElements {
     
@@ -101,6 +102,18 @@ object GDShaderLookupElements {
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Type)
             .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
+    val BUILTIN_FUNCTIONS = GDShaderBuiltins.BUILTIN_FUNCTIONS.map {
+        LookupElementBuilder.create(it.name)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText(
+                "(" + it.parameters.joinToString(", ") { param -> "${param.type} ${param.name}" } + ")", 
+                true
+            )
+            .withTypeText(it.returnType, true)
+            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
     }
     
     val CONSTRUCTORS = GDShaderKeywords.BUILTIN_TYPES.map { 

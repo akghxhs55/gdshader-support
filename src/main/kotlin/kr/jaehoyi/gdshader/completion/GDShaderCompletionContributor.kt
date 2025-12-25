@@ -232,8 +232,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 6. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
-                        result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                        result.addExpressionCompletions()
                     }
                 }
             }
@@ -289,8 +288,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 4. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
-                        result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                        result.addExpressionCompletions()
                     }
                 }
             }
@@ -546,12 +544,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         }
 
                         GDShaderTypes.PARENTHESIS_OPEN -> {
-                            result.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
-
                             if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
                                 result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                                result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                             } else {
-                                result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+                                result.addExpressionCompletions()
                             }
                         }
                     }
@@ -564,9 +561,9 @@ class GDShaderCompletionContributor : CompletionContributor() {
         this.addElement(GDShaderLookupElements.RETURN_KEYWORD)
         this.addElement(GDShaderLookupElements.DISCARD_KEYWORD)
         this.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS)
         this.addAllElements(GDShaderLookupElements.PRECISIONS)
         this.addElement(GDShaderLookupElements.CONST_KEYWORD)
-        this.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
         
         if (position.parentOfType<GDShaderForStatement>() != null ||
             position.parentOfType<GDShaderWhileStatement>() != null ||
@@ -583,6 +580,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
     
     private fun CompletionResultSet.addExpressionCompletions() {
         this.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
+        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS)
         this.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
     }
     
