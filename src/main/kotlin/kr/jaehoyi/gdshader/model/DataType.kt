@@ -1,6 +1,6 @@
-package kr.jaehoyi.gdshader.util
+package kr.jaehoyi.gdshader.model
 
-enum class GDShaderDataType(
+enum class DataType(
     val text: String,
     val isInstantiable: Boolean = true
 ) {
@@ -51,7 +51,7 @@ enum class GDShaderDataType(
     companion object {
         private val TEXT_TO_TYPE_MAP = entries.associateBy { it.text }
         
-        fun fromText(text: String): GDShaderDataType? {
+        fun fromText(text: String): DataType? {
             return TEXT_TO_TYPE_MAP[text]
         }
     }

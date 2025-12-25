@@ -5,8 +5,8 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
-import kr.jaehoyi.gdshader.util.GDShaderBuiltins
-import kr.jaehoyi.gdshader.util.GDShaderDataType
+import kr.jaehoyi.gdshader.model.GDShaderBuiltins
+import kr.jaehoyi.gdshader.model.DataType
 
 object GDShaderLookupElements {
     
@@ -106,7 +106,7 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    val BUILTIN_FUNCTIONS = GDShaderBuiltins.BUILTIN_FUNCTIONS.map {
+    val BUILTIN_FUNCTIONS = GDShaderBuiltins.GLOBAL_FUNCTIONS.map {
         LookupElementBuilder.create(it.name)
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Function)
@@ -139,7 +139,7 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    val UNIFORM_HINTS: Map<GDShaderDataType, List<LookupElement>>
+    val UNIFORM_HINTS: Map<DataType, List<LookupElement>>
         = GDShaderKeywords.UNIFORM_HINTS.mapValues { entry ->
             entry.value.map { 
                 when (it) {

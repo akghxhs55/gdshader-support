@@ -1,7 +1,10 @@
 package kr.jaehoyi.gdshader.completion
 
-import kr.jaehoyi.gdshader.util.GDShaderDataType
-import kr.jaehoyi.gdshader.util.ShaderType
+import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.model.InterpolationQualifier
+import kr.jaehoyi.gdshader.model.ParameterQualifier
+import kr.jaehoyi.gdshader.model.Precision
+import kr.jaehoyi.gdshader.model.ShaderType
 
 object GDShaderKeywords {
     
@@ -33,11 +36,11 @@ object GDShaderKeywords {
     )
     
     val UNIFORM_HINTS = mapOf(
-        GDShaderDataType.VEC3 to setOf("instance_index", "source_color", "color_conversion_disabled"),
-        GDShaderDataType.VEC4 to setOf("instance_index", "source_color", "color_conversion_disabled"),
-        GDShaderDataType.INT to setOf("instance_index", "hint_enum", "hint_range"),
-        GDShaderDataType.FLOAT to setOf("instance_index", "hint_range"),
-        GDShaderDataType.SAMPLER2D to setOf("instance_index", "source_color", "hint_normal", "hint_default_white",
+        DataType.VEC3 to setOf("instance_index", "source_color", "color_conversion_disabled"),
+        DataType.VEC4 to setOf("instance_index", "source_color", "color_conversion_disabled"),
+        DataType.INT to setOf("instance_index", "hint_enum", "hint_range"),
+        DataType.FLOAT to setOf("instance_index", "hint_range"),
+        DataType.SAMPLER2D to setOf("instance_index", "source_color", "hint_normal", "hint_default_white",
             "hint_default_black", "hint_default_transparent", "hint_anisotropy", "hint_roughness_r", "hint_roughness_g",
             "hint_roughness_b", "hint_roughness_a", "hint_roughness_normal", "hint_roughness_gray", "filter_nearest",
             "filter_linear", "filter_nearest_mipmap", "filter_linear_mipmap", "hint_nearest_mipmap_anisotropic",
@@ -45,15 +48,15 @@ object GDShaderKeywords {
             "hint_depth_texture", "hint_normal_roughness_texture")
     )
     
-    val BUILTIN_TYPES = GDShaderDataType.entries.filter { it.isInstantiable }.map { it.text }.toSet()
+    val BUILTIN_TYPES = DataType.entries.filter { it.isInstantiable }.map { it.text }.toSet()
     
-    val PRECISIONS = setOf("highp", "mediump", "lowp")
+    val PRECISIONS = Precision.entries.filter { it != Precision.DEFAULT }.map { it.text }.toSet()
     
-    val INTERPOLATIONS = setOf("flat", "smooth")
+    val INTERPOLATIONS = InterpolationQualifier.entries.filter { it != InterpolationQualifier.DEFAULT }.map { it.text }.toSet()
     
     val BOOLEAN_LITERALS = setOf("true", "false")
     
-    val PARAMETER_QUALIFIERS = setOf("in", "out", "inout")
+    val PARAMETER_QUALIFIERS = ParameterQualifier.entries.filter { it != ParameterQualifier.NONE }.map { it.text }.toSet()
     
     val CONTROL_STATEMENT_STARTERS = setOf(
         "if", "for", "while", "do", "switch"

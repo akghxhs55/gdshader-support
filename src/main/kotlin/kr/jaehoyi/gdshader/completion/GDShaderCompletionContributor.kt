@@ -32,7 +32,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
-import kr.jaehoyi.gdshader.util.GDShaderDataType
+import kr.jaehoyi.gdshader.model.DataType
 
 class GDShaderCompletionContributor : CompletionContributor() {
     
@@ -209,7 +209,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     if (prevLeaf.elementType == GDShaderTypes.COLON) {
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
                         val typeText = uniformDeclaration?.type?.text ?: return
-                        val type = GDShaderDataType.fromText(typeText) ?: return
+                        val type = DataType.fromText(typeText) ?: return
 
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
@@ -225,7 +225,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
                         val typeText = uniformDeclaration?.type?.text ?: return
-                        val type = GDShaderDataType.fromText(typeText) ?: return
+                        val type = DataType.fromText(typeText) ?: return
 
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
