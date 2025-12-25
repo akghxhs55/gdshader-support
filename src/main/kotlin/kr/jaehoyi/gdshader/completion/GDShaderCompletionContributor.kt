@@ -501,6 +501,8 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         }
 
                         GDShaderTypes.CURLY_BRACKET_CLOSE -> {
+                            result.addCommonStatementCompletions(position)
+                            
                             val prevStatement = prevLeaf.parentOfType<GDShaderIfStatement>() ?: return
 
                             if (position.parentOfType<GDShaderIfStatement>() != prevStatement) {

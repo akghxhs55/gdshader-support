@@ -48,5 +48,10 @@ class StatementCompletionTest : BaseCompletionTest() {
         assertContainsElements(completions, "true", "false")
         assertDoesntContain(completions, "for", "if")
     }
+    
+    fun testAfterStatement() {
+        val completions = getCompletionsForTestFile()
+        assertContainsElements(completions, "int", "float", "if", "for", "return")
+    }
 
 }
