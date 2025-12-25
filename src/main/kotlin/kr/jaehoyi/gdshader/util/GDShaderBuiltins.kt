@@ -5,1521 +5,1521 @@ object GDShaderBuiltins {
     val BUILTIN_FUNCTIONS = listOf(
         BuiltinFunctionSpec(
             name = "radians",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("degrees", "vec_type")
+                ParameterSpec("degrees", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "degrees",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("radians", "vec_type")
+                ParameterSpec("radians", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "sin",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "cos",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "tan",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "asin",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "acos",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "atan",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("y_over_x", "vec_type")
+                ParameterSpec("y_over_x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "atan",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("y", "vec_type"),
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "sinh",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "cosh",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "tanh",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "asinh",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "acosh",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "atanh",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "pow",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "exp",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "exp2",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "log",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "log2",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "sqrt",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "inversesqrt",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "abs",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "abs",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_int_type")
+                ParameterSpec("x", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "sign",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "sign",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_int_type")
+                ParameterSpec("x", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "floor",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "round",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "roundEven",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "trunc",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "ceil",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "fract",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "mod",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "mod",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "float")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "modf",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("i", "vec_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("i", GDShaderDataType.VEC_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "min",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "min",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "float")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "min",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_int_type"),
-                ParameterSpec("b", "vec_int_type")
+                ParameterSpec("a", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "min",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_int_type"),
-                ParameterSpec("b", "int")
+                ParameterSpec("a", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("b", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "min",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_uint_type"),
-                ParameterSpec("b", "vec_uint_type")
+                ParameterSpec("a", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "min",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_uint_type"),
-                ParameterSpec("b", "uint")
+                ParameterSpec("a", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("b", GDShaderDataType.UINT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "max",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "max",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "float")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "max",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_int_type"),
-                ParameterSpec("b", "vec_int_type")
+                ParameterSpec("a", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "max",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_int_type"),
-                ParameterSpec("b", "int")
+                ParameterSpec("a", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("b", GDShaderDataType.INT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "max",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_uint_type"),
-                ParameterSpec("b", "vec_uint_type")
+                ParameterSpec("a", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "max",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_uint_type"),
-                ParameterSpec("b", "uint")
+                ParameterSpec("a", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("b", GDShaderDataType.UINT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "clamp",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("min", "vec_type"),
-                ParameterSpec("max", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("min", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("max", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "clamp",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("min", "float"),
-                ParameterSpec("max", "float")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("min", GDShaderDataType.FLOAT),
+                ParameterSpec("max", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "clamp",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_int_type"),
-                ParameterSpec("min", "vec_int_type"),
-                ParameterSpec("max", "vec_int_type")
+                ParameterSpec("x", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("min", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("max", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "clamp",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_int_type"),
-                ParameterSpec("min", "int"),
-                ParameterSpec("max", "int")
+                ParameterSpec("x", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("min", GDShaderDataType.INT),
+                ParameterSpec("max", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "clamp",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_uint_type"),
-                ParameterSpec("min", "vec_uint_type"),
-                ParameterSpec("max", "vec_uint_type")
+                ParameterSpec("x", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("min", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("max", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "clamp",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_uint_type"),
-                ParameterSpec("min", "uint"),
-                ParameterSpec("max", "uint")
+                ParameterSpec("x", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("min", GDShaderDataType.UINT),
+                ParameterSpec("max", GDShaderDataType.UINT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "mix",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type"),
-                ParameterSpec("c", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("c", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "mix",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type"),
-                ParameterSpec("c", "float")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("c", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "mix",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type"),
-                ParameterSpec("c", "vec_bool_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("c", GDShaderDataType.VEC_BOOL_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "fma",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type"),
-                ParameterSpec("c", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("c", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "step",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "step",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "float"),
-                ParameterSpec("b", "vec_type")
+                ParameterSpec("a", GDShaderDataType.FLOAT),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "smoothstep",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type"),
-                ParameterSpec("c", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("c", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "smoothstep",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("a", "float"),
-                ParameterSpec("b", "float"),
-                ParameterSpec("c", "vec_type")
+                ParameterSpec("a", GDShaderDataType.FLOAT),
+                ParameterSpec("b", GDShaderDataType.FLOAT),
+                ParameterSpec("c", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "isnan",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "isinf",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "floatBitsToInt",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "floatBitsToUint",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "intBitsToFloat",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_int_type")
+                ParameterSpec("x", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "uintBitsToFloat",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_uint_type")
+                ParameterSpec("x", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "length",
-            returnType = "float",
+            returnType = GDShaderDataType.FLOAT,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "distance",
-            returnType = "float",
+            returnType = GDShaderDataType.FLOAT,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dot",
-            returnType = "float",
+            returnType = GDShaderDataType.FLOAT,
             parameters = listOf(
-                ParameterSpec("a", "vec_type"),
-                ParameterSpec("b", "vec_type")
+                ParameterSpec("a", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("b", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "cross",
-            returnType = "vec3",
+            returnType = GDShaderDataType.VEC3,
             parameters = listOf(
-                ParameterSpec("a", "vec3"),
-                ParameterSpec("b", "vec3")
+                ParameterSpec("a", GDShaderDataType.VEC3),
+                ParameterSpec("b", GDShaderDataType.VEC3)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "normalize",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type")
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "reflect",
-            returnType = "vec3",
+            returnType = GDShaderDataType.VEC3,
             parameters = listOf(
-                ParameterSpec("I", "vec3"),
-                ParameterSpec("N", "vec3")
+                ParameterSpec("I", GDShaderDataType.VEC3),
+                ParameterSpec("N", GDShaderDataType.VEC3)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "refract",
-            returnType = "vec3",
+            returnType = GDShaderDataType.VEC3,
             parameters = listOf(
-                ParameterSpec("I", "vec3"),
-                ParameterSpec("N", "vec3"),
-                ParameterSpec("eta", "float")
+                ParameterSpec("I", GDShaderDataType.VEC3),
+                ParameterSpec("N", GDShaderDataType.VEC3),
+                ParameterSpec("eta", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "faceforward",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("N", "vec_type"),
-                ParameterSpec("I", "vec_type"),
-                ParameterSpec("Nref", "vec_type")
+                ParameterSpec("N", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("I", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("Nref", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "matrixCompMult",
-            returnType = "mat_type",
+            returnType = GDShaderDataType.MAT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "mat_type"),
-                ParameterSpec("y", "mat_type")
+                ParameterSpec("x", GDShaderDataType.MAT_TYPE),
+                ParameterSpec("y", GDShaderDataType.MAT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "outerProduct",
-            returnType = "mat_type",
+            returnType = GDShaderDataType.MAT_TYPE,
             parameters = listOf(
-                ParameterSpec("column", "vec_type"),
-                ParameterSpec("row", "vec_type")
+                ParameterSpec("column", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("row", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "transpose",
-            returnType = "mat_type",
+            returnType = GDShaderDataType.MAT_TYPE,
             parameters = listOf(
-                ParameterSpec("m", "mat_type")
+                ParameterSpec("m", GDShaderDataType.MAT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "determinant",
-            returnType = "float",
+            returnType = GDShaderDataType.FLOAT,
             parameters = listOf(
-                ParameterSpec("m", "mat_type")
+                ParameterSpec("m", GDShaderDataType.MAT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "inverse",
-            returnType = "mat_type",
+            returnType = GDShaderDataType.MAT_TYPE,
             parameters = listOf(
-                ParameterSpec("m", "mat_type")
+                ParameterSpec("m", GDShaderDataType.MAT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "lessThan",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type"),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "greaterThan",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type"),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "lessThanEqual",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type"),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "greaterThanEqual",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type"),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "equal",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type"),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "notEqual",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("y", "vec_type"),
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_TYPE),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "any",
-            returnType = "bool",
+            returnType = GDShaderDataType.BOOL,
             parameters = listOf(
-                ParameterSpec("x", "vec_bool_type")
+                ParameterSpec("x", GDShaderDataType.VEC_BOOL_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "all",
-            returnType = "bool",
+            returnType = GDShaderDataType.BOOL,
             parameters = listOf(
-                ParameterSpec("x", "vec_bool_type")
+                ParameterSpec("x", GDShaderDataType.VEC_BOOL_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "not",
-            returnType = "vec_bool_type",
+            returnType = GDShaderDataType.VEC_BOOL_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_bool_type")
+                ParameterSpec("x", GDShaderDataType.VEC_BOOL_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureSize",
-            returnType = "ivec2",
+            returnType = GDShaderDataType.IVEC2,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureSize",
-            returnType = "ivec2",
+            returnType = GDShaderDataType.IVEC2,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureSize",
-            returnType = "ivec2",
+            returnType = GDShaderDataType.IVEC2,
             parameters = listOf(
-                ParameterSpec("s", "samplerCubeArray"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBEARRAY),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureSize",
-            returnType = "ivec3",
+            returnType = GDShaderDataType.IVEC3,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureSize",
-            returnType = "ivec3",
+            returnType = GDShaderDataType.IVEC3,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLod",
-            returnType = "vec2",
+            returnType = GDShaderDataType.VEC2,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec2")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLod",
-            returnType = "vec3",
+            returnType = GDShaderDataType.VEC3,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("p", "vec2")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLod",
-            returnType = "vec2",
+            returnType = GDShaderDataType.VEC2,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec2")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLod",
-            returnType = "vec2",
+            returnType = GDShaderDataType.VEC2,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube"),
-                ParameterSpec("p", "vec2")
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE),
+                ParameterSpec("p", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLevels",
-            returnType = "int",
+            returnType = GDShaderDataType.INT,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLevels",
-            returnType = "int",
+            returnType = GDShaderDataType.INT,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLevels",
-            returnType = "int",
+            returnType = GDShaderDataType.INT,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureQueryLevels",
-            returnType = "int",
+            returnType = GDShaderDataType.INT,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube")
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texture",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec2"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC2),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texture",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texture",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texture",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texture",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCubeArray"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBEARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texture",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerExternalOES"),
-                ParameterSpec("p", "vec2"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.SAMPLEREXTERNALOES),
+                ParameterSpec("p", GDShaderDataType.VEC2),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProj",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProj",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProj",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("bias", "float", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("bias", GDShaderDataType.FLOAT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureLod",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec2"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC2),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureLod",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureLod",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureLod",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureLod",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCubeArray"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBEARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProjLod",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProjLod",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProjLod",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("lod", "float")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("lod", GDShaderDataType.FLOAT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGrad",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec2"),
-                ParameterSpec("dPdx", "vec2"),
-                ParameterSpec("dPdy", "vec2"),
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC2),
+                ParameterSpec("dPdx", GDShaderDataType.VEC2),
+                ParameterSpec("dPdy", GDShaderDataType.VEC2),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGrad",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("dPdx", "vec2"),
-                ParameterSpec("dPdy", "vec2"),
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("dPdx", GDShaderDataType.VEC2),
+                ParameterSpec("dPdy", GDShaderDataType.VEC2),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGrad",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("dPdx", "vec2"),
-                ParameterSpec("dPdy", "vec2"),
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("dPdx", GDShaderDataType.VEC2),
+                ParameterSpec("dPdy", GDShaderDataType.VEC2),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGrad",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("dPdx", "vec3"),
-                ParameterSpec("dPdy", "vec3"),
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("dPdx", GDShaderDataType.VEC3),
+                ParameterSpec("dPdy", GDShaderDataType.VEC3),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGrad",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCubeArray"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("dPdx", "vec3"),
-                ParameterSpec("dPdy", "vec3"),
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBEARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("dPdx", GDShaderDataType.VEC3),
+                ParameterSpec("dPdy", GDShaderDataType.VEC3),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProjGrad",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("dPdx", "vec2"),
-                ParameterSpec("dPdy", "vec2"),
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("dPdx", GDShaderDataType.VEC2),
+                ParameterSpec("dPdy", GDShaderDataType.VEC2),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProjGrad",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("dPdx", "vec2"),
-                ParameterSpec("dPdy", "vec2"),
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("dPdx", GDShaderDataType.VEC2),
+                ParameterSpec("dPdy", GDShaderDataType.VEC2),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureProjGrad",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "vec4"),
-                ParameterSpec("dPdx", "vec3"),
-                ParameterSpec("dPdy", "vec3"),
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.VEC4),
+                ParameterSpec("dPdx", GDShaderDataType.VEC3),
+                ParameterSpec("dPdy", GDShaderDataType.VEC3),
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texelFetch",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "ivec2"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.IVEC2),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texelFetch",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("p", "ivec3"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("p", GDShaderDataType.IVEC3),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "texelFetch",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler3D"),
-                ParameterSpec("p", "ivec3"),
-                ParameterSpec("lod", "int")
+                ParameterSpec("s", GDShaderDataType.GSAMPLER3D),
+                ParameterSpec("p", GDShaderDataType.IVEC3),
+                ParameterSpec("lod", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGather",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2D"),
-                ParameterSpec("p", "vec2"),
-                ParameterSpec("comps", "int", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2D),
+                ParameterSpec("p", GDShaderDataType.VEC2),
+                ParameterSpec("comps", GDShaderDataType.INT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGather",
-            returnType = "gvec4_type",
+            returnType = GDShaderDataType.GVEC4_TYPE,
             parameters = listOf(
-                ParameterSpec("s", "gsampler2DArray"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("comps", "int", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.GSAMPLER2DARRAY),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("comps", GDShaderDataType.INT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "textureGather",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("s", "samplerCube"),
-                ParameterSpec("p", "vec3"),
-                ParameterSpec("comps", "int", isOptional = true)
+                ParameterSpec("s", GDShaderDataType.SAMPLERCUBE),
+                ParameterSpec("p", GDShaderDataType.VEC3),
+                ParameterSpec("comps", GDShaderDataType.INT, isOptional = true)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dFdx",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dFdxCoarse",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dFdxFine",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dFdy",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dFdyCoarse",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "dFdyFine",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "fwidth",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "fwidthCoarse",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "fwidthFine",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("p", "vec_type")
+                ParameterSpec("p", GDShaderDataType.VEC_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "packHalf2x16",
-            returnType = "uint",
+            returnType = GDShaderDataType.UINT,
             parameters = listOf(
-                ParameterSpec("v", "vec2")
+                ParameterSpec("v", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "unpackHalf2x16",
-            returnType = "vec2",
+            returnType = GDShaderDataType.VEC2,
             parameters = listOf(
-                ParameterSpec("v", "uint")
+                ParameterSpec("v", GDShaderDataType.UINT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "packUnorm2x16",
-            returnType = "uint",
+            returnType = GDShaderDataType.UINT,
             parameters = listOf(
-                ParameterSpec("v", "vec2")
+                ParameterSpec("v", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "unpackUnorm2x16",
-            returnType = "vec2",
+            returnType = GDShaderDataType.VEC2,
             parameters = listOf(
-                ParameterSpec("v", "uint")
+                ParameterSpec("v", GDShaderDataType.UINT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "packSnorm2x16",
-            returnType = "uint",
+            returnType = GDShaderDataType.UINT,
             parameters = listOf(
-                ParameterSpec("v", "vec2")
+                ParameterSpec("v", GDShaderDataType.VEC2)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "unpackSnorm2x16",
-            returnType = "vec2",
+            returnType = GDShaderDataType.VEC2,
             parameters = listOf(
-                ParameterSpec("v", "uint")
+                ParameterSpec("v", GDShaderDataType.UINT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "packUnorm4x8",
-            returnType = "uint",
+            returnType = GDShaderDataType.UINT,
             parameters = listOf(
-                ParameterSpec("v", "vec4")
+                ParameterSpec("v", GDShaderDataType.VEC4)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "unpackUnorm4x8",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("v", "uint")
+                ParameterSpec("v", GDShaderDataType.UINT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "packSnorm4x8",
-            returnType = "uint",
+            returnType = GDShaderDataType.UINT,
             parameters = listOf(
-                ParameterSpec("v", "vec4")
+                ParameterSpec("v", GDShaderDataType.VEC4)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "unpackSnorm4x8",
-            returnType = "vec4",
+            returnType = GDShaderDataType.VEC4,
             parameters = listOf(
-                ParameterSpec("v", "uint")
+                ParameterSpec("v", GDShaderDataType.UINT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "bitfieldExtract",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_int_type"),
-                ParameterSpec("offset", "int"),
-                ParameterSpec("bits", "int")
+                ParameterSpec("value", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("offset", GDShaderDataType.INT),
+                ParameterSpec("bits", GDShaderDataType.INT)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "bitfieldExtract",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_uint_type"),
-                ParameterSpec("offset", "int"),
-                ParameterSpec("bits", "int")
+                ParameterSpec("value", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("offset", GDShaderDataType.INT),
+                ParameterSpec("bits", GDShaderDataType.INT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "bitfieldInsert",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("base", "vec_int_type"),
-                ParameterSpec("insert", "vec_int_type"),
-                ParameterSpec("offset", "int"),
-                ParameterSpec("bits", "int")
+                ParameterSpec("base", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("insert", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("offset", GDShaderDataType.INT),
+                ParameterSpec("bits", GDShaderDataType.INT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "bitfieldInsert",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("base", "vec_uint_type"),
-                ParameterSpec("insert", "vec_uint_type"),
-                ParameterSpec("offset", "int"),
-                ParameterSpec("bits", "int")
+                ParameterSpec("base", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("insert", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("offset", GDShaderDataType.INT),
+                ParameterSpec("bits", GDShaderDataType.INT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "bitfieldReverse",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_int_type")
+                ParameterSpec("value", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "bitfieldReverse",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_uint_type")
+                ParameterSpec("value", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "bitCount",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_int_type")
+                ParameterSpec("value", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "bitCount",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_uint_type")
+                ParameterSpec("value", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "findLSB",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_int_type")
+                ParameterSpec("value", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "findLSB",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_uint_type")
+                ParameterSpec("value", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "findMSB",
-            returnType = "vec_int_type",
+            returnType = GDShaderDataType.VEC_INT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_int_type")
+                ParameterSpec("value", GDShaderDataType.VEC_INT_TYPE)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "findMSB",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("value", "vec_uint_type")
+                ParameterSpec("value", GDShaderDataType.VEC_UINT_TYPE)
             ),
         ),
 
         BuiltinFunctionSpec(
             name = "imulExtended",
-            returnType = "void",
+            returnType = GDShaderDataType.VOID,
             parameters = listOf(
-                ParameterSpec("x", "vec_int_type"),
-                ParameterSpec("y", "vec_int_type"),
-                ParameterSpec("msb", "vec_int_type", qualifier = ParameterQualifier.OUT),
-                ParameterSpec("lsb", "vec_int_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_INT_TYPE),
+                ParameterSpec("msb", GDShaderDataType.VEC_INT_TYPE, qualifier = ParameterQualifier.OUT),
+                ParameterSpec("lsb", GDShaderDataType.VEC_INT_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "umulExtended",
-            returnType = "void",
+            returnType = GDShaderDataType.VOID,
             parameters = listOf(
-                ParameterSpec("x", "vec_uint_type"),
-                ParameterSpec("y", "vec_uint_type"),
-                ParameterSpec("msb", "vec_uint_type", qualifier = ParameterQualifier.OUT),
-                ParameterSpec("lsb", "vec_uint_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("msb", GDShaderDataType.VEC_UINT_TYPE, qualifier = ParameterQualifier.OUT),
+                ParameterSpec("lsb", GDShaderDataType.VEC_UINT_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "uaddCarry",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_uint_type"),
-                ParameterSpec("y", "vec_uint_type"),
-                ParameterSpec("carry", "vec_uint_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("carry", GDShaderDataType.VEC_UINT_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "usubBorrow",
-            returnType = "vec_uint_type",
+            returnType = GDShaderDataType.VEC_UINT_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_uint_type"),
-                ParameterSpec("y", "vec_uint_type"),
-                ParameterSpec("borrow", "vec_uint_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("y", GDShaderDataType.VEC_UINT_TYPE),
+                ParameterSpec("borrow", GDShaderDataType.VEC_UINT_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "ldexp",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("exp", "vec_int_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("exp", GDShaderDataType.VEC_INT_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
         
         BuiltinFunctionSpec(
             name = "frexp",
-            returnType = "vec_type",
+            returnType = GDShaderDataType.VEC_TYPE,
             parameters = listOf(
-                ParameterSpec("x", "vec_type"),
-                ParameterSpec("exp", "vec_int_type", qualifier = ParameterQualifier.OUT)
+                ParameterSpec("x", GDShaderDataType.VEC_TYPE),
+                ParameterSpec("exp", GDShaderDataType.VEC_INT_TYPE, qualifier = ParameterQualifier.OUT)
             ),
         ),
     )

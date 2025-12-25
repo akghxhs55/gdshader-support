@@ -1,5 +1,7 @@
 package kr.jaehoyi.gdshader.completion
 
+import kr.jaehoyi.gdshader.util.GDShaderDataType
+
 object GDShaderKeywords {
     
     val SHADER_TYPES = setOf("spatial", "canvas_item", "particles", "sky", "fog")
@@ -30,11 +32,11 @@ object GDShaderKeywords {
     )
     
     val UNIFORM_HINTS = mapOf(
-        "vec3" to setOf("instance_index", "source_color", "color_conversion_disabled"),
-        "vec4" to setOf("instance_index", "source_color", "color_conversion_disabled"),
-        "int" to setOf("instance_index", "hint_enum", "hint_range"),
-        "float" to setOf("instance_index", "hint_range"),
-        "sampler2D" to setOf("instance_index", "source_color", "hint_normal", "hint_default_white",
+        GDShaderDataType.VEC3 to setOf("instance_index", "source_color", "color_conversion_disabled"),
+        GDShaderDataType.VEC4 to setOf("instance_index", "source_color", "color_conversion_disabled"),
+        GDShaderDataType.INT to setOf("instance_index", "hint_enum", "hint_range"),
+        GDShaderDataType.FLOAT to setOf("instance_index", "hint_range"),
+        GDShaderDataType.SAMPLER2D to setOf("instance_index", "source_color", "hint_normal", "hint_default_white",
             "hint_default_black", "hint_default_transparent", "hint_anisotropy", "hint_roughness_r", "hint_roughness_g",
             "hint_roughness_b", "hint_roughness_a", "hint_roughness_normal", "hint_roughness_gray", "filter_nearest",
             "filter_linear", "filter_nearest_mipmap", "filter_linear_mipmap", "hint_nearest_mipmap_anisotropic",
@@ -42,12 +44,7 @@ object GDShaderKeywords {
             "hint_depth_texture", "hint_normal_roughness_texture")
     )
     
-    val BUILTIN_TYPES = setOf(
-        "void", "bool", "bvec2", "bvec3", "bvec4", "int", "ivec2", "ivec3", "ivec4", "uint", "uvec2", "uvec3", "uvec4",
-        "float", "vec2", "vec3", "vec4", "mat2", "mat3", "mat4", "sampler2D", "isampler2D", "usampler2D",
-        "sampler2DArray", "isampler2DArray", "usampler2DArray", "sampler3D", "isampler3D", "usampler3D",
-        "samplerCube", "samplerCubeArray", "samplerExternalOES"
-    )
+    val BUILTIN_TYPES = GDShaderDataType.entries.filter { it.isInstantiable }.map { it.text }
     
     val PRECISIONS = setOf("highp", "mediump", "lowp")
     

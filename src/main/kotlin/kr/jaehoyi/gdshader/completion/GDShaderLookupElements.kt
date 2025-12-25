@@ -2,9 +2,11 @@ package kr.jaehoyi.gdshader.completion
 
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import kr.jaehoyi.gdshader.util.GDShaderBuiltins
+import kr.jaehoyi.gdshader.util.GDShaderDataType
 
 object GDShaderLookupElements {
     
@@ -112,7 +114,7 @@ object GDShaderLookupElements {
                 "(" + it.parameters.joinToString(", ") { param -> "${param.type} ${param.name}" } + ")", 
                 true
             )
-            .withTypeText(it.returnType, true)
+            .withTypeText(it.returnType.text, true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
     }
     
@@ -137,33 +139,34 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    val UNIFORM_HINTS = GDShaderKeywords.UNIFORM_HINTS.mapValues { entry ->
-        entry.value.map { 
-            when (it) {
-                "hint_enum" ->
-                    LookupElementBuilder.create(it)
-                        .withBoldness(true)
-                        .appendTailText("(String1, String2, ...)", true)
-                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-                
-                "hint_range" ->
-                    LookupElementBuilder.create(it)
-                        .withBoldness(true)
-                        .appendTailText("(min, max[, step])", true)
-                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-                
-                "instance_index" ->
-                    LookupElementBuilder.create(it)
-                        .withBoldness(true)
-                        .appendTailText("(index)", true)
-                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-                
-                else ->
-                    LookupElementBuilder.create(it)
-                        .withBoldness(true)
+    val UNIFORM_HINTS: Map<GDShaderDataType, List<LookupElement>>
+        = GDShaderKeywords.UNIFORM_HINTS.mapValues { entry ->
+            entry.value.map { 
+                when (it) {
+                    "hint_enum" ->
+                        LookupElementBuilder.create(it)
+                            .withBoldness(true)
+                            .appendTailText("(String1, String2, ...)", true)
+                            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+                    
+                    "hint_range" ->
+                        LookupElementBuilder.create(it)
+                            .withBoldness(true)
+                            .appendTailText("(min, max[, step])", true)
+                            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+                    
+                    "instance_index" ->
+                        LookupElementBuilder.create(it)
+                            .withBoldness(true)
+                            .appendTailText("(index)", true)
+                            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+                    
+                    else ->
+                        LookupElementBuilder.create(it)
+                            .withBoldness(true)
+                }
             }
         }
-    }
     
     val INTERPOLATIONS = GDShaderKeywords.INTERPOLATIONS.map {
         LookupElementBuilder.create(it)

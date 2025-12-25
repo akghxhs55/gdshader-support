@@ -32,6 +32,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
+import kr.jaehoyi.gdshader.util.GDShaderDataType
 
 class GDShaderCompletionContributor : CompletionContributor() {
     
@@ -207,7 +208,8 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // 5. After COLON
                     if (prevLeaf.elementType == GDShaderTypes.COLON) {
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
-                        val type = uniformDeclaration?.type?.text
+                        val typeText = uniformDeclaration?.type?.text ?: return
+                        val type = GDShaderDataType.fromText(typeText) ?: return
 
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
@@ -222,8 +224,9 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         }
                         
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
-                        val type = uniformDeclaration?.type?.text
-                        
+                        val typeText = uniformDeclaration?.type?.text ?: return
+                        val type = GDShaderDataType.fromText(typeText) ?: return
+
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
                         )
@@ -557,6 +560,8 @@ class GDShaderCompletionContributor : CompletionContributor() {
         )
     
     private fun CompletionResultSet.addCommonStatementCompletions(position: PsiElement) {
+        println(GDShaderLookupElements.BUILTIN_TYPES.map { it.lookupString })
+        
         this.addAllElements(GDShaderLookupElements.CONTROL_STATEMENT_STARTERS)
         this.addElement(GDShaderLookupElements.RETURN_KEYWORD)
         this.addElement(GDShaderLookupElements.DISCARD_KEYWORD)
