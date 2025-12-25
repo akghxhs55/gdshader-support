@@ -232,7 +232,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 6. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
                         result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
                     }
                 }
@@ -289,7 +289,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 4. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
                         result.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
                     }
                 }
@@ -546,7 +546,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         }
 
                         GDShaderTypes.PARENTHESIS_OPEN -> {
-                            result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                            result.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
 
                             if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
                                 result.addAllElements(GDShaderLookupElements.PRECISIONS)
@@ -582,7 +582,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
     }
     
     private fun CompletionResultSet.addExpressionCompletions() {
-        this.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+        this.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
         this.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
     }
     

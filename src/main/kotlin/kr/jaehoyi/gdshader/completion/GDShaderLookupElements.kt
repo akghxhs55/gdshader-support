@@ -99,7 +99,16 @@ object GDShaderLookupElements {
     val BUILTIN_TYPES = GDShaderKeywords.BUILTIN_TYPES.map { 
         LookupElementBuilder.create(it)
             .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Type)
             .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
+    val CONSTRUCTORS = GDShaderKeywords.BUILTIN_TYPES.map { 
+        LookupElementBuilder.create(it)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText("(...)", true)
+            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
     }
     
     val INTEGER_TYPES = listOf(
