@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.model
 
 enum class Precision(val text: String) {
+    
     DEFAULT(""),
     HIGH("highp"),
     MEDIUM("mediump"),
@@ -9,8 +10,8 @@ enum class Precision(val text: String) {
     companion object {
         private val textToPrecisionMap = entries.associateBy { it.text }
         
-        fun fromText(text: String): Precision? {
-            return textToPrecisionMap[text]
-        }
+        fun fromText(text: String): Precision? =
+            textToPrecisionMap[text]
     }
+    
 }

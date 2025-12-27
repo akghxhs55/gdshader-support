@@ -9,11 +9,10 @@ enum class ShaderType(val text: String) {
     FOG("fog");
     
     companion object {
-        private val textToTypeMap = entries.associateBy { it.text }
+        private val textToShaderTypeMap = entries.associateBy { it.text }
         
-        fun fromText(text: String): ShaderType? {
-            return textToTypeMap[text]
-        }
+        fun fromText(text: String): ShaderType? =
+            textToShaderTypeMap[text]
     }
     
 }

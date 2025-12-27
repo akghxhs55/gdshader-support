@@ -49,11 +49,10 @@ enum class DataType(
     GSAMPLER3D("gsampler3D", isInstantiable = false);
     
     companion object {
-        private val TEXT_TO_TYPE_MAP = entries.associateBy { it.text }
+        private val textToDataTypeMap = entries.associateBy { it.text }
         
-        fun fromText(text: String): DataType? {
-            return TEXT_TO_TYPE_MAP[text]
-        }
+        fun fromText(text: String): DataType? =
+            textToDataTypeMap[text]
     }
     
 }
