@@ -38,12 +38,14 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
+        ideaVersion {
+            sinceBuild = "231"
+        }
+        
         changeNotes = """
             <ul>
-              <li>Added support for Godot 4.5 (Stencil Mode)</li>
-              <li>Added file type support for GDShader include files (.gdshaderinc)</li>
-              <li>Improved grammar for various contexts</li>
-              <li>Improved syntax highlighting</li>
+              <li>Improved code completions</li>
+              <li>Improved grammar</li>
               <li>Fix bugs</li>
             </ul>
         """.trimIndent()
