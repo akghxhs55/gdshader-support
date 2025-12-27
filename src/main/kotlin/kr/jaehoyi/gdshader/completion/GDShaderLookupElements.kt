@@ -145,6 +145,23 @@ object GDShaderLookupElements {
         }
     }
     
+    val PROCESSING_FUNCTIONS = GDShaderBuiltins.PROCESSING_FUNCTIONS.mapValues {
+        it.value.map { functionContext ->
+            LookupElementBuilder.create(functionContext.text)
+                .withBoldness(true)
+                .withIcon(AllIcons.Nodes.AbstractMethod)
+                .appendTailText("()", true)
+                .withTypeText("void", true)
+                .withInsertHandler { context, _ ->
+                    val offset = context.tailOffset
+                    val textToInsert = "() {\n    \n}"
+
+                    context.document.insertString(offset, textToInsert)
+                    context.editor.caretModel.moveToOffset(offset + textToInsert.length - 2)
+                }
+        }
+    }
+    
     val CONSTRUCTORS = GDShaderKeywords.BUILTIN_TYPES.map { 
         LookupElementBuilder.create(it)
             .withBoldness(true)

@@ -359,7 +359,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             or(
                 GDShaderPatterns.TOP_LEVEL,
-                psiElement().withParent(GDShaderFile::class.java).and(GDShaderPatterns.AFTER_PRECISION),
+                psiElement().withParent(GDShaderFile::class.java),
                 psiElement().inside(GDShaderFunctionDeclaration::class.java)
                     .andNot(psiElement().inside(GDShaderBlock::class.java))
             ),
@@ -375,23 +375,37 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
                     // 1.
-                    if (position.parent is GDShaderFile && !GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text)) {
+                    if (GDShaderPatterns.TOP_LEVEL.accepts(position)) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
                     
+                    if (prevLeaf == null) {
+                        return
+                    }
+                    
                     // 2. After precision
-                    if (prevLeaf != null && GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
                     
+                    // 3. After type
+                    if (position.parentOfType<GDShaderFunctionDeclaration>() == null &&
+                        prevLeaf.elementType == GDShaderTypes.IDENTIFIER || GDShaderKeywords.BUILTIN_TYPES.contains(prevLeaf.text)
+                    ) {
+                        val file = position.containingFile as? GDShaderFile ?: return
+                        val shaderType = GDShaderPsiImplUtil.getShaderType(file) ?: ShaderType.SPATIAL
+                        result.addAllElements(GDShaderLookupElements.PROCESSING_FUNCTIONS[shaderType] ?: emptyList())
+                        return
+                    }
+
                     if (position.parentOfType<GDShaderFunctionDeclaration>() == null) {
                         return
                     }
                     
-                    // 3. Inside parameter list, after COMMA or PARENTHESIS_OPEN
+                    // 4. Inside parameter list, after COMMA or PARENTHESIS_OPEN
                     if (prevLeaf.elementType == GDShaderTypes.COMMA || prevLeaf.elementType == GDShaderTypes.PARENTHESIS_OPEN) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
@@ -400,7 +414,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
                     
-                    // 4. Inside parameter list, after CONST
+                    // 5. Inside parameter list, after CONST
                     if (prevLeaf.elementType == GDShaderTypes.CONST) {
                         result.addElement(GDShaderLookupElements.IN_KEYWORD)
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
@@ -408,21 +422,20 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
                     
-                    // 5. Inside parameter list, after parameter qualifier
-                    if (GDShaderKeywords.PARAMETER_QUALIFIERS.contains(prevLeaf?.text)) {
+                    // 6. Inside parameter list, after parameter qualifier
+                    if (GDShaderKeywords.PARAMETER_QUALIFIERS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
                     
-                    // 6. Inside parameter list, after precision
-                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text))
-                    {
+                    // 7. Inside parameter list, after precision
+                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                         return
                     }
                     
-                    // Inside array size
+                    // 8. Inside array size
                     if (prevLeaf.elementType == GDShaderTypes.BRACKET_OPEN) {
                         result.addAllElements(GDShaderLookupElements.INTEGER_TYPES)
                     }

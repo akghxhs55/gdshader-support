@@ -1568,6 +1568,29 @@ object GDShaderBuiltins {
         ),
     )
     
+    val PROCESSING_FUNCTIONS: Map<ShaderType, List<FunctionContext>> = mapOf(
+        ShaderType.SPATIAL to listOf(
+            FunctionContext.VERTEX,
+            FunctionContext.FRAGMENT,
+            FunctionContext.LIGHT,
+        ),
+        ShaderType.CANVAS_ITEM to listOf(
+            FunctionContext.VERTEX,
+            FunctionContext.FRAGMENT,
+            FunctionContext.LIGHT,
+        ),
+        ShaderType.PARTICLES to listOf(
+            FunctionContext.START,
+            FunctionContext.PROCESS,
+        ),
+        ShaderType.SKY to listOf(
+            FunctionContext.SKY,
+        ),
+        ShaderType.FOG to listOf(
+            FunctionContext.FOG,
+        ),
+    )
+    
 }
 
 private val globalFunctions = listOf(
