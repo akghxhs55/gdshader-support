@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.or
 import com.intellij.psi.PsiElement
@@ -34,7 +35,9 @@ import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil
+import kotlin.collections.plusAssign
 
 class GDShaderCompletionContributor : CompletionContributor() {
     
@@ -237,7 +240,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 6. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addExpressionCompletions(position)
+                        result.addAllElements(getExpressionCompletions(position))
                     }
                 }
             }
@@ -293,7 +296,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 4. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addExpressionCompletions(position)
+                        result.addAllElements(getExpressionCompletions(position))
                     }
                 }
             }
@@ -488,46 +491,47 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     context: ProcessingContext,
                     result: CompletionResultSet
                 ) {
+                    val completions = arrayListOf<LookupElement>()
+
                     val position = parameters.position
+                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return
 
                     if (position.parentOfType<GDShaderVariableNameRef>() != null) {
-                        result.addExpressionCompletions(position)
+                        completions += getExpressionCompletions(position)
                     }
 
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return
-                    
                     when (prevLeaf.elementType) {
                         GDShaderTypes.CURLY_BRACKET_OPEN,
                         GDShaderTypes.CF_ELSE,
                         GDShaderTypes.CF_DO -> {
-                            result.addStatementCompletions(position)
+                            completions += getStatementCompletions(position)
                         }
 
                         GDShaderTypes.CURLY_BRACKET_CLOSE -> {
-                            result.addStatementCompletions(position)
-                            
-                            val prevStatement = prevLeaf.parentOfType<GDShaderIfStatement>() ?: return
+                            completions += getStatementCompletions(position)
+
+                            val prevStatement = prevLeaf.parentOfType<GDShaderIfStatement>()
 
                             if (position.parentOfType<GDShaderIfStatement>() != prevStatement) {
-                                result.addElement(GDShaderLookupElements.ELSE_KEYWORD)
-                                return
+                                completions += GDShaderLookupElements.ELSE_KEYWORD
                             }
                         }
 
                         GDShaderTypes.SEMICOLON -> {
-                            if (prevLeaf.parent is GDShaderForStatement) {
-                                result.addExpressionCompletions(position)
-                            } else {
-                                result.addStatementCompletions(position)
-                            }
+                            completions += 
+                                if (prevLeaf.parent is GDShaderForStatement) {
+                                    getExpressionCompletions(position)
+                                } else {
+                                    getStatementCompletions(position)
+                                }
                         }
 
                         GDShaderTypes.COLON -> {
                             if (prevLeaf.parent.elementType == GDShaderTypes.CASE_CLAUSE) {
-                                result.addStatementCompletions(position)
-                                result.addElement(GDShaderLookupElements.BREAK_KEYWORD)
+                                completions += getStatementCompletions(position)
+                                completions += GDShaderLookupElements.BREAK_KEYWORD
                             } else {
-                                result.addExpressionCompletions(position)
+                                completions += getExpressionCompletions(position)
                             }
                         }
 
@@ -536,7 +540,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                                 prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT ||
                                 prevLeaf.parent.elementType == GDShaderTypes.WHILE_STATEMENT
                             ) {
-                                result.addStatementCompletions(position)
+                                completions += getStatementCompletions(position)
                             }
                         }
 
@@ -545,58 +549,66 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         GDShaderTypes.CF_RETURN,
                         GDShaderTypes.QUESTION,
                         in GDShaderTokenSets.OPERATORS -> {
-                            result.addExpressionCompletions(position)
+                            completions += getExpressionCompletions(position)
                         }
 
                         GDShaderTypes.PARENTHESIS_OPEN -> {
                             if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
-                                result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                                result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                                completions += GDShaderLookupElements.PRECISIONS
+                                completions += GDShaderLookupElements.BUILTIN_TYPES
                             } else {
-                                result.addExpressionCompletions(position)
+                                completions += getExpressionCompletions(position)
                             }
                         }
                     }
+                    
+                    result.addAllElements(completions)
                 }
             }
         )
     
-    private fun CompletionResultSet.addStatementCompletions(position: PsiElement) {
-        this.addAllElements(GDShaderLookupElements.CONTROL_STATEMENT_STARTERS)
-        this.addElement(GDShaderLookupElements.RETURN_KEYWORD)
-        this.addElement(GDShaderLookupElements.DISCARD_KEYWORD)
-        this.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
-        this.addAllElements(GDShaderLookupElements.PRECISIONS)
-        this.addElement(GDShaderLookupElements.CONST_KEYWORD)
+    private fun getStatementCompletions(position: PsiElement): List<LookupElement> {
+        val completions = arrayListOf<LookupElement>()
+        
+        completions += GDShaderLookupElements.CONTROL_STATEMENT_STARTERS
+        completions += GDShaderLookupElements.RETURN_KEYWORD
+        completions += GDShaderLookupElements.DISCARD_KEYWORD
+        completions += GDShaderLookupElements.BUILTIN_TYPES
+        completions += GDShaderLookupElements.PRECISIONS
+        completions += GDShaderLookupElements.CONST_KEYWORD
         
         if (position.parentOfType<GDShaderForStatement>() != null ||
             position.parentOfType<GDShaderWhileStatement>() != null ||
             position.parentOfType<GDShaderDoWhileStatement>() != null
         ) {
-            this.addElement(GDShaderLookupElements.BREAK_KEYWORD)
-            this.addElement(GDShaderLookupElements.CONTINUE_KEYWORD)
+            completions += GDShaderLookupElements.BREAK_KEYWORD
+            completions += GDShaderLookupElements.CONTINUE_KEYWORD
         }
         
         if (position.parentOfType<GDShaderSwitchStatement>() != null) {
-            this.addElement(GDShaderLookupElements.BREAK_KEYWORD)
+            completions += GDShaderLookupElements.BREAK_KEYWORD
         }
         
-        this.addExpressionCompletions(position)
+        return completions + getExpressionCompletions(position)
     }
     
-    private fun CompletionResultSet.addExpressionCompletions(position: PsiElement) {
-        val file = position.containingFile as? GDShaderFile ?: return
-        val shaderType = GDShaderPsiImplUtil.getShaderType(file)
+    private fun getExpressionCompletions(position: PsiElement): List<LookupElement> {
+        val file = position.containingFile as? GDShaderFile ?: return emptyList()
+        val shaderType = GDShaderPsiImplUtil.getShaderType(file) ?: ShaderType.SPATIAL
         val functionContext = GDShaderPsiImplUtil.getFunctionContext(position)
         
-        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList())
-        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList())
+        val completions = arrayListOf<LookupElement>()
+        
+        completions += GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList()
+        completions += GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
 
-        this.addAllElements(GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList())
-        this.addAllElements(GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList())
+        completions += GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()
+        completions +=GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList()
 
-        this.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
-        this.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
+        completions += GDShaderLookupElements.CONSTRUCTORS
+        completions += GDShaderLookupElements.BOOLEAN_LITERALS
+        
+        return completions
     }
     
 }
