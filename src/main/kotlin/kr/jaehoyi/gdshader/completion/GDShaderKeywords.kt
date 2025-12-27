@@ -58,8 +58,4 @@ object GDShaderKeywords {
     
     val PARAMETER_QUALIFIERS = ParameterQualifier.entries.filter { it != ParameterQualifier.NONE }.map { it.text }.toSet()
     
-    val CONTROL_STATEMENT_STARTERS = setOf(
-        "if", "for", "while", "do", "switch"
-    )
-    
 }

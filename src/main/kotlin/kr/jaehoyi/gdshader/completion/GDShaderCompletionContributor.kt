@@ -571,6 +571,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         val completions = arrayListOf<LookupElement>()
         
         completions += GDShaderLookupElements.CONTROL_STATEMENT_STARTERS
+        completions += GDShaderLookupElements.DO_KEYWORD
         completions += GDShaderLookupElements.RETURN_KEYWORD
         completions += GDShaderLookupElements.DISCARD_KEYWORD
         completions += GDShaderLookupElements.BUILTIN_TYPES

@@ -50,11 +50,20 @@ object GDShaderLookupElements {
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
     
-    val CONTROL_STATEMENT_STARTERS = GDShaderKeywords.CONTROL_STATEMENT_STARTERS.map {
+    val CONTROL_STATEMENT_STARTERS = listOf("if", "for", "while", "switch").map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
-            .withInsertHandler(AddSpaceInsertHandler(true))
+            .withInsertHandler { context, _ ->
+                val offset = context.tailOffset
+
+                context.document.insertString(offset, " ()")
+                context.editor.caretModel.moveToOffset(offset + 2)
+            }
     }
+    
+    val DO_KEYWORD = LookupElementBuilder.create("do")
+        .withBoldness(true)
+        .withInsertHandler(AddSpaceInsertHandler(true))
     
     val ELSE_KEYWORD = LookupElementBuilder.create("else")
         .withBoldness(true)
@@ -113,7 +122,7 @@ object GDShaderLookupElements {
                 .withBoldness(true)
                 .withIcon(AllIcons.Nodes.Function)
                 .appendTailText(
-                    "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.type} ${param.name}" } + ")",
+                    "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.type.text} ${param.name}" } + ")",
                     true
                 )
                 .withTypeText(functionSpec.returnType.text, true)
