@@ -161,6 +161,33 @@ object GDShaderLookupElements {
                 }
         }
     }
+
+    val PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE = GDShaderBuiltins.PROCESSING_FUNCTIONS.mapValues {
+        it.value.map { functionContext ->
+            LookupElementBuilder.create(functionContext.text)
+                .withBoldness(true)
+                .withIcon(AllIcons.Nodes.Template)
+                .withTypeText("template")
+                .withInsertHandler { context, element ->
+                    val document = context.document
+                    val editor = context.editor
+
+                    val startOffset = context.startOffset
+                    val tailOffset = context.tailOffset
+
+                    val suffix = "() {\n    \n}"
+                    document.insertString(tailOffset, suffix)
+
+                    val prefix = "void "
+                    document.insertString(startOffset, prefix)
+
+                    val nameLength = element.lookupString.length
+                    val cursorOffset = startOffset + prefix.length + nameLength + suffix.length - 2
+
+                    editor.caretModel.moveToOffset(cursorOffset)
+                }
+        }
+    }
     
     val CONSTRUCTORS = GDShaderKeywords.BUILTIN_TYPES.map { 
         LookupElementBuilder.create(it)

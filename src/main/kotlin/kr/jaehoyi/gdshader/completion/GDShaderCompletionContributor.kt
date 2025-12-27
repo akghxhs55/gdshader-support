@@ -50,6 +50,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         extendConstantDeclaration()
         extendVaryingDeclaration()
         extendFunctionDeclaration()
+        extendProcessingFunctionDeclaration()
         extendStructDeclaration()
         extendStatement()
     }
@@ -439,6 +440,26 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     if (prevLeaf.elementType == GDShaderTypes.BRACKET_OPEN) {
                         result.addAllElements(GDShaderLookupElements.INTEGER_TYPES)
                     }
+                }
+            }
+        )
+    
+    private fun extendProcessingFunctionDeclaration() =
+        extend(
+            CompletionType.BASIC,
+            GDShaderPatterns.TOP_LEVEL,
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    
+                    val file = position.containingFile as? GDShaderFile ?: return
+                    val shaderType = GDShaderPsiImplUtil.getShaderType(file) ?: return
+                    
+                    result.addAllElements(GDShaderLookupElements.PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE[shaderType] ?: emptyList())
                 }
             }
         )
