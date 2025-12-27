@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import kr.jaehoyi.gdshader.model.GDShaderBuiltins
 import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.model.ParameterQualifier
 
 object GDShaderLookupElements {
     
@@ -106,16 +107,33 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    val BUILTIN_FUNCTIONS = GDShaderBuiltins.GLOBAL_FUNCTIONS.map {
-        LookupElementBuilder.create(it.name)
-            .withBoldness(true)
-            .withIcon(AllIcons.Nodes.Function)
-            .appendTailText(
-                "(" + it.parameters.joinToString(", ") { param -> "${param.type} ${param.name}" } + ")", 
-                true
-            )
-            .withTypeText(it.returnType.text, true)
-            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+    val BUILTIN_FUNCTIONS = GDShaderBuiltins.FUNCTIONS.mapValues {
+        it.value.map { functionSpec ->
+            LookupElementBuilder.create(functionSpec.name)
+                .withBoldness(true)
+                .withIcon(AllIcons.Nodes.Function)
+                .appendTailText(
+                    "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.type} ${param.name}" } + ")",
+                    true
+                )
+                .withTypeText(functionSpec.returnType.text, true)
+                .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+        }
+    }
+    
+    val BUILTIN_VARIABLES = GDShaderBuiltins.VARIABLES.mapValues {
+        it.value.map { variableSpec ->
+            val icon =
+                if (variableSpec.isConstant || variableSpec.parameterQualifier == ParameterQualifier.IN)
+                    AllIcons.Nodes.Constant
+                else
+                    AllIcons.Nodes.Variable
+            
+            LookupElementBuilder.create(variableSpec.name)
+                .withBoldness(true)
+                .withIcon(icon)
+                .withTypeText(variableSpec.type.text, true)
+        }
     }
     
     val CONSTRUCTORS = GDShaderKeywords.BUILTIN_TYPES.map { 

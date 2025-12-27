@@ -33,6 +33,8 @@ import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
 import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil
 
 class GDShaderCompletionContributor : CompletionContributor() {
     
@@ -235,7 +237,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 6. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addExpressionCompletions()
+                        result.addExpressionCompletions(position)
                     }
                 }
             }
@@ -291,7 +293,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 4. Inside initializer expression
                     if (position.parent.elementType == GDShaderTypes.VARIABLE_NAME_REF) {
-                        result.addExpressionCompletions()
+                        result.addExpressionCompletions(position)
                     }
                 }
             }
@@ -489,7 +491,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     val position = parameters.position
 
                     if (position.parentOfType<GDShaderVariableNameRef>() != null) {
-                        result.addExpressionCompletions()
+                        result.addExpressionCompletions(position)
                     }
 
                     val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return
@@ -498,11 +500,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         GDShaderTypes.CURLY_BRACKET_OPEN,
                         GDShaderTypes.CF_ELSE,
                         GDShaderTypes.CF_DO -> {
-                            result.addCommonStatementCompletions(position)
+                            result.addStatementCompletions(position)
                         }
 
                         GDShaderTypes.CURLY_BRACKET_CLOSE -> {
-                            result.addCommonStatementCompletions(position)
+                            result.addStatementCompletions(position)
                             
                             val prevStatement = prevLeaf.parentOfType<GDShaderIfStatement>() ?: return
 
@@ -514,18 +516,18 @@ class GDShaderCompletionContributor : CompletionContributor() {
 
                         GDShaderTypes.SEMICOLON -> {
                             if (prevLeaf.parent is GDShaderForStatement) {
-                                result.addExpressionCompletions()
+                                result.addExpressionCompletions(position)
                             } else {
-                                result.addCommonStatementCompletions(position)
+                                result.addStatementCompletions(position)
                             }
                         }
 
                         GDShaderTypes.COLON -> {
                             if (prevLeaf.parent.elementType == GDShaderTypes.CASE_CLAUSE) {
-                                result.addCommonStatementCompletions(position)
+                                result.addStatementCompletions(position)
                                 result.addElement(GDShaderLookupElements.BREAK_KEYWORD)
                             } else {
-                                result.addExpressionCompletions()
+                                result.addExpressionCompletions(position)
                             }
                         }
 
@@ -534,7 +536,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                                 prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT ||
                                 prevLeaf.parent.elementType == GDShaderTypes.WHILE_STATEMENT
                             ) {
-                                result.addCommonStatementCompletions(position)
+                                result.addStatementCompletions(position)
                             }
                         }
 
@@ -543,7 +545,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         GDShaderTypes.CF_RETURN,
                         GDShaderTypes.QUESTION,
                         in GDShaderTokenSets.OPERATORS -> {
-                            result.addExpressionCompletions()
+                            result.addExpressionCompletions(position)
                         }
 
                         GDShaderTypes.PARENTHESIS_OPEN -> {
@@ -551,7 +553,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                                 result.addAllElements(GDShaderLookupElements.PRECISIONS)
                                 result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
                             } else {
-                                result.addExpressionCompletions()
+                                result.addExpressionCompletions(position)
                             }
                         }
                     }
@@ -559,14 +561,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
             }
         )
     
-    private fun CompletionResultSet.addCommonStatementCompletions(position: PsiElement) {
-        println(GDShaderLookupElements.BUILTIN_TYPES.map { it.lookupString })
-        
+    private fun CompletionResultSet.addStatementCompletions(position: PsiElement) {
         this.addAllElements(GDShaderLookupElements.CONTROL_STATEMENT_STARTERS)
         this.addElement(GDShaderLookupElements.RETURN_KEYWORD)
         this.addElement(GDShaderLookupElements.DISCARD_KEYWORD)
         this.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
-        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS)
         this.addAllElements(GDShaderLookupElements.PRECISIONS)
         this.addElement(GDShaderLookupElements.CONST_KEYWORD)
         
@@ -581,11 +580,22 @@ class GDShaderCompletionContributor : CompletionContributor() {
         if (position.parentOfType<GDShaderSwitchStatement>() != null) {
             this.addElement(GDShaderLookupElements.BREAK_KEYWORD)
         }
+        
+        this.addExpressionCompletions(position)
     }
     
-    private fun CompletionResultSet.addExpressionCompletions() {
+    private fun CompletionResultSet.addExpressionCompletions(position: PsiElement) {
+        val file = position.containingFile as? GDShaderFile ?: return
+        val shaderType = GDShaderPsiImplUtil.getShaderType(file)
+        val functionContext = GDShaderPsiImplUtil.getFunctionContext(position)
+        
+        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList())
+        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList())
+
+        this.addAllElements(GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList())
+        this.addAllElements(GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList())
+
         this.addAllElements(GDShaderLookupElements.CONSTRUCTORS)
-        this.addAllElements(GDShaderLookupElements.BUILTIN_FUNCTIONS)
         this.addAllElements(GDShaderLookupElements.BOOLEAN_LITERALS)
     }
     

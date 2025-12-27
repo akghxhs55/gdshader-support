@@ -1,6 +1,6 @@
 package kr.jaehoyi.gdshader.model
 
-data class BuiltinFunctionSpec(
+data class FunctionSpec(
     val name: String,
     val returnType: DataType,
     val parameters: List<ParameterSpec>,

@@ -2,1586 +2,38 @@ package kr.jaehoyi.gdshader.model
 
 object GDShaderBuiltins {
     
-    val GLOBAL_FUNCTIONS = listOf(
-        BuiltinFunctionSpec(
-            name = "radians",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("degrees", DataType.VEC_TYPE)
-            ),
-        ),
+    val FUNCTIONS: Map<Pair<ShaderType, FunctionContext>, List<FunctionSpec>> = mapOf(
+        ShaderType.SPATIAL to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
+
+        ShaderType.CANVAS_ITEM to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
+
+        ShaderType.CANVAS_ITEM to FunctionContext.FRAGMENT to sdfFunctions,
         
-        BuiltinFunctionSpec(
-            name = "degrees",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("radians", DataType.VEC_TYPE)
-            ),
-        ),
+        ShaderType.CANVAS_ITEM to FunctionContext.LIGHT to sdfFunctions,
+
+        ShaderType.PARTICLES to FunctionContext.COMMON to globalFunctions,
         
-        BuiltinFunctionSpec(
-            name = "sin",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "cos",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "tan",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "asin",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "acos",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "atan",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("y_over_x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "atan",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("y", DataType.VEC_TYPE),
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "sinh",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "cosh",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "tanh",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "asinh",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "acosh",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "atanh",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "pow",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "exp",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "exp2",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "log",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "log2",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "sqrt",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "inversesqrt",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "abs",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "abs",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_INT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "sign",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "sign",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_INT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "floor",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "round",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "roundEven",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "trunc",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "ceil",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "fract",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "mod",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "mod",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "modf",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("i", DataType.VEC_TYPE, qualifier = ParameterQualifier.OUT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "min",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "min",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "min",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_INT_TYPE),
-                ParameterSpec("b", DataType.VEC_INT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "min",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_INT_TYPE),
-                ParameterSpec("b", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "min",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_UINT_TYPE),
-                ParameterSpec("b", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "min",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_UINT_TYPE),
-                ParameterSpec("b", DataType.UINT)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "max",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "max",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "max",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_INT_TYPE),
-                ParameterSpec("b", DataType.VEC_INT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "max",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_INT_TYPE),
-                ParameterSpec("b", DataType.INT)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "max",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_UINT_TYPE),
-                ParameterSpec("b", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "max",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_UINT_TYPE),
-                ParameterSpec("b", DataType.UINT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "clamp",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("min", DataType.VEC_TYPE),
-                ParameterSpec("max", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "clamp",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("min", DataType.FLOAT),
-                ParameterSpec("max", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "clamp",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_INT_TYPE),
-                ParameterSpec("min", DataType.VEC_INT_TYPE),
-                ParameterSpec("max", DataType.VEC_INT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "clamp",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_INT_TYPE),
-                ParameterSpec("min", DataType.INT),
-                ParameterSpec("max", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "clamp",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_UINT_TYPE),
-                ParameterSpec("min", DataType.VEC_UINT_TYPE),
-                ParameterSpec("max", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "clamp",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_UINT_TYPE),
-                ParameterSpec("min", DataType.UINT),
-                ParameterSpec("max", DataType.UINT)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "mix",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE),
-                ParameterSpec("c", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "mix",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE),
-                ParameterSpec("c", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "mix",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE),
-                ParameterSpec("c", DataType.VEC_BOOL_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "fma",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE),
-                ParameterSpec("c", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "step",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "step",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.FLOAT),
-                ParameterSpec("b", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "smoothstep",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE),
-                ParameterSpec("c", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "smoothstep",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("a", DataType.FLOAT),
-                ParameterSpec("b", DataType.FLOAT),
-                ParameterSpec("c", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "isnan",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "isinf",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "floatBitsToInt",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "floatBitsToUint",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "intBitsToFloat",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_INT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "uintBitsToFloat",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "length",
-            returnType = DataType.FLOAT,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "distance",
-            returnType = DataType.FLOAT,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dot",
-            returnType = DataType.FLOAT,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC_TYPE),
-                ParameterSpec("b", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "cross",
-            returnType = DataType.VEC3,
-            parameters = listOf(
-                ParameterSpec("a", DataType.VEC3),
-                ParameterSpec("b", DataType.VEC3)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "normalize",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "reflect",
-            returnType = DataType.VEC3,
-            parameters = listOf(
-                ParameterSpec("I", DataType.VEC3),
-                ParameterSpec("N", DataType.VEC3)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "refract",
-            returnType = DataType.VEC3,
-            parameters = listOf(
-                ParameterSpec("I", DataType.VEC3),
-                ParameterSpec("N", DataType.VEC3),
-                ParameterSpec("eta", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "faceforward",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("N", DataType.VEC_TYPE),
-                ParameterSpec("I", DataType.VEC_TYPE),
-                ParameterSpec("Nref", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "matrixCompMult",
-            returnType = DataType.MAT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.MAT_TYPE),
-                ParameterSpec("y", DataType.MAT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "outerProduct",
-            returnType = DataType.MAT_TYPE,
-            parameters = listOf(
-                ParameterSpec("column", DataType.VEC_TYPE),
-                ParameterSpec("row", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "transpose",
-            returnType = DataType.MAT_TYPE,
-            parameters = listOf(
-                ParameterSpec("m", DataType.MAT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "determinant",
-            returnType = DataType.FLOAT,
-            parameters = listOf(
-                ParameterSpec("m", DataType.MAT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "inverse",
-            returnType = DataType.MAT_TYPE,
-            parameters = listOf(
-                ParameterSpec("m", DataType.MAT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "lessThan",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "greaterThan",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "lessThanEqual",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "greaterThanEqual",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "equal",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "notEqual",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec("y", DataType.VEC_TYPE),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "any",
-            returnType = DataType.BOOL,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_BOOL_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "all",
-            returnType = DataType.BOOL,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_BOOL_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "not",
-            returnType = DataType.VEC_BOOL_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_BOOL_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureSize",
-            returnType = DataType.IVEC2,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureSize",
-            returnType = DataType.IVEC2,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureSize",
-            returnType = DataType.IVEC2,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureSize",
-            returnType = DataType.IVEC3,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureSize",
-            returnType = DataType.IVEC3,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLod",
-            returnType = DataType.VEC2,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLod",
-            returnType = DataType.VEC3,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("p", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLod",
-            returnType = DataType.VEC2,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLod",
-            returnType = DataType.VEC2,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE),
-                ParameterSpec("p", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLevels",
-            returnType = DataType.INT,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLevels",
-            returnType = DataType.INT,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLevels",
-            returnType = DataType.INT,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureQueryLevels",
-            returnType = DataType.INT,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texture",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC2),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texture",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texture",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texture",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texture",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texture",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLEREXTERNALOES),
-                ParameterSpec("p", DataType.VEC2),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProj",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProj",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProj",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("bias", DataType.FLOAT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureLod",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC2),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureLod",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureLod",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureLod",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureLod",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProjLod",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProjLod",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProjLod",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("lod", DataType.FLOAT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGrad",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC2),
-                ParameterSpec("dPdx", DataType.VEC2),
-                ParameterSpec("dPdy", DataType.VEC2),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGrad",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("dPdx", DataType.VEC2),
-                ParameterSpec("dPdy", DataType.VEC2),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGrad",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("dPdx", DataType.VEC2),
-                ParameterSpec("dPdy", DataType.VEC2),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGrad",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("dPdx", DataType.VEC3),
-                ParameterSpec("dPdy", DataType.VEC3),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGrad",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("dPdx", DataType.VEC3),
-                ParameterSpec("dPdy", DataType.VEC3),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProjGrad",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("dPdx", DataType.VEC2),
-                ParameterSpec("dPdy", DataType.VEC2),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProjGrad",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("dPdx", DataType.VEC2),
-                ParameterSpec("dPdy", DataType.VEC2),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureProjGrad",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.VEC4),
-                ParameterSpec("dPdx", DataType.VEC3),
-                ParameterSpec("dPdy", DataType.VEC3),
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texelFetch",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.IVEC2),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texelFetch",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("p", DataType.IVEC3),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "texelFetch",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER3D),
-                ParameterSpec("p", DataType.IVEC3),
-                ParameterSpec("lod", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGather",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2D),
-                ParameterSpec("p", DataType.VEC2),
-                ParameterSpec("comps", DataType.INT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGather",
-            returnType = DataType.GVEC4_TYPE,
-            parameters = listOf(
-                ParameterSpec("s", DataType.GSAMPLER2DARRAY),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("comps", DataType.INT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "textureGather",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("s", DataType.SAMPLERCUBE),
-                ParameterSpec("p", DataType.VEC3),
-                ParameterSpec("comps", DataType.INT, isOptional = true)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dFdx",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dFdxCoarse",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dFdxFine",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dFdy",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dFdyCoarse",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "dFdyFine",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "fwidth",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "fwidthCoarse",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "fwidthFine",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("p", DataType.VEC_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "packHalf2x16",
-            returnType = DataType.UINT,
-            parameters = listOf(
-                ParameterSpec("v", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "unpackHalf2x16",
-            returnType = DataType.VEC2,
-            parameters = listOf(
-                ParameterSpec("v", DataType.UINT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "packUnorm2x16",
-            returnType = DataType.UINT,
-            parameters = listOf(
-                ParameterSpec("v", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "unpackUnorm2x16",
-            returnType = DataType.VEC2,
-            parameters = listOf(
-                ParameterSpec("v", DataType.UINT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "packSnorm2x16",
-            returnType = DataType.UINT,
-            parameters = listOf(
-                ParameterSpec("v", DataType.VEC2)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "unpackSnorm2x16",
-            returnType = DataType.VEC2,
-            parameters = listOf(
-                ParameterSpec("v", DataType.UINT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "packUnorm4x8",
-            returnType = DataType.UINT,
-            parameters = listOf(
-                ParameterSpec("v", DataType.VEC4)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "unpackUnorm4x8",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("v", DataType.UINT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "packSnorm4x8",
-            returnType = DataType.UINT,
-            parameters = listOf(
-                ParameterSpec("v", DataType.VEC4)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "unpackSnorm4x8",
-            returnType = DataType.VEC4,
-            parameters = listOf(
-                ParameterSpec("v", DataType.UINT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "bitfieldExtract",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_INT_TYPE),
-                ParameterSpec("offset", DataType.INT),
-                ParameterSpec("bits", DataType.INT)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "bitfieldExtract",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_UINT_TYPE),
-                ParameterSpec("offset", DataType.INT),
-                ParameterSpec("bits", DataType.INT)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "bitfieldInsert",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("base", DataType.VEC_INT_TYPE),
-                ParameterSpec("insert", DataType.VEC_INT_TYPE),
-                ParameterSpec("offset", DataType.INT),
-                ParameterSpec("bits", DataType.INT)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "bitfieldInsert",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("base", DataType.VEC_UINT_TYPE),
-                ParameterSpec("insert", DataType.VEC_UINT_TYPE),
-                ParameterSpec("offset", DataType.INT),
-                ParameterSpec("bits", DataType.INT)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "bitfieldReverse",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_INT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "bitfieldReverse",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "bitCount",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_INT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "bitCount",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "findLSB",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_INT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "findLSB",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "findMSB",
-            returnType = DataType.VEC_INT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_INT_TYPE)
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "findMSB",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("value", DataType.VEC_UINT_TYPE)
-            ),
-        ),
-
-        BuiltinFunctionSpec(
-            name = "imulExtended",
-            returnType = DataType.VOID,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_INT_TYPE),
-                ParameterSpec("y", DataType.VEC_INT_TYPE),
-                ParameterSpec(
-                    "msb",
-                    DataType.VEC_INT_TYPE,
-                    qualifier = ParameterQualifier.OUT
+        ShaderType.PARTICLES to FunctionContext.PROCESS to listOf(
+            FunctionSpec(
+                name = "emit_subparticle",
+                returnType = DataType.BOOL,
+                parameters = listOf(
+                    ParameterSpec("xform", DataType.MAT4),
+                    ParameterSpec("velocity", DataType.VEC3),
+                    ParameterSpec("color", DataType.VEC4),
+                    ParameterSpec("custom", DataType.VEC4),
+                    ParameterSpec("flags", DataType.UINT),
                 ),
-                ParameterSpec(
-                    "lsb",
-                    DataType.VEC_INT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                )
             ),
         ),
-        
-        BuiltinFunctionSpec(
-            name = "umulExtended",
-            returnType = DataType.VOID,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_UINT_TYPE),
-                ParameterSpec("y", DataType.VEC_UINT_TYPE),
-                ParameterSpec(
-                    "msb",
-                    DataType.VEC_UINT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                ),
-                ParameterSpec(
-                    "lsb",
-                    DataType.VEC_UINT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                )
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "uaddCarry",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_UINT_TYPE),
-                ParameterSpec("y", DataType.VEC_UINT_TYPE),
-                ParameterSpec(
-                    "carry",
-                    DataType.VEC_UINT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                )
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "usubBorrow",
-            returnType = DataType.VEC_UINT_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_UINT_TYPE),
-                ParameterSpec("y", DataType.VEC_UINT_TYPE),
-                ParameterSpec(
-                    "borrow",
-                    DataType.VEC_UINT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                )
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "ldexp",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec(
-                    "exp",
-                    DataType.VEC_INT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                )
-            ),
-        ),
-        
-        BuiltinFunctionSpec(
-            name = "frexp",
-            returnType = DataType.VEC_TYPE,
-            parameters = listOf(
-                ParameterSpec("x", DataType.VEC_TYPE),
-                ParameterSpec(
-                    "exp",
-                    DataType.VEC_INT_TYPE,
-                    qualifier = ParameterQualifier.OUT
-                )
-            ),
-        ),
+
+        ShaderType.SKY to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
+
+        ShaderType.FOG to FunctionContext.COMMON to globalFunctions,
     )
 
     val VARIABLES: Map<Pair<ShaderType, FunctionContext>, List<VariableSpec>> = mapOf(
-        ShaderType.SPATIAL to FunctionContext.GLOBAL to listOf(
-            VariableSpec(
-                name = "TIME",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-
-            VariableSpec(
-                name = "PI",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-
-            VariableSpec(
-                name = "TAU",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-
-            VariableSpec(
-                name = "E",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-
+        ShaderType.SPATIAL to FunctionContext.COMMON to globalVariables + listOf(
             VariableSpec(
                 name = "OUTPUT_IS_SRGB",
                 type = DataType.BOOL,
@@ -2325,31 +777,7 @@ object GDShaderBuiltins {
             ),
         ),
         
-        ShaderType.CANVAS_ITEM to FunctionContext.GLOBAL to listOf(
-            VariableSpec(
-                name = "TIME",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "PI",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "TAU",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "E",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-        ),
+        ShaderType.CANVAS_ITEM to FunctionContext.COMMON to globalVariables,
         
         ShaderType.CANVAS_ITEM to FunctionContext.VERTEX to listOf(
             VariableSpec(
@@ -2658,31 +1086,7 @@ object GDShaderBuiltins {
             ),
         ),
 
-        ShaderType.PARTICLES to FunctionContext.GLOBAL to listOf(
-            VariableSpec(
-                name = "TIME",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "PI",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "TAU",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "E",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-        ),
+        ShaderType.PARTICLES to FunctionContext.COMMON to globalVariables,
         
         ShaderType.PARTICLES to FunctionContext.START to listOf(
             VariableSpec(
@@ -3000,13 +1404,7 @@ object GDShaderBuiltins {
             ),
         ),
 
-        ShaderType.SKY to FunctionContext.GLOBAL to listOf(
-            VariableSpec(
-                name = "TIME",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
+        ShaderType.SKY to FunctionContext.COMMON to globalVariables + listOf(
             VariableSpec(
                 name = "POSITION",
                 type = DataType.VEC3,
@@ -3065,24 +1463,6 @@ object GDShaderBuiltins {
                 type = DataType.FLOAT,
                 parameterQualifier = ParameterQualifier.IN,
             ),
-
-            VariableSpec(
-                name = "PI",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "TAU",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "E",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
         ),
         
         ShaderType.SKY to FunctionContext.SKY to listOf(
@@ -3135,31 +1515,7 @@ object GDShaderBuiltins {
             ),
         ),
 
-        ShaderType.FOG to FunctionContext.GLOBAL to listOf(
-            VariableSpec(
-                name = "TIME",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "PI",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "TAU",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-            
-            VariableSpec(
-                name = "E",
-                type = DataType.FLOAT,
-                parameterQualifier = ParameterQualifier.IN,
-            ),
-        ),
+        ShaderType.FOG to FunctionContext.COMMON to globalVariables,
         
         ShaderType.FOG to FunctionContext.FOG to listOf(
             VariableSpec(
@@ -3213,3 +1569,1619 @@ object GDShaderBuiltins {
     )
     
 }
+
+private val globalFunctions = listOf(
+    FunctionSpec(
+        name = "radians",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("degrees", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "degrees",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("radians", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "sin",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "cos",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "tan",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "asin",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "acos",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "atan",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("y_over_x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "atan",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("y", DataType.VEC_TYPE),
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "sinh",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "cosh",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "tanh",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "asinh",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "acosh",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "atanh",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "pow",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "exp",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "exp2",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "log",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "log2",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "sqrt",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "inversesqrt",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "abs",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "abs",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "sign",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "sign",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "floor",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "round",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "roundEven",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "trunc",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "ceil",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "fract",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "mod",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "mod",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "modf",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("i", DataType.VEC_TYPE, qualifier = ParameterQualifier.OUT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "min",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "min",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "min",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_INT_TYPE),
+            ParameterSpec("b", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "min",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_INT_TYPE),
+            ParameterSpec("b", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "min",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_UINT_TYPE),
+            ParameterSpec("b", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "min",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_UINT_TYPE),
+            ParameterSpec("b", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "max",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "max",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "max",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_INT_TYPE),
+            ParameterSpec("b", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "max",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_INT_TYPE),
+            ParameterSpec("b", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "max",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_UINT_TYPE),
+            ParameterSpec("b", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "max",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_UINT_TYPE),
+            ParameterSpec("b", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "clamp",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("min", DataType.VEC_TYPE),
+            ParameterSpec("max", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "clamp",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("min", DataType.FLOAT),
+            ParameterSpec("max", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "clamp",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_INT_TYPE),
+            ParameterSpec("min", DataType.VEC_INT_TYPE),
+            ParameterSpec("max", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "clamp",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_INT_TYPE),
+            ParameterSpec("min", DataType.INT),
+            ParameterSpec("max", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "clamp",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_UINT_TYPE),
+            ParameterSpec("min", DataType.VEC_UINT_TYPE),
+            ParameterSpec("max", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "clamp",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_UINT_TYPE),
+            ParameterSpec("min", DataType.UINT),
+            ParameterSpec("max", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "mix",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE),
+            ParameterSpec("c", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "mix",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE),
+            ParameterSpec("c", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "mix",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE),
+            ParameterSpec("c", DataType.VEC_BOOL_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "fma",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE),
+            ParameterSpec("c", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "step",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "step",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.FLOAT),
+            ParameterSpec("b", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "smoothstep",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE),
+            ParameterSpec("c", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "smoothstep",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("a", DataType.FLOAT),
+            ParameterSpec("b", DataType.FLOAT),
+            ParameterSpec("c", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "isnan",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "isinf",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "floatBitsToInt",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "floatBitsToUint",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "intBitsToFloat",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "uintBitsToFloat",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "length",
+        returnType = DataType.FLOAT,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "distance",
+        returnType = DataType.FLOAT,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dot",
+        returnType = DataType.FLOAT,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC_TYPE),
+            ParameterSpec("b", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "cross",
+        returnType = DataType.VEC3,
+        parameters = listOf(
+            ParameterSpec("a", DataType.VEC3),
+            ParameterSpec("b", DataType.VEC3)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "normalize",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "reflect",
+        returnType = DataType.VEC3,
+        parameters = listOf(
+            ParameterSpec("I", DataType.VEC3),
+            ParameterSpec("N", DataType.VEC3)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "refract",
+        returnType = DataType.VEC3,
+        parameters = listOf(
+            ParameterSpec("I", DataType.VEC3),
+            ParameterSpec("N", DataType.VEC3),
+            ParameterSpec("eta", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "faceforward",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("N", DataType.VEC_TYPE),
+            ParameterSpec("I", DataType.VEC_TYPE),
+            ParameterSpec("Nref", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "matrixCompMult",
+        returnType = DataType.MAT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.MAT_TYPE),
+            ParameterSpec("y", DataType.MAT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "outerProduct",
+        returnType = DataType.MAT_TYPE,
+        parameters = listOf(
+            ParameterSpec("column", DataType.VEC_TYPE),
+            ParameterSpec("row", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "transpose",
+        returnType = DataType.MAT_TYPE,
+        parameters = listOf(
+            ParameterSpec("m", DataType.MAT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "determinant",
+        returnType = DataType.FLOAT,
+        parameters = listOf(
+            ParameterSpec("m", DataType.MAT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "inverse",
+        returnType = DataType.MAT_TYPE,
+        parameters = listOf(
+            ParameterSpec("m", DataType.MAT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "lessThan",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "greaterThan",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "lessThanEqual",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "greaterThanEqual",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "equal",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "notEqual",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec("y", DataType.VEC_TYPE),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "any",
+        returnType = DataType.BOOL,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_BOOL_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "all",
+        returnType = DataType.BOOL,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_BOOL_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "not",
+        returnType = DataType.VEC_BOOL_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_BOOL_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureSize",
+        returnType = DataType.IVEC2,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureSize",
+        returnType = DataType.IVEC2,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureSize",
+        returnType = DataType.IVEC2,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureSize",
+        returnType = DataType.IVEC3,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureSize",
+        returnType = DataType.IVEC3,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLevels",
+        returnType = DataType.INT,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLevels",
+        returnType = DataType.INT,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLevels",
+        returnType = DataType.INT,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLevels",
+        returnType = DataType.INT,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC2),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLEREXTERNALOES),
+            ParameterSpec("p", DataType.VEC2),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProj",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProj",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProj",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("bias", DataType.FLOAT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureLod",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC2),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureLod",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureLod",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureLod",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureLod",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProjLod",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProjLod",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProjLod",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("lod", DataType.FLOAT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGrad",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC2),
+            ParameterSpec("dPdx", DataType.VEC2),
+            ParameterSpec("dPdy", DataType.VEC2),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGrad",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("dPdx", DataType.VEC2),
+            ParameterSpec("dPdy", DataType.VEC2),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGrad",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("dPdx", DataType.VEC2),
+            ParameterSpec("dPdy", DataType.VEC2),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGrad",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("dPdx", DataType.VEC3),
+            ParameterSpec("dPdy", DataType.VEC3),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGrad",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBEARRAY),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("dPdx", DataType.VEC3),
+            ParameterSpec("dPdy", DataType.VEC3),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProjGrad",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("dPdx", DataType.VEC2),
+            ParameterSpec("dPdy", DataType.VEC2),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProjGrad",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("dPdx", DataType.VEC2),
+            ParameterSpec("dPdy", DataType.VEC2),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureProjGrad",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC4),
+            ParameterSpec("dPdx", DataType.VEC3),
+            ParameterSpec("dPdy", DataType.VEC3),
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texelFetch",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.IVEC2),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texelFetch",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("p", DataType.IVEC3),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texelFetch",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.IVEC3),
+            ParameterSpec("lod", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGather",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC2),
+            ParameterSpec("comps", DataType.INT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGather",
+        returnType = DataType.GVEC4_TYPE,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("comps", DataType.INT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureGather",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE),
+            ParameterSpec("p", DataType.VEC3),
+            ParameterSpec("comps", DataType.INT, isOptional = true)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "fwidth",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "packHalf2x16",
+        returnType = DataType.UINT,
+        parameters = listOf(
+            ParameterSpec("v", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "unpackHalf2x16",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("v", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "packUnorm2x16",
+        returnType = DataType.UINT,
+        parameters = listOf(
+            ParameterSpec("v", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "unpackUnorm2x16",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("v", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "packSnorm2x16",
+        returnType = DataType.UINT,
+        parameters = listOf(
+            ParameterSpec("v", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "unpackSnorm2x16",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("v", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "packUnorm4x8",
+        returnType = DataType.UINT,
+        parameters = listOf(
+            ParameterSpec("v", DataType.VEC4)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "unpackUnorm4x8",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("v", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "packSnorm4x8",
+        returnType = DataType.UINT,
+        parameters = listOf(
+            ParameterSpec("v", DataType.VEC4)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "unpackSnorm4x8",
+        returnType = DataType.VEC4,
+        parameters = listOf(
+            ParameterSpec("v", DataType.UINT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitfieldExtract",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_INT_TYPE),
+            ParameterSpec("offset", DataType.INT),
+            ParameterSpec("bits", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitfieldExtract",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_UINT_TYPE),
+            ParameterSpec("offset", DataType.INT),
+            ParameterSpec("bits", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitfieldInsert",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("base", DataType.VEC_INT_TYPE),
+            ParameterSpec("insert", DataType.VEC_INT_TYPE),
+            ParameterSpec("offset", DataType.INT),
+            ParameterSpec("bits", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitfieldInsert",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("base", DataType.VEC_UINT_TYPE),
+            ParameterSpec("insert", DataType.VEC_UINT_TYPE),
+            ParameterSpec("offset", DataType.INT),
+            ParameterSpec("bits", DataType.INT)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitfieldReverse",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitfieldReverse",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitCount",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "bitCount",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "findLSB",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "findLSB",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "findMSB",
+        returnType = DataType.VEC_INT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_INT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "findMSB",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("value", DataType.VEC_UINT_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "imulExtended",
+        returnType = DataType.VOID,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_INT_TYPE),
+            ParameterSpec("y", DataType.VEC_INT_TYPE),
+            ParameterSpec(
+                "msb",
+                DataType.VEC_INT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            ),
+            ParameterSpec(
+                "lsb",
+                DataType.VEC_INT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            )
+        ),
+    ),
+
+    FunctionSpec(
+        name = "umulExtended",
+        returnType = DataType.VOID,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_UINT_TYPE),
+            ParameterSpec("y", DataType.VEC_UINT_TYPE),
+            ParameterSpec(
+                "msb",
+                DataType.VEC_UINT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            ),
+            ParameterSpec(
+                "lsb",
+                DataType.VEC_UINT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            )
+        ),
+    ),
+
+    FunctionSpec(
+        name = "uaddCarry",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_UINT_TYPE),
+            ParameterSpec("y", DataType.VEC_UINT_TYPE),
+            ParameterSpec(
+                "carry",
+                DataType.VEC_UINT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            )
+        ),
+    ),
+
+    FunctionSpec(
+        name = "usubBorrow",
+        returnType = DataType.VEC_UINT_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_UINT_TYPE),
+            ParameterSpec("y", DataType.VEC_UINT_TYPE),
+            ParameterSpec(
+                "borrow",
+                DataType.VEC_UINT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            )
+        ),
+    ),
+
+    FunctionSpec(
+        name = "ldexp",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec(
+                "exp",
+                DataType.VEC_INT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            )
+        ),
+    ),
+
+    FunctionSpec(
+        name = "frexp",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("x", DataType.VEC_TYPE),
+            ParameterSpec(
+                "exp",
+                DataType.VEC_INT_TYPE,
+                qualifier = ParameterQualifier.OUT
+            )
+        ),
+    ),
+)
+
+private val fragmentShaderOnlyFunctions = listOf(
+    FunctionSpec(
+        name = "textureQueryLod",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2D),
+            ParameterSpec("p", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLod",
+        returnType = DataType.VEC3,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER2DARRAY),
+            ParameterSpec("p", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLod",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("s", DataType.GSAMPLER3D),
+            ParameterSpec("p", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "textureQueryLod",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("s", DataType.SAMPLERCUBE),
+            ParameterSpec("p", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dFdx",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dFdxCoarse",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dFdxFine",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dFdy",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dFdyCoarse",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "dFdyFine",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "fwidthCoarse",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "fwidthFine",
+        returnType = DataType.VEC_TYPE,
+        parameters = listOf(
+            ParameterSpec("p", DataType.VEC_TYPE)
+        ),
+    ),
+)
+
+private val sdfFunctions = listOf(
+    FunctionSpec(
+        name = "texture_sdf",
+        returnType = DataType.FLOAT,
+        parameters = listOf(
+            ParameterSpec("sdf_pos", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "texture_sdf_normal",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("sdf_pos", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "sdf_to_screen_uv",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("sdf_pos", DataType.VEC2)
+        ),
+    ),
+
+    FunctionSpec(
+        name = "screen_uv_to_sdf",
+        returnType = DataType.VEC2,
+        parameters = listOf(
+            ParameterSpec("uv", DataType.VEC2)
+        ),
+    ),
+)
+
+private val globalVariables = listOf(
+    VariableSpec(
+        name = "TIME",
+        type = DataType.FLOAT,
+        parameterQualifier = ParameterQualifier.IN,
+    ),
+
+    VariableSpec(
+        name = "PI",
+        type = DataType.FLOAT,
+        parameterQualifier = ParameterQualifier.IN,
+    ),
+
+    VariableSpec(
+        name = "TAU",
+        type = DataType.FLOAT,
+        parameterQualifier = ParameterQualifier.IN,
+    ),
+
+    VariableSpec(
+        name = "E",
+        type = DataType.FLOAT,
+        parameterQualifier = ParameterQualifier.IN,
+    ),
+)
