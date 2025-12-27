@@ -1555,5 +1555,1661 @@ object GDShaderBuiltins {
             ),
         ),
     )
+
+    val VARIABLES: Map<Pair<ShaderType, FunctionContext>, List<VariableSpec>> = mapOf(
+        ShaderType.SPATIAL to FunctionContext.GLOBAL to listOf(
+            VariableSpec(
+                name = "TIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "PI",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "TAU",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "E",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "OUTPUT_IS_SRGB",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CLIP_SPACE_FAR",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+        
+        ShaderType.SPATIAL to FunctionContext.VERTEX to listOf(
+            VariableSpec(
+                name = "VIEWPORT_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INV_VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "MAIN_CAM_INV_VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INV_PROJECTION_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NODE_POSITION_WORLD",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NODE_POSITION_VIEW",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CAMERA_POSITION_WORLD",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CAMERA_DIRECTION_WORLD",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CAMERA_VISIBLE_LAYERS",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INSTANCE_ID",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INSTANCE_CUSTOM",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW_INDEX",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW_MONO_LEFT",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW_RIGHT",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "EYE_OFFSET",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VERTEX",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "VERTEX_ID",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "TANGENT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "BINORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "POSITION",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "UV2",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "ROUGHNESS",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "POINT_SIZE",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "MODELVIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "MODELVIEW_NORMAL_MATRIX",
+                type = DataType.MAT3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "MODEL_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "MODEL_NORMAL_MATRIX",
+                type = DataType.MAT3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "PROJECTION_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "BONE_INDICES",
+                type = DataType.UVEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "BONE_WEIGHTS",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM0",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM1",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM2",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM3",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+
+        ShaderType.SPATIAL to FunctionContext.FRAGMENT to listOf(
+            VariableSpec(
+                name = "VIEWPORT_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FRAGCOORD",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FRONT_FACING",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV2",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "POINT_COORD",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "MODEL_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "MODEL_NORMAL_MATRIX",
+                type = DataType.MAT3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INV_VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "PROJECTION_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "INV_PROJECTION_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NODE_POSITION_WORLD",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NODE_POSITION_VIEW",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CAMERA_POSITION_WORLD",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "CAMERA_DIRECTION_WORLD",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "CAMERA_VISIBLE_LAYERS",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "VERTEX",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_VERTEX",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "VIEW_INDEX",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "VIEW_MONO_LEFT",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "VIEW_RIGHT",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "EYE_OFFSET",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "DEPTH_TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+            
+            VariableSpec(
+                name = "DEPTH",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "NORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "TANGENT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+            
+            VariableSpec(
+                name = "BINORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+            
+            VariableSpec(
+                name = "NORMAL_MAP",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "NORMAL_MAP_DEPTH",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "ALBEDO",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ALPHA",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ALPHA_SCISSOR_THRESHOLD",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ALPHA_TEXTURE_COORDINATE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "PREMUL_ALPHA_FACTOR",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "METALLIC",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "SPECULAR",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "ROUGHNESS",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "RIM",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "RIM_TINT",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "CLEARCOAT",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "CLEARCOAT_GLOSS",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ANISOTROPY",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ANISOTROPY_FLOW",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "SSS_STRENGTH",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "SSS_TRANSMITTANCE_COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "SSS_TRANSMITTANCE_DEPTH",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "SSS_TRANSMISSION_BOOST",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "BACKLIGHT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "AO",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "AO_LIGHT_AFFECT",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "EMISSION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+            
+            VariableSpec(
+                name = "FOG",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "RADIANCE",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "IRRADIANCE",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+        ),
+
+        ShaderType.SPATIAL to FunctionContext.LIGHT to listOf(
+            VariableSpec(
+                name = "VIEWPORT_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FRAGCOORD",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "MODEL_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INV_VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "PROJECTION_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INV_PROJECTION_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "NORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV2",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VIEW",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_COLOR",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SPECULAR_AMOUNT",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_IS_DIRECTIONAL",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ATTENUATION",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ALBEDO",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "BACKLIGHT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "METALLIC",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ROUGHNESS",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "DIFFUSE_LIGHT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "SPECULAR_LIGHT",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ALPHA",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+        ),
+        
+        ShaderType.CANVAS_ITEM to FunctionContext.GLOBAL to listOf(
+            VariableSpec(
+                name = "TIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "PI",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "TAU",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "E",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+        
+        ShaderType.CANVAS_ITEM to FunctionContext.VERTEX to listOf(
+            VariableSpec(
+                name = "MODEL_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CANVAS_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_MATRIX",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INSTANCE_ID",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INSTANCE_CUSTOM",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "AT_LIGHT_PASS",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "TEXTURE_PIXEL_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "VERTEX",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "VERTEX_ID",
+                type = DataType.INT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "POINT_SIZE",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM0",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM1",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+
+        ShaderType.CANVAS_ITEM to FunctionContext.FRAGMENT to listOf(
+            VariableSpec(
+                name = "FRAGCOORD",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_PIXEL_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "REGION_RECT",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "POINT_COORD",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+
+            VariableSpec(
+                name = "TEXTURE_PIXEL_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "AT_LIGHT_PASS",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SPECULAR_SHININESS_TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+
+            VariableSpec(
+                name = "SPECULAR_SHININESS",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+
+            VariableSpec(
+                name = "NORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "NORMAL_TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+
+            VariableSpec(
+                name = "NORMAL_MAP",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "NORMAL_MAP_DEPTH",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "VERTEX",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "SHADOW_VERTEX",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_VERTEX",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+        ),
+
+        ShaderType.CANVAS_ITEM to FunctionContext.LIGHT to listOf(
+            VariableSpec(
+                name = "FRAGCOORD",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "NORMAL",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "TEXTURE",
+                type = DataType.SAMPLER2D,
+            ),
+
+            VariableSpec(
+                name = "TEXTURE_PIXEL_SIZE",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "POINT_COORD",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_ENERGY",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_POSITION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_DIRECTION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_IS_DIRECTIONAL",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT_VERTEX",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHT",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "SPECULAR_SHININESS",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SHADOW_MODULATE",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+        ),
+
+        ShaderType.PARTICLES to FunctionContext.GLOBAL to listOf(
+            VariableSpec(
+                name = "TIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "PI",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "TAU",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "E",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+        
+        ShaderType.PARTICLES to FunctionContext.START to listOf(
+            VariableSpec(
+                name = "LIFETIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "DELTA",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NUMBER",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INDEX",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "EMISSION_TRANSFORM",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RANDOM_SEED",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ACTIVE",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "VELOCITY",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "TRANSFORM",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "MASS",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "USERDATAX",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_POSITION",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_ROT_SCALE",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_VELOCITY",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_COLOR",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_CUSTOM",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "EMITTER_VELOCITY",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INTERPOLATE_TO_END",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "AMOUNT_RATIO",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RESTART_POSITION",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RESTART_ROT_SCALE",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RESTART_VELOCITY",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RESTART_COLOR",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RESTART_CUSTOM",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+
+        ShaderType.PARTICLES to FunctionContext.PROCESS to listOf(
+            VariableSpec(
+                name = "LIFETIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "DELTA",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "NUMBER",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INDEX",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "EMISSION_TRANSFORM",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RANDOM_SEED",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ACTIVE",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "VELOCITY",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "TRANSFORM",
+                type = DataType.MAT4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "CUSTOM",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "MASS",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.INOUT,
+            ),
+
+            VariableSpec(
+                name = "USERDATAX",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_POSITION",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_ROT_SCALE",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_VELOCITY",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_COLOR",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "FLAG_EMIT_CUSTOM",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "EMITTER_VELOCITY",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "INTERPOLATE_TO_END",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "AMOUNT_RATIO",
+                type = DataType.UINT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RESTART",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "COLLIDED",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "COLLISION_NORMAL",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "COLLISION_DEPTH",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ATTRACTOR_FORCE",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+
+        ShaderType.SKY to FunctionContext.GLOBAL to listOf(
+            VariableSpec(
+                name = "TIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "POSITION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "RADIANCE",
+                type = DataType.SAMPLERCUBE,
+            ),
+
+            VariableSpec(
+                name = "AT_HALF_RES_PASS",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "AT_QUARTER_RES_PASS",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "AT_CUBEMAP_PASS",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHTX_ENABLED",
+                type = DataType.BOOL,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHTX_ENERGY",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHTX_DIRECTION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHTX_COLOR",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "LIGHTX_SIZE",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "PI",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "TAU",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "E",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+        
+        ShaderType.SKY to FunctionContext.SKY to listOf(
+            VariableSpec(
+                name = "EYEDIR",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SCREEN_UV",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SKY_COORDS",
+                type = DataType.VEC2,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "HALF_RES_COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "QUARTER_RES_COLOR",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "COLOR",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "ALPHA",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "FOG",
+                type = DataType.VEC4,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+        ),
+
+        ShaderType.FOG to FunctionContext.GLOBAL to listOf(
+            VariableSpec(
+                name = "TIME",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "PI",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "TAU",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+            
+            VariableSpec(
+                name = "E",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+        ),
+        
+        ShaderType.FOG to FunctionContext.FOG to listOf(
+            VariableSpec(
+                name = "WORLD_POSITION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "OBJECT_POSITION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "UVW",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SIZE",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "SDF",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.IN,
+            ),
+
+            VariableSpec(
+                name = "ALBEDO",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "DENSITY",
+                type = DataType.FLOAT,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+
+            VariableSpec(
+                name = "EMISSION",
+                type = DataType.VEC3,
+                parameterQualifier = ParameterQualifier.OUT,
+            ),
+        ),
+    )
     
 }

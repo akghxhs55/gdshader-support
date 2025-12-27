@@ -9,5 +9,6 @@ data class VariableSpec(
     val storageQualifier: StorageQualifier = StorageQualifier.LOCAL,
     val parameterQualifier: ParameterQualifier = ParameterQualifier.NONE,
     val interpolationQualifier: InterpolationQualifier = InterpolationQualifier.DEFAULT,
-    val isConstant: Boolean = false
+    val isConstant: Boolean = false,
+    val description: String? = null
 )

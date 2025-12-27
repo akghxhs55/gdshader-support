@@ -2,7 +2,7 @@ package kr.jaehoyi.gdshader.model
 
 enum class FunctionContext(val text: String) {
     
-    COMMON("common"),
+    GLOBAL("common"),
     VERTEX("vertex"),
     FRAGMENT("fragment"),
     LIGHT("light"),
