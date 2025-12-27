@@ -393,7 +393,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 3. After type
                     if (position.parentOfType<GDShaderFunctionDeclaration>() == null &&
-                        prevLeaf.elementType == GDShaderTypes.IDENTIFIER || GDShaderKeywords.BUILTIN_TYPES.contains(prevLeaf.text)
+                        prevLeaf.text == "void"
                     ) {
                         val file = position.containingFile as? GDShaderFile ?: return
                         val shaderType = GDShaderPsiImplUtil.getShaderType(file) ?: ShaderType.SPATIAL
