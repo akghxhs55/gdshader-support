@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 0.3.2-beta (2025-12-27)
+- Improved code completions
+- Improved grammar
+- Fix bugs
+
 ## 0.3.1-beta (2025-09-23)
 - Added support for Godot 4.5 (Stencil Mode)
 - Added file type support for GDShader include files (.gdshaderinc)
