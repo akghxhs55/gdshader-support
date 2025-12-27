@@ -15,7 +15,7 @@ class GDShaderCompletionTypedHandler : TypedHandlerDelegate() {
         }
         
         when (charTyped) {
-            ',' -> AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, null)
+            ',' -> AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
         
             ' ' -> {
                 val offset = editor.caretModel.offset
@@ -26,7 +26,7 @@ class GDShaderCompletionTypedHandler : TypedHandlerDelegate() {
                 val document = editor.document
                 val prevChar = document.charsSequence[offset - 1]
                 if (prevChar == ',') {
-                    AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, null)
+                    AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
                 }
             }
         }
