@@ -40,22 +40,24 @@
         <lang.parserDefinition
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.GDShaderParserDefinition" />
+        
+        <!-- Highlighting -->
         <lang.syntaxHighlighterFactory
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighterFactory" />
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.highlighter.GDShaderColorSettingsPage" />
-        <lang.braceMatcher
-            language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderBraceMatcher" />
-        <lang.quoteHandler
-            language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderQuoteHandler" />
         
         <!-- Formatting -->
         <lang.formatter
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.formatter.GDShaderFormattingModelBuilder" />
+        <lang.braceMatcher
+                language="GDShader"
+                implementationClass="kr.jaehoyi.gdshader.completion.GDShaderBraceMatcher" />
+        <lang.quoteHandler
+                language="GDShader"
+                implementationClass="kr.jaehoyi.gdshader.completion.GDShaderQuoteHandler" />
         <typedHandler implementation="kr.jaehoyi.gdshader.formatter.GDShaderTypedHandler" />
         
         <!-- Annotators -->
@@ -69,6 +71,9 @@
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderCompletionContributor" />
         <typedHandler implementation="kr.jaehoyi.gdshader.completion.GDShaderCompletionTypedHandler" />
+        
+        <!-- Color Provider -->
+        <colorProvider implementation="kr.jaehoyi.gdshader.GDShaderUniformColorProvider" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
