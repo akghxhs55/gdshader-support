@@ -28,4 +28,17 @@ object GDShaderElementFactory {
         return PsiTreeUtil.findChildOfType(file, GDShaderUniformDeclaration::class.java)
     }
     
+    fun createInitializer(project: Project, text: String): GDShaderInitializer? {
+        val fileName = "dummy.gdshader"
+        val dummyText = "const int dummy = $text;"
+        
+        val file = PsiFileFactory.getInstance(project)
+            .createFileFromText(fileName, GDShaderFileType, dummyText)
+        
+        val constantDeclaration = PsiTreeUtil.findChildOfType(file, GDShaderConstantDeclaration::class.java)
+        val constantDeclarator = constantDeclaration?.constantDeclaratorList?.constantDeclaratorList?.firstOrNull()
+        
+        return constantDeclarator?.initializer
+    }
+    
 }

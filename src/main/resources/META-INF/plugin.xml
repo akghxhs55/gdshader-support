@@ -74,6 +74,7 @@
         
         <!-- Color Provider -->
         <colorProvider implementation="kr.jaehoyi.gdshader.GDShaderUniformColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.GDShaderConstantColorProvider" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
