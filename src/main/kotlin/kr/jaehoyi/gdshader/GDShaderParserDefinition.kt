@@ -35,4 +35,4 @@ class GDShaderParserDefinition : ParserDefinition {
     
 }
 
-val FILE: IFileElementType = IFileElementType(GDShaderLanguage)
+private val FILE: IFileElementType = IFileElementType(GDShaderLanguage)
