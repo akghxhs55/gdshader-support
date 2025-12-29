@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.util
+package kr.jaehoyi.gdshader.codeinsight
 
 import java.awt.Color
 import java.util.Locale

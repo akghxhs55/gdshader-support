@@ -41,4 +41,14 @@ object GDShaderElementFactory {
         return constantDeclarator?.initializer
     }
     
+    fun createLocalVariableDeclarator(project: Project, text: String): GDShaderLocalVariableDeclarator? {
+        val fileName = "dummy.gdshader"
+        val dummyText = "void dummy() { $text }"
+        
+        val file = PsiFileFactory.getInstance(project)
+            .createFileFromText(fileName, GDShaderFileType, dummyText)
+        
+        return PsiTreeUtil.findChildOfType(file, GDShaderLocalVariableDeclarator::class.java)
+    }
+    
 }

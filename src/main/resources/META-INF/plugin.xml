@@ -73,8 +73,9 @@
         <typedHandler implementation="kr.jaehoyi.gdshader.completion.GDShaderCompletionTypedHandler" />
         
         <!-- Color Provider -->
-        <colorProvider implementation="kr.jaehoyi.gdshader.GDShaderUniformColorProvider" />
-        <colorProvider implementation="kr.jaehoyi.gdshader.GDShaderConstantColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderUniformColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderConstantColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderLocalVariableColorProvider" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />

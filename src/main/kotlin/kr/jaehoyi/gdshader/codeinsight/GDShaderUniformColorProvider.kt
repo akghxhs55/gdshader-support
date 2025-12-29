@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader
+package kr.jaehoyi.gdshader.codeinsight
 
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
@@ -9,8 +9,8 @@ import kr.jaehoyi.gdshader.psi.GDShaderElementFactory
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
-import kr.jaehoyi.gdshader.util.GDShaderColorUtil.convertColorToVecString
-import kr.jaehoyi.gdshader.util.GDShaderColorUtil.extractColorFromText
+import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.convertColorToVecString
+import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.extractColorFromText
 import java.awt.Color
 
 class GDShaderUniformColorProvider : ElementColorProvider {
