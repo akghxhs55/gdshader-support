@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## Unreleased
+- Added color picker for color values
+
 ## 0.3.2-beta (2025-12-27)
 - Improved code completions
 - Improved grammar
