@@ -6,7 +6,7 @@ import java.util.Locale
 object GDShaderColorUtil {
     
     fun extractColorFromText(text: String): Color? {
-        val regex = Regex("""vec([34])\s*\(\s*([0-9.,\s]+)\s*\)""")
+        val regex = Regex("""vec([34])\s*\(\s*([-0-9.,\s]+)\s*\)""")
         val match = regex.find(text) ?: return null
 
         val type = match.groupValues[1]
@@ -55,7 +55,11 @@ object GDShaderColorUtil {
         if (colorExcludeKeywords.any { it in lowerName }) {
             return false
         }
-        if (colorIncludeKeywords.any { it in lowerName } || colorNames.any { it == lowerName }) {
+        if (colorIncludeKeywords.any { it in lowerName }) {
+            return true
+        }
+        val words = lowerName.split(Regex("[_\\d]+"))
+        if (words.any { it in colorNames }) {
             return true
         }
         return false
