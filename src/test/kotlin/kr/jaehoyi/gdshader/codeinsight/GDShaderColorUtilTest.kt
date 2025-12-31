@@ -95,10 +95,10 @@ class GDShaderColorUtilTest {
 
     @Test
     fun `test trimming zeros`() {
-        val gray = Color(128, 128, 128)
+        val gray = Color(51, 51, 51)
         
         val result = GDShaderColorUtil.convertColorToVecString(gray, isVec4 = false)
-        assertEquals("vec3(0.502, 0.502, 0.502)", result)
+        assertEquals("vec3(0.2, 0.2, 0.2)", result)
     }
 
     @Test
