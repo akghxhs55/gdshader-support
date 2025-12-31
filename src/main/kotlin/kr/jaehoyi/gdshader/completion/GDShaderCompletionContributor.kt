@@ -406,7 +406,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
                     
-                    // 4. Inside parameter list, after COMMA or PARENTHESIS_OPEN
+                    // 4. Inside the parameter list, after COMMA or PARENTHESIS_OPEN
                     if (prevLeaf.elementType == GDShaderTypes.COMMA || prevLeaf.elementType == GDShaderTypes.PARENTHESIS_OPEN) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
                         result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
@@ -415,7 +415,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         return
                     }
                     
-                    // 5. Inside parameter list, after CONST
+                    // 5. Inside the parameter list, after CONST
                     if (prevLeaf.elementType == GDShaderTypes.CONST) {
                         result.addElement(GDShaderLookupElements.IN_KEYWORD)
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
@@ -638,7 +638,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         completions += GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
 
         completions += GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()
-        completions +=GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList()
+        completions += GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList()
 
         completions += GDShaderLookupElements.CONSTRUCTORS
         completions += GDShaderLookupElements.BOOLEAN_LITERALS

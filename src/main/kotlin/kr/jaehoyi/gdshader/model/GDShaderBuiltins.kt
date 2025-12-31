@@ -1,5 +1,7 @@
 package kr.jaehoyi.gdshader.model
 
+import java.util.EnumMap
+
 object GDShaderBuiltins {
     
     val FUNCTIONS: Map<Pair<ShaderType, FunctionContext>, List<FunctionSpec>> = mapOf(
@@ -1568,7 +1570,7 @@ object GDShaderBuiltins {
         ),
     )
     
-    val PROCESSING_FUNCTIONS: Map<ShaderType, List<FunctionContext>> = mapOf(
+    val PROCESSING_FUNCTIONS: EnumMap<ShaderType, List<FunctionContext>> = EnumMap(mapOf(
         ShaderType.SPATIAL to listOf(
             FunctionContext.VERTEX,
             FunctionContext.FRAGMENT,
@@ -1589,7 +1591,7 @@ object GDShaderBuiltins {
         ShaderType.FOG to listOf(
             FunctionContext.FOG,
         ),
-    )
+    ))
     
 }
 
