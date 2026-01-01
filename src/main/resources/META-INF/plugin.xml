@@ -72,10 +72,13 @@
             implementationClass="kr.jaehoyi.gdshader.completion.GDShaderCompletionContributor" />
         <typedHandler implementation="kr.jaehoyi.gdshader.completion.GDShaderCompletionTypedHandler" />
         
-        <!-- Color Provider -->
+        <!-- Code Insights -->
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderUniformColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderConstantColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderLocalVariableColorProvider" />
+        <codeInsight.lineMarkerProvider
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.codeinsight.GDShaderProcessingFunctionLineMarkerProvider" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
