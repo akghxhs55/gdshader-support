@@ -1,14 +1,39 @@
 package kr.jaehoyi.gdshader.psi.impl
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.ShaderType
+import kr.jaehoyi.gdshader.psi.GDShaderElementFactory
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderItem
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
+import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
+import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
+import kr.jaehoyi.gdshader.reference.GDShaderLocalReference
 
 object GDShaderPsiImplUtil {
+
+    @JvmStatic
+    fun getName(element: GDShaderVariableNameDecl): String =
+        element.text
+
+    @JvmStatic
+    fun setName(element: GDShaderVariableNameDecl, newName: String): PsiElement? {
+        val identifier = GDShaderElementFactory.createIdentifier(element.project, newName) ?: return null
+        element.firstChild.replace(identifier)
+        return element
+    }
+    
+    @JvmStatic
+    fun getNameIdentifier(element: GDShaderVariableNameDecl): PsiElement? =
+        element.node.findChildByType(GDShaderTypes.IDENTIFIER)?.psi
+    
+    @JvmStatic
+    fun getReference(element: GDShaderVariableNameRef): PsiReference =
+        GDShaderLocalReference(element, element.textRangeInParent)
     
     fun getShaderType(file: GDShaderFile): ShaderType? {
         for (child in file.children) {

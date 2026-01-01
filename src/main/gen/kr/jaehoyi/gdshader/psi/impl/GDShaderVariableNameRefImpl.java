@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
+import com.intellij.psi.PsiReference;
 
 public class GDShaderVariableNameRefImpl extends ASTWrapperPsiElement implements GDShaderVariableNameRef {
 
@@ -25,6 +26,11 @@ public class GDShaderVariableNameRefImpl extends ASTWrapperPsiElement implements
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GDShaderVisitor) accept((GDShaderVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  public @NotNull PsiReference getReference() {
+    return GDShaderPsiImplUtil.getReference(this);
   }
 
 }

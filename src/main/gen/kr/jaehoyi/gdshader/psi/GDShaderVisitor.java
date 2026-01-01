@@ -4,6 +4,7 @@ package kr.jaehoyi.gdshader.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 
 public class GDShaderVisitor extends PsiElementVisitor {
 
@@ -364,7 +365,7 @@ public class GDShaderVisitor extends PsiElementVisitor {
   }
 
   public void visitVariableNameDecl(@NotNull GDShaderVariableNameDecl o) {
-    visitPsiElement(o);
+    visitPsiNameIdentifierOwner(o);
   }
 
   public void visitVariableNameRef(@NotNull GDShaderVariableNameRef o) {
@@ -377,6 +378,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
 
   public void visitWhileStatement(@NotNull GDShaderWhileStatement o) {
     visitPsiElement(o);
+  }
+
+  public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
+    visitElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

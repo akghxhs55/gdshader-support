@@ -152,7 +152,10 @@ local_variable_declaration ::= precision? type array_size? local_variable_declar
 local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)*
 local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initializer)?
 
-variable_name_decl ::= IDENTIFIER
+variable_name_decl ::= IDENTIFIER {
+	implements="com.intellij.psi.PsiNameIdentifierOwner"
+	methods=[getName setName getNameIdentifier]
+}
 
 initializer ::= expression | initializer_list
 initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
@@ -298,6 +301,9 @@ function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argume
 argument_list ::= initializer (COMMA initializer)*
 
 variable_name_ref ::= IDENTIFIER
+{
+	methods=[getReference getName setName]
+}
 function_name_ref ::= IDENTIFIER
 struct_name_ref ::= IDENTIFIER
 struct_member_name_ref ::= IDENTIFIER

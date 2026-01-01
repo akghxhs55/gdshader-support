@@ -80,6 +80,11 @@
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.codeinsight.GDShaderProcessingFunctionLineMarkerProvider" />
         
+        <!-- Refactoring -->
+        <lang.refactoringSupport
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.refactoring.GDShaderRefactoringSupportProvider" />
+        
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
         <internalFileTemplate name="Canvas Item" />
