@@ -10,12 +10,4 @@ public interface GDShaderVariableNameRef extends PsiElement {
 
   @NotNull PsiReference getReference();
 
-  //WARNING: getName(...) is skipped
-  //matching getName(GDShaderVariableNameRef, ...)
-  //methods are not found in GDShaderPsiImplUtil
-
-  //WARNING: setName(...) is skipped
-  //matching setName(GDShaderVariableNameRef, ...)
-  //methods are not found in GDShaderPsiImplUtil
-
 }

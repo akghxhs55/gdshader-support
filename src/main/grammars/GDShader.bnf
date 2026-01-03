@@ -302,7 +302,7 @@ argument_list ::= initializer (COMMA initializer)*
 
 variable_name_ref ::= IDENTIFIER
 {
-	methods=[getReference getName setName]
+	methods=[getReference]
 }
 function_name_ref ::= IDENTIFIER
 struct_name_ref ::= IDENTIFIER
