@@ -158,7 +158,7 @@ public interface GDShaderTypes {
   IElementType INTERPOLATION_FLAT = new GDShaderTokenType("INTERPOLATION_FLAT");
   IElementType INTERPOLATION_SMOOTH = new GDShaderTokenType("INTERPOLATION_SMOOTH");
   IElementType INT_CONSTANT = new GDShaderTokenType("INT_CONSTANT");
-  IElementType LINE_COMMENT = new GDShaderTokenType("Line commnet");
+  IElementType LINE_COMMENT = new GDShaderTokenType("Line comment");
   IElementType OP_ADD = new GDShaderTokenType("OP_ADD");
   IElementType OP_AND = new GDShaderTokenType("OP_AND");
   IElementType OP_ASSIGN = new GDShaderTokenType("OP_ASSIGN");

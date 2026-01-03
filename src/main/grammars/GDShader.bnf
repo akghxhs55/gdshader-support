@@ -16,7 +16,7 @@
   
   tokens=[
   	UNTERMINATED_STRING_CONSTANT = "Unterminated string"
-  	LINE_COMMENT = "Line commnet"
+  	LINE_COMMENT = "Line comment"
   	BLOCK_COMMENT = "Block comment"
   	PP_DEFINE_LINE = "Preprocessor define line"
     PP_UNDEF_LINE = "Preprocessor undef line"
