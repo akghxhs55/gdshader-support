@@ -36,13 +36,13 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
         };
 
         void <func>fragment</func>() {
-            vec4 <lvar>texColor</lvar> = texture(image, UV);
-            COLOR = <lvar>texColor</lvar> * <uvar>color</uvar>;
+            vec4 <lvar>texColor</lvar> = texture(image, <bconst>UV</bconst>);
+            <bvar>COLOR</bvar> = <lvar>texColor</lvar> * <uvar>color</uvar>;
             int <lvar>values</lvar>[3] = { 1, 2, 3 };
             
-            for (int <lvar>i</lvar> = 0; i < 10; i++) {
-                COLOR.<member>rgb</member> += vec3(float(i) / 10.0);
-                if (i % 2 == 0) {
+            for (int <lvar>i</lvar> = 0; <lvar>i</lvar> < 10; <lvar>i</lvar>++) {
+                <bvar>COLOR</bvar>.<member>rgb</member> += vec3(float(<lvar>i</lvar>) / 10.0);
+                if (<lvar>i</lvar> % 2 == 0) {
                     <lvar>values</lvar>[i % 3] += <func>foo</func>(i, 0.5);
                     continue;
                 }
@@ -61,7 +61,9 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
         "func" to GDShaderSyntaxHighlighter.FUNCTION,
         "param" to GDShaderSyntaxHighlighter.PARAMETER,
         "struct" to GDShaderSyntaxHighlighter.STRUCT,
-        "member" to GDShaderSyntaxHighlighter.STRUCT_MEMBER
+        "member" to GDShaderSyntaxHighlighter.STRUCT_MEMBER,
+        "bvar" to GDShaderSyntaxHighlighter.BUILTIN_VARIABLE,
+        "bconst" to GDShaderSyntaxHighlighter.BUILTIN_CONSTANT,
     )
     
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> = DESCRIPTORS
@@ -79,6 +81,8 @@ private val DESCRIPTORS = arrayOf(
     AttributesDescriptor("Identifiers//Parameter", GDShaderSyntaxHighlighter.PARAMETER),
     AttributesDescriptor("Identifiers//Struct", GDShaderSyntaxHighlighter.STRUCT),
     AttributesDescriptor("Identifiers//Struct Member", GDShaderSyntaxHighlighter.STRUCT_MEMBER),
+    AttributesDescriptor("Identifiers//Builtin Variable", GDShaderSyntaxHighlighter.BUILTIN_VARIABLE),
+    AttributesDescriptor("Identifiers//Builtin Constant", GDShaderSyntaxHighlighter.BUILTIN_CONSTANT),
     AttributesDescriptor("Keyword", GDShaderSyntaxHighlighter.KEYWORD),
     AttributesDescriptor("Preprocessor", GDShaderSyntaxHighlighter.PREPROCESSOR),
     AttributesDescriptor("Hint", GDShaderSyntaxHighlighter.UNIFORM_HINT),

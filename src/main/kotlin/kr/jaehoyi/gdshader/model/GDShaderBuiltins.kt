@@ -1566,6 +1566,16 @@ object GDShaderBuiltins {
         ),
     )
     
+    private val LOOKUP_CACHE: Map<Pair<ShaderType, FunctionContext>, Map<String, VariableSpec>> by lazy {
+        VARIABLES.mapValues { (_, list) ->
+            list.associateBy { it.name }
+        }
+    }
+    
+    fun getVariable(shaderType: ShaderType, functionContext: FunctionContext, name: String): VariableSpec? {
+        return LOOKUP_CACHE[shaderType to functionContext]?.get(name)
+    }
+    
     val PROCESSING_FUNCTIONS: EnumMap<ShaderType, List<FunctionContext>> = EnumMap(mapOf(
         ShaderType.SPATIAL to listOf(
             FunctionContext.VERTEX,

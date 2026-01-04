@@ -47,6 +47,11 @@ object GDShaderPsiImplUtil {
         return null
     }
     
+    fun getShaderType(element: PsiElement): ShaderType? {
+        val gdShaderFile = element.containingFile as? GDShaderFile ?: return null
+        return getShaderType(gdShaderFile)
+    }
+    
     fun getFunctionContext(element: PsiElement): FunctionContext? {
         val functionDeclaration = element.parentOfType<GDShaderFunctionDeclaration>() ?: return null
         

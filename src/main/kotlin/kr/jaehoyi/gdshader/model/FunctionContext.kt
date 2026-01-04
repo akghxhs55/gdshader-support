@@ -14,8 +14,8 @@ enum class FunctionContext(val text: String) {
     companion object {
         private val textToFunctionContextMap = FunctionContext.entries.associateBy { it.text }
         
-        fun fromText(text: String): FunctionContext? 
-            = textToFunctionContextMap[text]
+        fun fromText(text: String): FunctionContext 
+            = textToFunctionContextMap[text] ?: COMMON
     }
     
 }

@@ -16,6 +16,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
+import kr.jaehoyi.gdshader.psi.impl.GDShaderLightVariable
 
 class GDShaderHighlightingAnnotator : Annotator {
 
@@ -33,14 +34,23 @@ class GDShaderHighlightingAnnotator : Annotator {
             }
             is GDShaderVariableNameRef -> {
                 val target = element.reference.resolve() ?: return
-                when (target.parent) {
-                    is GDShaderUniformDeclaration -> GDShaderSyntaxHighlighter.UNIFORM_VARIABLE
-                    is GDShaderVaryingDeclaration -> GDShaderSyntaxHighlighter.VARYING_VARIABLE
-                    is GDShaderConstantDeclarator -> GDShaderSyntaxHighlighter.CONSTANT
-                    is GDShaderLocalVariableDeclarator -> GDShaderSyntaxHighlighter.LOCAL_VARIABLE
-                    is GDShaderParameter -> GDShaderSyntaxHighlighter.PARAMETER
-                    else -> {
-                        return
+                if (target is GDShaderLightVariable) {
+                    if (target.spec.isReadOnly) {
+                        GDShaderSyntaxHighlighter.BUILTIN_CONSTANT
+                    } else {
+                        GDShaderSyntaxHighlighter.BUILTIN_VARIABLE
+                    }
+                }
+                else {
+                    when (target.parent) {
+                        is GDShaderUniformDeclaration -> GDShaderSyntaxHighlighter.UNIFORM_VARIABLE
+                        is GDShaderVaryingDeclaration -> GDShaderSyntaxHighlighter.VARYING_VARIABLE
+                        is GDShaderConstantDeclarator -> GDShaderSyntaxHighlighter.CONSTANT
+                        is GDShaderLocalVariableDeclarator -> GDShaderSyntaxHighlighter.LOCAL_VARIABLE
+                        is GDShaderParameter -> GDShaderSyntaxHighlighter.PARAMETER
+                        else -> {
+                            return
+                        }
                     }
                 }
             }

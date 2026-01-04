@@ -7,7 +7,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import kr.jaehoyi.gdshader.model.GDShaderBuiltins
 import kr.jaehoyi.gdshader.model.DataType
-import kr.jaehoyi.gdshader.model.ParameterQualifier
 
 object GDShaderLookupElements {
     
@@ -133,7 +132,7 @@ object GDShaderLookupElements {
     val BUILTIN_VARIABLES = GDShaderBuiltins.VARIABLES.mapValues {
         it.value.map { variableSpec ->
             val icon =
-                if (variableSpec.isConstant || variableSpec.parameterQualifier == ParameterQualifier.IN)
+                if (variableSpec.isReadOnly)
                     AllIcons.Nodes.Constant
                 else
                     AllIcons.Nodes.Variable
