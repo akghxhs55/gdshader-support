@@ -1572,9 +1572,8 @@ object GDShaderBuiltins {
         }
     }
     
-    fun getVariable(shaderType: ShaderType, functionContext: FunctionContext, name: String): VariableSpec? {
-        return LOOKUP_CACHE[shaderType to functionContext]?.get(name)
-    }
+    fun getVariable(shaderType: ShaderType, functionContext: FunctionContext, name: String): VariableSpec? 
+        = LOOKUP_CACHE[shaderType to functionContext]?.get(name) ?: LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
     
     val PROCESSING_FUNCTIONS: EnumMap<ShaderType, List<FunctionContext>> = EnumMap(mapOf(
         ShaderType.SPATIAL to listOf(
