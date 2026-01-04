@@ -13,10 +13,7 @@ object GDShaderBuiltins {
         
         ShaderType.CANVAS_ITEM to FunctionContext.LIGHT to sdfFunctions,
 
-        ShaderType.PARTICLES to FunctionContext.COMMON to globalFunctions,
-        
-        ShaderType.PARTICLES to FunctionContext.PROCESS to listOf(
-            FunctionSpec(
+        ShaderType.PARTICLES to FunctionContext.COMMON to globalFunctions + listOf(FunctionSpec(
                 name = "emit_subparticle",
                 returnType = DataType.BOOL,
                 parameters = listOf(
@@ -26,8 +23,7 @@ object GDShaderBuiltins {
                     ParameterSpec("custom", DataType.VEC4),
                     ParameterSpec("flags", DataType.UINT),
                 ),
-            ),
-        ),
+            )),
 
         ShaderType.SKY to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
 
