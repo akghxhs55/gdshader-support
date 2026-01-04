@@ -10,6 +10,14 @@ object GDShaderResolver {
 
     fun processDeclarations(startElement: PsiElement, processor: (nameDecl: PsiNamedElement) -> Boolean) {
         for (currentScope in generateSequence(startElement.context) { it.context }) {
+            val params = (currentScope as? GDShaderFunctionDeclaration)?.parameterList?.parameterList
+            if (params != null) {
+                for (param in params) {
+                    val nameDecl = param.variableNameDecl
+                    if (!processor(nameDecl)) return
+                }
+            }
+            
             for (sibling in generateSequence(currentScope.prevSibling) { it.prevSibling }) {
                 when (sibling) {
                     is GDShaderStatementBody -> {
@@ -64,14 +72,6 @@ object GDShaderResolver {
 //                            if (!processor(nameDecl)) return
 //                        }
                     }
-                }
-            }
-
-            val params = (currentScope as? GDShaderFunctionDeclaration)?.parameterList?.parameterList
-            if (params != null) {
-                for (param in params) {
-                    val nameDecl = param.variableNameDecl
-                    if (!processor(nameDecl)) return
                 }
             }
         }

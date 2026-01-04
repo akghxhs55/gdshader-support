@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.highlighter
+package kr.jaehoyi.gdshader.highlighting
 
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.options.colors.AttributesDescriptor
@@ -27,7 +27,7 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
         varying vec2 <vvar>uv</vvar>;
         
         int <func>foo</func>(int <param>a</param>, float <param>b</param>) {
-            return a + int(b);
+            return <param>a</param> + int(<param>b</param>);
         }
         
         struct <struct>MyStruct</struct> {
@@ -35,15 +35,15 @@ class GDShaderColorSettingsPage : ColorSettingsPage {
             vec3 <member>color</member>;
         };
 
-        void fragment() {
+        void <func>fragment</func>() {
             vec4 <lvar>texColor</lvar> = texture(image, UV);
-            COLOR = texColor * color;
+            COLOR = <lvar>texColor</lvar> * <uvar>color</uvar>;
             int <lvar>values</lvar>[3] = { 1, 2, 3 };
             
             for (int <lvar>i</lvar> = 0; i < 10; i++) {
-                COLOR.rgb += vec3(float(i) / 10.0);
+                COLOR.<member>rgb</member> += vec3(float(i) / 10.0);
                 if (i % 2 == 0) {
-                    values[i % 3] += foo(i, 0.5);
+                    <lvar>values</lvar>[i % 3] += <func>foo</func>(i, 0.5);
                     continue;
                 }
             }

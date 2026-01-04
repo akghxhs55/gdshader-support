@@ -44,9 +44,10 @@
         <!-- Highlighting -->
         <lang.syntaxHighlighterFactory
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.highlighter.GDShaderSyntaxHighlighterFactory" />
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GDShaderSyntaxHighlighterFactory" />
         <colorSettingsPage
-            implementation="kr.jaehoyi.gdshader.highlighter.GDShaderColorSettingsPage" />
+            implementation="kr.jaehoyi.gdshader.highlighting.GDShaderColorSettingsPage" />
+        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GDShaderHighlightingAnnotator" />
         
         <!-- Formatting -->
         <lang.formatter
@@ -59,12 +60,6 @@
                 language="GDShader"
                 implementationClass="kr.jaehoyi.gdshader.completion.GDShaderQuoteHandler" />
         <typedHandler implementation="kr.jaehoyi.gdshader.formatter.GDShaderTypedHandler" />
-        
-        <!-- Annotators -->
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderFunctionAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderVariableAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderStructAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.annotator.GDShaderParameterAnnotator" />
         
         <!-- Completions -->
         <completion.contributor
