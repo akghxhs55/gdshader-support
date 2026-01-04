@@ -76,12 +76,12 @@ object GDShaderResolver {
                             if (nameDecl != null && !processor(nameDecl)) return
                         }
                         
-//                        val functionDeclaration = sibling.topLevelDeclaration.functionDeclaration
-//                        if (functionDeclaration != null) {
-//                            val nameDecl = functionDeclaration.functionNameDecl
-//                            if (!processor(nameDecl)) return
-//                        }
-//                        
+                        val functionDeclaration = sibling.topLevelDeclaration.functionDeclaration
+                        if (functionDeclaration != null) {
+                            val nameDecl = functionDeclaration.functionNameDecl
+                            if (!processor(nameDecl)) return
+                        }
+
 //                        val structDeclaration = sibling.topLevelDeclaration.structDeclaration
 //                        if (structDeclaration != null) {
 //                            val nameDecl = structDeclaration.structNameDecl

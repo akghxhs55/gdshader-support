@@ -27,4 +27,19 @@ public class GDShaderFunctionNameDeclImpl extends ASTWrapperPsiElement implement
     else super.accept(visitor);
   }
 
+  @Override
+  public @NotNull String getName() {
+    return GDShaderPsiImplUtil.getName(this);
+  }
+
+  @Override
+  public @Nullable PsiElement setName(@NotNull String newName) {
+    return GDShaderPsiImplUtil.setName(this, newName);
+  }
+
+  @Override
+  public @Nullable PsiElement getNameIdentifier() {
+    return GDShaderPsiImplUtil.getNameIdentifier(this);
+  }
+
 }

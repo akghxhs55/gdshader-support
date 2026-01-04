@@ -169,7 +169,10 @@ function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN p
 	pin=3
 }
 
-function_name_decl ::= IDENTIFIER
+function_name_decl ::= IDENTIFIER {
+	implements="com.intellij.psi.PsiNameIdentifierOwner"
+	methods=[getName setName getNameIdentifier]
+}
 
 parameter_list ::= parameter (COMMA parameter)*
 {
@@ -305,7 +308,9 @@ variable_name_ref ::= IDENTIFIER
 {
 	methods=[getReference]
 }
-function_name_ref ::= IDENTIFIER
+function_name_ref ::= IDENTIFIER {
+	methods=[getReference]
+}
 struct_name_ref ::= IDENTIFIER
 struct_member_name_ref ::= IDENTIFIER
 

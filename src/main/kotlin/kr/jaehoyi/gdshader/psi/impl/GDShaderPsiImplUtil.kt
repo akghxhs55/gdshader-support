@@ -8,6 +8,8 @@ import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.psi.GDShaderElementFactory
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
+import kr.jaehoyi.gdshader.psi.GDShaderFunctionNameDecl
+import kr.jaehoyi.gdshader.psi.GDShaderFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderItem
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
@@ -33,6 +35,25 @@ object GDShaderPsiImplUtil {
     
     @JvmStatic
     fun getReference(element: GDShaderVariableNameRef): PsiReference =
+        GDShaderReference(element, element.textRangeInParent)
+    
+    @JvmStatic
+    fun getName(element: GDShaderFunctionNameDecl): String =
+        element.text
+    
+    @JvmStatic
+    fun setName(element: GDShaderFunctionNameDecl, newName: String): PsiElement? {
+        val identifier = GDShaderElementFactory.createIdentifier(element.project, newName) ?: return null
+        element.firstChild.replace(identifier)
+        return element
+    }
+    
+    @JvmStatic
+    fun getNameIdentifier(element: GDShaderFunctionNameDecl): PsiElement? =
+        element.node.findChildByType(GDShaderTypes.IDENTIFIER)?.psi
+    
+    @JvmStatic
+    fun getReference(element: GDShaderFunctionNameRef): PsiReference =
         GDShaderReference(element, element.textRangeInParent)
     
     fun getShaderType(file: GDShaderFile): ShaderType? {
