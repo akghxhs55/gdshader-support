@@ -34,7 +34,7 @@ val GDShaderVariableNameDecl.variableSpec: VariableSpec?
             }
             
             is GDShaderConstantDeclarator -> {
-                val parent = declarator.parent as? GDShaderConstantDeclaration ?: return null
+                val parent = declarator.parent?.parent as? GDShaderConstantDeclaration ?: return null
                 val type = parent.type?.text?.let { DataType.fromText(it) }
                     ?: return null
                 val precision = parent.precision?.text?.let { Precision.fromText(it) }
