@@ -588,6 +588,13 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         in GDShaderTokenSets.OPERATORS -> {
                             completions += getExpressionCompletions(position)
                         }
+                        
+                        GDShaderTypes.COMMA -> {
+                            val nextLeaf = PsiTreeUtil.nextVisibleLeaf(position) ?: return
+                            if (nextLeaf.elementType == GDShaderTypes.PARENTHESIS_CLOSE) {
+                                completions += getExpressionCompletions(position)
+                            }
+                        }
 
                         GDShaderTypes.PARENTHESIS_OPEN -> {
                             if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
