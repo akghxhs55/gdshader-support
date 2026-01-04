@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNamedElement
 import kr.jaehoyi.gdshader.model.GDShaderBuiltins
+import kr.jaehoyi.gdshader.psi.GDShaderForInit
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderItem
 import kr.jaehoyi.gdshader.psi.GDShaderStatementBody
@@ -43,6 +44,15 @@ object GDShaderResolver {
                             if (!processor(declarator.variableNameDecl)) return
                         }
                     }
+                    
+                    is GDShaderForInit -> {
+                        val declarators = sibling.localVariableDeclaratorList
+                            .localVariableDeclaratorList
+                        for (declarator in declarators) {
+                            if (!processor(declarator.variableNameDecl)) return
+                        }
+                    }
+                    
                     is GDShaderItem -> {
                         val uniformDeclaration = sibling.topLevelDeclaration.uniformDeclaration
                         if (uniformDeclaration != null) {
