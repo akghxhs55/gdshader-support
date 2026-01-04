@@ -12,7 +12,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderItem
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
-import kr.jaehoyi.gdshader.reference.GDShaderLocalReference
+import kr.jaehoyi.gdshader.reference.GDShaderReference
 
 object GDShaderPsiImplUtil {
 
@@ -33,7 +33,7 @@ object GDShaderPsiImplUtil {
     
     @JvmStatic
     fun getReference(element: GDShaderVariableNameRef): PsiReference =
-        GDShaderLocalReference(element, element.textRangeInParent)
+        GDShaderReference(element, element.textRangeInParent)
     
     fun getShaderType(file: GDShaderFile): ShaderType? {
         for (child in file.children) {
