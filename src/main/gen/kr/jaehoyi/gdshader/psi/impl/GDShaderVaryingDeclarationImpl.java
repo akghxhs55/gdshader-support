@@ -35,6 +35,12 @@ public class GDShaderVaryingDeclarationImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
+  public GDShaderInterpolationQualifier getInterpolationQualifier() {
+    return findChildByClass(GDShaderInterpolationQualifier.class);
+  }
+
+  @Override
+  @Nullable
   public GDShaderPrecision getPrecision() {
     return findChildByClass(GDShaderPrecision.class);
   }

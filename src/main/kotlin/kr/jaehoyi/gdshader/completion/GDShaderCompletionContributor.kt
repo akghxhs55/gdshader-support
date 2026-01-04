@@ -36,7 +36,10 @@ import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.ShaderType
+import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
+import kr.jaehoyi.gdshader.psi.impl.GDShaderLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GDShaderResolver
 import kotlin.collections.plusAssign
 
 class GDShaderCompletionContributor : CompletionContributor() {
@@ -636,6 +639,20 @@ class GDShaderCompletionContributor : CompletionContributor() {
         
         completions += GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList()
         completions += GDShaderLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
+
+        GDShaderResolver.processDeclarations(position) { element ->
+            if (element is GDShaderLightVariable) {
+                return@processDeclarations false
+            }
+            
+            val nameDecl = element as? GDShaderVariableNameDecl ?: return@processDeclarations true
+            val lookupElement = GDShaderLookupElements.createFromNameDecl(nameDecl)
+            if (lookupElement != null) {
+                completions += lookupElement
+            }
+            
+            return@processDeclarations true
+        }
 
         completions += GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()
         completions += GDShaderLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList()

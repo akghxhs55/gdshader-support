@@ -13,9 +13,9 @@ class GDShaderReference(element: PsiElement, textRange: TextRange) : PsiReferenc
     override fun resolve(): PsiElement? {
         var result: PsiElement? = null
 
-        GDShaderResolver.processDeclarations(element) { nameDecl ->
-            if (nameDecl.name == key) {
-                result = nameDecl
+        GDShaderResolver.processDeclarations(element) { element ->
+            if (element.name == key) {
+                result = element
                 return@processDeclarations false
             }
             return@processDeclarations true

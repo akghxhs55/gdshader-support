@@ -164,6 +164,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitInterpolationQualifier(@NotNull GDShaderInterpolationQualifier o) {
+    visitPsiElement(o);
+  }
+
   public void visitItem(@NotNull GDShaderItem o) {
     visitPsiElement(o);
   }

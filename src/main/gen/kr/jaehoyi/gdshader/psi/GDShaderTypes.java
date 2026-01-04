@@ -47,6 +47,7 @@ public interface GDShaderTypes {
   IElementType INITIALIZER = new GDShaderElementType("INITIALIZER");
   IElementType INITIALIZER_LIST = new GDShaderElementType("INITIALIZER_LIST");
   IElementType INSTANCE_INDEX_HINT = new GDShaderElementType("INSTANCE_INDEX_HINT");
+  IElementType INTERPOLATION_QUALIFIER = new GDShaderElementType("INTERPOLATION_QUALIFIER");
   IElementType ITEM = new GDShaderElementType("ITEM");
   IElementType LITERAL = new GDShaderElementType("LITERAL");
   IElementType LOCAL_VARIABLE_DECLARATION = new GDShaderElementType("LOCAL_VARIABLE_DECLARATION");
@@ -373,6 +374,9 @@ public interface GDShaderTypes {
       }
       else if (type == INSTANCE_INDEX_HINT) {
         return new GDShaderInstanceIndexHintImpl(node);
+      }
+      else if (type == INTERPOLATION_QUALIFIER) {
+        return new GDShaderInterpolationQualifierImpl(node);
       }
       else if (type == ITEM) {
         return new GDShaderItemImpl(node);

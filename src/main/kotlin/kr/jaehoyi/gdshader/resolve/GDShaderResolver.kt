@@ -8,13 +8,15 @@ import kr.jaehoyi.gdshader.psi.GDShaderForInit
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderItem
 import kr.jaehoyi.gdshader.psi.GDShaderStatementBody
+import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.impl.GDShaderLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil
 
 object GDShaderResolver {
 
-    fun processDeclarations(startElement: PsiElement, processor: (nameDecl: PsiNamedElement) -> Boolean) {
-        for (currentScope in generateSequence(startElement.context) { it.context }) {
+    fun processDeclarations(startElement: PsiElement, processor: (element: PsiNamedElement) -> Boolean) {
+        val start = if (startElement.node.elementType == GDShaderTypes.IDENTIFIER) startElement else startElement.context
+        for (currentScope in generateSequence(start) { it.context }) {
             val params = (currentScope as? GDShaderFunctionDeclaration)?.parameterList?.parameterList
             if (params != null) {
                 for (param in params) {

@@ -140,10 +140,11 @@ constant_declarator ::= variable_name_decl array_size? OP_ASSIGN initializer
 }
 
 // Varying Declaration
-varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type array_size? variable_name_decl array_size? SEMICOLON
+varying_declaration ::= VARYING interpolation_qualifier? precision? type array_size? variable_name_decl array_size? SEMICOLON
 {
 	pin=1
 }
+interpolation_qualifier ::= INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
 
 // Local Variable Declaration
 local_variable_declaration ::= precision? type array_size? local_variable_declarator_list SEMICOLON

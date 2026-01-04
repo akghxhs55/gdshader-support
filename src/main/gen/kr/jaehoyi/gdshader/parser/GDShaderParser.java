@@ -1086,6 +1086,19 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
+  public static boolean interpolation_qualifier(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "interpolation_qualifier")) return false;
+    if (!nextTokenIs(b, "<interpolation qualifier>", INTERPOLATION_FLAT, INTERPOLATION_SMOOTH)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, INTERPOLATION_QUALIFIER, "<interpolation qualifier>");
+    r = consumeToken(b, INTERPOLATION_FLAT);
+    if (!r) r = consumeToken(b, INTERPOLATION_SMOOTH);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // top_level_declaration
   public static boolean item(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "item")) return false;
@@ -2594,7 +2607,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type array_size? variable_name_decl array_size? SEMICOLON
+  // VARYING interpolation_qualifier? precision? type array_size? variable_name_decl array_size? SEMICOLON
   public static boolean varying_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_declaration")) return false;
     if (!nextTokenIs(b, VARYING)) return false;
@@ -2613,20 +2626,11 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)?
+  // interpolation_qualifier?
   private static boolean varying_declaration_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varying_declaration_1")) return false;
-    varying_declaration_1_0(b, l + 1);
+    interpolation_qualifier(b, l + 1);
     return true;
-  }
-
-  // INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
-  private static boolean varying_declaration_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varying_declaration_1_0")) return false;
-    boolean r;
-    r = consumeToken(b, INTERPOLATION_FLAT);
-    if (!r) r = consumeToken(b, INTERPOLATION_SMOOTH);
-    return r;
   }
 
   // precision?

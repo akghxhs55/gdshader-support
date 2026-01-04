@@ -4,13 +4,19 @@ data class VariableSpec(
     val name: String,
     val type: DataType,
     val precision: Precision = Precision.DEFAULT,
-    val arraySize: Int? = null,
+    val array: Boolean = false,
     val storageQualifier: StorageQualifier = StorageQualifier.LOCAL,
     val parameterQualifier: ParameterQualifier = ParameterQualifier.NONE,
     val interpolationQualifier: InterpolationQualifier = InterpolationQualifier.DEFAULT,
-    val constKeyword: Boolean = false,
     val description: String? = null
 ) {
     val isReadOnly: Boolean
-        get() = constKeyword || parameterQualifier == ParameterQualifier.IN
+        get() = 
+            storageQualifier == StorageQualifier.CONSTANT ||
+            storageQualifier == StorageQualifier.UNIFORM ||
+            storageQualifier == StorageQualifier.GLOBAL_UNIFORM ||
+            storageQualifier == StorageQualifier.INSTANCE_UNIFORM ||
+            parameterQualifier == ParameterQualifier.IN ||
+            parameterQualifier == ParameterQualifier.CONST ||
+            parameterQualifier == ParameterQualifier.CONST_IN
 }

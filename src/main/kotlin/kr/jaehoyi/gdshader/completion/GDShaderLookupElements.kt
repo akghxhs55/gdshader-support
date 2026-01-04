@@ -7,6 +7,9 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import kr.jaehoyi.gdshader.model.GDShaderBuiltins
 import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.model.StorageQualifier
+import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
+import kr.jaehoyi.gdshader.psi.variableSpec
 
 object GDShaderLookupElements {
     
@@ -252,6 +255,30 @@ object GDShaderLookupElements {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
+    fun createFromNameDecl(nameDecl: GDShaderVariableNameDecl): LookupElement? {
+        val name = nameDecl.name
+        val variableSpec = nameDecl.variableSpec ?: return null
+        
+        val icon = when (variableSpec.storageQualifier) {
+            StorageQualifier.LOCAL -> AllIcons.Nodes.Variable
+            StorageQualifier.PARAMETER -> AllIcons.Nodes.Parameter
+            StorageQualifier.CONSTANT -> AllIcons.Nodes.Constant
+            StorageQualifier.UNIFORM,
+            StorageQualifier.GLOBAL_UNIFORM,
+            StorageQualifier.INSTANCE_UNIFORM -> AllIcons.Nodes.Gvariable
+            StorageQualifier.VARYING -> AllIcons.Nodes.Field
+        }
+        
+        val typeText = variableSpec.type.text + if (variableSpec.array) "[]" else ""
+        
+        val builder = LookupElementBuilder.create(nameDecl, name)
+            .withBoldness(true)
+            .withTypeText(typeText, true)
+            .withIcon(icon)
+        
+        return builder
     }
     
 }
