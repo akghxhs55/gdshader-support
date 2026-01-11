@@ -11,26 +11,20 @@ import static kr.jaehoyi.gdshader.psi.GDShaderTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GDShaderUniformHeaderImpl extends ASTWrapperPsiElement implements GDShaderUniformHeader {
+public class GDShaderUniformQualifierImpl extends ASTWrapperPsiElement implements GDShaderUniformQualifier {
 
-  public GDShaderUniformHeaderImpl(@NotNull ASTNode node) {
+  public GDShaderUniformQualifierImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GDShaderVisitor visitor) {
-    visitor.visitUniformHeader(this);
+    visitor.visitUniformQualifier(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GDShaderVisitor) accept((GDShaderVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public GDShaderUniformQualifier getUniformQualifier() {
-    return findChildByClass(GDShaderUniformQualifier.class);
   }
 
 }

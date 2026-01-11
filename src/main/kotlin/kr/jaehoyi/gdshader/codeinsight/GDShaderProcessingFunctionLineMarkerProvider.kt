@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.GDShaderBundle
 import kr.jaehoyi.gdshader.model.FunctionContext
-import kr.jaehoyi.gdshader.model.GDShaderBuiltins
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.psi.GDShaderFile
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionNameDecl
@@ -26,12 +26,12 @@ class GDShaderProcessingFunctionLineMarkerProvider : LineMarkerProvider {
             return null
         }
         
-        val functionContext = FunctionContext.fromText(element.text) ?: return null
+        val functionContext = FunctionContext.fromText(element.text)
         
         val file = element.containingFile as? GDShaderFile ?: return null
         val shaderType = GDShaderPsiImplUtil.getShaderType(file) ?: return null
         
-        val validProcessingFunctions = GDShaderBuiltins.PROCESSING_FUNCTIONS[shaderType] ?: return null
+        val validProcessingFunctions = Builtins.PROCESSING_FUNCTIONS[shaderType] ?: return null
         if (functionContext !in validProcessingFunctions) {
             return null
         }

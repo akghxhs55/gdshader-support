@@ -5,9 +5,13 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
-import kr.jaehoyi.gdshader.model.GDShaderBuiltins
+import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.model.ConstantSpec
 import kr.jaehoyi.gdshader.model.DataType
-import kr.jaehoyi.gdshader.model.StorageQualifier
+import kr.jaehoyi.gdshader.model.LocalVariableSpec
+import kr.jaehoyi.gdshader.model.ParameterSpec
+import kr.jaehoyi.gdshader.model.UniformSpec
+import kr.jaehoyi.gdshader.model.VaryingSpec
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.psi.variableSpec
 
@@ -111,43 +115,57 @@ object GDShaderLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    val BUILTIN_TYPES = GDShaderKeywords.BUILTIN_TYPES.map { 
-        LookupElementBuilder.create(it)
+    val DECLARABLE_BUILTIN_TYPES = Builtins.ALL_DATA_TYPE_LIST.filter { it.isDeclarable }.map { 
+        LookupElementBuilder.create(it.presentationText)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Type)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+
+    val OPAQUE_BUILTIN_TYPES = Builtins.ALL_DATA_TYPE_LIST.filter { it.isOpaque }.map {
+        LookupElementBuilder.create(it.presentationText)
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Type)
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    val BUILTIN_FUNCTIONS = GDShaderBuiltins.FUNCTIONS.mapValues {
+    val RETURNABLE_BUILTIN_TYPES = Builtins.ALL_DATA_TYPE_LIST.filter { it.isValidReturnType }.map { 
+        LookupElementBuilder.create(it.presentationText)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Type)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+    }
+    
+    val BUILTIN_FUNCTIONS = Builtins.FUNCTIONS.mapValues {
         it.value.map { functionSpec ->
             LookupElementBuilder.create(functionSpec.name)
                 .withBoldness(true)
                 .withIcon(AllIcons.Nodes.Function)
                 .appendTailText(
-                    "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.type.text} ${param.name}" } + ")",
+                    "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.presentationTypeText} ${param.name}" } + ")",
                     true
                 )
-                .withTypeText(functionSpec.returnType.text, true)
+                .withTypeText(functionSpec.returnType.presentationText, true)
                 .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
         }
     }
     
-    val BUILTIN_VARIABLES = GDShaderBuiltins.VARIABLES.mapValues {
+    val BUILTIN_VARIABLES = Builtins.VARIABLES.mapValues {
         it.value.map { variableSpec ->
             val icon =
-                if (variableSpec.isReadOnly)
-                    AllIcons.Nodes.Constant
-                else
+                if (variableSpec.isMutable)
                     AllIcons.Nodes.Variable
+                else
+                    AllIcons.Nodes.Constant
             
             LookupElementBuilder.create(variableSpec.name)
                 .withBoldness(true)
                 .withIcon(icon)
-                .withTypeText(variableSpec.type.text, true)
+                .withTypeText(variableSpec.presentationTypeText, true)
         }
     }
     
-    val PROCESSING_FUNCTIONS = GDShaderBuiltins.PROCESSING_FUNCTIONS.mapValues {
+    val PROCESSING_FUNCTIONS = Builtins.PROCESSING_FUNCTIONS.mapValues {
         it.value.map { functionContext ->
             LookupElementBuilder.create(functionContext.text)
                 .withBoldness(true)
@@ -164,7 +182,7 @@ object GDShaderLookupElements {
         }
     }
 
-    val PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE = GDShaderBuiltins.PROCESSING_FUNCTIONS.mapValues {
+    val PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE = Builtins.PROCESSING_FUNCTIONS.mapValues {
         it.value.map { functionContext ->
             LookupElementBuilder.create(functionContext.text)
                 .withBoldness(true)
@@ -191,7 +209,7 @@ object GDShaderLookupElements {
         }
     }
     
-    val CONSTRUCTORS = GDShaderKeywords.BUILTIN_TYPES.map { 
+    val CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST.filter { it.isInstantiable }.map { 
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Function)
@@ -258,24 +276,19 @@ object GDShaderLookupElements {
     }
     
     fun createFromNameDecl(nameDecl: GDShaderVariableNameDecl): LookupElement? {
-        val name = nameDecl.name
         val variableSpec = nameDecl.variableSpec ?: return null
         
-        val icon = when (variableSpec.storageQualifier) {
-            StorageQualifier.LOCAL -> AllIcons.Nodes.Variable
-            StorageQualifier.PARAMETER -> AllIcons.Nodes.Parameter
-            StorageQualifier.CONSTANT -> AllIcons.Nodes.Constant
-            StorageQualifier.UNIFORM,
-            StorageQualifier.GLOBAL_UNIFORM,
-            StorageQualifier.INSTANCE_UNIFORM -> AllIcons.Nodes.Gvariable
-            StorageQualifier.VARYING -> AllIcons.Nodes.Field
+        val icon = when (variableSpec) {
+            is UniformSpec -> AllIcons.Nodes.Gvariable
+            is ConstantSpec -> AllIcons.Nodes.Constant
+            is VaryingSpec -> AllIcons.Nodes.Field
+            is ParameterSpec -> AllIcons.Nodes.Parameter
+            is LocalVariableSpec -> AllIcons.Nodes.Variable
         }
         
-        val typeText = variableSpec.type.text + if (variableSpec.array) "[]" else ""
-        
-        val builder = LookupElementBuilder.create(nameDecl, name)
+        val builder = LookupElementBuilder.create(nameDecl, variableSpec.name)
             .withBoldness(true)
-            .withTypeText(typeText, true)
+            .withTypeText(variableSpec.presentationTypeText, true)
             .withIcon(icon)
         
         return builder

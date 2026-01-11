@@ -368,6 +368,10 @@ public class GDShaderVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitUniformQualifier(@NotNull GDShaderUniformQualifier o) {
+    visitPsiElement(o);
+  }
+
   public void visitVariableNameDecl(@NotNull GDShaderVariableNameDecl o) {
     visitPsiNameIdentifierOwner(o);
   }

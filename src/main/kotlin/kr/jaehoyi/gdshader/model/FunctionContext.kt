@@ -12,10 +12,16 @@ enum class FunctionContext(val text: String) {
     FOG("fog");
     
     companion object {
-        private val textToFunctionContextMap = FunctionContext.entries.associateBy { it.text }
-        
-        fun fromText(text: String): FunctionContext 
-            = textToFunctionContextMap[text] ?: COMMON
+        fun fromText(text: String): FunctionContext = when (text) {
+            "vertex" -> VERTEX
+            "fragment" -> FRAGMENT
+            "light" -> LIGHT
+            "start" -> START
+            "process" -> PROCESS
+            "sky" -> SKY
+            "fog" -> FOG
+            else -> COMMON
+        }
     }
     
 }

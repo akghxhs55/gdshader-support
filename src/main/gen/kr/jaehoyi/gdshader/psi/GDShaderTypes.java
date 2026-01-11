@@ -98,6 +98,7 @@ public interface GDShaderTypes {
   IElementType UNIFORM_GROUP_DECLARATION = new GDShaderElementType("UNIFORM_GROUP_DECLARATION");
   IElementType UNIFORM_GROUP_NAME = new GDShaderElementType("UNIFORM_GROUP_NAME");
   IElementType UNIFORM_HEADER = new GDShaderElementType("UNIFORM_HEADER");
+  IElementType UNIFORM_QUALIFIER = new GDShaderElementType("UNIFORM_QUALIFIER");
   IElementType VARIABLE_NAME_DECL = new GDShaderElementType("VARIABLE_NAME_DECL");
   IElementType VARIABLE_NAME_REF = new GDShaderElementType("VARIABLE_NAME_REF");
   IElementType VARYING_DECLARATION = new GDShaderElementType("VARYING_DECLARATION");
@@ -527,6 +528,9 @@ public interface GDShaderTypes {
       }
       else if (type == UNIFORM_HEADER) {
         return new GDShaderUniformHeaderImpl(node);
+      }
+      else if (type == UNIFORM_QUALIFIER) {
+        return new GDShaderUniformQualifierImpl(node);
       }
       else if (type == VARIABLE_NAME_DECL) {
         return new GDShaderVariableNameDeclImpl(node);

@@ -82,21 +82,27 @@ uniform_declaration ::= uniform_header precision? type array_size? variable_name
 {
 	pin=1
 }
-uniform_header ::= (GLOBAL | INSTANCE) UNIFORM | UNIFORM
+
+uniform_header ::= uniform_qualifier UNIFORM | UNIFORM
 {
 	pin=1
 }
+uniform_qualifier ::= GLOBAL | INSTANCE
+
 hint_section ::= COLON hint_list
 {
 	pin=1
 	recoverWhile=hint_section_recover
 }
 private hint_section_recover ::= !(SEMICOLON | OP_ASSIGN)
+
 hint_list ::= hint (COMMA hint)*
+
 hint ::= simple_hint
 	   | range_hint
 	   | enum_hint
 	   | instance_index_hint
+	   
 simple_hint ::= hint_identifier (COMMA hint_identifier)*
 range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
 enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
@@ -149,7 +155,6 @@ interpolation_qualifier ::= INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
 // Local Variable Declaration
 local_variable_declaration ::= precision? type array_size? local_variable_declarator_list SEMICOLON
 
-// Variable Declarations
 local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)*
 local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initializer)?
 
@@ -179,8 +184,7 @@ parameter_list ::= parameter (COMMA parameter)*
 	recoverWhile=parameter_list_recover
 }
 private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
-parameter ::= parameter_qualifier? precision? type variable_name_decl array_size? |
-			  parameter_qualifier? precision? type array_size? variable_name_decl
+parameter ::= parameter_qualifier? precision? type array_size? variable_name_decl array_size?
 			  
 parameter_qualifier ::= CONST? ARG_IN | CONST | ARG_OUT | ARG_INOUT
 

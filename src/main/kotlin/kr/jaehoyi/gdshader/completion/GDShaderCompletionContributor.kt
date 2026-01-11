@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.psi.GDShaderBlock
 import kr.jaehoyi.gdshader.psi.GDShaderBlockBody
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
@@ -33,7 +34,6 @@ import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
 import kr.jaehoyi.gdshader.psi.GDShaderVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderWhileStatement
-import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
@@ -204,13 +204,15 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // 3. After UNIFORM
                     if (prevLeaf.elementType == GDShaderTypes.UNIFORM) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
 
                     // 4. After precision
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
 
@@ -218,7 +220,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     if (prevLeaf.elementType == GDShaderTypes.COLON) {
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
                         val typeText = uniformDeclaration?.type?.text ?: return
-                        val type = DataType.fromText(typeText) ?: return
+                        val type = Builtins.getType(typeText) ?: return
 
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
@@ -234,7 +236,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         
                         val uniformDeclaration = position.parentOfType<GDShaderUniformDeclaration>()
                         val typeText = uniformDeclaration?.type?.text ?: return
-                        val type = DataType.fromText(typeText) ?: return
+                        val type = Builtins.getType(typeText) ?: return
 
                         result.addAllElements(
                             GDShaderLookupElements.UNIFORM_HINTS[type] ?: emptyList()
@@ -288,13 +290,13 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // 2. After CONST
                     if (prevLeaf.elementType == GDShaderTypes.CONST) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
 
                     // 3. After precision
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
                     
@@ -338,20 +340,20 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     if (prevLeaf.elementType == GDShaderTypes.VARYING) {
                         result.addAllElements(GDShaderLookupElements.INTERPOLATIONS)
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
 
                     // 3. After interpolation modifier
                     if (GDShaderKeywords.INTERPOLATIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
 
                     // 4. After precision modifier
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
                 }
@@ -381,7 +383,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // 1.
                     if (GDShaderPatterns.TOP_LEVEL.accepts(position)) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.RETURNABLE_BUILTIN_TYPES)
                         return
                     }
                     
@@ -390,12 +392,14 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     }
                     
                     // 2. After precision
-                    if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                    if (position.parent !is GDShaderFunctionDeclaration &&
+                        GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)
+                    ) {
+                        result.addAllElements(GDShaderLookupElements.RETURNABLE_BUILTIN_TYPES)
                         return
                     }
                     
-                    // 3. After type
+                    // 3. After return type
                     if (position.parentOfType<GDShaderFunctionDeclaration>() == null &&
                         prevLeaf.text == "void"
                     ) {
@@ -411,10 +415,11 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     
                     // 4. Inside the parameter list, after COMMA or PARENTHESIS_OPEN
                     if (prevLeaf.elementType == GDShaderTypes.COMMA || prevLeaf.elementType == GDShaderTypes.PARENTHESIS_OPEN) {
-                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
-                        result.addAllElements(GDShaderLookupElements.PARAMETER_QUALIFIERS)
                         result.addElement(GDShaderLookupElements.CONST_KEYWORD)
+                        result.addAllElements(GDShaderLookupElements.PRECISIONS)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.OPAQUE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.PARAMETER_QUALIFIERS)
                         return
                     }
                     
@@ -422,20 +427,23 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     if (prevLeaf.elementType == GDShaderTypes.CONST) {
                         result.addElement(GDShaderLookupElements.IN_KEYWORD)
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
                     
                     // 6. Inside parameter list, after parameter qualifier
                     if (GDShaderKeywords.PARAMETER_QUALIFIERS.contains(prevLeaf.text)) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
                     
                     // 7. Inside parameter list, after precision
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf.text)) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
                     
@@ -498,13 +506,13 @@ class GDShaderCompletionContributor : CompletionContributor() {
                     // 2. After CURLY_BRACKET_OPEN or SEMICOLON
                     if (prevLeaf.elementType == GDShaderTypes.CURLY_BRACKET_OPEN || prevLeaf.elementType == GDShaderTypes.SEMICOLON) {
                         result.addAllElements(GDShaderLookupElements.PRECISIONS)
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
                     
                     // 3. After precision
                     if (GDShaderKeywords.PRECISIONS.contains(prevLeaf?.text)) {
-                        result.addAllElements(GDShaderLookupElements.BUILTIN_TYPES)
+                        result.addAllElements(GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
                     
@@ -599,7 +607,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
                         GDShaderTypes.PARENTHESIS_OPEN -> {
                             if (prevLeaf.parent.elementType == GDShaderTypes.FOR_STATEMENT) {
                                 completions += GDShaderLookupElements.PRECISIONS
-                                completions += GDShaderLookupElements.BUILTIN_TYPES
+                                completions += GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES
                             } else {
                                 completions += getExpressionCompletions(position)
                             }
@@ -618,7 +626,7 @@ class GDShaderCompletionContributor : CompletionContributor() {
         completions += GDShaderLookupElements.DO_KEYWORD
         completions += GDShaderLookupElements.RETURN_KEYWORD
         completions += GDShaderLookupElements.DISCARD_KEYWORD
-        completions += GDShaderLookupElements.BUILTIN_TYPES
+        completions += GDShaderLookupElements.DECLARABLE_BUILTIN_TYPES
         completions += GDShaderLookupElements.PRECISIONS
         completions += GDShaderLookupElements.CONST_KEYWORD
         

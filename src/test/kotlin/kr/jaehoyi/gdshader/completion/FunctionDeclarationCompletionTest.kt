@@ -22,37 +22,37 @@ class FunctionDeclarationCompletionTest : BaseCompletionTest() {
     
     fun testParameterHeader() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "void", "int", "float", "in", "out", "inout", "highp", "mediump", "lowp", "const")
+        assertContainsElements(completions, "int", "float", "in", "out", "inout", "highp", "mediump", "lowp", "const")
         assertDoesntContain(completions, "shader_type", "uniform")
     }
     
     fun testParameterHeaderAfterConst() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "void", "int", "float", "in", "highp", "mediump", "lowp")
-        assertDoesntContain(completions, "out", "inout", "shader_type", "uniform", "const")
+        assertContainsElements(completions, "int", "float", "in", "highp", "mediump", "lowp")
+        assertDoesntContain(completions, "out", "inout", "shader_type", "uniform", "const", "void")
     }
     
     fun testParameterHeaderAfterQualifier() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "void", "int", "float", "highp", "mediump", "lowp")
-        assertDoesntContain(completions, "in", "out", "inout", "shader_type", "uniform")
+        assertContainsElements(completions, "int", "float", "highp", "mediump", "lowp")
+        assertDoesntContain(completions, "in", "out", "inout", "shader_type", "uniform", "void")
     }
     
     fun testParameterHeaderAfterPrecision() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "void", "int", "float")
-        assertDoesntContain(completions, "highp", "mediump", "lowp", "in", "out", "inout", "shader_type", "uniform")
+        assertContainsElements(completions, "int", "float")
+        assertDoesntContain(completions, "highp", "mediump", "lowp", "in", "out", "inout", "shader_type", "uniform", "void")
     }
     
     fun testAfterParameterHeader() {
         val completions = getCompletionsForTestFile()
-        assertDoesntContain(completions, "void", "int", "float", "highp", "mediump", "lowp", "in", "out", "inout", "shader_type", "uniform", "const")
+        assertDoesntContain(completions, "int", "float", "highp", "mediump", "lowp", "in", "out", "inout", "shader_type", "uniform", "const", "void")
     }
     
     fun testMultipleParameters() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "void", "int", "float", "in", "out", "inout", "highp", "mediump", "lowp", "const")
-        assertDoesntContain(completions, "shader_type", "uniform")
+        assertContainsElements(completions, "int", "float", "in", "out", "inout", "highp", "mediump", "lowp", "const")
+        assertDoesntContain(completions, "shader_type", "uniform", "void")
     }
     
     fun testNoToplevelCompletionInFunctionBody() {

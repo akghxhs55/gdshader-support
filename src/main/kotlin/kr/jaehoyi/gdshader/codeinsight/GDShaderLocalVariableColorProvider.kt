@@ -4,13 +4,13 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
-import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GDShaderElementFactory
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.convertColorToVecString
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.extractColorFromText
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.isColorVariableName
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderLocalVariableDeclarator
 import java.awt.Color
@@ -39,7 +39,7 @@ class GDShaderLocalVariableColorProvider : ElementColorProvider {
         
         val typeText = localVariableDeclaration.type.text ?: return null
 
-        if (typeText != DataType.VEC3.text && typeText != DataType.VEC4.text) {
+        if (typeText != Builtins.VEC3.name && typeText != Builtins.VEC4.name) {
             return null
         }
         
@@ -52,7 +52,7 @@ class GDShaderLocalVariableColorProvider : ElementColorProvider {
         val localVariableDeclarator = element.parent?.parent as? GDShaderLocalVariableDeclarator ?: return
         val localVariableDeclaration = localVariableDeclarator.parent.parent as? GDShaderLocalVariableDeclaration ?: return
         val typeText = localVariableDeclaration.type.text ?: return
-        val isVec4 = typeText == DataType.VEC4.text
+        val isVec4 = typeText == Builtins.VEC4.name
 
         val oldInitializer = localVariableDeclarator.initializer
 

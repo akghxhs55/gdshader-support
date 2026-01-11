@@ -1395,84 +1395,45 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // parameter_qualifier? precision? type variable_name_decl array_size? |
-  // 			  parameter_qualifier? precision? type array_size? variable_name_decl
+  // parameter_qualifier? precision? type array_size? variable_name_decl array_size?
   public static boolean parameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PARAMETER, "<parameter>");
     r = parameter_0(b, l + 1);
-    if (!r) r = parameter_1(b, l + 1);
+    r = r && parameter_1(b, l + 1);
+    r = r && type(b, l + 1);
+    r = r && parameter_3(b, l + 1);
+    r = r && variable_name_decl(b, l + 1);
+    r = r && parameter_5(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // parameter_qualifier? precision? type variable_name_decl array_size?
+  // parameter_qualifier?
   private static boolean parameter_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = parameter_0_0(b, l + 1);
-    r = r && parameter_0_1(b, l + 1);
-    r = r && type(b, l + 1);
-    r = r && variable_name_decl(b, l + 1);
-    r = r && parameter_0_4(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // parameter_qualifier?
-  private static boolean parameter_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_0_0")) return false;
     parameter_qualifier(b, l + 1);
     return true;
   }
 
   // precision?
-  private static boolean parameter_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_0_1")) return false;
+  private static boolean parameter_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_1")) return false;
     precision(b, l + 1);
     return true;
   }
 
   // array_size?
-  private static boolean parameter_0_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_0_4")) return false;
+  private static boolean parameter_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_3")) return false;
     array_size(b, l + 1);
     return true;
   }
 
-  // parameter_qualifier? precision? type array_size? variable_name_decl
-  private static boolean parameter_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = parameter_1_0(b, l + 1);
-    r = r && parameter_1_1(b, l + 1);
-    r = r && type(b, l + 1);
-    r = r && parameter_1_3(b, l + 1);
-    r = r && variable_name_decl(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // parameter_qualifier?
-  private static boolean parameter_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_1_0")) return false;
-    parameter_qualifier(b, l + 1);
-    return true;
-  }
-
-  // precision?
-  private static boolean parameter_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_1_1")) return false;
-    precision(b, l + 1);
-    return true;
-  }
-
   // array_size?
-  private static boolean parameter_1_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "parameter_1_3")) return false;
+  private static boolean parameter_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_5")) return false;
     array_size(b, l + 1);
     return true;
   }
@@ -2551,7 +2512,7 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (GLOBAL | INSTANCE) UNIFORM | UNIFORM
+  // uniform_qualifier UNIFORM | UNIFORM
   public static boolean uniform_header(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_header")) return false;
     boolean r;
@@ -2562,23 +2523,27 @@ public class GDShaderParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (GLOBAL | INSTANCE) UNIFORM
+  // uniform_qualifier UNIFORM
   private static boolean uniform_header_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_header_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = uniform_header_0_0(b, l + 1);
+    r = uniform_qualifier(b, l + 1);
     r = r && consumeToken(b, UNIFORM);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  /* ********************************************************** */
   // GLOBAL | INSTANCE
-  private static boolean uniform_header_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "uniform_header_0_0")) return false;
+  public static boolean uniform_qualifier(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "uniform_qualifier")) return false;
+    if (!nextTokenIs(b, "<uniform qualifier>", GLOBAL, INSTANCE)) return false;
     boolean r;
+    Marker m = enter_section_(b, l, _NONE_, UNIFORM_QUALIFIER, "<uniform qualifier>");
     r = consumeToken(b, GLOBAL);
     if (!r) r = consumeToken(b, INSTANCE);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

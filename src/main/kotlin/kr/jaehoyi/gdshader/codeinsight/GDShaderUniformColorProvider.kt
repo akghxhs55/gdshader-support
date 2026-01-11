@@ -4,13 +4,13 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
-import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GDShaderElementFactory
 import kr.jaehoyi.gdshader.psi.GDShaderTypes
 import kr.jaehoyi.gdshader.psi.GDShaderUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.convertColorToVecString
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.extractColorFromText
+import kr.jaehoyi.gdshader.model.Builtins
 import java.awt.Color
 
 class GDShaderUniformColorProvider : ElementColorProvider {
@@ -32,7 +32,7 @@ class GDShaderUniformColorProvider : ElementColorProvider {
         
         val typeText = uniformDeclaration.type?.text ?: return null
         
-        if (typeText != DataType.VEC3.text && typeText != DataType.VEC4.text) {
+        if (typeText != Builtins.VEC3.name && typeText != Builtins.VEC4.name) {
             return null
         }
         
@@ -44,7 +44,7 @@ class GDShaderUniformColorProvider : ElementColorProvider {
         val uniformDeclaration = element.parent?.parent as? GDShaderUniformDeclaration ?: return
 
         val typeText = uniformDeclaration.type?.text ?: return
-        val isVec4 = typeText == DataType.VEC4.text
+        val isVec4 = typeText == Builtins.VEC4.name
         
         val oldExpression = uniformDeclaration.expression
 

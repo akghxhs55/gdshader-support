@@ -35,10 +35,10 @@ class GDShaderHighlightingAnnotator : Annotator {
             is GDShaderVariableNameRef -> {
                 val target = element.reference.resolve() ?: return
                 if (target is GDShaderLightVariable) {
-                    if (target.variableSpec.isReadOnly) {
-                        GDShaderSyntaxHighlighter.BUILTIN_CONSTANT
-                    } else {
+                    if (target.variableSpec.isMutable) {
                         GDShaderSyntaxHighlighter.BUILTIN_VARIABLE
+                    } else {
+                        GDShaderSyntaxHighlighter.BUILTIN_CONSTANT
                     }
                 }
                 else {

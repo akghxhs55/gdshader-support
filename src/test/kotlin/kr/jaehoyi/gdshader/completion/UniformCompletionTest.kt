@@ -1,6 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
-import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.model.Builtins
 
 class UniformCompletionTest : BaseCompletionTest() {
 
@@ -19,14 +19,14 @@ class UniformCompletionTest : BaseCompletionTest() {
     
     fun testAfterUniform() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "int", "float", "bool", "void", "highp")
-        assertDoesntContain(completions, "uniform", "global", "instance", "shader_type")
+        assertContainsElements(completions, "int", "float", "bool", "highp")
+        assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "void")
     }
     
     fun testAfterPrecision() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, "int", "float", "bool", "void")
-        assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "highp", "mediump", "lowp")
+        assertContainsElements(completions, "int", "float", "bool")
+        assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "highp", "mediump", "lowp", "void")
     }
     
     fun testAfterType() {
@@ -42,7 +42,7 @@ class UniformCompletionTest : BaseCompletionTest() {
     fun testHintForVec3() {
         val completions = getCompletionsForTestFile()
         
-        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[DataType.VEC3])
+        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[Builtins.VEC3])
         assertContainsElements(completions, expectedHints.toList())
         assertDoesntContain(completions, "hint_enum", "hint_range", "hint_normal", "hint_default_white")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
@@ -51,7 +51,7 @@ class UniformCompletionTest : BaseCompletionTest() {
     fun testHintForVec4() {
         val completions = getCompletionsForTestFile()
         
-        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[DataType.VEC4])
+        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[Builtins.VEC4])
         assertContainsElements(completions, expectedHints.toList())
         assertDoesntContain(completions, "hint_enum", "hint_range", "hint_normal", "hint_default_white")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
@@ -60,7 +60,7 @@ class UniformCompletionTest : BaseCompletionTest() {
     fun testHintForInt() {
         val completions = getCompletionsForTestFile()
         
-        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[DataType.INT])
+        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[Builtins.INT])
         assertContainsElements(completions, expectedHints.toList())
         assertDoesntContain(completions, "hint_normal", "hint_default_white", "filter_nearest", "filter_linear")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
@@ -69,7 +69,7 @@ class UniformCompletionTest : BaseCompletionTest() {
     fun testHintForFloat() {
         val completions = getCompletionsForTestFile()
         
-        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[DataType.FLOAT])
+        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[Builtins.FLOAT])
         assertContainsElements(completions, expectedHints.toList())
         assertDoesntContain(completions, "hint_enum", "hint_normal", "hint_default_white", "filter_nearest", "filter_linear")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
@@ -78,7 +78,7 @@ class UniformCompletionTest : BaseCompletionTest() {
     fun testHintForSampler2D() {
         val completions = getCompletionsForTestFile()
         
-        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[DataType.SAMPLER2D])
+        val expectedHints = requireNotNull(GDShaderKeywords.UNIFORM_HINTS[Builtins.SAMPLER2D])
         assertContainsElements(completions, expectedHints.toList())
         assertDoesntContain(completions, "hint_enum", "hint_range")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")

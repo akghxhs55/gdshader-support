@@ -3,7 +3,6 @@ package kr.jaehoyi.gdshader.codeinsight
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
 import com.intellij.psi.PsiElement
-import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GDShaderElementFactory
@@ -12,6 +11,7 @@ import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.convertColorToVecString
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.extractColorFromText
 import kr.jaehoyi.gdshader.codeinsight.GDShaderColorUtil.isColorVariableName
+import kr.jaehoyi.gdshader.model.Builtins
 import java.awt.Color
 
 class GDShaderConstantColorProvider : ElementColorProvider {
@@ -38,7 +38,7 @@ class GDShaderConstantColorProvider : ElementColorProvider {
         
         val typeText = constantDeclaration.type?.text ?: return null
 
-        if (typeText != DataType.VEC3.text && typeText != DataType.VEC4.text) {
+        if (typeText != Builtins.VEC3.name && typeText != Builtins.VEC4.name) {
             return null
         }
         
@@ -51,7 +51,7 @@ class GDShaderConstantColorProvider : ElementColorProvider {
         val constantDeclarator = element.parent?.parent as? GDShaderConstantDeclarator ?: return
         val constantDeclaration = constantDeclarator.parent.parent as? GDShaderConstantDeclaration ?: return
         val typeText = constantDeclaration.type?.text ?: return
-        val isVec4 = typeText == DataType.VEC4.text
+        val isVec4 = typeText == Builtins.VEC4.name
 
         val oldInitializer = constantDeclarator.initializer ?: return
 

@@ -5,9 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GDShaderUniformHeader extends PsiElement {
-
-  @Nullable
-  GDShaderUniformQualifier getUniformQualifier();
+public interface GDShaderUniformQualifier extends PsiElement {
 
 }

@@ -1,7 +1,10 @@
 package kr.jaehoyi.gdshader.reference
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import kr.jaehoyi.gdshader.model.StorageQualifier
+import kr.jaehoyi.gdshader.model.ConstantSpec
+import kr.jaehoyi.gdshader.model.LocalVariableSpec
+import kr.jaehoyi.gdshader.model.ParameterSpec
+import kr.jaehoyi.gdshader.model.UniformSpec
 import kr.jaehoyi.gdshader.model.VariableSpec
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GDShaderVariableNameRef
@@ -19,8 +22,23 @@ class GDShaderVariableReferenceTest : BasePlatformTestCase() {
         """
         doTest(code) { spec ->
             assertEquals("my_var", spec.name)
-            assertEquals(StorageQualifier.LOCAL, spec.storageQualifier)
-            assertFalse(spec.isReadOnly)
+            assertInstanceOf(spec, LocalVariableSpec::class.java)
+            assertTrue(spec.isMutable)
+        }
+    }
+    
+    fun testForInitResolve() {
+        val code = """
+            void fragment() {
+                for (int i = 0; i < 10; i++) {
+                    float a = <caret>i * 2.0;
+                }
+            }
+        """
+        doTest(code) { spec ->
+            assertEquals("i", spec.name)
+            assertInstanceOf(spec, LocalVariableSpec::class.java)
+            assertTrue(spec.isMutable)
         }
     }
 
@@ -32,7 +50,7 @@ class GDShaderVariableReferenceTest : BasePlatformTestCase() {
         """
         doTest(code) { spec ->
             assertEquals("param_a", spec.name)
-            assertEquals(StorageQualifier.PARAMETER, spec.storageQualifier)
+            assertInstanceOf(spec, ParameterSpec::class.java)
         }
     }
 
@@ -46,7 +64,7 @@ class GDShaderVariableReferenceTest : BasePlatformTestCase() {
         """
         doTest(code) { spec ->
             assertEquals("u_time", spec.name)
-            assertEquals(StorageQualifier.UNIFORM, spec.storageQualifier)
+            assertInstanceOf(spec, UniformSpec::class.java)
         }
     }
 
@@ -59,8 +77,8 @@ class GDShaderVariableReferenceTest : BasePlatformTestCase() {
         """
         doTest(code) { spec ->
             assertEquals("MAX_SPEED", spec.name)
-            assertTrue(spec.isReadOnly)
-            assertTrue(spec.storageQualifier == StorageQualifier.CONSTANT)
+            assertInstanceOf(spec, ConstantSpec::class.java)
+            assertFalse(spec.isMutable)
         }
     }
 
@@ -86,7 +104,7 @@ class GDShaderVariableReferenceTest : BasePlatformTestCase() {
         """
         doTest(code) { spec ->
             assertEquals("value", spec.name)
-            assertEquals(StorageQualifier.LOCAL, spec.storageQualifier)
+            assertInstanceOf(spec, LocalVariableSpec::class.java)
         }
     }
 

@@ -3,7 +3,7 @@ package kr.jaehoyi.gdshader.resolve
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNamedElement
-import kr.jaehoyi.gdshader.model.GDShaderBuiltins
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.psi.GDShaderForInit
 import kr.jaehoyi.gdshader.psi.GDShaderFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GDShaderItem
@@ -94,7 +94,7 @@ object GDShaderResolver {
         
         val shaderType = GDShaderPsiImplUtil.getShaderType(startElement) ?: return
         val functionContext = GDShaderPsiImplUtil.getFunctionContext(startElement) ?: return
-        val variableSpec = GDShaderBuiltins.getVariable(shaderType, functionContext, startElement.text) ?: return
+        val variableSpec = Builtins.getVariable(shaderType, functionContext, startElement.text) ?: return
         val lightVariable = GDShaderLightVariable(PsiManager.getInstance(startElement.project), variableSpec)
         if (!processor(lightVariable)) return
     }
