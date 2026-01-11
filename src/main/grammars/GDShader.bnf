@@ -158,7 +158,8 @@ local_variable_declaration ::= precision? type array_size? local_variable_declar
 local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)*
 local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initializer)?
 
-variable_name_decl ::= IDENTIFIER {
+variable_name_decl ::= IDENTIFIER
+{
 	implements="com.intellij.psi.PsiNameIdentifierOwner"
 	methods=[getName setName getNameIdentifier]
 }
@@ -174,7 +175,8 @@ function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN p
 	pin=3
 }
 
-function_name_decl ::= IDENTIFIER {
+function_name_decl ::= IDENTIFIER
+{
 	implements="com.intellij.psi.PsiNameIdentifierOwner"
 	methods=[getName setName getNameIdentifier]
 }
@@ -201,6 +203,10 @@ struct_declaration ::= STRUCT struct_name_decl struct_block SEMICOLON
 	pin=1
 }
 struct_name_decl ::= IDENTIFIER
+{
+	implements="com.intellij.psi.PsiNameIdentifierOwner"
+	methods=[getName setName getNameIdentifier]
+}
 struct_block ::= CURLY_BRACKET_OPEN struct_member_list CURLY_BRACKET_CLOSE
 struct_member_list ::= struct_member*
 {
@@ -212,6 +218,10 @@ struct_member ::= precision? type array_size? struct_member_name_decl array_size
 	pin=2
 }
 struct_member_name_decl ::= IDENTIFIER
+{
+	implements="com.intellij.psi.PsiNameIdentifierOwner"
+	methods=[getName setName getNameIdentifier]
+}
 
 // Control Statements
 control_statement ::= if_statement
@@ -312,11 +322,18 @@ variable_name_ref ::= IDENTIFIER
 {
 	methods=[getReference]
 }
-function_name_ref ::= IDENTIFIER {
+function_name_ref ::= IDENTIFIER
+{
 	methods=[getReference]
 }
 struct_name_ref ::= IDENTIFIER
+{
+	methods=[getReference]
+}
 struct_member_name_ref ::= IDENTIFIER
+{
+	methods=[getReference]
+}
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH

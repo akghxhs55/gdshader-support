@@ -4,7 +4,14 @@ package kr.jaehoyi.gdshader.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 
-public interface GdsStructNameDecl extends PsiElement {
+public interface GdsStructNameDecl extends PsiNameIdentifierOwner {
+
+  @NotNull String getName();
+
+  @Nullable PsiElement setName(@NotNull String newName);
+
+  @Nullable PsiElement getNameIdentifier();
 
 }

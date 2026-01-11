@@ -11,6 +11,10 @@ import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GdsItem
+import kr.jaehoyi.gdshader.psi.GdsStructMemberNameDecl
+import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
+import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
+import kr.jaehoyi.gdshader.psi.GdsStructNameRef
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
@@ -54,6 +58,44 @@ object GdsPsiImplUtil {
     
     @JvmStatic
     fun getReference(element: GdsFunctionNameRef): PsiReference =
+        GdsReference(element, element.textRangeInParent)
+    
+    @JvmStatic
+    fun getName(element: GdsStructNameDecl): String =
+        element.text
+    
+    @JvmStatic
+    fun setName(element: GdsStructNameDecl, newName: String): PsiElement? {
+        val identifier = GdsElementFactory.createIdentifier(element.project, newName) ?: return null
+        element.firstChild.replace(identifier)
+        return element
+    }
+    
+    @JvmStatic
+    fun getNameIdentifier(element: GdsStructNameDecl): PsiElement? =
+        element.node.findChildByType(GdsTypes.IDENTIFIER)?.psi
+    
+    @JvmStatic
+    fun getReference(element: GdsStructNameRef): PsiReference =
+        GdsReference(element, element.textRangeInParent)
+    
+    @JvmStatic
+    fun getName(element: GdsStructMemberNameDecl): String =
+        element.text
+    
+    @JvmStatic
+    fun setName(element: GdsStructMemberNameDecl, newName: String): PsiElement? {
+        val identifier = GdsElementFactory.createIdentifier(element.project, newName) ?: return null
+        element.firstChild.replace(identifier)
+        return element
+    }
+    
+    @JvmStatic
+    fun getNameIdentifier(element: GdsStructMemberNameDecl): PsiElement? =
+        element.node.findChildByType(GdsTypes.IDENTIFIER)?.psi
+    
+    @JvmStatic
+    fun getReference(element: GdsStructMemberNameRef): PsiReference =
         GdsReference(element, element.textRangeInParent)
     
     fun getShaderType(file: GdsFile): ShaderType? {

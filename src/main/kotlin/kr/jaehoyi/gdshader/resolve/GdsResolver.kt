@@ -83,11 +83,11 @@ object GdsResolver {
                             if (!processor(nameDecl)) return
                         }
 
-//                        val structDeclaration = sibling.topLevelDeclaration.structDeclaration
-//                        if (structDeclaration != null) {
-//                            val nameDecl = structDeclaration.structNameDecl
-//                            if (!processor(nameDecl)) return
-//                        }
+                        val structDeclaration = sibling.topLevelDeclaration.structDeclaration
+                        if (structDeclaration != null) {
+                            val nameDecl = structDeclaration.structNameDecl
+                            if (nameDecl != null && !processor(nameDecl)) return
+                        }
                     }
                 }
             }

@@ -27,4 +27,19 @@ public class GdsStructNameDeclImpl extends ASTWrapperPsiElement implements GdsSt
     else super.accept(visitor);
   }
 
+  @Override
+  public @NotNull String getName() {
+    return GdsPsiImplUtil.getName(this);
+  }
+
+  @Override
+  public @Nullable PsiElement setName(@NotNull String newName) {
+    return GdsPsiImplUtil.setName(this, newName);
+  }
+
+  @Override
+  public @Nullable PsiElement getNameIdentifier() {
+    return GdsPsiImplUtil.getNameIdentifier(this);
+  }
+
 }
