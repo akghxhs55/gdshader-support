@@ -94,8 +94,8 @@ val GdsFunctionNameDecl.functionSpec: FunctionSpec?
     get() {
         val declaration = this.parent as? GdsFunctionDeclaration ?: return null
         val returnType = GdsDataTypeFactory.createFromFunctionDeclaration(declaration) ?: return null
-        val parameterList = declaration.parameterList ?: return null
-        val parameters = parameterList.parameterList.mapNotNull { param ->
+        val parameterList = declaration.parameterList?.parameterList ?: emptyList()
+        val parameters = parameterList.mapNotNull { param ->
             val nameDecl = param.variableNameDecl
             nameDecl.variableSpec as ParameterSpec
         }
