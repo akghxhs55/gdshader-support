@@ -12,7 +12,9 @@ import kr.jaehoyi.gdshader.model.LocalVariableSpec
 import kr.jaehoyi.gdshader.model.ParameterSpec
 import kr.jaehoyi.gdshader.model.UniformSpec
 import kr.jaehoyi.gdshader.model.VaryingSpec
+import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.psi.functionSpec
 import kr.jaehoyi.gdshader.psi.variableSpec
 
 object GdsLookupElements {
@@ -146,7 +148,7 @@ object GdsLookupElements {
                     true
                 )
                 .withTypeText(functionSpec.returnType.presentationText, true)
-                .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+                .withInsertHandler(if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
         }
     }
     
@@ -275,7 +277,7 @@ object GdsLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
     }
     
-    fun createFromNameDecl(nameDecl: GdsVariableNameDecl): LookupElement? {
+    fun createFromVariableNameDecl(nameDecl: GdsVariableNameDecl): LookupElement? {
         val variableSpec = nameDecl.variableSpec ?: return null
         
         val icon = when (variableSpec) {
@@ -290,6 +292,22 @@ object GdsLookupElements {
             .withBoldness(true)
             .withTypeText(variableSpec.presentationTypeText, true)
             .withIcon(icon)
+        
+        return builder
+    }
+    
+    fun createFromFunctionNameDecl(nameDecl: GdsFunctionNameDecl): LookupElement? {
+        val functionSpec = nameDecl.functionSpec ?: return null
+        
+        val builder = LookupElementBuilder.create(nameDecl, functionSpec.name)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText(
+                "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.presentationTypeText} ${param.name}" } + ")",
+                true
+            )
+            .withTypeText(functionSpec.returnType.presentationText, true)
+            .withInsertHandler(if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
         
         return builder
     }

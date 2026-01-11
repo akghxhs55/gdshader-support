@@ -106,6 +106,16 @@ object Builtins {
 
         ShaderType.FOG to FunctionContext.COMMON to globalFunctions,
     ) }
+    
+    private val FUNCTION_LOOKUP_CACHE: Map<Pair<ShaderType, FunctionContext>, Map<String, List<FunctionSpec>>> by lazy {
+        FUNCTIONS.mapValues { entry ->
+            entry.value.groupBy { it.name }
+        }
+    }
+    
+    fun getFunctions(shaderType: ShaderType, functionContext: FunctionContext, name: String): List<FunctionSpec>? = 
+        FUNCTION_LOOKUP_CACHE[shaderType to functionContext]?.get(name) 
+            ?: FUNCTION_LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
 
     // Variables
     val VARIABLES: Map<Pair<ShaderType, FunctionContext>, List<VariableSpec>> by lazy { mapOf(
@@ -1482,14 +1492,15 @@ object Builtins {
         ),
     ) }
     
-    private val LOOKUP_CACHE: Map<Pair<ShaderType, FunctionContext>, Map<String, VariableSpec>> by lazy {
+    private val VARIABLE_LOOKUP_CACHE: Map<Pair<ShaderType, FunctionContext>, Map<String, VariableSpec>> by lazy {
         VARIABLES.mapValues { (_, list) ->
             list.associateBy { it.name }
         }
     }
     
-    fun getVariable(shaderType: ShaderType, functionContext: FunctionContext, name: String): VariableSpec? 
-        = LOOKUP_CACHE[shaderType to functionContext]?.get(name) ?: LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
+    fun getVariable(shaderType: ShaderType, functionContext: FunctionContext, name: String): VariableSpec? =
+        VARIABLE_LOOKUP_CACHE[shaderType to functionContext]?.get(name)
+            ?: VARIABLE_LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
     
     // Processing functions
     val PROCESSING_FUNCTIONS: EnumMap<ShaderType, List<FunctionContext>> = EnumMap(mapOf(

@@ -36,7 +36,9 @@ import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GdsWhileStatement
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.ShaderType
+import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
@@ -656,14 +658,20 @@ class GdsCompletionContributor : CompletionContributor() {
         completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
 
         GdsResolver.processDeclarations(position) { element ->
-            if (element is GdsLightVariable) {
+            if (element is GdsLightVariable ||
+                element is GdsLightFunction
+            ) {
                 return@processDeclarations false
             }
             
-            val nameDecl = element as? GdsVariableNameDecl ?: return@processDeclarations true
-            val lookupElement = GdsLookupElements.createFromNameDecl(nameDecl)
-            if (lookupElement != null) {
-                completions += lookupElement
+            when (element) {
+                is GdsVariableNameDecl -> {
+                    completions += GdsLookupElements.createFromVariableNameDecl(element) ?: return@processDeclarations true
+                }
+                
+                is GdsFunctionNameDecl -> {
+                    completions += GdsLookupElements.createFromFunctionNameDecl(element) ?: return@processDeclarations true
+                }
             }
             
             return@processDeclarations true

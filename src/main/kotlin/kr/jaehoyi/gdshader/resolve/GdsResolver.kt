@@ -9,6 +9,7 @@ import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
 import kr.jaehoyi.gdshader.psi.GdsTypes
+import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
@@ -94,9 +95,20 @@ object GdsResolver {
         
         val shaderType = GdsPsiImplUtil.getShaderType(startElement) ?: return
         val functionContext = GdsPsiImplUtil.getFunctionContext(startElement) ?: return
-        val variableSpec = Builtins.getVariable(shaderType, functionContext, startElement.text) ?: return
-        val lightVariable = GdsLightVariable(PsiManager.getInstance(startElement.project), variableSpec)
-        if (!processor(lightVariable)) return
+        
+        val manager = PsiManager.getInstance(startElement.project)
+        
+        val variableSpec = Builtins.getVariable(shaderType, functionContext, startElement.text)
+        if (variableSpec != null) {
+            val lightVariable = GdsLightVariable(manager, variableSpec)
+            if (!processor(lightVariable)) return
+        }
+        
+        val functionSpecs = Builtins.getFunctions(shaderType, functionContext, startElement.text) ?: emptyList()
+        for (functionSpec in functionSpecs) {
+            val lightFunction = GdsLightFunction(manager, functionSpec)
+            if (!processor(lightFunction)) return
+        }
     }
     
 }
