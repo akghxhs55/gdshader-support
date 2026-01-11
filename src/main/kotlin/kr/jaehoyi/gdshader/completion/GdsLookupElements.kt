@@ -210,7 +210,7 @@ object GdsLookupElements {
     }
     
     val CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST.filter { it.isInstantiable }.map { 
-        LookupElementBuilder.create(it)
+        LookupElementBuilder.create(it.presentationText)
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
