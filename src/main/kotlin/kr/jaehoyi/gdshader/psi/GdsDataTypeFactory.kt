@@ -8,7 +8,7 @@ import kr.jaehoyi.gdshader.model.withPrecision
 
 object GdsDataTypeFactory {
     
-    fun createFromUniformDeclaration(declaration: GDShaderUniformDeclaration): DataType? {
+    fun createFromUniformDeclaration(declaration: GdsUniformDeclaration): DataType? {
         val typeText = declaration.type?.text ?: return null
         val baseType = getBaseType(declaration.precision?.text, typeText) ?: return null
         
@@ -26,8 +26,8 @@ object GdsDataTypeFactory {
         }
     }
     
-    fun createFromConstantDeclaration(declarator: GDShaderConstantDeclarator): DataType? {
-        val declaration = declarator.parent?.parent as? GDShaderConstantDeclaration ?: return null
+    fun createFromConstantDeclaration(declarator: GdsConstantDeclarator): DataType? {
+        val declaration = declarator.parent?.parent as? GdsConstantDeclaration ?: return null
         
         val typeText = declaration.type?.text ?: return null
         val baseType = getBaseType(declaration.precision?.text, typeText) ?: return null
@@ -48,7 +48,7 @@ object GdsDataTypeFactory {
         }
     }
     
-    fun createFromVaryingDeclaration(declaration: GDShaderVaryingDeclaration): DataType? {
+    fun createFromVaryingDeclaration(declaration: GdsVaryingDeclaration): DataType? {
         val typeText = declaration.type?.text ?: return null
         val baseType = getBaseType(declaration.precision?.text, typeText) ?: return null
         
@@ -66,8 +66,8 @@ object GdsDataTypeFactory {
         }
     }
     
-    fun createFromLocalVariableDeclaration(declarator: GDShaderLocalVariableDeclarator): DataType? {
-        val declaration = declarator.parent?.parent as? GDShaderLocalVariableDeclaration ?: return null
+    fun createFromLocalVariableDeclaration(declarator: GdsLocalVariableDeclarator): DataType? {
+        val declaration = declarator.parent?.parent as? GdsLocalVariableDeclaration ?: return null
         
         val baseType = getBaseType(declaration.precision?.text, declaration.type.text) ?: return null
         
@@ -87,13 +87,13 @@ object GdsDataTypeFactory {
         }
     }
     
-    fun createFromForInit(declarator: GDShaderLocalVariableDeclarator): DataType? {
-        val declaration = declarator.parent?.parent as? GDShaderForInit ?: return null
+    fun createFromForInit(declarator: GdsLocalVariableDeclarator): DataType? {
+        val declaration = declarator.parent?.parent as? GdsForInit ?: return null
         
         return getBaseType(declaration.precision?.text, declaration.type.text)
     }
     
-    fun createFromParameter(parameter: GDShaderParameter): DataType? {
+    fun createFromParameter(parameter: GdsParameter): DataType? {
         val typeText = parameter.type.text ?: return null
         val baseType = getBaseType(parameter.precision?.text, typeText) ?: return null
         
@@ -111,7 +111,7 @@ object GdsDataTypeFactory {
         }
     }
     
-    fun createFromFunctionDeclaration(declaration: GDShaderFunctionDeclaration): DataType? {
+    fun createFromFunctionDeclaration(declaration: GdsFunctionDeclaration): DataType? {
         val typeText = declaration.type.text ?: return null
         return getBaseType(declaration.precision?.text, typeText)
     }
@@ -125,7 +125,7 @@ object GdsDataTypeFactory {
         return baseType
     }
     
-    private fun parseArraySize(node: GDShaderArraySize): Int? {
+    private fun parseArraySize(node: GdsArraySize): Int? {
         return node.text.filter { it.isDigit() }.toIntOrNull()
     }
     

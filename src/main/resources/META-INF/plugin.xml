@@ -22,63 +22,63 @@
 
     <extensions defaultExtensionNs="com.intellij">
         
-        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GDShaderNestingRulesProvider" />
+        <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GdsNestingRulesProvider" />
         
         <fileType
             name="GDShader File"
-            implementationClass="kr.jaehoyi.gdshader.GDShaderFileType"
+            implementationClass="kr.jaehoyi.gdshader.GdsFileType"
             fieldName="INSTANCE"
             language="GDShader"
             extensions="gdshader;gdshaderinc" />
         <fileType
             name="GDShader Include File"
-            implementationClass="kr.jaehoyi.gdshader.GDShaderIncludeFileType"
+            implementationClass="kr.jaehoyi.gdshader.GdsIncludeFileType"
             fieldName="INSTANCE"
             language="GDShader"
             extensions="gdshaderinc" />
         
         <lang.parserDefinition
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.GDShaderParserDefinition" />
+            implementationClass="kr.jaehoyi.gdshader.GdsParserDefinition" />
         
         <!-- Highlighting -->
         <lang.syntaxHighlighterFactory
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.highlighting.GDShaderSyntaxHighlighterFactory" />
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsSyntaxHighlighterFactory" />
         <colorSettingsPage
-            implementation="kr.jaehoyi.gdshader.highlighting.GDShaderColorSettingsPage" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GDShaderHighlightingAnnotator" />
+            implementation="kr.jaehoyi.gdshader.highlighting.GdsColorSettingsPage" />
+        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsHighlightingAnnotator" />
         
         <!-- Formatting -->
         <lang.formatter
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.formatter.GDShaderFormattingModelBuilder" />
+            implementationClass="kr.jaehoyi.gdshader.formatter.GdsFormattingModelBuilder" />
         <lang.braceMatcher
                 language="GDShader"
-                implementationClass="kr.jaehoyi.gdshader.completion.GDShaderBraceMatcher" />
+                implementationClass="kr.jaehoyi.gdshader.completion.GdsBraceMatcher" />
         <lang.quoteHandler
                 language="GDShader"
-                implementationClass="kr.jaehoyi.gdshader.completion.GDShaderQuoteHandler" />
-        <typedHandler implementation="kr.jaehoyi.gdshader.formatter.GDShaderTypedHandler" />
+                implementationClass="kr.jaehoyi.gdshader.completion.GdsQuoteHandler" />
+        <typedHandler implementation="kr.jaehoyi.gdshader.formatter.GdsTypedHandler" />
         
         <!-- Completions -->
         <completion.contributor
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.completion.GDShaderCompletionContributor" />
-        <typedHandler implementation="kr.jaehoyi.gdshader.completion.GDShaderCompletionTypedHandler" />
+            implementationClass="kr.jaehoyi.gdshader.completion.GdsCompletionContributor" />
+        <typedHandler implementation="kr.jaehoyi.gdshader.completion.GdsCompletionTypedHandler" />
         
         <!-- Code Insights -->
-        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderUniformColorProvider" />
-        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderConstantColorProvider" />
-        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GDShaderLocalVariableColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUniformColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsConstantColorProvider" />
+        <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsLocalVariableColorProvider" />
         <codeInsight.lineMarkerProvider
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.codeinsight.GDShaderProcessingFunctionLineMarkerProvider" />
+            implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsProcessingFunctionLineMarkerProvider" />
         
         <!-- Refactoring -->
         <lang.refactoringSupport
             language="GDShader"
-            implementationClass="kr.jaehoyi.gdshader.refactoring.GDShaderRefactoringSupportProvider" />
+            implementationClass="kr.jaehoyi.gdshader.refactoring.GdsRefactoringSupportProvider" />
         
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
@@ -96,8 +96,8 @@
             id="GDShader.NewFile"
             text="GDShader File"
             description="Create a new GDShader file"
-            class="kr.jaehoyi.gdshader.action.GDShaderNewFileAction"
-            icon="kr.jaehoyi.gdshader.GDShaderIcons.GDSHADER">
+            class="kr.jaehoyi.gdshader.action.GdsNewFileAction"
+            icon="kr.jaehoyi.gdshader.GdsIcons.GDSHADER">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
         </action>
         
@@ -105,8 +105,8 @@
             id="GDShaderInclude.NewFile"
             text="GDShader Include File"
             description="Create a new GDShader Include file"
-            class="kr.jaehoyi.gdshader.action.GDShaderIncludeNewFileAction"
-            icon="kr.jaehoyi.gdshader.GDShaderIcons.GDSHADERINC">
+            class="kr.jaehoyi.gdshader.action.GdsIncludeNewFileAction"
+            icon="kr.jaehoyi.gdshader.GdsIcons.GDSHADERINC">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
         </action>
         

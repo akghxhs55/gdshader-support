@@ -1,11 +1,11 @@
 GDShader File
-  GDShaderItemImpl(ITEM)
-    GDShaderTopLevelDeclarationImpl(TOP_LEVEL_DECLARATION)
-      GDShaderConstantDeclarationImpl(CONSTANT_DECLARATION)
+  GdsItemImpl(ITEM)
+    GdsTopLevelDeclarationImpl(TOP_LEVEL_DECLARATION)
+      GdsConstantDeclarationImpl(CONSTANT_DECLARATION)
         PsiElement(GDShaderTokenType.CONST)('const')
         PsiWhiteSpace(' ')
-        GDShaderTypeImpl(TYPE)
-          GDShaderPrimitiveTypeImpl(PRIMITIVE_TYPE)
+        GdsTypeImpl(TYPE)
+          GdsPrimitiveTypeImpl(PRIMITIVE_TYPE)
             PsiElement(GDShaderTokenType.TYPE_INT)('int')
         PsiErrorElement:GDShaderTokenType.BRACKET_OPEN or GDShaderTokenType.IDENTIFIER expected, got ';'
           <empty list>

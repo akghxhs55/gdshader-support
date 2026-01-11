@@ -1,12 +1,12 @@
 package kr.jaehoyi.gdshader.parsing
 
 import com.intellij.testFramework.ParsingTestCase
-import kr.jaehoyi.gdshader.GDShaderParserDefinition
+import kr.jaehoyi.gdshader.GdsParserDefinition
 
 class DeclarationParsingTest : ParsingTestCase(
     "parsing/declarations",
     "gdshader",
-    GDShaderParserDefinition()
+    GdsParserDefinition()
 ) {
     
     override fun getTestDataPath(): String = "src/test/testData"

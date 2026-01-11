@@ -1,18 +1,18 @@
 {
-  parserClass="kr.jaehoyi.gdshader.parser.GDShaderParser"
+  parserClass="kr.jaehoyi.gdshader.parser.GdsParser"
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
-  psiClassPrefix="GDShader"
+  psiClassPrefix="Gds"
   psiImplClassSuffix="Impl"
   psiPackage="kr.jaehoyi.gdshader.psi"
   psiImplPackage="kr.jaehoyi.gdshader.psi.impl"
 
-  elementTypeHolderClass="kr.jaehoyi.gdshader.psi.GDShaderTypes"
-  elementTypeClass="kr.jaehoyi.gdshader.psi.GDShaderElementType"
-  tokenTypeClass="kr.jaehoyi.gdshader.psi.GDShaderTokenType"
+  elementTypeHolderClass="kr.jaehoyi.gdshader.psi.GdsTypes"
+  elementTypeClass="kr.jaehoyi.gdshader.psi.GdsElementType"
+  tokenTypeClass="kr.jaehoyi.gdshader.psi.GdsTokenType"
   
-  psiImplUtilClass="kr.jaehoyi.gdshader.psi.impl.GDShaderPsiImplUtil"
+  psiImplUtilClass="kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil"
   
   tokens=[
   	UNTERMINATED_STRING_CONSTANT = "Unterminated string"

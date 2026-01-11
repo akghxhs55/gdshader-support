@@ -11,7 +11,7 @@ class ShaderTypeCompletionTest : BaseCompletionTest() {
     
     fun testShaderTypeValues() {
         val completions = getCompletionsForTestFile()
-        assertContainsElements(completions, GDShaderKeywords.SHADER_TYPES)
+        assertContainsElements(completions, GdsKeywords.SHADER_TYPES)
         assertDoesntContain(completions, "shader_type", "render_mode", "void", "uniform")
     }
     
