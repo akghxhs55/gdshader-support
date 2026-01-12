@@ -37,6 +37,7 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.reference.GdsFunctionReference
+import kr.jaehoyi.gdshader.reference.GdsStructReference
 import kr.jaehoyi.gdshader.reference.GdsVariableReference
 
 object GdsPsiImplUtil {
@@ -192,7 +193,7 @@ object GdsPsiImplUtil {
     
     @JvmStatic
     fun getReference(element: GdsStructNameRef): PsiReference =
-        GdsVariableReference(element, TextRange(0, element.textLength))
+        GdsStructReference(element, TextRange(0, element.textLength))
     
     fun getShaderType(file: GdsFile): ShaderType? {
         for (child in file.children) {

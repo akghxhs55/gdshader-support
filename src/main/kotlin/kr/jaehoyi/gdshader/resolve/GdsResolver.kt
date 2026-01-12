@@ -3,11 +3,13 @@ package kr.jaehoyi.gdshader.resolve
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
+import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
@@ -66,6 +68,19 @@ object GdsResolver {
             }
             true
         } && processBuiltinFunctions(startElement, processor)
+    }
+    
+    fun processStructDeclaration(startElement: PsiElement, processor: (element: GdsStructNameDecl) -> Boolean): Boolean {
+        val file = startElement.containingFile as? GdsFile ?: return true
+        
+        for (item in file.children) {
+            if (item !is GdsItem) continue
+            val structDeclaration = item.topLevelDeclaration.structDeclaration ?: continue
+            val nameDecl = structDeclaration.structNameDecl ?: continue
+            if (!processor(nameDecl)) return false
+        }
+        
+        return true
     }
 
     private inline fun walkUpScope(startElement: PsiElement, action: (PsiElement) -> Boolean): Boolean {
