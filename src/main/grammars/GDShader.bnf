@@ -160,8 +160,8 @@ local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initiali
 
 variable_name_decl ::= IDENTIFIER
 {
-	implements="com.intellij.psi.PsiNameIdentifierOwner"
-	methods=[getName setName getNameIdentifier]
+	implements=["com.intellij.psi.PsiNameIdentifierOwner" "kr.jaehoyi.gdshader.psi.GdsVariable"]
+	methods=[getName setName getNameIdentifier getVariableSpec]
 }
 
 initializer ::= expression | initializer_list
@@ -177,8 +177,8 @@ function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN p
 
 function_name_decl ::= IDENTIFIER
 {
-	implements="com.intellij.psi.PsiNameIdentifierOwner"
-	methods=[getName setName getNameIdentifier]
+	implements=["com.intellij.psi.PsiNameIdentifierOwner" " kr.jaehoyi.gdshader.psi.GdsFunction"]
+	methods=[getName setName getNameIdentifier getFunctionSpec]
 }
 
 parameter_list ::= parameter (COMMA parameter)*
@@ -218,10 +218,6 @@ struct_member ::= precision? type array_size? struct_member_name_decl array_size
 	pin=2
 }
 struct_member_name_decl ::= IDENTIFIER
-{
-	implements="com.intellij.psi.PsiNameIdentifierOwner"
-	methods=[getName setName getNameIdentifier]
-}
 
 // Control Statements
 control_statement ::= if_statement
@@ -331,9 +327,6 @@ struct_name_ref ::= IDENTIFIER
 	methods=[getReference]
 }
 struct_member_name_ref ::= IDENTIFIER
-{
-	methods=[getReference]
-}
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH

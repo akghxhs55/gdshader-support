@@ -2,113 +2,114 @@ package kr.jaehoyi.gdshader.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiNamedElement
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.psi.GdsForInit
+import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
-import kr.jaehoyi.gdshader.psi.GdsTypes
+import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
 object GdsResolver {
 
-    fun processDeclarations(startElement: PsiElement, processor: (element: PsiNamedElement) -> Boolean) {
-        val start = if (startElement.node.elementType == GdsTypes.IDENTIFIER) startElement else startElement.context
-        for (currentScope in generateSequence(start) { it.context }) {
-            val params = (currentScope as? GdsFunctionDeclaration)?.parameterList?.parameterList
-            if (params != null) {
-                for (param in params) {
-                    val nameDecl = param.variableNameDecl
-                    if (!processor(nameDecl)) return
+    fun processVariableDeclaration(startElement: PsiElement, processor: (element: GdsVariable) -> Boolean): Boolean {
+        return walkUpScope(startElement) { scope ->
+            when (scope) {
+                is GdsStatementBody -> {
+                    scope.statement?.localVariableDeclaration?.localVariableDeclaratorList?.localVariableDeclaratorList?.forEach {
+                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                    }
+                    scope.statement?.constantDeclaration?.constantDeclaratorList?.constantDeclaratorList?.forEach {
+                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                    }
                 }
-            }
-            
-            for (sibling in generateSequence(currentScope.prevSibling) { it.prevSibling }) {
-                when (sibling) {
-                    is GdsStatementBody -> {
-                        val statement = sibling.statement ?: continue
 
-                        val localVariableDeclarators = statement.localVariableDeclaration
-                            ?.localVariableDeclaratorList
-                            ?.localVariableDeclaratorList
-                            .orEmpty()
-                        for (declarator in localVariableDeclarators) {
-                            if (!processor(declarator.variableNameDecl)) return
-                        }
-                        
-                        val constantDeclarators = statement.constantDeclaration
-                            ?.constantDeclaratorList
-                            ?.constantDeclaratorList
-                            .orEmpty()
-                        for (declarator in constantDeclarators) {
-                            if (!processor(declarator.variableNameDecl)) return
-                        }
+                is GdsForInit -> {
+                    scope.localVariableDeclaratorList.localVariableDeclaratorList.forEach {
+                        if (!processor(it.variableNameDecl)) return@walkUpScope false
                     }
-                    
-                    is GdsForInit -> {
-                        val declarators = sibling.localVariableDeclaratorList
-                            .localVariableDeclaratorList
-                        for (declarator in declarators) {
-                            if (!processor(declarator.variableNameDecl)) return
-                        }
-                    }
-                    
-                    is GdsItem -> {
-                        val uniformDeclaration = sibling.topLevelDeclaration.uniformDeclaration
-                        if (uniformDeclaration != null) {
-                            val nameDecl = uniformDeclaration.variableNameDecl
-                            if (nameDecl != null && !processor(nameDecl)) return
-                        }
-                        
-                        val constantDeclarators = sibling.topLevelDeclaration.constantDeclaration
-                            ?.constantDeclaratorList
-                            ?.constantDeclaratorList
-                            .orEmpty()
-                        for (declarator in constantDeclarators) {
-                            if (!processor(declarator.variableNameDecl)) return
-                        }
-                        
-                        val varyingDeclaration = sibling.topLevelDeclaration.varyingDeclaration
-                        if (varyingDeclaration != null) {
-                            val nameDecl = varyingDeclaration.variableNameDecl
-                            if (nameDecl != null && !processor(nameDecl)) return
-                        }
-                        
-                        val functionDeclaration = sibling.topLevelDeclaration.functionDeclaration
-                        if (functionDeclaration != null) {
-                            val nameDecl = functionDeclaration.functionNameDecl
-                            if (!processor(nameDecl)) return
-                        }
+                }
 
-                        val structDeclaration = sibling.topLevelDeclaration.structDeclaration
-                        if (structDeclaration != null) {
-                            val nameDecl = structDeclaration.structNameDecl
-                            if (nameDecl != null && !processor(nameDecl)) return
-                        }
+                is GdsFunctionDeclaration -> {
+                    scope.parameterList?.parameterList?.forEach {
+                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                    }
+                }
+
+                is GdsItem -> {
+                    scope.topLevelDeclaration.uniformDeclaration?.variableNameDecl?.let {
+                        if (!processor(it)) return@walkUpScope false
+                    }
+                    scope.topLevelDeclaration.constantDeclaration?.constantDeclaratorList?.constantDeclaratorList?.forEach {
+                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                    }
+                    scope.topLevelDeclaration.varyingDeclaration?.variableNameDecl?.let {
+                        if (!processor(it)) return@walkUpScope false
                     }
                 }
             }
+            true
+        } && processBuiltinVariables(startElement, processor)
+    }
+    
+    fun processFunctionDeclaration(startElement: PsiElement, processor: (element: GdsFunction) -> Boolean): Boolean {
+        return walkUpScope(startElement) { scope ->
+            when (scope) {
+                is GdsItem -> {
+                    scope.topLevelDeclaration.functionDeclaration?.functionNameDecl?.let {
+                        if (!processor(it)) return@walkUpScope false
+                    }
+                }
+            }
+            true
+        } && processBuiltinFunctions(startElement, processor)
+    }
+
+    private inline fun walkUpScope(startElement: PsiElement, action: (PsiElement) -> Boolean): Boolean {
+        var current = startElement.context
+        while (current != null) {
+            if (!action(current)) return false
+
+            var sibling = current.prevSibling
+            while (sibling != null) {
+                if (!action(sibling)) return false
+                sibling = sibling.prevSibling
+            }
+
+            current = current.context
         }
+        return true
+    }
+    
+    private fun processBuiltinVariables(element: PsiElement, processor: (element: GdsVariable) -> Boolean): Boolean {
+        val shaderType = GdsPsiImplUtil.getShaderType(element) ?: return true
+        val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: return true
         
-        val shaderType = GdsPsiImplUtil.getShaderType(startElement) ?: return
-        val functionContext = GdsPsiImplUtil.getFunctionContext(startElement) ?: return
+        val project = element.project
+        val manager = PsiManager.getInstance(project)
         
-        val manager = PsiManager.getInstance(startElement.project)
-        
-        val variableSpec = Builtins.getVariable(shaderType, functionContext, startElement.text)
-        if (variableSpec != null) {
-            val lightVariable = GdsLightVariable(manager, variableSpec)
-            if (!processor(lightVariable)) return
+        val spec = Builtins.getVariable(shaderType, functionContext, element.text)
+        if (spec != null) {
+            return !processor(GdsLightVariable(manager, spec))
         }
+        return true
+    }
+    
+    private fun processBuiltinFunctions(element: PsiElement, processor: (element: GdsFunction) -> Boolean): Boolean {
+        val shaderType = GdsPsiImplUtil.getShaderType(element) ?: return true
+        val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: return true
         
-        val functionSpecs = Builtins.getFunctions(shaderType, functionContext, startElement.text) ?: emptyList()
-        for (functionSpec in functionSpecs) {
-            val lightFunction = GdsLightFunction(manager, functionSpec)
-            if (!processor(lightFunction)) return
+        val project = element.project
+        val manager = PsiManager.getInstance(project)
+        
+        val spec = Builtins.getFunctions(shaderType, functionContext, element.text) ?: return true
+        spec.forEach {
+            if (!processor(GdsLightFunction(manager, it))) return false
         }
+        return true
     }
     
 }

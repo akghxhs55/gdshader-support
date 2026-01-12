@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static kr.jaehoyi.gdshader.psi.GdsTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
+import kr.jaehoyi.gdshader.model.FunctionSpec;
 
 public class GdsFunctionNameDeclImpl extends ASTWrapperPsiElement implements GdsFunctionNameDecl {
 
@@ -40,6 +41,11 @@ public class GdsFunctionNameDeclImpl extends ASTWrapperPsiElement implements Gds
   @Override
   public @Nullable PsiElement getNameIdentifier() {
     return GdsPsiImplUtil.getNameIdentifier(this);
+  }
+
+  @Override
+  public @Nullable FunctionSpec getFunctionSpec() {
+    return GdsPsiImplUtil.getFunctionSpec(this);
   }
 
 }

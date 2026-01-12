@@ -126,6 +126,7 @@ public class GdsVisitor extends PsiElementVisitor {
 
   public void visitFunctionNameDecl(@NotNull GdsFunctionNameDecl o) {
     visitPsiNameIdentifierOwner(o);
+    // visitFunction(o);
   }
 
   public void visitFunctionNameRef(@NotNull GdsFunctionNameRef o) {
@@ -313,7 +314,7 @@ public class GdsVisitor extends PsiElementVisitor {
   }
 
   public void visitStructMemberNameDecl(@NotNull GdsStructMemberNameDecl o) {
-    visitPsiNameIdentifierOwner(o);
+    visitPsiElement(o);
   }
 
   public void visitStructMemberNameRef(@NotNull GdsStructMemberNameRef o) {
@@ -374,6 +375,7 @@ public class GdsVisitor extends PsiElementVisitor {
 
   public void visitVariableNameDecl(@NotNull GdsVariableNameDecl o) {
     visitPsiNameIdentifierOwner(o);
+    // visitVariable(o);
   }
 
   public void visitVariableNameRef(@NotNull GdsVariableNameRef o) {

@@ -6,19 +6,19 @@ import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
-class GdsReference(element: PsiElement, textRange: TextRange) : PsiReferenceBase<PsiElement>(element, textRange) {
+class GdsVariableReference(element: PsiElement, textRange: TextRange) : PsiReferenceBase<PsiElement>(element, textRange) {
     
     private val key: String = element.text
 
     override fun resolve(): PsiElement? {
         var result: PsiElement? = null
 
-        GdsResolver.processDeclarations(element) { element ->
+        GdsResolver.processVariableDeclaration(element) { element ->
             if (element.name == key) {
                 result = element
-                return@processDeclarations false
+                return@processVariableDeclaration false
             }
-            return@processDeclarations true
+            return@processVariableDeclaration true
         }
         
         return result

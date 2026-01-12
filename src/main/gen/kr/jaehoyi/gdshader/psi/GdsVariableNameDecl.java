@@ -5,13 +5,16 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import kr.jaehoyi.gdshader.model.VariableSpec;
 
-public interface GdsVariableNameDecl extends PsiNameIdentifierOwner {
+public interface GdsVariableNameDecl extends PsiNameIdentifierOwner, GdsVariable {
 
   @NotNull String getName();
 
   @Nullable PsiElement setName(@NotNull String newName);
 
   @Nullable PsiElement getNameIdentifier();
+
+  @Nullable VariableSpec getVariableSpec();
 
 }

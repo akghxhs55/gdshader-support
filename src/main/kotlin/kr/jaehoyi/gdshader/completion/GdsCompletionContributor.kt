@@ -657,24 +657,20 @@ class GdsCompletionContributor : CompletionContributor() {
         completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList()
         completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
 
-        GdsResolver.processDeclarations(position) { element ->
-            if (element is GdsLightVariable ||
-                element is GdsLightFunction
-            ) {
-                return@processDeclarations false
-            }
-            
+        GdsResolver.processVariableDeclaration(position) { element ->
             when (element) {
-                is GdsVariableNameDecl -> {
-                    completions += GdsLookupElements.createFromVariableNameDecl(element) ?: return@processDeclarations true
-                }
-                
-                is GdsFunctionNameDecl -> {
-                    completions += GdsLookupElements.createFromFunctionNameDecl(element) ?: return@processDeclarations true
-                }
+                is GdsLightVariable -> return@processVariableDeclaration false
+                is GdsVariableNameDecl -> completions += GdsLookupElements.createFromVariableNameDecl(element) ?: return@processVariableDeclaration true
             }
-            
-            return@processDeclarations true
+            return@processVariableDeclaration true
+        }
+
+        GdsResolver.processFunctionDeclaration(position) { element ->
+            when (element) {
+                is GdsLightFunction -> return@processFunctionDeclaration false
+                is GdsFunctionNameDecl -> completions += GdsLookupElements.createFromFunctionNameDecl(element) ?: return@processFunctionDeclaration true
+            }
+            return@processFunctionDeclaration true
         }
 
         completions += GdsLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()

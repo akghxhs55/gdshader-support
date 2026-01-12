@@ -14,8 +14,6 @@ import kr.jaehoyi.gdshader.model.UniformSpec
 import kr.jaehoyi.gdshader.model.VaryingSpec
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
-import kr.jaehoyi.gdshader.psi.functionSpec
-import kr.jaehoyi.gdshader.psi.variableSpec
 
 object GdsLookupElements {
     
