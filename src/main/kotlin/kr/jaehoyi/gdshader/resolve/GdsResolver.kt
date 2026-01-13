@@ -84,17 +84,21 @@ object GdsResolver {
     }
 
     private inline fun walkUpScope(startElement: PsiElement, action: (PsiElement) -> Boolean): Boolean {
-        var current = startElement.context
+        var current: PsiElement? = startElement
         while (current != null) {
-            if (!action(current)) return false
-
             var sibling = current.prevSibling
             while (sibling != null) {
                 if (!action(sibling)) return false
                 sibling = sibling.prevSibling
             }
+            
+            val parent = current.context
 
-            current = current.context
+            if (parent is GdsFunctionDeclaration) {
+                if (!action(parent)) return false
+            }
+            
+            current = parent
         }
         return true
     }

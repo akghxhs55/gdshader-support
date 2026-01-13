@@ -9,7 +9,6 @@ import kr.jaehoyi.gdshader.model.VariableSpec
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
-import kr.jaehoyi.gdshader.psi.variableSpec
 
 class GdsVariableReferenceTest : BasePlatformTestCase() {
 

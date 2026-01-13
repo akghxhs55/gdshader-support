@@ -97,4 +97,19 @@ class VariableCompletionTest : BasePlatformTestCase() {
         }
     }
     
+    fun `test for loop variable completion`() {
+        myFixture.configureByText("test.gdshader", """
+            void fragment() {
+                for (int i = 0; i < 10; i++) {
+                    i<caret>
+                }
+            }
+        """.trimIndent())
+
+        myFixture.completeBasic()
+        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+
+        assertTrue("Should contain 'i'", lookupStrings.contains("i"))
+    }
+    
 }

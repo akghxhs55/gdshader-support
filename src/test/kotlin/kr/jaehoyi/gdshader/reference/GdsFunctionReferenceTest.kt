@@ -4,7 +4,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.model.FunctionSpec
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
-import kr.jaehoyi.gdshader.psi.functionSpec
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 
 class GdsFunctionReferenceTest : BasePlatformTestCase() {
