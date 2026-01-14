@@ -291,8 +291,14 @@ class GdsCompletionContributor : CompletionContributor() {
 
                     // 2. After CONST
                     if (prevLeaf.elementType == GdsTypes.CONST) {
-                        result.addAllElements(GdsLookupElements.PRECISIONS)
-                        result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        val completions = arrayListOf<LookupElement>()
+                        completions += GdsLookupElements.PRECISIONS
+                        completions += GdsLookupElements.DECLARABLE_BUILTIN_TYPES
+                        GdsResolver.processStructDeclaration(position) { element ->
+                            completions += GdsLookupElements.createTypeDeclarationFromStructNameDecl(element)
+                            return@processStructDeclaration true
+                        }
+                        result.addAllElements(completions)
                         return
                     }
 
