@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.model.ParameterSpec
 import kr.jaehoyi.gdshader.model.UniformSpec
 import kr.jaehoyi.gdshader.model.VaryingSpec
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
+import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 
 object GdsLookupElements {
@@ -306,6 +307,29 @@ object GdsLookupElements {
             )
             .withTypeText(functionSpec.returnType.presentationText, true)
             .withInsertHandler(if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
+        
+        return builder
+    }
+    
+    fun createTypeDeclarationFromStructNameDecl(nameDecl: GdsStructNameDecl): LookupElement {
+        val structName = nameDecl.name
+        
+        val builder = LookupElementBuilder.create(nameDecl, structName)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Class)
+            .withInsertHandler(AddSpaceInsertHandler(true))
+        
+        return builder
+    }
+    
+    fun createConstructorFromStructNameDecl(nameDecl: GdsStructNameDecl): LookupElement {
+        val structName = nameDecl.name
+        
+        val builder = LookupElementBuilder.create(nameDecl, structName)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText("(...)", true)
+            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
         
         return builder
     }

@@ -629,6 +629,12 @@ class GdsCompletionContributor : CompletionContributor() {
         completions += GdsLookupElements.RETURN_KEYWORD
         completions += GdsLookupElements.DISCARD_KEYWORD
         completions += GdsLookupElements.DECLARABLE_BUILTIN_TYPES
+
+        GdsResolver.processStructDeclaration(position) { element ->
+            completions += GdsLookupElements.createTypeDeclarationFromStructNameDecl(element)
+            return@processStructDeclaration true
+        }
+        
         completions += GdsLookupElements.PRECISIONS
         completions += GdsLookupElements.CONST_KEYWORD
         
@@ -671,6 +677,11 @@ class GdsCompletionContributor : CompletionContributor() {
                 is GdsFunctionNameDecl -> completions += GdsLookupElements.createFromFunctionNameDecl(element) ?: return@processFunctionDeclaration true
             }
             return@processFunctionDeclaration true
+        }
+
+        GdsResolver.processStructDeclaration(position) { element ->
+            completions += GdsLookupElements.createConstructorFromStructNameDecl(element)
+            return@processStructDeclaration true
         }
 
         completions += GdsLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()
