@@ -9,16 +9,17 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GdsFile
+import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 object GdsPatterns {
 
-    val TOP_LEVEL: ElementPattern<PsiElement> = psiElement()
+    val TOP_LEVEL: ElementPattern<PsiElement> = psiElement(GdsTypes.IDENTIFIER)
         .withParent(GdsFile::class.java)
         .with(object : PatternCondition<PsiElement>("AfterTopLevelSeperator") {
             override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
                 val prevLeaf = PsiTreeUtil.prevVisibleLeaf(element)
-                return prevLeaf == null || prevLeaf.elementType == GdsTypes.SEMICOLON || prevLeaf.elementType == GdsTypes.CURLY_BRACKET_CLOSE
+                return prevLeaf == null || prevLeaf.elementType == GdsTypes.SEMICOLON || prevLeaf.elementType == GdsTypes.CURLY_BRACKET_CLOSE || prevLeaf.elementType in GdsTokenSets.COMMENTS
             }
         })
     
