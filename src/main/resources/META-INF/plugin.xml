@@ -80,6 +80,11 @@
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.refactoring.GdsRefactoringSupportProvider" />
         
+        <!-- Reference -->
+        <psi.referenceContributor
+            language="GDShader"
+            implementation="kr.jaehoyi.gdshader.reference.GdsReferenceContributor" />
+        
         <!-- File Templates -->
         <internalFileTemplate name="Spatial" />
         <internalFileTemplate name="Canvas Item" />

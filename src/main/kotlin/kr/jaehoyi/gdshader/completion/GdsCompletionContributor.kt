@@ -65,7 +65,7 @@ class GdsCompletionContributor : CompletionContributor() {
             CompletionType.BASIC,
             or(
                 GdsPatterns.TOP_LEVEL,
-                psiElement().inside(GdsShaderTypeDeclaration::class.java),
+                psiElement(GdsTypes.IDENTIFIER).inside(GdsShaderTypeDeclaration::class.java),
             ),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
