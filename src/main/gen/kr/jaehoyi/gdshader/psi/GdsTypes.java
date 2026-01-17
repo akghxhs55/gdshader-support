@@ -107,7 +107,9 @@ public interface GdsTypes {
   IElementType ARG_IN = new GdsTokenType("ARG_IN");
   IElementType ARG_INOUT = new GdsTokenType("ARG_INOUT");
   IElementType ARG_OUT = new GdsTokenType("ARG_OUT");
-  IElementType BLOCK_COMMENT = new GdsTokenType("Block comment");
+  IElementType BLOCK_COMMENT_CONTENT = new GdsTokenType("Block comment content");
+  IElementType BLOCK_COMMENT_END = new GdsTokenType("Block comment end");
+  IElementType BLOCK_COMMENT_START = new GdsTokenType("Block comment start");
   IElementType BRACKET_CLOSE = new GdsTokenType("BRACKET_CLOSE");
   IElementType BRACKET_OPEN = new GdsTokenType("BRACKET_OPEN");
   IElementType CF_BREAK = new GdsTokenType("CF_BREAK");

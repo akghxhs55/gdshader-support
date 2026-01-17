@@ -105,7 +105,9 @@ class GdsSyntaxHighlighter : SyntaxHighlighterBase() {
                 GdsTypes.LINE_COMMENT
                     -> LINE_COMMENT_KEYS
 
-                GdsTypes.BLOCK_COMMENT
+                GdsTypes.BLOCK_COMMENT_START,
+                GdsTypes.BLOCK_COMMENT_END,
+                GdsTypes.BLOCK_COMMENT_CONTENT,
                     -> BLOCK_COMMENT_KEYS
 
                 GdsTypes.FLOAT_CONSTANT, GdsTypes.INT_CONSTANT, GdsTypes.UINT_CONSTANT

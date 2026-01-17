@@ -17,7 +17,9 @@
   tokens=[
   	UNTERMINATED_STRING_CONSTANT = "Unterminated string"
   	LINE_COMMENT = "Line comment"
-  	BLOCK_COMMENT = "Block comment"
+  	BLOCK_COMMENT_START = "Block comment start"
+	BLOCK_COMMENT_END = "Block comment end"
+	BLOCK_COMMENT_CONTENT = "Block comment content"
   	PP_DEFINE_LINE = "Preprocessor define line"
     PP_UNDEF_LINE = "Preprocessor undef line"
     PP_ELSE_LINE = "Preprocessor else line"
