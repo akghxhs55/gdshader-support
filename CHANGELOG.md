@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 - Added color picker for color values
+- Added code completion for custom functions and variables
+- Added refactoring support (rename symbol)
+- Added line markers for processing functions
 
 ## 0.3.2-beta (2025-12-27)
 - Improved code completions
