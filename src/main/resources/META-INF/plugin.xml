@@ -59,7 +59,10 @@
         <lang.quoteHandler
                 language="GDShader"
                 implementationClass="kr.jaehoyi.gdshader.completion.GdsQuoteHandler" />
-        <typedHandler implementation="kr.jaehoyi.gdshader.formatter.GdsTypedHandler" />
+        
+        <!-- Editor Features -->
+        <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />
+        <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
         
         <!-- Completions -->
         <completion.contributor
