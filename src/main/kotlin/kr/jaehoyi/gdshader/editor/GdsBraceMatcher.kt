@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.completion
+package kr.jaehoyi.gdshader.editor
 
 import com.intellij.lang.BracePair
 import com.intellij.lang.PairedBraceMatcher

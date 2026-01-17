@@ -1,20 +1,17 @@
-package kr.jaehoyi.gdshader.completion
+package kr.jaehoyi.gdshader.psi
 
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
-import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.patterns.StandardPatterns.or
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
-import kr.jaehoyi.gdshader.psi.GdsFile
-import kr.jaehoyi.gdshader.psi.GdsTokenSets
-import kr.jaehoyi.gdshader.psi.GdsTypes
 
 object GdsPatterns {
 
-    val TOP_LEVEL: ElementPattern<PsiElement> = psiElement(GdsTypes.IDENTIFIER)
+    val TOP_LEVEL: ElementPattern<PsiElement> = PlatformPatterns.psiElement(GdsTypes.IDENTIFIER)
         .withParent(GdsFile::class.java)
         .with(object : PatternCondition<PsiElement>("AfterTopLevelSeperator") {
             override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
@@ -23,10 +20,10 @@ object GdsPatterns {
             }
         })
     
-    val AFTER_PRECISION: ElementPattern<PsiElement> = or(
-        psiElement().afterLeaf(psiElement(GdsTypes.PRECISION_HIGH)),
-        psiElement().afterLeaf(psiElement(GdsTypes.PRECISION_MEDIUM)),
-        psiElement().afterLeaf(psiElement(GdsTypes.PRECISION_LOW))
+    val AFTER_PRECISION: ElementPattern<PsiElement> = StandardPatterns.or(
+        PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_HIGH)),
+        PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_MEDIUM)),
+        PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_LOW))
     )
     
 }

@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.completion
+package kr.jaehoyi.gdshader.editor
 
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
 import kr.jaehoyi.gdshader.psi.GdsTypes

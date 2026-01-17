@@ -55,10 +55,10 @@
             implementationClass="kr.jaehoyi.gdshader.formatter.GdsFormattingModelBuilder" />
         <lang.braceMatcher
                 language="GDShader"
-                implementationClass="kr.jaehoyi.gdshader.completion.GdsBraceMatcher" />
+                implementationClass="kr.jaehoyi.gdshader.editor.GdsBraceMatcher" />
         <lang.quoteHandler
                 language="GDShader"
-                implementationClass="kr.jaehoyi.gdshader.completion.GdsQuoteHandler" />
+                implementationClass="kr.jaehoyi.gdshader.editor.GdsQuoteHandler" />
         
         <!-- Editor Features -->
         <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />

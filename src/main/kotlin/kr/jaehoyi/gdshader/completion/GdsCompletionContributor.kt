@@ -37,6 +37,7 @@ import kr.jaehoyi.gdshader.psi.GdsWhileStatement
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
+import kr.jaehoyi.gdshader.psi.GdsPatterns
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
