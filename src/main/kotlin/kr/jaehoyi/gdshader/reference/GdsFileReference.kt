@@ -1,7 +1,6 @@
 package kr.jaehoyi.gdshader.reference
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -9,7 +8,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
-import kr.jaehoyi.gdshader.GdsIcons
 import kr.jaehoyi.gdshader.completion.GdsLookupElements
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 
