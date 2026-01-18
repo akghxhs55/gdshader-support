@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.3.2-beta"
+version = "0.4.0-beta"
 
 sourceSets {
     main {
@@ -44,9 +44,10 @@ intellijPlatform {
         
         changeNotes = """
             <ul>
-              <li>Improved code completions</li>
-              <li>Improved grammar</li>
-              <li>Fix bugs</li>
+              <li>Added color picker for color values</li>
+              <li>Added code completion for custom variables, functions and structs</li>
+              <li>Added refactoring support (rename symbol)</li>
+              <li>Added line markers for processing functions</li>
             </ul>
         """.trimIndent()
     }
@@ -54,12 +55,12 @@ intellijPlatform {
 
 tasks {
     withType<JavaCompile> {
-        sourceCompatibility = "21"
-        targetCompatibility = "21"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
     
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
     }
     
     withType<Test> {
