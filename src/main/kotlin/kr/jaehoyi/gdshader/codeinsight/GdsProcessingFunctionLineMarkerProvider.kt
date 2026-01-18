@@ -40,10 +40,10 @@ class GdsProcessingFunctionLineMarkerProvider : LineMarkerProvider {
             element,
             element.textRange,
             AllIcons.Gutter.OverridingMethod,
-            { GdsBundle.message("gdshader.processing.function.tooltip", functionContext.text) },
+            { GdsBundle.message("processing.function.tooltip", functionContext.text) },
             { _, _ -> openDocumentation(shaderType, functionContext) },
             GutterIconRenderer.Alignment.LEFT,
-            { GdsBundle.message("gdshader.processing.function.accessible.name", functionContext.text) }
+            { GdsBundle.message("processing.function.accessible.name", functionContext.text) }
         )
     }
     

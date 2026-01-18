@@ -1,9 +1,12 @@
+@file:Suppress("DialogTitleCapitalization")
+
 package kr.jaehoyi.gdshader.highlighting
 
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
+import kr.jaehoyi.gdshader.GdsBundle
 import kr.jaehoyi.gdshader.GdsIcons
 import javax.swing.Icon
 import kotlin.collections.mapOf
@@ -73,29 +76,29 @@ class GdsColorSettingsPage : ColorSettingsPage {
 }
 
 private val DESCRIPTORS = arrayOf(
-    AttributesDescriptor("Identifiers//Local Variable", GdsSyntaxHighlighter.LOCAL_VARIABLE),
-    AttributesDescriptor("Identifiers//Uniform Variable", GdsSyntaxHighlighter.UNIFORM_VARIABLE),
-    AttributesDescriptor("Identifiers//Constant", GdsSyntaxHighlighter.CONSTANT),
-    AttributesDescriptor("Identifiers//Varying Variable", GdsSyntaxHighlighter.VARYING_VARIABLE),
-    AttributesDescriptor("Identifiers//Function", GdsSyntaxHighlighter.FUNCTION),
-    AttributesDescriptor("Identifiers//Parameter", GdsSyntaxHighlighter.PARAMETER),
-    AttributesDescriptor("Identifiers//Struct", GdsSyntaxHighlighter.STRUCT),
-    AttributesDescriptor("Identifiers//Struct Member", GdsSyntaxHighlighter.STRUCT_MEMBER),
-    AttributesDescriptor("Identifiers//Builtin Variable", GdsSyntaxHighlighter.BUILTIN_VARIABLE),
-    AttributesDescriptor("Identifiers//Builtin Constant", GdsSyntaxHighlighter.BUILTIN_CONSTANT),
-    AttributesDescriptor("Keyword", GdsSyntaxHighlighter.KEYWORD),
-    AttributesDescriptor("Preprocessor", GdsSyntaxHighlighter.PREPROCESSOR),
-    AttributesDescriptor("Hint", GdsSyntaxHighlighter.UNIFORM_HINT),
-    AttributesDescriptor("Number", GdsSyntaxHighlighter.NUMBER),
-    AttributesDescriptor("String", GdsSyntaxHighlighter.STRING),
-    AttributesDescriptor("Primitive Type", GdsSyntaxHighlighter.TYPE),
-    AttributesDescriptor("Comments//Line Comment", GdsSyntaxHighlighter.LINE_COMMENT),
-    AttributesDescriptor("Comments//Block Comment", GdsSyntaxHighlighter.BLOCK_COMMENT),
-    AttributesDescriptor("Braces and Operators//Operator", GdsSyntaxHighlighter.OPERATOR),
-    AttributesDescriptor("Braces and Operators//Period", GdsSyntaxHighlighter.PERIOD),
-    AttributesDescriptor("Braces and Operators//Colon", GdsSyntaxHighlighter.COLON),
-    AttributesDescriptor("Braces and Operators//Semicolon", GdsSyntaxHighlighter.SEMICOLON),
-    AttributesDescriptor("Braces and Operators//Parenthesis", GdsSyntaxHighlighter.PARENTHESIS),
-    AttributesDescriptor("Braces and Operators//Curly Bracket", GdsSyntaxHighlighter.CURLY_BRACKET),
-    AttributesDescriptor("Braces and Operators//Bracket", GdsSyntaxHighlighter.BRACKET),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.local.variable"), GdsSyntaxHighlighter.LOCAL_VARIABLE),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.uniform.variable"), GdsSyntaxHighlighter.UNIFORM_VARIABLE),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.constant"), GdsSyntaxHighlighter.CONSTANT),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.varying.variable"), GdsSyntaxHighlighter.VARYING_VARIABLE),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.function"), GdsSyntaxHighlighter.FUNCTION),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.parameter"), GdsSyntaxHighlighter.PARAMETER),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.struct"), GdsSyntaxHighlighter.STRUCT),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.struct.member"), GdsSyntaxHighlighter.STRUCT_MEMBER),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.builtin.variable"), GdsSyntaxHighlighter.BUILTIN_VARIABLE),
+    AttributesDescriptor(GdsBundle.message("color.settings.identifiers.builtin.constant"), GdsSyntaxHighlighter.BUILTIN_CONSTANT),
+    AttributesDescriptor(GdsBundle.message("color.settings.keyword"), GdsSyntaxHighlighter.KEYWORD),
+    AttributesDescriptor(GdsBundle.message("color.settings.preprocessor"), GdsSyntaxHighlighter.PREPROCESSOR),
+    AttributesDescriptor(GdsBundle.message("color.settings.hint"), GdsSyntaxHighlighter.UNIFORM_HINT),
+    AttributesDescriptor(GdsBundle.message("color.settings.number"), GdsSyntaxHighlighter.NUMBER),
+    AttributesDescriptor(GdsBundle.message("color.settings.string"), GdsSyntaxHighlighter.STRING),
+    AttributesDescriptor(GdsBundle.message("color.settings.primitive.type"), GdsSyntaxHighlighter.TYPE),
+    AttributesDescriptor(GdsBundle.message("color.settings.comments.line"), GdsSyntaxHighlighter.LINE_COMMENT),
+    AttributesDescriptor(GdsBundle.message("color.settings.comments.block"), GdsSyntaxHighlighter.BLOCK_COMMENT),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.operator"), GdsSyntaxHighlighter.OPERATOR),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.period"), GdsSyntaxHighlighter.PERIOD),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.colon"), GdsSyntaxHighlighter.COLON),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.semicolon"), GdsSyntaxHighlighter.SEMICOLON),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.parenthesis"), GdsSyntaxHighlighter.PARENTHESIS),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.curly.bracket"), GdsSyntaxHighlighter.CURLY_BRACKET),
+    AttributesDescriptor(GdsBundle.message("color.settings.braces.bracket"), GdsSyntaxHighlighter.BRACKET),
 )
