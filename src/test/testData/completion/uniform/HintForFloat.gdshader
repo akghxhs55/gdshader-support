@@ -1,1 +1,0 @@
-uniform float myVar : <caret>

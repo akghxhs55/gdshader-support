@@ -1,1 +1,0 @@
-varying highp <caret>

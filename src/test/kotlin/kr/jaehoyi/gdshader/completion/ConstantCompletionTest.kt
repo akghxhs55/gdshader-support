@@ -1,50 +1,117 @@
 package kr.jaehoyi.gdshader.completion
 
-class ConstantCompletionTest : BaseCompletionTest() {
+import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-    override val testPath = "completion/constant"
+class ConstantCompletionTest : BasePlatformTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
+    }
+
+    override fun tearDown() {
+        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = true
+        super.tearDown()
+    }
     
     fun testConstantKeywordInToplevel() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+        
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "const")
     }
     
     fun testAfterConstInToplevel() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            const <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "int", "float", "vec3", "highp", "lowp", "mediump")
         assertDoesntContain(completions, "const", "shader_type", "uniform")
     }
-    
+
     fun testAfterPrecisionInToplevel() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            const highp <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "int", "float", "vec3")
         assertDoesntContain(completions, "const", "shader_type", "uniform", "highp", "lowp", "mediump")
     }
-    
+
     fun testAfterTypeInToplevel() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            const float <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertDoesntContain(completions, "const", "shader_type", "uniform", "highp", "lowp", "mediump", "int", "float", "vec3")
     }
-    
-    fun testConstantKeywordInFunction() {
-        val completions = getCompletionsForTestFile()
+
+    fun testConstKeywordInFunction() {
+        myFixture.configureByText("test.gdshader", """
+            void f() {
+	            <caret>
+            }
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "const")
     }
-    
+
     fun testAfterConstInFunction() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            void f() {
+                const <caret>
+            }
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "int", "float", "vec3", "highp", "lowp", "mediump")
         assertDoesntContain(completions, "const", "shader_type", "uniform")
     }
-    
+
     fun testAfterPrecisionInFunction() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            void f() {
+                const highp <caret>
+            }
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "int", "float", "vec3")
         assertDoesntContain(completions, "const", "shader_type", "uniform", "highp", "lowp", "mediump")
     }
-    
+
     fun testAfterTypeInFunction() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            void f() {
+                const float <caret>
+            }
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertDoesntContain(completions, "const", "shader_type", "uniform", "highp", "lowp", "mediump", "int", "float", "vec3")
     }
 

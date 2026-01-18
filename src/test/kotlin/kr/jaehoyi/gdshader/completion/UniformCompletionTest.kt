@@ -1,46 +1,97 @@
 package kr.jaehoyi.gdshader.completion
 
+import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.model.Builtins
 
-class UniformCompletionTest : BaseCompletionTest() {
+class UniformCompletionTest : BasePlatformTestCase() {
 
-    override val testPath = "completion/uniform"
+    override fun setUp() {
+        super.setUp()
+        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
+    }
+
+    override fun tearDown() {
+        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = true
+        super.tearDown()
+    }
     
     fun testUniformKeywords() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "uniform", "global", "instance")
     }
     
     fun testAfterModifier() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            global <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "uniform")
         assertDoesntContain(completions, "global", "instance", "shader_type", "void")
     }
     
     fun testAfterUniform() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "int", "float", "bool", "highp")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "void")
     }
     
     fun testAfterPrecision() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform highp <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertContainsElements(completions, "int", "float", "bool")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "highp", "mediump", "lowp", "void")
     }
     
     fun testAfterType() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform vec4 <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
     }
     
     fun testAfterVariableName() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform vec4 myVar <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
+        
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
     }
     
     fun testHintForVec3() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform vec3 myVar : <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.VEC3])
         assertContainsElements(completions, expectedHints.toList())
@@ -49,7 +100,12 @@ class UniformCompletionTest : BaseCompletionTest() {
     }
     
     fun testHintForVec4() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform vec4 myVar : <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.VEC4])
         assertContainsElements(completions, expectedHints.toList())
@@ -58,7 +114,12 @@ class UniformCompletionTest : BaseCompletionTest() {
     }
     
     fun testHintForInt() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform int myVar : <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.INT])
         assertContainsElements(completions, expectedHints.toList())
@@ -67,7 +128,12 @@ class UniformCompletionTest : BaseCompletionTest() {
     }
     
     fun testHintForFloat() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform float myVar : <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.FLOAT])
         assertContainsElements(completions, expectedHints.toList())
@@ -76,7 +142,12 @@ class UniformCompletionTest : BaseCompletionTest() {
     }
     
     fun testHintForSampler2D() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform sampler2D myVar : <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLER2D])
         assertContainsElements(completions, expectedHints.toList())
@@ -85,14 +156,24 @@ class UniformCompletionTest : BaseCompletionTest() {
     }
     
     fun testChainedHint() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform sampler2D myVar : source_color, <caret>
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         assertContainsElements(completions, "instance_index")
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp")
     }
     
     fun testInsideRangeHintParameter() {
-        val completions = getCompletionsForTestFile()
+        myFixture.configureByText("test.gdshader", """
+            uniform float u_roundness : hint_range(0.0, <caret>);
+        """.trimIndent())
+        myFixture.completeBasic()
+
+        val completions = requireNotNull(myFixture.lookupElementStrings)
         
         assertDoesntContain(completions, "uniform", "global", "instance", "shader_type", "int", "float", "bool", "void", "highp", "mediump", "lowp", "hint_range", "hint_enum", "hint_normal", "hint_default_white", "filter_nearest", "filter_linear", "instance_index")
     }

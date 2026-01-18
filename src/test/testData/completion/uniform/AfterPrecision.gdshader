@@ -1,1 +1,0 @@
-uniform highp <caret>

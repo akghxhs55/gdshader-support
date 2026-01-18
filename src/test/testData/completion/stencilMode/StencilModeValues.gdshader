@@ -1,1 +1,0 @@
-stencil_mode <caret>
