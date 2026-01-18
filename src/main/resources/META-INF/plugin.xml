@@ -1,9 +1,9 @@
 <idea-plugin>
     <id>kr.jaehoyi.gdshader</id>
-
     <name>GDShader</name>
-
     <vendor url="https://www.jaehoyi.kr">Jaeho Yi</vendor>
+    
+    <resource-bundle>messages.GDShaderBundle</resource-bundle>
 
     <description>
         <![CDATA[
@@ -104,8 +104,6 @@
         
         <action
             id="GDShader.NewFile"
-            text="GDShader File"
-            description="Create a new GDShader file"
             class="kr.jaehoyi.gdshader.action.GdsNewFileAction"
             icon="kr.jaehoyi.gdshader.GdsIcons.GDSHADER">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
@@ -113,8 +111,6 @@
         
         <action
             id="GDShaderInclude.NewFile"
-            text="GDShader Include File"
-            description="Create a new GDShader Include file"
             class="kr.jaehoyi.gdshader.action.GdsIncludeNewFileAction"
             icon="kr.jaehoyi.gdshader.GdsIcons.GDSHADERINC">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile" />
