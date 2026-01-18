@@ -64,5 +64,29 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
 
         fail("Resolved element is of unexpected type: ${resolvedElement::class.java}")
     }
+
+    fun `test resolve function from included file with relative path`() {
+        myFixture.addFileToProject(
+            "lib/math_utils.gdshaderinc",
+            "float calculate_pi() { return 3.14; }"
+        )
+
+        val mainFile = "lib/mylib.gdshader"
+        myFixture.addFileToProject(mainFile, """
+            #include "math_utils.gdshaderinc"
+            
+            void run() {
+                float p = calculate<caret>_pi();
+            }
+        """.trimIndent())
+
+        myFixture.configureFromTempProjectFile(mainFile)
+
+        val element = myFixture.elementAtCaret
+
+        assertTrue(element is GdsFunctionNameDecl)
+        assertEquals("calculate_pi", element.text)
+        assertTrue(element.containingFile.name.contains("math_utils.gdshaderinc"))
+    }
     
 }

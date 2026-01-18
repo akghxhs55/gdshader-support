@@ -125,5 +125,43 @@ class VariableCompletionTest : BasePlatformTestCase() {
 
         assertTrue("Should contain 'i'", lookupStrings.contains("i"))
     }
+
+    fun `test completion shows variables from included file`() {
+        myFixture.addFileToProject("constants.gdshaderinc", "const int MAX_LIGHTS = 10;")
+
+        myFixture.configureByText("main.gdshader", """
+            #include "res://constants.gdshaderinc"
+            
+            void light() {
+                int count = MAX_<caret>;
+            }
+        """.trimIndent())
+        
+        myFixture.completeBasic()
+        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        
+        assertContainsElements(lookupStrings, "MAX_LIGHTS")
+    }
+
+    fun `test transitive include resolution`() {
+        myFixture.addFileToProject("level_a.gdshaderinc", "uniform vec3 deep_color;")
+        
+        myFixture.addFileToProject("level_b.gdshaderinc", """
+            #include "res://level_a.gdshaderinc"
+        """.trimIndent())
+        
+        myFixture.configureByText("main.gdshader", """
+            #include "res://level_b.gdshaderinc"
+            
+            void fragment() {
+                vec3 c = deep_<caret>color;
+            }
+        """.trimIndent())
+        
+        val element = myFixture.elementAtCaret
+        
+        assertEquals("deep_color", element.text)
+        assertEquals("level_a.gdshaderinc", element.containingFile.name)
+    }
     
 }

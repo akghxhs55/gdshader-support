@@ -127,5 +127,55 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
             return
         }
     }
+
+    fun `test resolve variable from included file`() {
+        val includedFile = myFixture.addFileToProject(
+            "utils.gdshaderinc",
+            "uniform float u_global_time;"
+        )
+
+        myFixture.configureByText("main.gdshader", """
+            #include "res://utils.gdshaderinc"
+            
+            void fragment() {
+                float t = u_global_<caret>time;
+            }
+        """.trimIndent())
+
+        val element = myFixture.elementAtCaret
+
+        assertTrue("Reference should resolve to a variable declaration", element is GdsVariableNameDecl)
+        assertEquals("u_global_time", element.text)
+
+        assertEquals(
+            "Resolved element should be in the included file",
+            includedFile.virtualFile.path,
+            element.containingFile.virtualFile.path
+        )
+    }
+
+    fun `test cyclic include does not crash`() {
+        myFixture.addFileToProject("cycle_a.gdshaderinc", """
+            #include "res://cycle_b.gdshaderinc"
+            uniform float var_a;
+        """.trimIndent())
+
+        myFixture.addFileToProject("cycle_b.gdshaderinc", """
+            #include "res://cycle_a.gdshaderinc"
+            uniform float var_b;
+        """.trimIndent())
+
+        myFixture.configureByText("main.gdshader", """
+            #include "res://cycle_a.gdshaderinc"
+            void f() {
+                var_a; 
+                var_<caret>b; 
+            }
+        """.trimIndent())
+
+        val element = myFixture.elementAtCaret
+
+        assertEquals("var_b", element.text)
+    }
     
 }

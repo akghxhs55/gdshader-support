@@ -2,12 +2,11 @@ package kr.jaehoyi.gdshader.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.ResolveState
 import kr.jaehoyi.gdshader.model.Builtins
-import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
-import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariable
@@ -18,72 +17,73 @@ import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 object GdsResolver {
 
     fun processVariableDeclaration(startElement: PsiElement, processor: (element: GdsVariable) -> Boolean): Boolean {
-        return walkUpScope(startElement) { scope ->
+        val keepGoing = walkUpLocalScope(startElement) { scope ->
             when (scope) {
                 is GdsStatementBody -> {
                     scope.statement?.localVariableDeclaration?.localVariableDeclaratorList?.localVariableDeclaratorList?.forEach {
-                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                        if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
                     }
                     scope.statement?.constantDeclaration?.constantDeclaratorList?.constantDeclaratorList?.forEach {
-                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                        if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
                     }
                 }
 
                 is GdsForInit -> {
                     scope.localVariableDeclaratorList.localVariableDeclaratorList.forEach {
-                        if (!processor(it.variableNameDecl)) return@walkUpScope false
+                        if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
                     }
                 }
 
                 is GdsFunctionDeclaration -> {
                     scope.parameterList?.parameterList?.forEach {
-                        if (!processor(it.variableNameDecl)) return@walkUpScope false
-                    }
-                }
-
-                is GdsItem -> {
-                    scope.topLevelDeclaration.uniformDeclaration?.variableNameDecl?.let {
-                        if (!processor(it)) return@walkUpScope false
-                    }
-                    scope.topLevelDeclaration.constantDeclaration?.constantDeclaratorList?.constantDeclaratorList?.forEach {
-                        if (!processor(it.variableNameDecl)) return@walkUpScope false
-                    }
-                    scope.topLevelDeclaration.varyingDeclaration?.variableNameDecl?.let {
-                        if (!processor(it)) return@walkUpScope false
+                        if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
                     }
                 }
             }
             true
-        } && processBuiltinVariables(startElement, processor)
+        }
+        
+        if (!keepGoing) return false
+        
+        val file = startElement.containingFile
+        if (!file.processDeclarations(
+                GdsScopeProcessor(GdsVariable::class.java, processor),
+                ResolveState.initial(),
+                null,
+                startElement
+            )
+        ) {
+            return false
+        }
+        
+        return processBuiltinVariables(startElement, processor)
     }
     
     fun processFunctionDeclaration(startElement: PsiElement, processor: (element: GdsFunction) -> Boolean): Boolean {
-        return walkUpScope(startElement) { scope ->
-            when (scope) {
-                is GdsItem -> {
-                    scope.topLevelDeclaration.functionDeclaration?.functionNameDecl?.let {
-                        if (!processor(it)) return@walkUpScope false
-                    }
-                }
-            }
-            true
-        } && processBuiltinFunctions(startElement, processor)
+        val file = startElement.containingFile
+        if (!file.processDeclarations(
+                GdsScopeProcessor(GdsFunction::class.java, processor),
+                ResolveState.initial(),
+                null,
+                startElement
+            )) {
+            return false
+        }
+
+        return processBuiltinFunctions(startElement, processor)
     }
     
     fun processStructDeclaration(startElement: PsiElement, processor: (element: GdsStructNameDecl) -> Boolean): Boolean {
-        val file = startElement.containingFile as? GdsFile ?: return true
-        
-        for (item in file.children) {
-            if (item !is GdsItem) continue
-            val structDeclaration = item.topLevelDeclaration.structDeclaration ?: continue
-            val nameDecl = structDeclaration.structNameDecl ?: continue
-            if (!processor(nameDecl)) return false
-        }
-        
-        return true
+        val file = startElement.containingFile
+        return file.processDeclarations(
+            GdsScopeProcessor(GdsStructNameDecl::class.java, processor),
+            ResolveState.initial(),
+            null,
+            startElement
+        )
     }
 
-    private inline fun walkUpScope(startElement: PsiElement, action: (PsiElement) -> Boolean): Boolean {
+    private inline fun walkUpLocalScope(startElement: PsiElement, action: (PsiElement) -> Boolean): Boolean {
         var current: PsiElement? = startElement
         while (current != null) {
             var sibling = current.prevSibling
