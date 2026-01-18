@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
+import kr.jaehoyi.gdshader.GdsIcons
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.ConstantSpec
 import kr.jaehoyi.gdshader.model.DataType
@@ -330,6 +331,18 @@ object GdsLookupElements {
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+        
+        return builder
+    }
+    
+    fun createFromIncludeFilePath(includeFilePath: String): LookupElement {
+        val fileName = includeFilePath.substringAfterLast('/')
+        
+        val builder = LookupElementBuilder.create(includeFilePath)
+            .withPresentableText(fileName)
+            .withTypeText(includeFilePath.substringAfterLast("res://"), true)
+            .withIcon(GdsIcons.GDSHADERINC)
+            .withCaseSensitivity(false)
         
         return builder
     }

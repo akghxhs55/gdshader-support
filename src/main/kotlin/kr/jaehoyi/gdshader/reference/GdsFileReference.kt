@@ -10,6 +10,7 @@ import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import kr.jaehoyi.gdshader.GdsIcons
+import kr.jaehoyi.gdshader.completion.GdsLookupElements
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 
 class GdsFileReference(element: PsiElement, textRange: TextRange) :
@@ -33,19 +34,10 @@ class GdsFileReference(element: PsiElement, textRange: TextRange) :
         
         val virtualFiles = FilenameIndex.getAllFilesByExt(project, "gdshaderinc", GlobalSearchScope.projectScope(project))
         for (file in virtualFiles) {
-            val parentDir = file.parent
-            val folderPath = VfsUtilCore.getRelativePath(parentDir, projectBaseDir) ?: ""
-            
             val relativeFilePath = VfsUtilCore.getRelativePath(file, projectBaseDir) ?: continue
             val resPath = "res://$relativeFilePath"
             
-            result.add(
-                LookupElementBuilder.create(resPath)
-                    .withPresentableText(file.name)
-                    .withTypeText(folderPath)
-                    .withIcon(GdsIcons.GDSHADERINC)
-                    .withCaseSensitivity(false)
-            )
+            result.add(GdsLookupElements.createFromIncludeFilePath(resPath))
         }
         
         return result.toTypedArray()
