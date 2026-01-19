@@ -1,23 +1,25 @@
 package kr.jaehoyi.gdshader.completion
 
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import kr.jaehoyi.gdshader.GdsIcons
-import kr.jaehoyi.gdshader.model.Builtins
-import kr.jaehoyi.gdshader.model.ConstantSpec
-import kr.jaehoyi.gdshader.model.DataType
-import kr.jaehoyi.gdshader.model.LocalVariableSpec
-import kr.jaehoyi.gdshader.model.ParameterSpec
-import kr.jaehoyi.gdshader.model.UniformSpec
-import kr.jaehoyi.gdshader.model.VaryingSpec
+import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 
 object GdsLookupElements {
+    
+    private const val PRIORITY_HIGHEST = 100.0
+    private const val PRIORITY_HIGH = 90.0
+    private const val PRIORITY_NORMAL = 50.0
+    private const val PRIORITY_BUILTIN = 20.0
+    private const val PRIORITY_TYPE = 10.0
+    private const val PRIORITY_LOW = 0.0
     
     val SHADER_TYPE_KEYWORD = LookupElementBuilder.create("shader_type")
         .withBoldness(true)
@@ -67,30 +69,37 @@ object GdsLookupElements {
                 context.document.insertString(offset, " ()")
                 context.editor.caretModel.moveToOffset(offset + 2)
             }
+            .withPriority(PRIORITY_HIGH)
     }
     
     val DO_KEYWORD = LookupElementBuilder.create("do")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_HIGH)
     
     val ELSE_KEYWORD = LookupElementBuilder.create("else")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_HIGH)
     
     val RETURN_KEYWORD = LookupElementBuilder.create("return")
         .withBoldness(true)
+        .withPriority(PRIORITY_HIGH)
     
     val DISCARD_KEYWORD = LookupElementBuilder.create("discard")
         .withBoldness(true)
         .withInsertHandler(GdsSemicolonInsertHandler)
+        .withPriority(PRIORITY_HIGH)
     
     val BREAK_KEYWORD = LookupElementBuilder.create("break")
         .withBoldness(true)
         .withInsertHandler(GdsSemicolonInsertHandler)
+        .withPriority(PRIORITY_HIGH)
     
     val CONTINUE_KEYWORD = LookupElementBuilder.create("continue")
         .withBoldness(true)
         .withInsertHandler(GdsSemicolonInsertHandler)
+        .withPriority(PRIORITY_HIGH)
     
     val SHADER_TYPES = GdsKeywords.SHADER_TYPES.map {
         LookupElementBuilder.create(it)
@@ -115,6 +124,7 @@ object GdsLookupElements {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_TYPE)
     }
     
     val DECLARABLE_BUILTIN_TYPES = Builtins.ALL_DATA_TYPE_LIST.filter { it.isDeclarable }.map { 
@@ -122,6 +132,7 @@ object GdsLookupElements {
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Type)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_TYPE)
     }
 
     val OPAQUE_BUILTIN_TYPES = Builtins.ALL_DATA_TYPE_LIST.filter { it.isOpaque }.map {
@@ -129,6 +140,7 @@ object GdsLookupElements {
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Type)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_TYPE)
     }
     
     val RETURNABLE_BUILTIN_TYPES = Builtins.ALL_DATA_TYPE_LIST.filter { it.isValidReturnType }.map { 
@@ -136,6 +148,7 @@ object GdsLookupElements {
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Type)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_TYPE)
     }
     
     val BUILTIN_FUNCTIONS = Builtins.FUNCTIONS.mapValues {
@@ -149,6 +162,7 @@ object GdsLookupElements {
                 )
                 .withTypeText(functionSpec.returnType.presentationText, true)
                 .withInsertHandler(if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
+                .withPriority(PRIORITY_BUILTIN)
         }
     }
     
@@ -164,6 +178,7 @@ object GdsLookupElements {
                 .withBoldness(true)
                 .withIcon(icon)
                 .withTypeText(variableSpec.presentationTypeText, true)
+                .withPriority(PRIORITY_BUILTIN)
         }
     }
     
@@ -181,6 +196,7 @@ object GdsLookupElements {
                     context.document.insertString(offset, textToInsert)
                     context.editor.caretModel.moveToOffset(offset + textToInsert.length - 2)
                 }
+                .withPriority(PRIORITY_NORMAL)
         }
     }
 
@@ -208,6 +224,7 @@ object GdsLookupElements {
 
                     editor.caretModel.moveToOffset(cursorOffset)
                 }
+                .withPriority(PRIORITY_NORMAL)
         }
     }
     
@@ -217,19 +234,29 @@ object GdsLookupElements {
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+            .withPriority(PRIORITY_TYPE)
     }
     
     val INTEGER_TYPES = listOf(
         LookupElementBuilder.create("int")
-            .withBoldness(true),
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText("(...)", true)
+            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+            .withPriority(PRIORITY_TYPE),
         LookupElementBuilder.create("uint")
             .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText("(...)", true)
+            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+            .withPriority(PRIORITY_TYPE)
     )
 
     val BOOLEAN_LITERALS = GdsKeywords.BOOLEAN_LITERALS.map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_HIGH)
     }
     
     val UNIFORM_HINTS: Map<DataType, List<LookupElement>>
@@ -265,16 +292,19 @@ object GdsLookupElements {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_TYPE)
     }
     
     val IN_KEYWORD = LookupElementBuilder.create("in")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_LOW)
     
     val PARAMETER_QUALIFIERS = GdsKeywords.PARAMETER_QUALIFIERS.map {
         LookupElementBuilder.create(it)
             .withBoldness(true)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_LOW)
     }
     
     fun createFromVariableNameDecl(nameDecl: GdsVariableNameDecl): LookupElement? {
@@ -288,10 +318,19 @@ object GdsLookupElements {
             is LocalVariableSpec -> AllIcons.Nodes.Variable
         }
         
+        val priority = when (variableSpec) {
+            is UniformSpec -> PRIORITY_NORMAL
+            is ConstantSpec -> PRIORITY_NORMAL
+            is VaryingSpec -> PRIORITY_NORMAL
+            is ParameterSpec -> PRIORITY_HIGHEST
+            is LocalVariableSpec -> PRIORITY_HIGHEST
+        }
+        
         val builder = LookupElementBuilder.create(nameDecl, variableSpec.name)
             .withBoldness(true)
             .withTypeText(variableSpec.presentationTypeText, true)
             .withIcon(icon)
+            .withPriority(priority)
         
         return builder
     }
@@ -308,6 +347,7 @@ object GdsLookupElements {
             )
             .withTypeText(functionSpec.returnType.presentationText, true)
             .withInsertHandler(if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
+            .withPriority(PRIORITY_NORMAL)
         
         return builder
     }
@@ -319,6 +359,7 @@ object GdsLookupElements {
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Class)
             .withInsertHandler(AddSpaceInsertHandler(true))
+            .withPriority(PRIORITY_TYPE)
         
         return builder
     }
@@ -331,6 +372,7 @@ object GdsLookupElements {
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+            .withPriority(PRIORITY_TYPE)
         
         return builder
     }
@@ -346,5 +388,8 @@ object GdsLookupElements {
         
         return builder
     }
+    
+    private fun LookupElement.withPriority(priority: Double): LookupElement =
+        PrioritizedLookupElement.withPriority(this, priority)
     
 }
