@@ -182,7 +182,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val position = parameters.position
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    val prevLeaf = getPrevCodeLeaf(position)
 
                     // uniform_declaration ::= uniform_header precision? type array_size? variable_name_decl array_size? hint_section? (OP_ASSIGN expression)? SEMICOLON
 
@@ -233,7 +233,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     
                     // 6. After COMMA
                     if (prevLeaf.elementType == GdsTypes.COMMA) {
-                        if (PsiTreeUtil.prevVisibleLeaf(prevLeaf)?.parentOfType<GdsHintList>() == null) {
+                        if (getPrevCodeLeaf(prevLeaf)?.parentOfType<GdsHintList>() == null) {
                             return
                         }
                         
@@ -274,7 +274,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val position = parameters.position
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    val prevLeaf = getPrevCodeLeaf(position)
 
                     // constant_declaration ::= CONST precision? type array_size? constant_declarator_list SEMICOLON
 
@@ -331,7 +331,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val position = parameters.position
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    val prevLeaf = getPrevCodeLeaf(position)
 
                     // varying_declaration ::= VARYING (INTERPOLATION_FLAT | INTERPOLATION_SMOOTH)? precision? type array_size? variable_name_decl array_size? SEMICOLON
 
@@ -385,7 +385,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val position = parameters.position
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    val prevLeaf = getPrevCodeLeaf(position)
 
                     // function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 
@@ -498,7 +498,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     result: CompletionResultSet
                 ) {
                     val position = parameters.position
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position)
+                    val prevLeaf = getPrevCodeLeaf(position)
                     
                     // struct_declaration ::= STRUCT struct_name_decl struct_block SEMICOLON
                     
@@ -548,7 +548,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     val completions = arrayListOf<LookupElement>()
 
                     val position = parameters.position
-                    val prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return
+                    val prevLeaf = getPrevCodeLeaf(position) ?: return
 
                     if (position.parentOfType<GdsVariableNameRef>() != null) {
                         completions += getExpressionCompletions(position)
@@ -698,6 +698,16 @@ class GdsCompletionContributor : CompletionContributor() {
         completions += GdsLookupElements.BOOLEAN_LITERALS
         
         return completions
+    }
+    
+    private fun getPrevCodeLeaf(position: PsiElement): PsiElement? {
+        var prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return null
+
+        while (prevLeaf.elementType in GdsTokenSets.COMMENTS) {
+            prevLeaf = PsiTreeUtil.prevVisibleLeaf(prevLeaf) ?: return null
+        }
+
+        return prevLeaf
     }
     
 }
