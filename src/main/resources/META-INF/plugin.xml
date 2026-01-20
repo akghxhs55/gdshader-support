@@ -65,6 +65,7 @@
         <!-- Editor Features -->
         <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />
         <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
+        <lang.findUsagesProvider language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFindUsagesProvider" />
         
         <!-- Completions -->
         <completion.contributor

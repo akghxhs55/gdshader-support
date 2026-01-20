@@ -20,4 +20,6 @@ object GdsTokenSets {
         GdsTypes.OP_MOD, GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT,  
     )
     
+    val STRING_LITERALS = TokenSet.create(GdsTypes.STRING_CONSTANT, GdsTypes.UNTERMINATED_STRING_CONSTANT)
+    
 }
