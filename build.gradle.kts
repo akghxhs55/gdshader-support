@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.4.0-beta"
+version = "0.5.0-beta"
 
 sourceSets {
     main {
@@ -44,10 +44,11 @@ intellijPlatform {
         
         changeNotes = """
             <ul>
-              <li>Added color picker for color values</li>
-              <li>Added code completion for custom variables, functions and structs</li>
-              <li>Added refactoring support (rename symbol)</li>
-              <li>Added line markers for processing functions</li>
+              <li>Added completion prioritization</li>
+              <li>Added find usages feature</li>
+              <li>Added folding support</li>
+              <li>Added go to symbols feature</li>
+              <li>Fixed bugs</li>
             </ul>
         """.trimIndent()
     }
