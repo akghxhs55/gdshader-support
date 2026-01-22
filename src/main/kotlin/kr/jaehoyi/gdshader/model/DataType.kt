@@ -48,9 +48,6 @@ class FloatType private constructor(
     val precision: Precision = Precision.DEFAULT
 ) : Scalar("float") {
     
-    override val presentationText: String
-        get() = if (precision == Precision.DEFAULT) name else "${precision.text} $name"
-    
     companion object {
         val DEFAULT = FloatType(Precision.DEFAULT)
         val HIGH = FloatType(Precision.HIGH)
@@ -146,13 +143,6 @@ class VectorType private constructor(
         is BoolType -> "bvec$containerSize"
     }
 ), Instantiable, MemberAccessible, Indexable {
-
-    override val presentationText: String
-        get() = if (elementType is FloatType && elementType.precision != Precision.DEFAULT) {
-            "${elementType.precision.text} $name"
-        } else {
-            name
-        }
     
     companion object {
         val VEC2 = VectorType(FloatType.DEFAULT, 2)
@@ -269,15 +259,6 @@ class MatrixType private constructor(
     override val containerSize: Int
         get() = colType.containerSize
 
-    override val presentationText: String
-        get() {
-            val floatType = colType.elementType as? FloatType
-            if (floatType != null && floatType.precision != Precision.DEFAULT) {
-                return "${floatType.precision.text} $name"
-            }
-            return name
-        }
-    
     companion object {
         val MAT2 = MatrixType(VectorType.VEC2)
         val MAT3 = MatrixType(VectorType.VEC3)
