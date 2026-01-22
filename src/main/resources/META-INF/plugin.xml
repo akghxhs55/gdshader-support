@@ -67,6 +67,7 @@
         <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
         <lang.findUsagesProvider language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFindUsagesProvider" />
         <lang.foldingBuilder language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFoldingBuilder" />
+        <gotoSymbolContributor implementation="kr.jaehoyi.gdshader.editor.GdsChooseByNameContributor" />
         
         <!-- Completions -->
         <completion.contributor

@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added completion prioritization
 - Added find usages feature
 - Added folding support
+- Added find usages feature
 - Fixed bugs
 
 ## 0.4.0-beta (2026-01-18)
