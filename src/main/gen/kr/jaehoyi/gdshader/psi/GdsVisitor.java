@@ -120,6 +120,10 @@ public class GdsVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFunctionCallStatement(@NotNull GdsFunctionCallStatement o) {
+    visitPsiElement(o);
+  }
+
   public void visitFunctionDeclaration(@NotNull GdsFunctionDeclaration o) {
     visitPsiElement(o);
   }

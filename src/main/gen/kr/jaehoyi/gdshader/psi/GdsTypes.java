@@ -36,6 +36,7 @@ public interface GdsTypes {
   IElementType FOR_ITERATION = new GdsElementType("FOR_ITERATION");
   IElementType FOR_STATEMENT = new GdsElementType("FOR_STATEMENT");
   IElementType FUNCTION_CALL = new GdsElementType("FUNCTION_CALL");
+  IElementType FUNCTION_CALL_STATEMENT = new GdsElementType("FUNCTION_CALL_STATEMENT");
   IElementType FUNCTION_DECLARATION = new GdsElementType("FUNCTION_DECLARATION");
   IElementType FUNCTION_NAME_DECL = new GdsElementType("FUNCTION_NAME_DECL");
   IElementType FUNCTION_NAME_REF = new GdsElementType("FUNCTION_NAME_REF");
@@ -344,6 +345,9 @@ public interface GdsTypes {
       }
       else if (type == FUNCTION_CALL) {
         return new GdsFunctionCallImpl(node);
+      }
+      else if (type == FUNCTION_CALL_STATEMENT) {
+        return new GdsFunctionCallStatementImpl(node);
       }
       else if (type == FUNCTION_DECLARATION) {
         return new GdsFunctionDeclarationImpl(node);

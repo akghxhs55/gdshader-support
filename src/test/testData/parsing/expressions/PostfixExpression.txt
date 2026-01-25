@@ -41,6 +41,8 @@ GDShader File
                                                   GdsFunctionNameRefImpl(FUNCTION_NAME_REF)
                                                     PsiElement(GDShaderTokenType.IDENTIFIER)('x')
                                                   PsiElement(GDShaderTokenType.PARENTHESIS_OPEN)('(')
+                                                  GdsArgumentListImpl(ARGUMENT_LIST)
+                                                    <empty list>
                                                   PsiElement(GDShaderTokenType.PARENTHESIS_CLOSE)(')')
                   PsiElement(GDShaderTokenType.SEMICOLON)(';')
             PsiWhiteSpace('\n\t')
@@ -287,6 +289,8 @@ GDShader File
                                                   GdsFunctionNameRefImpl(FUNCTION_NAME_REF)
                                                     PsiElement(GDShaderTokenType.IDENTIFIER)('f')
                                                   PsiElement(GDShaderTokenType.PARENTHESIS_OPEN)('(')
+                                                  GdsArgumentListImpl(ARGUMENT_LIST)
+                                                    <empty list>
                                                   PsiElement(GDShaderTokenType.PARENTHESIS_CLOSE)(')')
                                                 PsiElement(GDShaderTokenType.PERIOD)('.')
                                                 GdsStructMemberNameRefImpl(STRUCT_MEMBER_NAME_REF)

@@ -17,6 +17,9 @@ public interface GdsStatement extends PsiElement {
   GdsExpressionStatement getExpressionStatement();
 
   @Nullable
+  GdsFunctionCallStatement getFunctionCallStatement();
+
+  @Nullable
   GdsLocalVariableDeclaration getLocalVariableDeclaration();
 
   @Nullable

@@ -79,31 +79,40 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // initializer (COMMA initializer)*
+  // [ initializer (COMMA initializer)* ]
   public static boolean argument_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "argument_list")) return false;
-    boolean r;
     Marker m = enter_section_(b, l, _NONE_, ARGUMENT_LIST, "<argument list>");
+    argument_list_0(b, l + 1);
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  // initializer (COMMA initializer)*
+  private static boolean argument_list_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "argument_list_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
     r = initializer(b, l + 1);
-    r = r && argument_list_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    r = r && argument_list_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
   // (COMMA initializer)*
-  private static boolean argument_list_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "argument_list_1")) return false;
+  private static boolean argument_list_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "argument_list_0_1")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!argument_list_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "argument_list_1", c)) break;
+      if (!argument_list_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "argument_list_0_1", c)) break;
     }
     return true;
   }
 
   // COMMA initializer
-  private static boolean argument_list_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "argument_list_1_0")) return false;
+  private static boolean argument_list_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "argument_list_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
@@ -744,18 +753,19 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
+  // (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list PARENTHESIS_CLOSE
   public static boolean function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL, "<function call>");
     r = function_call_0(b, l + 1);
     r = r && function_call_1(b, l + 1);
     r = r && consumeToken(b, PARENTHESIS_OPEN);
-    r = r && function_call_3(b, l + 1);
-    r = r && consumeToken(b, PARENTHESIS_CLOSE);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = PARENTHESIS_OPEN
+    r = r && report_error_(b, argument_list(b, l + 1));
+    r = p && consumeToken(b, PARENTHESIS_CLOSE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // function_name_ref | type
@@ -774,11 +784,17 @@ public class GdsParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // argument_list?
-  private static boolean function_call_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_call_3")) return false;
-    argument_list(b, l + 1);
-    return true;
+  /* ********************************************************** */
+  // function_call SEMICOLON
+  public static boolean function_call_statement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_call_statement")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL_STATEMENT, "<function call statement>");
+    r = function_call(b, l + 1);
+    p = r; // pin = 1
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1978,9 +1994,10 @@ public class GdsParser implements PsiParser, LightPsiParser {
   // control_statement
   // 			| return_statement
   // 			| simple_statement
-  // 			| local_variable_declaration
   // 			| constant_declaration
+  // 			| function_call_statement
   // 			| expression_statement
+  // 			| local_variable_declaration
   // 			| SEMICOLON
   public static boolean statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement")) return false;
@@ -1989,9 +2006,10 @@ public class GdsParser implements PsiParser, LightPsiParser {
     r = control_statement(b, l + 1);
     if (!r) r = return_statement(b, l + 1);
     if (!r) r = simple_statement(b, l + 1);
-    if (!r) r = local_variable_declaration(b, l + 1);
     if (!r) r = constant_declaration(b, l + 1);
+    if (!r) r = function_call_statement(b, l + 1);
     if (!r) r = expression_statement(b, l + 1);
+    if (!r) r = local_variable_declaration(b, l + 1);
     if (!r) r = consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, false, null);
     return r;

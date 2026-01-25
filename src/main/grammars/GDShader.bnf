@@ -284,12 +284,17 @@ statement_body ::= statement
 statement ::= control_statement
 			| return_statement
 			| simple_statement
-			| local_variable_declaration
 			| constant_declaration
+			| function_call_statement
 			| expression_statement
+			| local_variable_declaration
 			| SEMICOLON
 
 // Expressions
+function_call_statement ::= function_call SEMICOLON
+{
+	pin=1
+}
 expression_statement ::= expression SEMICOLON
 expression ::= conditional_expr
 
@@ -313,8 +318,12 @@ primary ::= literal
 		  | variable_name_ref
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
 
-function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list? PARENTHESIS_CLOSE
-argument_list ::= initializer (COMMA initializer)*
+function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list PARENTHESIS_CLOSE
+{
+	pin(".*")="PARENTHESIS_OPEN"
+}
+
+argument_list ::= [ initializer (COMMA initializer)* ]
 
 variable_name_ref ::= IDENTIFIER
 {

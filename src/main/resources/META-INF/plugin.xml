@@ -76,6 +76,7 @@
         <typedHandler implementation="kr.jaehoyi.gdshader.completion.GdsCompletionTypedHandler" />
         
         <!-- Code Insights -->
+        <codeInsight.parameterInfo language="GDShader" implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsParameterInfoHandler" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUniformColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsConstantColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsLocalVariableColorProvider" />

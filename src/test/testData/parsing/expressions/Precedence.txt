@@ -562,6 +562,8 @@ GDShader File
                                                   GdsFunctionNameRefImpl(FUNCTION_NAME_REF)
                                                     PsiElement(GDShaderTokenType.IDENTIFIER)('z')
                                                   PsiElement(GDShaderTokenType.PARENTHESIS_OPEN)('(')
+                                                  GdsArgumentListImpl(ARGUMENT_LIST)
+                                                    <empty list>
                                                   PsiElement(GDShaderTokenType.PARENTHESIS_CLOSE)(')')
                                             PsiWhiteSpace(' ')
                                             PsiElement(GDShaderTokenType.OP_MUL)('*')

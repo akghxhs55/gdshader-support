@@ -47,6 +47,12 @@ public class GdsStatementImpl extends ASTWrapperPsiElement implements GdsStateme
 
   @Override
   @Nullable
+  public GdsFunctionCallStatement getFunctionCallStatement() {
+    return findChildByClass(GdsFunctionCallStatement.class);
+  }
+
+  @Override
+  @Nullable
   public GdsLocalVariableDeclaration getLocalVariableDeclaration() {
     return findChildByClass(GdsLocalVariableDeclaration.class);
   }

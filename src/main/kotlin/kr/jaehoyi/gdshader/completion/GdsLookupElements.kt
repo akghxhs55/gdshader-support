@@ -228,29 +228,37 @@ object GdsLookupElements {
         }
     }
     
-    val CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST.filter { it.isInstantiable }.map { 
-        LookupElementBuilder.create(it.presentationText)
-            .withBoldness(true)
-            .withIcon(AllIcons.Nodes.Function)
-            .appendTailText("(...)", true)
-            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_LOW)
-    }
+    val CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST
+        .filter { it.isInstantiable }
+        .flatMap { type ->
+            (type as Instantiable).getConstructors().map { constructorSpec ->
+                LookupElementBuilder.create(constructorSpec, constructorSpec.name)
+                    .withBoldness(true)
+                    .withIcon(AllIcons.Nodes.Function)
+                    .appendTailText(
+                        "(" + constructorSpec.parameters.joinToString(", ") { param -> "${param.presentationTypeText} ${param.name}" } + ")",
+                        true
+                    )
+                    .withInsertHandler(if (constructorSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
+                    .withPriority(PRIORITY_LOW)
+            }
+        }
     
-    val INTEGER_TYPE_CONSTRUCTORS = listOf(
-        LookupElementBuilder.create("int")
-            .withBoldness(true)
-            .withIcon(AllIcons.Nodes.Function)
-            .appendTailText("(...)", true)
-            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_LOW),
-        LookupElementBuilder.create("uint")
-            .withBoldness(true)
-            .withIcon(AllIcons.Nodes.Function)
-            .appendTailText("(...)", true)
-            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_LOW)
-    )
+    val INTEGER_TYPE_CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST
+        .filter { it == IntType || it == UIntType }
+        .flatMap { type ->
+            (type as Instantiable).getConstructors().map { constructorSpec ->
+                LookupElementBuilder.create(constructorSpec, constructorSpec.name)
+                    .withBoldness(true)
+                    .withIcon(AllIcons.Nodes.Function)
+                    .appendTailText(
+                        "(" + constructorSpec.parameters.joinToString(", ") { param -> "${param.presentationTypeText} ${param.name}" } + ")",
+                        true
+                    )
+                    .withInsertHandler(if (constructorSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS)
+                    .withPriority(PRIORITY_LOW)
+            }
+        }
 
     val BOOLEAN_LITERALS = GdsKeywords.BOOLEAN_LITERALS.map {
         LookupElementBuilder.create(it)
