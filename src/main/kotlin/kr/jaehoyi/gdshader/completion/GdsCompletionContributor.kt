@@ -458,7 +458,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     
                     // 8. Inside array size
                     if (prevLeaf.elementType == GdsTypes.BRACKET_OPEN) {
-                        result.addAllElements(GdsLookupElements.INTEGER_TYPES)
+                        result.addAllElements(GdsLookupElements.INTEGER_TYPE_CONSTRUCTORS)
                     }
                 }
             }
@@ -527,7 +527,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     
                     // 4. Inside array size
                     if (prevLeaf.elementType == GdsTypes.BRACKET_OPEN) {
-                        result.addAllElements(GdsLookupElements.INTEGER_TYPES)
+                        result.addAllElements(GdsLookupElements.INTEGER_TYPE_CONSTRUCTORS)
                     }
                 }
             }

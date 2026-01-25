@@ -234,22 +234,22 @@ object GdsLookupElements {
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_TYPE)
+            .withPriority(PRIORITY_LOW)
     }
     
-    val INTEGER_TYPES = listOf(
+    val INTEGER_TYPE_CONSTRUCTORS = listOf(
         LookupElementBuilder.create("int")
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_TYPE),
+            .withPriority(PRIORITY_LOW),
         LookupElementBuilder.create("uint")
             .withBoldness(true)
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_TYPE)
+            .withPriority(PRIORITY_LOW)
     )
 
     val BOOLEAN_LITERALS = GdsKeywords.BOOLEAN_LITERALS.map {
@@ -372,7 +372,7 @@ object GdsLookupElements {
             .withIcon(AllIcons.Nodes.Function)
             .appendTailText("(...)", true)
             .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
-            .withPriority(PRIORITY_TYPE)
+            .withPriority(PRIORITY_LOW)
         
         return builder
     }
