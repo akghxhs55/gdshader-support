@@ -339,7 +339,25 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(FloatType.DEFAULT, inferredType)
     }
     
-    fun testMixedVectorSizeMismatch() {
+    fun testInvalidConstructor() {
+        val code = """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0, 1.0);
+            }
+        """
+        myFixture.configureByText("test.gdshader", code)
+
+        val functionCalls = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
+        val functionCall = functionCalls.find { it.text == "vec3(1.0, 1.0)" }
+
+        val nonNullFunctionCall = requireNotNull(functionCall) { "Should find function call: vec3(1.0, 1.0)" }
+
+        val inferredType = GdsExpressionTypeInference.inferType(nonNullFunctionCall)
+        assertNull("Should not infer type for invalid constructor", inferredType)
+    }
+
+    fun testFunctionOverloadMismatch() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -354,7 +372,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         val nonNullFunctionCall = requireNotNull(functionCall) { "Should find function call: min" }
 
         val inferredType = GdsExpressionTypeInference.inferType(nonNullFunctionCall)
-        assertNull("Should not infer type for mismatched vector sizes", inferredType)
+        assertNull("Should not infer type for mismatched vector sizes in function call", inferredType)
     }
 
     // ===== Helper Methods =====

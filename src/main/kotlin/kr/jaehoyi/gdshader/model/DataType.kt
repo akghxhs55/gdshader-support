@@ -3,7 +3,7 @@ package kr.jaehoyi.gdshader.model
 import com.intellij.openapi.diagnostic.Logger
 
 interface Instantiable {
-    // fun getConstructors(): List<FunctionSpec>
+    fun getConstructors(): List<FunctionSpec>
 }
 
 interface MemberAccessible {
@@ -42,7 +42,9 @@ sealed class DataType(
     
 }
 
-sealed class Scalar(name: String) : DataType(name), Instantiable
+sealed class Scalar(name: String) : DataType(name), Instantiable {
+    override fun getConstructors(): List<FunctionSpec> = BuiltinConstructors.getConstructors(this)
+}
 
 class FloatType private constructor(
     val precision: Precision = Precision.DEFAULT
@@ -143,7 +145,9 @@ class VectorType private constructor(
         is BoolType -> "bvec$containerSize"
     }
 ), Instantiable, MemberAccessible, Indexable {
-    
+
+    override fun getConstructors(): List<FunctionSpec> = BuiltinConstructors.getConstructors(this)
+
     companion object {
         val VEC2 = VectorType(FloatType.DEFAULT, 2)
         val VEC3 = VectorType(FloatType.DEFAULT, 3)
@@ -233,7 +237,8 @@ data class StructType(
 ) : DataType(structName), MemberAccessible, Instantiable {
 
     override fun resolveMember(name: String): DataType? = members[name]
-    
+
+    override fun getConstructors(): List<FunctionSpec> = BuiltinConstructors.getConstructors(this)
 }
 
 open class ArrayType(
@@ -245,7 +250,8 @@ open class ArrayType(
 
     override val isOpaque: Boolean
         get() = elementType.isOpaque
-    
+
+    override fun getConstructors(): List<FunctionSpec> = BuiltinConstructors.getConstructors(this)
 }
 
 class MatrixType private constructor(
@@ -258,6 +264,8 @@ class MatrixType private constructor(
         get() = colType
     override val containerSize: Int
         get() = colType.containerSize
+
+    override fun getConstructors(): List<FunctionSpec> = BuiltinConstructors.getConstructors(this)
 
     companion object {
         val MAT2 = MatrixType(VectorType.VEC2)

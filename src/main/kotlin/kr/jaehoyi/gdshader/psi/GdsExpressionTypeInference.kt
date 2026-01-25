@@ -84,6 +84,19 @@ object GdsExpressionTypeInference {
             return ArrayType(baseType, size)
         }
 
+        if (baseType is Instantiable) {
+            val argTypes = collectArgumentTypes(functionCall)
+            val constructors = baseType.getConstructors()
+
+            if (constructors.isNotEmpty()) {
+                val resolvedConstructor = GdsOverloadResolver.resolveOverload(constructors, argTypes)
+                if (resolvedConstructor != null) {
+                    return resolvedConstructor.returnType
+                }
+                return null
+            }
+        }
+
         return baseType
     }
 
