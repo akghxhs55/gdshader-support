@@ -126,7 +126,8 @@ object GdsDataTypeFactory {
     }
     
     private fun parseArraySize(node: GdsArraySize): Int? {
-        return node.text.filter { it.isDigit() }.toIntOrNull()
+        val expression = node.expression ?: return null
+        return GdsConstantEvaluator.evaluateAsInt(expression)
     }
     
 }

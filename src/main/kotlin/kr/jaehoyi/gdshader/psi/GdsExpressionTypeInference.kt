@@ -381,6 +381,7 @@ object GdsExpressionTypeInference {
     }
 
     private fun parseArraySize(arraySize: GdsArraySize): Int? {
-        return arraySize.text.filter { it.isDigit() }.toIntOrNull()
+        val expression = arraySize.expression ?: return null
+        return GdsConstantEvaluator.evaluateAsInt(expression)
     }
 }
