@@ -66,6 +66,8 @@
         <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />
         <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
         <lang.findUsagesProvider language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFindUsagesProvider" />
+        <readWriteAccessDetector implementation="kr.jaehoyi.gdshader.codeinsight.GdsReadWriteAccessDetector" />
+        <usageTypeProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUsageTypeProvider" />
         <lang.foldingBuilder language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFoldingBuilder" />
         <gotoSymbolContributor implementation="kr.jaehoyi.gdshader.editor.GdsChooseByNameContributor" />
         
