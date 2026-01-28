@@ -220,6 +220,10 @@ struct_member ::= precision? type array_size? struct_member_name_decl array_size
 	pin=2
 }
 struct_member_name_decl ::= IDENTIFIER
+{
+	implements="com.intellij.psi.PsiNameIdentifierOwner"
+	methods=[getName setName getNameIdentifier]
+}
 
 // Control Statements
 control_statement ::= if_statement
@@ -338,6 +342,9 @@ struct_name_ref ::= IDENTIFIER
 	methods=[getReference]
 }
 struct_member_name_ref ::= IDENTIFIER
+{
+	methods=[getReference]
+}
 
 // Keywords
 precision ::= PRECISION_LOW | PRECISION_MEDIUM | PRECISION_HIGH

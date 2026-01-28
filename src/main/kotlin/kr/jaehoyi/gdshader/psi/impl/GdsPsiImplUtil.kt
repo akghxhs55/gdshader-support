@@ -40,6 +40,10 @@ import kr.jaehoyi.gdshader.reference.GdsFunctionReference
 import kr.jaehoyi.gdshader.reference.GdsStructReference
 import kr.jaehoyi.gdshader.reference.GdsVariableReference
 
+import kr.jaehoyi.gdshader.psi.GdsStructMemberNameDecl
+import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
+import kr.jaehoyi.gdshader.reference.GdsStructMemberReference
+
 object GdsPsiImplUtil {
 
     @JvmStatic
@@ -194,6 +198,25 @@ object GdsPsiImplUtil {
     @JvmStatic
     fun getReference(element: GdsStructNameRef): PsiReference =
         GdsStructReference(element, TextRange(0, element.textLength))
+
+    @JvmStatic
+    fun getName(element: GdsStructMemberNameDecl): String =
+        element.text
+
+    @JvmStatic
+    fun setName(element: GdsStructMemberNameDecl, newName: String): PsiElement? {
+        val identifier = GdsElementFactory.createIdentifier(element.project, newName) ?: return null
+        element.firstChild.replace(identifier)
+        return element
+    }
+
+    @JvmStatic
+    fun getNameIdentifier(element: GdsStructMemberNameDecl): PsiElement? =
+        element.node.findChildByType(GdsTypes.IDENTIFIER)?.psi
+
+    @JvmStatic
+    fun getReference(element: GdsStructMemberNameRef): PsiReference =
+        GdsStructMemberReference(element, TextRange(0, element.textLength))
     
     fun getShaderType(file: GdsFile): ShaderType? {
         for (child in file.children) {

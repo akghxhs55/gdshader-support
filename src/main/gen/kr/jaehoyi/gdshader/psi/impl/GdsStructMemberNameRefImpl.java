@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static kr.jaehoyi.gdshader.psi.GdsTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
+import com.intellij.psi.PsiReference;
 
 public class GdsStructMemberNameRefImpl extends ASTWrapperPsiElement implements GdsStructMemberNameRef {
 
@@ -25,6 +26,11 @@ public class GdsStructMemberNameRefImpl extends ASTWrapperPsiElement implements 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GdsVisitor) accept((GdsVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  public @NotNull PsiReference getReference() {
+    return GdsPsiImplUtil.getReference(this);
   }
 
 }

@@ -31,6 +31,49 @@ object GdsExpressionTypeInference {
             else -> null
         }
     }
+    
+    fun inferTypeBefore(postfixExpr: GdsPostfixExpr, targetChild: PsiElement): DataType? {
+        var currentType = inferPrimaryType(postfixExpr.primary) ?: return null
+        
+        // Iterate over children that modify the type (excluding primary)
+        // The children structure of PostfixExpr is: Primary (modifiers)*
+        // We need to iterate over modifiers.
+        
+        var memberIdx = 0
+        var functionIdx = 0
+        var indexIdx = 0
+        
+        for (child in postfixExpr.children) {
+            if (child == postfixExpr.primary) continue
+            if (child == targetChild) return currentType
+            
+            when (child) {
+                is GdsStructMemberNameRef -> {
+                    val memberRefs = postfixExpr.structMemberNameRefList
+                    if (memberIdx < memberRefs.size && memberRefs[memberIdx] == child) {
+                        currentType = inferMemberAccessType(currentType, child.text) ?: return null
+                        memberIdx++
+                    }
+                }
+                is GdsFunctionCall -> {
+                    val functionCalls = postfixExpr.functionCallList
+                    if (functionIdx < functionCalls.size && functionCalls[functionIdx] == child) {
+                        currentType = inferFunctionCallType(child) ?: return null
+                        functionIdx++
+                    }
+                }
+                is GdsExpression -> {
+                    val indexExpressions = postfixExpr.expressionList
+                    if (indexIdx < indexExpressions.size && indexExpressions[indexIdx] == child) {
+                        currentType = inferIndexingType(currentType) ?: return null
+                        indexIdx++
+                    }
+                }
+            }
+        }
+        
+        return currentType
+    }
 
     private fun inferLiteralType(literal: GdsLiteral): DataType? {
         return when {

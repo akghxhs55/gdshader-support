@@ -318,7 +318,7 @@ public class GdsVisitor extends PsiElementVisitor {
   }
 
   public void visitStructMemberNameDecl(@NotNull GdsStructMemberNameDecl o) {
-    visitPsiElement(o);
+    visitPsiNameIdentifierOwner(o);
   }
 
   public void visitStructMemberNameRef(@NotNull GdsStructMemberNameRef o) {
