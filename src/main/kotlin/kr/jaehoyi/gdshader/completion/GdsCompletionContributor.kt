@@ -14,6 +14,7 @@ import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GdsBlock
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
@@ -35,6 +36,7 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GdsWhileStatement
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsPatterns
@@ -44,6 +46,12 @@ import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 import kotlin.collections.plusAssign
+
+import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.model.VectorType
+import kr.jaehoyi.gdshader.psi.GdsExpression
+import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
+import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 
 class GdsCompletionContributor : CompletionContributor() {
     
@@ -59,6 +67,7 @@ class GdsCompletionContributor : CompletionContributor() {
         extendProcessingFunctionDeclaration()
         extendStructDeclaration()
         extendStatement()
+        extendPostfixExpression()
     }
 
     private fun extendShaderTypeDeclaration() =
@@ -516,12 +525,20 @@ class GdsCompletionContributor : CompletionContributor() {
                     if (prevLeaf.elementType == GdsTypes.CURLY_BRACKET_OPEN || prevLeaf.elementType == GdsTypes.SEMICOLON) {
                         result.addAllElements(GdsLookupElements.PRECISIONS)
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        GdsResolver.processStructDeclaration(position) { element ->
+                            result.addElement(GdsLookupElements.createTypeDeclarationFromStructNameDecl(element))
+                            return@processStructDeclaration true
+                        }
                         return
                     }
                     
                     // 3. After precision
                     if (GdsKeywords.PRECISIONS.contains(prevLeaf?.text)) {
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
+                        GdsResolver.processStructDeclaration(position) { element ->
+                            result.addElement(GdsLookupElements.createTypeDeclarationFromStructNameDecl(element))
+                            return@processStructDeclaration true
+                        }
                         return
                     }
                     
@@ -627,6 +644,142 @@ class GdsCompletionContributor : CompletionContributor() {
                 }
             }
         )
+
+    private fun extendPostfixExpression() =
+        extend(
+            CompletionType.BASIC,
+            psiElement().afterLeaf(psiElement(GdsTypes.PERIOD)),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    val dot = PsiTreeUtil.prevVisibleLeaf(position)
+                    if (dot == null || dot.node.elementType != GdsTypes.PERIOD) return
+
+                    var baseType: DataType? = null
+                    
+                    val postfixExpr = dot.parent as? GdsPostfixExpr
+                    if (postfixExpr != null) {
+                        baseType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, dot)
+                    } else {
+                        var curr = PsiTreeUtil.prevVisibleLeaf(dot) ?: return
+                        val chain = mutableListOf<String>()
+                        var startExpr: GdsExpression? = null
+                        
+                        while (true) {
+                            if (curr.node.elementType == GdsTypes.IDENTIFIER) {
+                                val prevDot = PsiTreeUtil.prevVisibleLeaf(curr)
+                                if (prevDot != null && prevDot.node.elementType == GdsTypes.PERIOD) {
+                                    chain.add(0, curr.text)
+                                    curr = PsiTreeUtil.prevVisibleLeaf(prevDot) ?: break
+                                    continue
+                                } else {
+                                    startExpr = PsiTreeUtil.getParentOfType(curr, GdsExpression::class.java)
+                                    break
+                                }
+                            } else {
+                                startExpr = PsiTreeUtil.getParentOfType(curr, GdsExpression::class.java)
+                                break
+                            }
+                        }
+                        
+                        if (startExpr != null) {
+                            var currentType = GdsExpressionTypeInference.inferType(startExpr)
+                            for (memberName in chain) {
+                                currentType = if (currentType is MemberAccessible) {
+                                    currentType.resolveMember(memberName)
+                                } else {
+                                    null
+                                }
+                                if (currentType == null) break
+                            }
+                            baseType = currentType
+                        } else if (curr.node.elementType == GdsTypes.IDENTIFIER) {
+                            val name = curr.text
+                            var currentType: DataType? = null
+                            
+                            GdsResolver.processVariableDeclaration(curr) { variable ->
+                                if (variable.name == name) {
+                                    currentType = variable.variableSpec?.type
+                                    return@processVariableDeclaration false
+                                }
+                                true
+                            }
+                            
+                            if (currentType != null) {
+                                for (memberName in chain) {
+                                    currentType = if (currentType is MemberAccessible) {
+                                        (currentType as MemberAccessible).resolveMember(memberName)
+                                    } else {
+                                        null
+                                    }
+                                    if (currentType == null) break
+                                }
+                                baseType = currentType
+                            }
+                        }
+                    }
+
+                    if (baseType == null) return
+
+                    val completions = when (baseType) {
+                        is StructType -> {
+                            baseType.members.map { (name, type) ->
+                                GdsLookupElements.createStructMember(name, type)
+                            }
+                        }
+                        is VectorType -> getVectorSwizzles(baseType)
+                        else -> emptyList()
+                    }
+
+                    result.addAllElements(completions)
+                }
+            }
+        )
+
+    private fun getVectorSwizzles(vectorType: VectorType): List<LookupElement> {
+        val size = vectorType.containerSize
+        val components = mutableListOf<String>()
+
+        val sets = listOf(
+            listOf("x", "y", "z", "w"),
+            listOf("r", "g", "b", "a"),
+            listOf("s", "t", "p", "q")
+        )
+
+        for (set in sets) {
+            val validComponents = set.take(size)
+
+            components.addAll(validComponents)
+
+            if (size >= 2) {
+                for (i in 0 until size - 1) {
+                    components.add(validComponents[i] + validComponents[i + 1])
+                }
+            }
+            if (size >= 3) {
+                for (i in 0 until size - 2) {
+                    components.add(validComponents[i] + validComponents[i + 1] + validComponents[i + 2])
+                }
+            }
+            if (size >= 4) {
+                components.add(validComponents.joinToString(""))
+            }
+        }
+
+        return components.map {
+            val resultType = if (it.length == 1) {
+                vectorType.elementType
+            } else {
+                VectorType.of(vectorType.elementType, it.length) ?: vectorType
+            }
+            
+            GdsLookupElements.createVectorSwizzle(it, resultType)
+        }
+    }
     
     private fun getStatementCompletions(position: PsiElement): List<LookupElement> {
         val completions = arrayListOf<LookupElement>()

@@ -397,6 +397,18 @@ object GdsLookupElements {
         return builder
     }
     
+    fun createStructMember(name: String, type: DataType): LookupElement {
+        return LookupElementBuilder.create(name)
+            .withIcon(AllIcons.Nodes.Field)
+            .withTypeText(type.presentationText)
+    }
+    
+    fun createVectorSwizzle(name: String, type: DataType): LookupElement {
+        return LookupElementBuilder.create(name)
+            .withIcon(AllIcons.Nodes.Field)
+            .withTypeText(type.presentationText)
+    }
+    
     private fun LookupElement.withPriority(priority: Double): LookupElement =
         PrioritizedLookupElement.withPriority(this, priority)
     
