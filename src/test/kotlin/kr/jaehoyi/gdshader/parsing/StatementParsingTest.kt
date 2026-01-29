@@ -8,7 +8,7 @@ class StatementParsingTest : ParsingTestCase(
     "gdshader",
     GdsParserDefinition()
 ) {
-    
+
     override fun getTestDataPath(): String = "src/test/testData"
 
     fun testBlock() {
@@ -18,29 +18,29 @@ class StatementParsingTest : ParsingTestCase(
     fun testIfStatement() {
         doTest(true)
     }
-    
+
     fun testForStatement() {
         doTest(true)
     }
-    
+
     fun testWhileStatement() {
         doTest(true)
     }
-    
+
     fun testDoWhileStatement() {
         doTest(true)
     }
-    
+
     fun testSwitchStatement() {
         doTest(true)
     }
-    
+
     fun testReturnStatement() {
         doTest(true)
     }
-    
+
     fun testSimpleStatement() {
         doTest(true)
     }
-    
+
 }

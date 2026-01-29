@@ -8,10 +8,10 @@ import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 
 class GdsFunctionReferenceTest : BasePlatformTestCase() {
 
-    fun testUserFunctionResolve() {
+    fun `test user function resolve`() {
         val code = """
             shader_type canvas_item;
-            
+
             void my_custom_func(float x) {}
 
             void fragment() {
@@ -24,7 +24,7 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    fun testBuiltinFunctionResolve() {
+    fun `test builtin function resolve`() {
         val code = """
             shader_type canvas_item;
             void fragment() {
@@ -74,7 +74,7 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
         val mainFile = "lib/mylib.gdshader"
         myFixture.addFileToProject(mainFile, """
             #include "math_utils.gdshaderinc"
-            
+
             void run() {
                 float p = calculate<caret>_pi();
             }
@@ -88,5 +88,5 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
         assertEquals("calculate_pi", element.text)
         assertTrue(element.containingFile.name.contains("math_utils.gdshaderinc"))
     }
-    
+
 }

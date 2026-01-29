@@ -1,19 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
-import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-
-class VariableCompletionTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
-    }
-
-    override fun tearDown() {
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = true
-        super.tearDown()
-    }
+class VariableCompletionTest : GdsCompletionTestBase() {
 
     fun `test local variable completion`() {
         myFixture.configureByText("test.gdshader", """
@@ -23,8 +10,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
             }
         """.trimIndent())
 
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'my_local_var'", lookupStrings.contains("my_local_var"))
     }
@@ -36,8 +22,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
             }
         """.trimIndent())
 
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'my_param_vec'", lookupStrings.contains("my_param_vec"))
     }
@@ -45,7 +30,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
     fun `test global variable completion`() {
         myFixture.configureByText("test.gdshader", """
             shader_type canvas_item;
-            
+
             uniform float u_time;
             const float MAX_SPEED = 10.0;
             varying vec3 v_normal;
@@ -55,8 +40,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
             }
         """.trimIndent())
 
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'u_time'", lookupStrings.contains("u_time"))
         assertTrue("Should contain 'MAX_SPEED'", lookupStrings.contains("MAX_SPEED"))
@@ -67,12 +51,11 @@ class VariableCompletionTest : BasePlatformTestCase() {
         myFixture.configureByText("test.gdshader", """
             shader_type canvas_item;
             void fragment() {
-                TIM<caret> 
+                TIM<caret>
             }
         """.trimIndent())
 
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'TIME'", lookupStrings.contains("TIME"))
     }
@@ -84,7 +67,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
             }
 
             void func_b() {
-                invis<caret> 
+                invis<caret>
             }
         """.trimIndent())
 
@@ -96,7 +79,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
                 lookupStrings.contains("invisible_var"))
         }
     }
-    
+
     fun `test for loop variable completion`() {
         myFixture.configureByText("test.gdshader", """
             void fragment() {
@@ -106,12 +89,11 @@ class VariableCompletionTest : BasePlatformTestCase() {
             }
         """.trimIndent())
 
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'i'", lookupStrings.contains("i"))
     }
-    
+
     fun `test for loop variable in condition`() {
         myFixture.configureByText("test.gdshader", """
             void fragment() {
@@ -120,8 +102,7 @@ class VariableCompletionTest : BasePlatformTestCase() {
             }
         """.trimIndent())
 
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
+        val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'i'", lookupStrings.contains("i"))
     }
@@ -131,37 +112,36 @@ class VariableCompletionTest : BasePlatformTestCase() {
 
         myFixture.configureByText("main.gdshader", """
             #include "res://constants.gdshaderinc"
-            
+
             void light() {
                 int count = MAX_<caret>;
             }
         """.trimIndent())
-        
-        myFixture.completeBasic()
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
-        
+
+        val lookupStrings = completeAndGetStrings()
+
         assertContainsElements(lookupStrings, "MAX_LIGHTS")
     }
 
     fun `test transitive include resolution`() {
         myFixture.addFileToProject("level_a.gdshaderinc", "uniform vec3 deep_color;")
-        
+
         myFixture.addFileToProject("level_b.gdshaderinc", """
             #include "res://level_a.gdshaderinc"
         """.trimIndent())
-        
+
         myFixture.configureByText("main.gdshader", """
             #include "res://level_b.gdshaderinc"
-            
+
             void fragment() {
                 vec3 c = deep_<caret>color;
             }
         """.trimIndent())
-        
+
         val element = myFixture.elementAtCaret
-        
+
         assertEquals("deep_color", element.text)
         assertEquals("level_a.gdshaderinc", element.containingFile.name)
     }
-    
+
 }

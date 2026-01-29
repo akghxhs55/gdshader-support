@@ -1,19 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
-import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-
-class IncludeCompletionTest: BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
-    }
-
-    override fun tearDown() {
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = true
-        super.tearDown()
-    }
+class IncludeCompletionTest : GdsCompletionTestBase() {
 
     fun `test include shows file list inside quotes`() {
         myFixture.addFileToProject("utils.gdshaderinc", "void util() {}")
@@ -25,9 +12,7 @@ class IncludeCompletionTest: BasePlatformTestCase() {
             void main() {}
         """.trimIndent())
 
-        myFixture.completeBasic()
-
-        val suggestedStrings = requireNotNull(myFixture.lookupElementStrings)
+        val suggestedStrings = completeAndGetStrings()
 
         assertContainsElements(suggestedStrings, "res://utils.gdshaderinc", "res://lib/math.gdshaderinc")
         assertDoesntContain(suggestedStrings, "ignored.gdshader")
@@ -44,11 +29,9 @@ class IncludeCompletionTest: BasePlatformTestCase() {
 
         myFixture.configureFromTempProjectFile(filePath)
 
-        myFixture.completeBasic()
-
-        val suggestedStrings = requireNotNull(myFixture.lookupElementStrings)
+        val suggestedStrings = completeAndGetStrings()
 
         assertContainsElements(suggestedStrings, "res://common/core.gdshaderinc", "res://utils.gdshaderinc")
     }
-    
+
 }

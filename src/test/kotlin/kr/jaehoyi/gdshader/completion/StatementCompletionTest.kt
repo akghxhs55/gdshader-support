@@ -1,48 +1,33 @@
 package kr.jaehoyi.gdshader.completion
 
-import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+class StatementCompletionTest : GdsCompletionTestBase() {
 
-class StatementCompletionTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
-    }
-
-    override fun tearDown() {
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = true
-        super.tearDown()
-    }
-
-    fun testInFunctionBody() {
+    fun `test in function body`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "if", "for", "while", "do", "switch")
         assertDoesntContain(completions, "else")
     }
 
-    fun testInsideIfCondition() {
+    fun `test inside if condition`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 if (<caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "true", "false")
     }
 
-    fun testInsideIfBody() {
+    fun `test inside if body`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 if (true) {
@@ -50,89 +35,83 @@ class StatementCompletionTest : BasePlatformTestCase() {
                 }
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "int", "float", "if", "return")
     }
 
-    fun testElseAfterIfStatement() {
+    fun `test else after if statement`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 if (true) {
-                    
+
                 }
                 <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "else")
     }
 
-    fun testIfAfterElse() {
+    fun `test if after else`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 if (true) {
-                    
+
                 }
                 else <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "if")
         assertDoesntContain(completions, "else")
     }
 
-    fun testInsideForInit() {
+    fun `test inside for init`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 for (<caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "int", "float", "highp")
         assertDoesntContain(completions, "for", "if")
     }
-    
-    fun testInsideForCondition() {
+
+    fun `test inside for condition`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 for (int i = 1; <caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "true", "false")
         assertDoesntContain(completions, "for", "if")
     }
-    
-    fun testInsideForIteration() {
+
+    fun `test inside for iteration`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 for (int i = 1; i < 10; <caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "true", "false")
         assertDoesntContain(completions, "for", "if")
     }
-    
-    fun testAfterStatement() {
+
+    fun `test after statement`() {
         myFixture.configureByText("test.gdshader", """
             void f() {
                 for (;;) {
@@ -140,10 +119,9 @@ class StatementCompletionTest : BasePlatformTestCase() {
                 <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "int", "float", "if", "for", "return")
     }
 

@@ -7,43 +7,43 @@ import kr.jaehoyi.gdshader.psi.*
 
 class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
 
-    fun testBoolLiteralTrue() {
+    fun `test bool literal true`() {
         doLiteralTest("true", BoolType)
     }
 
-    fun testBoolLiteralFalse() {
+    fun `test bool literal false`() {
         doLiteralTest("false", BoolType)
     }
 
-    fun testFloatLiteral() {
+    fun `test float literal`() {
         doLiteralTest("1.0", FloatType.DEFAULT)
     }
 
-    fun testIntLiteral() {
+    fun `test int literal`() {
         doLiteralTest("42", IntType)
     }
 
-    fun testUIntLiteral() {
+    fun `test uint literal`() {
         doLiteralTest("42u", UIntType)
     }
 
-    fun testVec3Constructor() {
+    fun `test vec3 constructor`() {
         doConstructorTest("vec3(1.0, 2.0, 3.0)", VectorType.VEC3)
     }
 
-    fun testVec4Constructor() {
+    fun `test vec4 constructor`() {
         doConstructorTest("vec4(1.0)", VectorType.VEC4)
     }
 
-    fun testMat4Constructor() {
+    fun `test mat4 constructor`() {
         doConstructorTest("mat4(1.0)", MatrixType.MAT4)
     }
 
-    fun testIvec2Constructor() {
+    fun `test ivec2 constructor`() {
         doConstructorTest("ivec2(1, 2)", VectorType.IVEC2)
     }
 
-    fun testArrayConstructor() {
+    fun `test array constructor`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -68,51 +68,51 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(3, arrayType.containerSize)
     }
 
-    fun testSinFloat() {
+    fun `test sin float`() {
         doBuiltinFunctionTest("sin(1.0)", FloatType.DEFAULT)
     }
 
-    fun testSinVec3() {
+    fun `test sin vec3`() {
         doBuiltinFunctionTest("sin(vec3(1.0))", VectorType.VEC3)
     }
 
-    fun testLengthVec3() {
+    fun `test length vec3`() {
         doBuiltinFunctionTest("length(vec3(1.0, 2.0, 3.0))", FloatType.DEFAULT)
     }
 
-    fun testDotVec3() {
+    fun `test dot vec3`() {
         doBuiltinFunctionTest("dot(vec3(1.0), vec3(2.0))", FloatType.DEFAULT)
     }
 
-    fun testCrossVec3() {
+    fun `test cross vec3`() {
         doBuiltinFunctionTest("cross(vec3(1.0), vec3(2.0))", VectorType.VEC3)
     }
 
-    fun testNormalizeVec3() {
+    fun `test normalize vec3`() {
         doBuiltinFunctionTest("normalize(vec3(1.0, 2.0, 3.0))", VectorType.VEC3)
     }
 
-    fun testMixFloat() {
+    fun `test mix float`() {
         doBuiltinFunctionTest("mix(0.0, 1.0, 0.5)", FloatType.DEFAULT)
     }
 
-    fun testMixVec3() {
+    fun `test mix vec3`() {
         doBuiltinFunctionTest("mix(vec3(0.0), vec3(1.0), 0.5)", VectorType.VEC3)
     }
 
-    fun testClampFloat() {
+    fun `test clamp float`() {
         doBuiltinFunctionTest("clamp(0.5, 0.0, 1.0)", FloatType.DEFAULT)
     }
 
-    fun testAbsInt() {
+    fun `test abs int`() {
         doBuiltinFunctionTest("abs(-5)", IntType)
     }
 
-    fun testAbsVec3() {
+    fun `test abs vec3`() {
         doBuiltinFunctionTest("abs(vec3(-1.0))", VectorType.VEC3)
     }
 
-    fun testLocalVariableRef() {
+    fun `test local variable ref`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -128,7 +128,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(FloatType.DEFAULT, inferredType)
     }
 
-    fun testUniformVariableRef() {
+    fun `test uniform variable ref`() {
         val code = """
             shader_type spatial;
             uniform vec3 u_color;
@@ -144,7 +144,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(VectorType.VEC3, inferredType)
     }
 
-    fun testParameterRef() {
+    fun `test parameter ref`() {
         val code = """
             shader_type spatial;
             float my_func(mat4 transform) {
@@ -160,7 +160,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(MatrixType.MAT4, inferredType)
     }
 
-    fun testVectorSwizzleXYZ() {
+    fun `test vector swizzle xyz`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -176,7 +176,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(VectorType.VEC3, inferredType)
     }
 
-    fun testVectorSwizzleSingle() {
+    fun `test vector swizzle single`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -192,7 +192,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(FloatType.DEFAULT, inferredType)
     }
 
-    fun testVectorSwizzleRGBA() {
+    fun `test vector swizzle rgba`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -208,7 +208,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(VectorType.VEC2, inferredType)
     }
 
-    fun testVectorIndexing() {
+    fun `test vector indexing`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -224,7 +224,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(FloatType.DEFAULT, inferredType)
     }
 
-    fun testMatrixIndexing() {
+    fun `test matrix indexing`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -240,87 +240,87 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(VectorType.VEC4, inferredType)
     }
 
-    fun testVec3AddVec3() {
+    fun `test vec3 add vec3`() {
         doBinaryExprTest("vec3(1.0) + vec3(2.0)", VectorType.VEC3)
     }
 
-    fun testVec3MulFloat() {
+    fun `test vec3 mul float`() {
         doBinaryExprTest("vec3(1.0) * 2.0", VectorType.VEC3)
     }
 
-    fun testFloatMulVec3() {
+    fun `test float mul vec3`() {
         doBinaryExprTest("2.0 * vec3(1.0)", VectorType.VEC3)
     }
 
-    fun testMat4MulVec4() {
+    fun `test mat4 mul vec4`() {
         doBinaryExprTest("mat4(1.0) * vec4(1.0)", VectorType.VEC4)
     }
 
-    fun testMat4MulMat4() {
+    fun `test mat4 mul mat4`() {
         doBinaryExprTest("mat4(1.0) * mat4(1.0)", MatrixType.MAT4)
     }
 
-    fun testLessThan() {
+    fun `test less than`() {
         doComparisonTest("1.0 < 2.0", BoolType)
     }
 
-    fun testEqual() {
+    fun `test equal`() {
         doComparisonTest("vec3(1.0) == vec3(1.0)", BoolType)
     }
 
-    fun testNotEqual() {
+    fun `test not equal`() {
         doComparisonTest("1 != 2", BoolType)
     }
 
-    fun testLogicalAnd() {
+    fun `test logical and`() {
         doLogicalTest("true && false", BoolType)
     }
 
-    fun testLogicalOr() {
+    fun `test logical or`() {
         doLogicalTest("true || false", BoolType)
     }
 
-    fun testLogicalNot() {
+    fun `test logical not`() {
         doUnaryTest("!true", BoolType)
     }
 
-    fun testNegation() {
+    fun `test negation`() {
         doUnaryTest("-1.0", FloatType.DEFAULT)
     }
 
-    fun testBitwiseNot() {
+    fun `test bitwise not`() {
         doUnaryTest("~5", IntType)
     }
-    
-    fun testShiftLeft() {
+
+    fun `test shift left`() {
         doShiftExprTest("1 << 2", IntType)
     }
 
-    fun testShiftRight() {
+    fun `test shift right`() {
         doShiftExprTest("8 >> 1", IntType)
     }
 
-    fun testBitwiseAnd() {
+    fun `test bitwise and`() {
         doBitwiseExprTest("5 & 3", IntType)
     }
 
-    fun testBitwiseXor() {
+    fun `test bitwise xor`() {
         doBitwiseExprTest("5 ^ 3", IntType)
     }
 
-    fun testBitwiseOr() {
+    fun `test bitwise or`() {
         doBitwiseExprTest("5 | 3", IntType)
     }
 
-    fun testTernaryOperator() {
+    fun `test ternary operator`() {
         doConditionalTest("true ? 1.0 : 0.0", FloatType.DEFAULT)
     }
-    
-    fun testTernaryOperatorSameType() {
+
+    fun `test ternary operator same type`() {
         doConditionalTest("true ? 1 : 0", IntType)
     }
 
-    fun testAssignment() {
+    fun `test assignment`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -329,17 +329,17 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
             }
         """
         myFixture.configureByText("test.gdshader", code)
-        
+
         val elementAtCaret = myFixture.file.findElementAt(myFixture.caretOffset)
         val assignExpr = PsiTreeUtil.getParentOfType(elementAtCaret, GdsAssignExpr::class.java)
-        
+
         val nonNullAssignExpr = requireNotNull(assignExpr) { "Should find assignment expression" }
-        
+
         val inferredType = GdsExpressionTypeInference.inferType(nonNullAssignExpr)
         assertEquals(FloatType.DEFAULT, inferredType)
     }
-    
-    fun testInvalidConstructor() {
+
+    fun `test invalid constructor`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -357,7 +357,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertNull("Should not infer type for invalid constructor", inferredType)
     }
 
-    fun testFunctionOverloadMismatch() {
+    fun `test function overload mismatch`() {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -534,7 +534,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         val inferredType = GdsExpressionTypeInference.inferType(nonNullLogicalExpr)
         assertEquals("Type mismatch for expression: $expressionText", expectedType, inferredType)
     }
-    
+
     private fun doConditionalTest(expressionText: String, expectedType: DataType) {
         val code = """
             shader_type spatial;
@@ -543,12 +543,12 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
             }
         """
         myFixture.configureByText("test.gdshader", code)
-        
+
         val conditionalExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsConditionalExpr::class.java)
         val conditionalExpr = conditionalExprs.find { it.text == expressionText }
-        
+
         val nonNullConditionalExpr = requireNotNull(conditionalExpr) { "Should find conditional expression: $expressionText" }
-        
+
         val inferredType = GdsExpressionTypeInference.inferType(nonNullConditionalExpr)
         assertEquals("Type mismatch for conditional expression: $expressionText", expectedType, inferredType)
     }
@@ -580,4 +580,5 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.caretOffset) ?: return null
         return PsiTreeUtil.getParentOfType(elementAtCaret, GdsPostfixExpr::class.java)
     }
+
 }

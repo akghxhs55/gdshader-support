@@ -1,34 +1,20 @@
 package kr.jaehoyi.gdshader.completion
 
-import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+class ExpressionCompletionTest : GdsCompletionTestBase() {
 
-class ExpressionCompletionTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
-    }
-
-    override fun tearDown() {
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = true
-        super.tearDown()
-    }
-    
-    fun testInInitializer() {
+    fun `test in initializer`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
-            
+
             uniform bool t = <caret>
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
 
-    fun testInFunctionBody() {
+    fun `test in function body`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -36,14 +22,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInFunctionBodyAfterStatement() {
+
+    fun `test in function body after statement`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -52,14 +37,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInFunctionBodyBeforeStatement() {
+
+    fun `test in function body before statement`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -68,14 +52,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 ;
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInFunctionBodyBetweenStatements() {
+
+    fun `test in function body between statements`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -85,14 +68,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 test;
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
 
-    fun testInIfStatementCondition() {
+    fun `test in if statement condition`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -100,14 +82,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 if (<caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testAfterIfStatementCondition() {
+
+    fun `test after if statement condition`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -116,14 +97,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                     <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testIfStatementBody() {
+
+    fun `test if statement body`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -131,14 +111,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 if (test) <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInForStatementCondition() {
+
+    fun `test in for statement condition`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -146,14 +125,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 for (; <caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
 
-    fun testInForStatementIteration() {
+    fun `test in for statement iteration`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -161,14 +139,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 for (;;<caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInSwitchStatementExpression() {
+
+    fun `test in switch statement expression`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -176,14 +153,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 switch (<caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInSwitchBody() {
+
+    fun `test in switch body`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -194,14 +170,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 }
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testAfterCaseKeyword() {
+
+    fun `test after case keyword`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -211,14 +186,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 }
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testAfterDoKeyword() {
+
+    fun `test after do keyword`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -226,14 +200,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 do <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testAfterReturnKeyword() {
+
+    fun `test after return keyword`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -241,14 +214,13 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 return <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInFunctionArgument() {
+
+    fun `test in function argument`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -256,27 +228,25 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 test(<caret>)
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testAfterOperator() {
+
+    fun `test after operator`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
             uniform int t = 1 + <caret>
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testAfterPrimary() {
+
+    fun `test after primary`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -284,40 +254,37 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 1 <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertDoesntContain(completions, "radians")
     }
-    
-    fun testUniformDeclarationInitializer() {
+
+    fun `test uniform declaration initializer`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
             uniform int test = <caret>
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testConstantDeclarationInitializer() {
+
+    fun `test constant declaration initializer`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
             const int test = <caret>
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testLocalVariableDeclarationInitializer() {
+
+    fun `test local variable declaration initializer`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -325,27 +292,25 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 int test = <caret>
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInInitializerList() {
+
+    fun `test in initializer list`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
             const int t[1] = { <caret> }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInArraySize() {
+
+    fun `test in array size`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
@@ -353,26 +318,22 @@ class ExpressionCompletionTest : BasePlatformTestCase() {
                 test[<caret>]
             }
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    fun testInConstantDeclarationArraySize() {
+
+    fun `test in constant declaration array size`() {
         myFixture.configureByText("test.gdshader", """
             shader_type spatial;
 
             const int test[<caret>]
         """.trimIndent())
-        myFixture.completeBasic()
 
-        val completions = requireNotNull(myFixture.lookupElementStrings)
-        
+        val completions = completeAndGetStrings()
+
         assertContainsElements(completions, "radians")
     }
-    
-    
-    
+
 }

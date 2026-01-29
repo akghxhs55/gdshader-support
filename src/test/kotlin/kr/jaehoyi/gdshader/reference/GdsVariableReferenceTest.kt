@@ -12,7 +12,7 @@ import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 
 class GdsVariableReferenceTest : BasePlatformTestCase() {
 
-    fun testLocalVariableResolve() {
+    fun `test local variable resolve`() {
         val code = """
             void fragment() {
                 float my_var = 1.0;
@@ -25,8 +25,8 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
             assertTrue(spec.isMutable)
         }
     }
-    
-    fun testForInitResolve() {
+
+    fun `test for init resolve`() {
         val code = """
             void fragment() {
                 for (int i = 0; i < 10; i++) {
@@ -41,7 +41,7 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    fun testParameterResolve() {
+    fun `test parameter resolve`() {
         val code = """
             void my_func(float param_a) {
                 float b = <caret>param_a;
@@ -53,7 +53,7 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    fun testUniformResolve() {
+    fun `test uniform resolve`() {
         val code = """
             shader_type spatial;
             uniform float u_time;
@@ -67,7 +67,7 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    fun testConstantResolve() {
+    fun `test constant resolve`() {
         val code = """
             const float MAX_SPEED = 10.0;
             void fragment() {
@@ -81,7 +81,7 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    fun testBuiltinVariableResolve() {
+    fun `test builtin variable resolve`() {
         val code = """
             shader_type canvas_item;
             void fragment() {
@@ -89,11 +89,11 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
             }
         """
         doTest(code) { spec ->
-            assertEquals("COLOR", spec.name) 
+            assertEquals("COLOR", spec.name)
         }
     }
 
-    fun testShadowingResolve() {
+    fun `test shadowing resolve`() {
         val code = """
             uniform float value;
             void fragment() {
@@ -136,7 +136,7 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
 
         myFixture.configureByText("main.gdshader", """
             #include "res://utils.gdshaderinc"
-            
+
             void fragment() {
                 float t = u_global_<caret>time;
             }
@@ -168,8 +168,8 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         myFixture.configureByText("main.gdshader", """
             #include "res://cycle_a.gdshaderinc"
             void f() {
-                var_a; 
-                var_<caret>b; 
+                var_a;
+                var_<caret>b;
             }
         """.trimIndent())
 
@@ -177,5 +177,5 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
 
         assertEquals("var_b", element.text)
     }
-    
+
 }
