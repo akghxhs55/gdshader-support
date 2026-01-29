@@ -43,5 +43,6 @@ bin/
 
 ### Other ###
 .claude/
-Claude.md
+CLAUDE.md
 .gemini/
+GEMINI.md
