@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added parameter info support
 - Added struct member reference and completion support
 - Added structure view feature
+- Added breadcrumbs support
 - Minor feature improvements
 
 ## 0.5.0-beta (2026-01-22)

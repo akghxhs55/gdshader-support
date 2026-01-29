@@ -70,6 +70,7 @@
         <usageTypeProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUsageTypeProvider" />
         <lang.foldingBuilder language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFoldingBuilder" />
         <lang.psiStructureViewFactory language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsStructureViewFactory" />
+        <breadcrumbsInfoProvider implementation="kr.jaehoyi.gdshader.editor.GdsBreadcrumbsProvider" />
         <gotoSymbolContributor implementation="kr.jaehoyi.gdshader.editor.GdsChooseByNameContributor" />
         
         <!-- Completions -->
