@@ -69,6 +69,7 @@
         <readWriteAccessDetector implementation="kr.jaehoyi.gdshader.codeinsight.GdsReadWriteAccessDetector" />
         <usageTypeProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUsageTypeProvider" />
         <lang.foldingBuilder language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFoldingBuilder" />
+        <lang.psiStructureViewFactory language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsStructureViewFactory" />
         <gotoSymbolContributor implementation="kr.jaehoyi.gdshader.editor.GdsChooseByNameContributor" />
         
         <!-- Completions -->
