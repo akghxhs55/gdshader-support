@@ -43,6 +43,10 @@
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.GdsParserDefinition" />
         
+        <lang.documentationProvider
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.documentation.GdsDocumentationProvider" />
+        
         <!-- Highlighting -->
         <lang.syntaxHighlighterFactory
             language="GDShader"
