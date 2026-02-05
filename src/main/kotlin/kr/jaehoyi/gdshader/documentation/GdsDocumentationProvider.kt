@@ -227,15 +227,12 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         if (element == null) return null
         
         var anchor = element
-        // Traverse up to find the element that is a direct child of a block or file
         while (anchor != null) {
             val parent = anchor.parent
             if (parent is GdsFile || parent is GdsBlockBody || parent is GdsStructBlock) {
                 break
             }
             if (anchor.prevSibling != null && anchor.prevSibling !is PsiWhiteSpace && anchor.prevSibling !is PsiComment) {
-                 // Stop if we hit a significant sibling that is not the comment we are looking for.
-                 // This prevents jumping over other declarations.
                  break
             }
             anchor = parent

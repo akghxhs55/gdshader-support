@@ -18,7 +18,9 @@ class GdsDocumentationTest : BasePlatformTestCase() {
         val doc = requireNotNull(provider.generateDoc(element, null))
         val plainDoc = doc.replace(Regex("<[^>]*>"), "")
         
-        assertTrue(plainDoc.contains("vec_type sin(vec_type x)"))
+        println(plainDoc)
+        
+        assertTrue(plainDoc.contains("vec_type sin(vec_type angle)"))
     }
     
     fun `test builtin variable documentation`() {
