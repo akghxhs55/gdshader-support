@@ -1,0 +1,16 @@
+{
+  "target_version": "stable",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/godotengine/godot-docs/refs/heads/master/tutorials/shaders/shader_reference/shader_functions.rst",
+      "base_doc_url": "https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shader_functions.html"
+    }
+  ],
+  "substitutions": {
+    "|componentwise|": "<a href=\"https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shader_functions.html#shading-componentwise\">Component-wise Function</a>."
+  },
+  "output": {
+    "json_path": "./build/generated/shader_functions.json",
+    "code_template": "./templates/kotlin_function_spec.j2"
+  }
+}
