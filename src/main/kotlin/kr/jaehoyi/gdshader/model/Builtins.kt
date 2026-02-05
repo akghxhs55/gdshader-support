@@ -4654,6 +4654,7 @@ object Builtins {
             parameters = listOf(
                 ParameterSpec("sdf_pos", VEC2)
             ),
+            description = "Performs an SDF texture lookup."
         ),
     
         FunctionSpec(
@@ -4662,6 +4663,7 @@ object Builtins {
             parameters = listOf(
                 ParameterSpec("sdf_pos", VEC2)
             ),
+            description = "Calculates a normal from the SDF texture."
         ),
     
         FunctionSpec(
@@ -4670,6 +4672,7 @@ object Builtins {
             parameters = listOf(
                 ParameterSpec("sdf_pos", VEC2)
             ),
+            description = "Converts an SDF to screen UV."
         ),
     
         FunctionSpec(
@@ -4678,6 +4681,7 @@ object Builtins {
             parameters = listOf(
                 ParameterSpec("uv", VEC2)
             ),
+            description = "Converts screen UV to an SDF."
         ),
     )
     
