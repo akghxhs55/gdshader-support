@@ -124,11 +124,13 @@ object Builtins {
             ParameterSpec(
                 name = "OUTPUT_IS_SRGB",
                 type = BOOL,
+                description = "<code>true</code> when output is in sRGB color space (this is <code>true</code> in the Compatibility renderer, <code>false</code> in Forward+ and Mobile)."
             ),
 
             ParameterSpec(
                 name = "CLIP_SPACE_FAR",
                 type = FLOAT,
+                description = "Clip space far <code>z</code> value. In the Forward+ or Mobile renderers, it's <code>0.0</code>. In the Compatibility renderer, it's <code>-1.0.</code>"
             ),
         ),
         
@@ -136,152 +138,180 @@ object Builtins {
             ParameterSpec(
                 name = "VIEWPORT_SIZE",
                 type = VEC2,
+                description = "Size of viewport (in pixels)."
             ),
 
             ParameterSpec(
                 name = "VIEW_MATRIX",
                 type = MAT4,
+                description = "World space to view space transform."
             ),
 
             ParameterSpec(
                 name = "INV_VIEW_MATRIX",
                 type = MAT4,
+                description = "View space to world space transform."
             ),
 
             ParameterSpec(
                 name = "MAIN_CAM_INV_VIEW_MATRIX",
                 type = MAT4,
+                description = "View space to world space transform of the camera used to draw the current viewport."
             ),
 
             ParameterSpec(
                 name = "INV_PROJECTION_MATRIX",
                 type = MAT4,
+                description = "Clip space to view space transform."
             ),
 
             ParameterSpec(
                 name = "NODE_POSITION_WORLD",
                 type = VEC3,
+                description = "Node position, in world space."
             ),
 
             ParameterSpec(
                 name = "NODE_POSITION_VIEW",
                 type = VEC3,
+                description = "Node position, in view space."
             ),
 
             ParameterSpec(
                 name = "CAMERA_POSITION_WORLD",
                 type = VEC3,
+                description = "Camera position, in world space. Represents the midpoint of the two eyes when in multiview/stereo rendering."
             ),
 
             ParameterSpec(
                 name = "CAMERA_DIRECTION_WORLD",
                 type = VEC3,
+                description = "Camera direction, in world space."
             ),
 
             ParameterSpec(
                 name = "CAMERA_VISIBLE_LAYERS",
                 type = UINT,
+                description = "Cull layers of the camera rendering the current pass."
             ),
 
             ParameterSpec(
                 name = "INSTANCE_ID",
                 type = INT,
+                description = "Instance ID for instancing."
             ),
 
             ParameterSpec(
                 name = "INSTANCE_CUSTOM",
                 type = VEC4,
+                description = "Instance custom data (for particles, mostly)."
             ),
 
             ParameterSpec(
                 name = "VIEW_INDEX",
                 type = INT,
+                description = "The view that we are rendering. <code>VIEW_MONO_LEFT</code> (<code>0</code>) for Mono (not multiview) or left eye, <code>VIEW_RIGHT</code> (<code>1</code>) for right eye."
             ),
 
             ParameterSpec(
                 name = "VIEW_MONO_LEFT",
                 type = INT,
+                description = "Constant for Mono or left eye, always <code>0</code>."
             ),
 
             ParameterSpec(
                 name = "VIEW_RIGHT",
                 type = INT,
+                description = "Constant for right eye, always <code>1</code>."
             ),
 
             ParameterSpec(
                 name = "EYE_OFFSET",
                 type = VEC3,
+                description = "Position offset for the eye being rendered, in view space. Only applicable for multiview rendering."
             ),
 
             ParameterSpec(
                 name = "VERTEX",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Position of the vertex, in model space. In world space if <code>world_vertex_coords</code> is used."
             ),
 
             ParameterSpec(
                 name = "VERTEX_ID",
                 type = INT,
+                description = "The index of the current vertex in the vertex buffer."
             ),
 
             ParameterSpec(
                 name = "NORMAL",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Normal in model space. In world space if <code>world_vertex_coords</code> is used."
             ),
 
             ParameterSpec(
                 name = "TANGENT",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Tangent in model space. In world space if <code>world_vertex_coords</code> is used."
             ),
 
             ParameterSpec(
                 name = "BINORMAL",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description =  "Binormal in model space. In world space if <code>world_vertex_coords</code> is used."
             ),
 
             ParameterSpec(
                 name = "POSITION",
                 type = VEC4,
                 qualifier = ParameterQualifier.OUT,
+                description = "If written to, overrides final vertex position in clip space."
             ),
 
             ParameterSpec(
                 name = "UV",
                 type = VEC2,
                 qualifier = ParameterQualifier.INOUT,
+                description = "UV main channel."
             ),
 
             ParameterSpec(
                 name = "UV2",
                 type = VEC2,
                 qualifier = ParameterQualifier.INOUT,
+                description = "UV secondary channel."
             ),
 
             ParameterSpec(
                 name = "COLOR",
                 type = VEC4,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Color from vertices. Limited to values between <code>0.0</code> and <code>1.0</code> for each channel and 8 bits per channel precision (256 possible levels). Alpha channel is supported. Values outside the allowed range are clamped, and values may be rounded due to precision limitations. Use <code>CUSTOM0</code>-<code>CUSTOM3</code> to pass data with more precision if needed."
             ),
 
             ParameterSpec(
                 name = "ROUGHNESS",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Roughness for vertex lighting."
             ),
 
             ParameterSpec(
                 name = "POINT_SIZE",
                 type = FLOAT,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Point size for point rendering."
             ),
 
             ParameterSpec(
                 name = "MODELVIEW_MATRIX",
                 type = MAT4,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Model/local space to view space transform (use if possible)."
             ),
 
             ParameterSpec(
@@ -293,19 +323,19 @@ object Builtins {
             ParameterSpec(
                 name = "MODEL_MATRIX",
                 type = MAT4,
-                
+                description = "Model/local space to world space transform."
             ),
 
             ParameterSpec(
                 name = "MODEL_NORMAL_MATRIX",
                 type = MAT3,
-                
             ),
 
             ParameterSpec(
                 name = "PROJECTION_MATRIX",
                 type = MAT4,
                 qualifier = ParameterQualifier.INOUT,
+                description =  "View space to clip space transform."
             ),
 
             ParameterSpec(
@@ -321,351 +351,423 @@ object Builtins {
             ParameterSpec(
                 name = "CUSTOM0",
                 type = VEC4,
+                description =  "Custom value from vertex primitive. When using extra UVs, <code>xy</code> is UV3 and <code>zw</code> is UV4."
             ),
 
             ParameterSpec(
                 name = "CUSTOM1",
                 type = VEC4,
+                description = "Custom value from vertex primitive. When using extra UVs, <code>xy</code> is UV5 and <code>zw</code> is UV6."
             ),
 
             ParameterSpec(
                 name = "CUSTOM2",
                 type = VEC4,
+                description = "Custom value from vertex primitive. When using extra UVs, <code>xy</code> is UV7 and <code>zw</code> is UV8."
             ),
 
             ParameterSpec(
                 name = "CUSTOM3",
                 type = VEC4,
+                description =  "Custom value from vertex primitive."
             ),
+
+            ParameterSpec(
+                name = "Z_CLIP_SCALE",
+                type = FLOAT,
+                qualifier = ParameterQualifier.OUT,
+                description = "If written to, scales the vertex towards the camera to avoid clipping into things like walls. Lighting and shadows will continue to work correctly when this is written to, but screen-space effects like SSAO and SSR may break with lower scales. Try to keep this value as close to <code>1.0</code> as possible."
+            )
         ),
 
         ShaderType.SPATIAL to FunctionContext.FRAGMENT to listOf(
             ParameterSpec(
                 name = "VIEWPORT_SIZE",
                 type = VEC2,
+                description = "Size of viewport (in pixels)."
             ),
 
             ParameterSpec(
                 name = "FRAGCOORD",
                 type = VEC4,
+                description = "Coordinate of pixel center in screen space. <code>xy</code> specifies position in window. Origin is upper left. <code>z</code> specifies fragment depth. It is also used as the output value for the fragment depth unless <code>DEPTH</code> is written to."
             ),
 
             ParameterSpec(
                 name = "FRONT_FACING",
                 type = BOOL,
+                description = "<code>true</code> if current face is front facing, <code>false</code> otherwise."
             ),
 
             ParameterSpec(
                 name = "VIEW",
                 type = VEC3,
+                description =  "Normalized vector from fragment position to camera (in view space). This is the same for both perspective and orthogonal cameras."
             ),
 
             ParameterSpec(
                 name = "UV",
                 type = VEC2,
+                description = "UV that comes from the <code>vertex()</code> function."
             ),
 
             ParameterSpec(
                 name = "UV2",
                 type = VEC2,
+                description = "UV2 that comes from the <code>vertex()</code> function."
             ),
 
             ParameterSpec(
                 name = "COLOR",
                 type = VEC4,
+                description = "COLOR that comes from the <code>vertex()</code> function."
             ),
 
             ParameterSpec(
                 name = "POINT_COORD",
                 type = VEC2,
+                description = "Point coordinate for drawing points with <code>POINT_SIZE</code>."
             ),
 
             ParameterSpec(
                 name = "MODEL_MATRIX",
                 type = MAT4,
+                description = "Model/local space to world space transform."
             ),
 
             ParameterSpec(
                 name = "MODEL_NORMAL_MATRIX",
                 type = MAT3,
+                description = "Model/local space to world space transform for normals. This is the same as <code>MODEL_MATRIX</code> by default unless the object is scaled non-uniformly, in which case this is set to <code>transpose(inverse(mat3(MODEL_MATRIX)))</code>."
             ),
 
             ParameterSpec(
                 name = "VIEW_MATRIX",
                 type = MAT4,
+                description = "World space to view space transform."
             ),
 
             ParameterSpec(
                 name = "INV_VIEW_MATRIX",
                 type = MAT4,
+                description = "View space to world space transform."
             ),
 
             ParameterSpec(
                 name = "PROJECTION_MATRIX",
                 type = MAT4,
+                description = "View space to clip space transform."
             ),
 
             ParameterSpec(
                 name = "INV_PROJECTION_MATRIX",
                 type = MAT4,
+                description = "Clip space to view space transform."
             ),
 
             ParameterSpec(
                 name = "NODE_POSITION_WORLD",
                 type = VEC3,
+                description = "Node position, in world space."
             ),
 
             ParameterSpec(
                 name = "NODE_POSITION_VIEW",
                 type = VEC3,
+                description = "Node position, in view space."
             ),
 
             ParameterSpec(
                 name = "CAMERA_POSITION_WORLD",
                 type = VEC3,
+                description = "Camera position, in world space. Represents the midpoint of the two eyes when in multiview/stereo rendering."
             ),
 
             ParameterSpec(
                 name = "CAMERA_DIRECTION_WORLD",
                 type = VEC3,
+                description = "Camera direction, in world space."
             ),
 
             ParameterSpec(
                 name = "CAMERA_VISIBLE_LAYERS",
                 type = UINT,
+                description = "Cull layers of the camera rendering the current pass."
             ),
 
             ParameterSpec(
                 name = "VERTEX",
                 type = VEC3,
+                description = "Position of the fragment (pixel), in view space. It is the <code>VERTEX</code> value from <code>vertex()</code> interpolated between the face's vertices and transformed into view space. If <code>skip_vertex_transform</code> is enabled, it may not be in view space."
             ),
 
             ParameterSpec(
                 name = "LIGHT_VERTEX",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "A writable version of <code>VERTEX</code> that can be used to alter light and shadows. Writing to this will not change the position of the fragment."
             ),
 
             ParameterSpec(
                 name = "VIEW_INDEX",
                 type = INT,
+                description = "The view that we are rendering. Used to distinguish between views in multiview/stereo rendering. <code>VIEW_MONO_LEFT</code> (<code>0</code>) for Mono (not multiview) or left eye, <code>VIEW_RIGHT</code> (<code>1</code>) for right eye."
             ),
 
             ParameterSpec(
                 name = "VIEW_MONO_LEFT",
                 type = INT,
+                description = "Constant for Mono or left eye, always <code>0</code>."
             ),
 
             ParameterSpec(
                 name = "VIEW_RIGHT",
                 type = INT,
+                description = "Constant for right eye, always <code>1</code>."
                 
             ),
 
             ParameterSpec(
                 name = "EYE_OFFSET",
                 type = VEC3,
-            ),
-
-            ParameterSpec(
-                name = "SCREEN_TEXTURE",
-                type = SAMPLER2D,
+                description = "Position offset for the eye being rendered, in view space. Only applicable for multiview rendering."
             ),
 
             ParameterSpec(
                 name = "SCREEN_UV",
                 type = VEC2,
-            ),
-
-            ParameterSpec(
-                name = "DEPTH_TEXTURE",
-                type = SAMPLER2D,
+                description = "Screen UV coordinate for the current pixel."
             ),
 
             ParameterSpec(
                 name = "DEPTH",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Custom depth value (range <code>[0.0, 1.0]</code>). If <code>DEPTH</code> is written to in any shader branch, then you are responsible for setting <code>DEPTH</code> for all other branches. Otherwise, the graphics API will leave them uninitialized."
             ),
 
             ParameterSpec(
                 name = "NORMAL",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Normal that comes from the <code>vertex()</code> function, in view space. If <code>skip_vertex_transform</code> is enabled, it may not be in view space."
             ),
 
             ParameterSpec(
                 name = "TANGENT",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Tangent that comes from the <code>vertex()</code> function, in view space. If <code>skip_vertex_transform</code> is enabled, it may not be in view space."
             ),
 
             ParameterSpec(
                 name = "BINORMAL",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Binormal that comes from the <code>vertex()</code> function, in view space. If <code>skip_vertex_transform</code> is enabled, it may not be in view space."
             ),
 
             ParameterSpec(
                 name = "NORMAL_MAP",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Set normal here if reading normal from a texture instead of <code>NORMAL</code>."
             ),
 
             ParameterSpec(
                 name = "NORMAL_MAP_DEPTH",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Depth from <code>NORMAL_MAP</code>. Defaults to <code>1.0</code>."
             ),
 
             ParameterSpec(
                 name = "ALBEDO",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Albedo (default white). Base color."
             ),
 
             ParameterSpec(
                 name = "ALPHA",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Alpha (range <code>[0.0, 1.0]</code>). If read from or written to, the material will go to the transparent pipeline."
             ),
 
             ParameterSpec(
                 name = "ALPHA_SCISSOR_THRESHOLD",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "If written to, values below a certain amount of alpha are discarded."
+            ),
+
+            ParameterSpec(
+                name = "ALPHA_HASH_SCALE",
+                type = FLOAT,
+                qualifier = ParameterQualifier.OUT,
+                description = "Alpha hash scale when using the alpha hash transparency mode. Defaults to <code>1.0</code>. Higher values result in more visible pixels in the dithering pattern."
+            ),
+
+            ParameterSpec(
+                name = "ALPHA_ANTIALIASING_EDGE",
+                type = FLOAT,
+                qualifier = ParameterQualifier.OUT,
+                description = "The threshold below which alpha to coverage antialiasing should be used. Defaults to <code>0.0</code>. Requires the <code>alpha_to_coverage</code> render mode. Should be set to a value lower than <code>ALPHA_SCISSOR_THRESHOLD</code> to be effective."
             ),
 
             ParameterSpec(
                 name = "ALPHA_TEXTURE_COORDINATE",
                 type = VEC2,
                 qualifier = ParameterQualifier.OUT,
+                description = "The texture coordinate to use for alpha-to-coverge antialiasing. Requires the <code>alpha_to_coverage</code> render mode. Typically set to <code>UV * vec2(albedo_texture_size)</code> where <code>albedo_texture_size</code> is the size of the albedo texture in pixels."
             ),
 
             ParameterSpec(
                 name = "PREMUL_ALPHA_FACTOR",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Premultiplied alpha factor. Only effective if <code>render_mode blend_premul_alpha;</code> is used. This should be written to when using a shaded material with premultiplied alpha blending for interaction with lighting. This is not required for unshaded materials."
             ),
 
             ParameterSpec(
                 name = "METALLIC",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Metallic (range <code>[0.0, 1.0]</code>)."
             ),
 
             ParameterSpec(
                 name = "SPECULAR",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Specular (not physically accurate to change). Defaults to <code>0.5</code>. <code>0.0</code> disables reflections."
             ),
 
             ParameterSpec(
                 name = "ROUGHNESS",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Roughness (range <code>[0.0, 1.0]</code>)."
             ),
 
             ParameterSpec(
                 name = "RIM",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Rim (range <code>[0.0, 1.0]</code>). If used, Godot calculates rim lighting. Rim size depends on <code>ROUGHNESS</code>."
             ),
 
             ParameterSpec(
                 name = "RIM_TINT",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Rim Tint, range from <code>0.0</code> (white) to <code>1.0</code> (albedo). If used, Godot calculates rim lighting."
             ),
 
             ParameterSpec(
                 name = "CLEARCOAT",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Small specular blob added on top of the existing one. If used, Godot calculates clearcoat."
             ),
 
             ParameterSpec(
                 name = "CLEARCOAT_GLOSS",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Gloss of clearcoat. If used, Godot calculates clearcoat."
             ),
 
             ParameterSpec(
                 name = "ANISOTROPY",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "For distorting the specular blob according to tangent space."
             ),
 
             ParameterSpec(
                 name = "ANISOTROPY_FLOW",
                 type = VEC2,
                 qualifier = ParameterQualifier.OUT,
+                description = "Distortion direction, use with flowmaps."
             ),
 
             ParameterSpec(
                 name = "SSS_STRENGTH",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Strength of subsurface scattering. If used, subsurface scattering will be applied to the object."
             ),
 
             ParameterSpec(
                 name = "SSS_TRANSMITTANCE_COLOR",
                 type = VEC4,
                 qualifier = ParameterQualifier.OUT,
+                description = "Color of subsurface scattering transmittance. If used, subsurface scattering transmittance will be applied to the object."
             ),
 
             ParameterSpec(
                 name = "SSS_TRANSMITTANCE_DEPTH",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Depth of subsurface scattering transmittance. Higher values allow the effect to reach deeper into the object."
             ),
 
             ParameterSpec(
                 name = "SSS_TRANSMISSION_BOOST",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Boosts the subsurface scattering transmittance if set above <code>0.0</code>. This makes the effect show up even on directly lit surfaces"
             ),
 
             ParameterSpec(
                 name = "BACKLIGHT",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Color of backlighting (works like direct light, but it's received even if the normal is slightly facing away from the light). If used, backlighting will be applied to the object. Can be used as a cheaper approximation of subsurface scattering."
             ),
 
             ParameterSpec(
                 name = "AO",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Strength of ambient occlusion. For use with pre-baked AO."
             ),
 
             ParameterSpec(
                 name = "AO_LIGHT_AFFECT",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "How much ambient occlusion affects direct light (range <code>[0.0, 1.0]</code>, default <code>0.0</code>)."
             ),
 
             ParameterSpec(
                 name = "EMISSION",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Emission color (can go over <code>(1.0, 1.0, 1.0)</code> for HDR)."
             ),
 
             ParameterSpec(
                 name = "FOG",
                 type = VEC4,
                 qualifier = ParameterQualifier.OUT,
+                description = "If written to, blends final pixel color with <code>FOG.rgb</code> based on <code>FOG.a</code>."
             ),
 
             ParameterSpec(
                 name = "RADIANCE",
                 type = VEC4,
                 qualifier = ParameterQualifier.OUT,
+                description = "If written to, blends environment map radiance with <code>RADIANCE.rgb</code> based on <code>RADIANCE.a</code>."
             ),
 
             ParameterSpec(
                 name = "IRRADIANCE",
                 type = VEC4,
                 qualifier = ParameterQualifier.OUT,
+                description = "If written to, blends environment map irradiance with <code>IRRADIANCE.rgb</code> based on <code>IRRADIANCE.a</code>."
             ),
         ),
 
@@ -673,91 +775,109 @@ object Builtins {
             ParameterSpec(
                 name = "VIEWPORT_SIZE",
                 type = VEC2,
+                description = "Size of viewport (in pixels)."
             ),
 
             ParameterSpec(
                 name = "FRAGCOORD",
                 type = VEC4,
+                description = "Coordinate of pixel center in screen space. <code>xy</code> specifies position in window, <code>z</code> specifies fragment depth if <code>DEPTH</code> is not used. Origin is lower-left."
             ),
 
             ParameterSpec(
                 name = "MODEL_MATRIX",
                 type = MAT4,
+                description = "Model/local space to world space transform."
             ),
 
             ParameterSpec(
                 name = "INV_VIEW_MATRIX",
                 type = MAT4,
+                description = "View space to world space transform."
             ),
 
             ParameterSpec(
                 name = "VIEW_MATRIX",
                 type = MAT4,
+                description = "World space to view space transform."
             ),
 
             ParameterSpec(
                 name = "PROJECTION_MATRIX",
                 type = MAT4,
+                description = "View space to clip space transform."
             ),
 
             ParameterSpec(
                 name = "INV_PROJECTION_MATRIX",
                 type = MAT4,
+                description = "Clip space to view space transform."
             ),
             
             ParameterSpec(
                 name = "NORMAL",
                 type = VEC3,
+                description = "Normal vector, in view space."
             ),
 
             ParameterSpec(
                 name = "SCREEN_UV",
                 type = VEC2,
+                description = "Screen UV coordinate for the current pixel."
             ),
 
             ParameterSpec(
                 name = "UV",
                 type = VEC2,
+                description = "UV that comes from the <code>vertex()</code> function."
             ),
 
             ParameterSpec(
                 name = "UV2",
                 type = VEC2,
+                description = "UV2 that comes from the <code>vertex()</code> function."
             ),
 
             ParameterSpec(
                 name = "VIEW",
                 type = VEC3,
+                description = "View vector, in view space."
             ),
 
             ParameterSpec(
                 name = "LIGHT",
                 type = VEC3,
+                description = "Light vector, in view space."
             ),
 
             ParameterSpec(
                 name = "LIGHT_COLOR",
                 type = VEC3,
+                description = "<a href=\"https://docs.godotengine.org/en/stable/classes/class_light3d.html#class-light3d-property-light-color\">Light</a> color multiplied by <a href=\"https://docs.godotengine.org/en/stable/classes/class_light3d.html#class-light3d-property-light-energy\">light energy</a> multiplied by <code>PI</code>. The <code>PI</code> multiplication is present because physically-based lighting models include a division by <code>PI</code>."
             ),
 
             ParameterSpec(
                 name = "SPECULAR_AMOUNT",
                 type = FLOAT,
+                description = "For <a href=\"https://docs.godotengine.org/en/stable/classes/class_omnilight3d.html#class-omnilight3d\">OmniLight3D</a> and <a href=\"https://docs.godotengine.org/en/stable/classes/class_spotlight3d.html#class-spotlight3d\">SpotLight3D</a>, <code>2.0</code> multiplied by <a href=\"https://docs.godotengine.org/en/stable/classes/class_light3d.html#class-light3d-property-light-specular\">light_specular</a>. For <a href=\"https://docs.godotengine.org/en/stable/classes/class_directionallight3d.html#class-directionallight3d\">DirectionalLight3D</a>, <code>1.0</code>."
             ),
 
             ParameterSpec(
                 name = "LIGHT_IS_DIRECTIONAL",
                 type = BOOL,
+                description = "<code>true</code> if this pass is a <a href=\"https://docs.godotengine.org/en/stable/classes/class_directionallight3d.html#class-directionallight3d\">DirectionalLight3D</a>."
             ),
 
             ParameterSpec(
                 name = "ATTENUATION",
                 type = FLOAT,
+                description = "Attenuation based on distance or shadow."
             ),
 
             ParameterSpec(
                 name = "ALBEDO",
                 type = VEC3,
+                description = "Base albedo."
             ),
 
             ParameterSpec(
@@ -768,29 +888,34 @@ object Builtins {
             ParameterSpec(
                 name = "METALLIC",
                 type = FLOAT,
+                description = "Metallic."
             ),
 
             ParameterSpec(
                 name = "ROUGHNESS",
                 type = FLOAT,
+                description = "Roughness."
             ),
 
             ParameterSpec(
                 name = "DIFFUSE_LIGHT",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Diffuse light result."
             ),
 
             ParameterSpec(
                 name = "SPECULAR_LIGHT",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Specular light result."
             ),
 
             ParameterSpec(
                 name = "ALPHA",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Alpha (range <code>[0.0, 1.0]</code>). If written to, the material will go to the transparent pipeline."
             ),
         ),
         
@@ -800,75 +925,89 @@ object Builtins {
             ParameterSpec(
                 name = "MODEL_MATRIX",
                 type = MAT4,
+                description = "Local space to world space transform. World space is the coordinates you normally use in the editor."
             ),
 
             ParameterSpec(
                 name = "CANVAS_MATRIX",
                 type = MAT4,
+                description = "World space to canvas space transform. In canvas space the origin is the upper-left corner of the screen and coordinates range from <code>(0.0, 0.0)</code> to viewport size."
             ),
 
             ParameterSpec(
                 name = "SCREEN_MATRIX",
                 type = MAT4,
+                description = "Canvas space to clip space transform. In clip space coordinates range from <code>(-1.0, -1.0)</code> to <code>(1.0, 1.0)</code>."
             ),
 
             ParameterSpec(
                 name = "INSTANCE_ID",
                 type = INT,
+                description = "Instance ID for instancing."
             ),
 
             ParameterSpec(
                 name = "INSTANCE_CUSTOM",
                 type = VEC4,
+                description = "Instance custom data."
             ),
 
             ParameterSpec(
                 name = "AT_LIGHT_PASS",
                 type = BOOL,
+                description = "Always <code>false</code>."
             ),
 
             ParameterSpec(
                 name = "TEXTURE_PIXEL_SIZE",
                 type = VEC2,
+                description = "Normalized pixel size of the default 2D texture. For a Sprite2D with a texture of size 64x32px, <code>TEXTURE_PIXEL_SIZE</code> = <code>vec2(1.0/64.0, 1.0/32.0)</code>"
             ),
 
             ParameterSpec(
                 name = "VERTEX",
                 type = VEC2,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Vertex position, in local space."
             ),
 
             ParameterSpec(
                 name = "VERTEX_ID",
                 type = INT,
+                description = "The index of the current vertex in the vertex buffer."
             ),
 
             ParameterSpec(
                 name = "UV",
                 type = VEC2,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Normalized texture coordinates. Range from <code>0.0</code> to <code>1.0</code>."
             ),
 
             ParameterSpec(
                 name = "COLOR",
                 type = VEC4,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Color from vertex primitive multiplied by the CanvasItem's <a href=\"https://docs.godotengine.org/en/stable/classes/class_canvasitem.html#class-canvasitem-property-modulate\">modulate</a> multiplied by CanvasItem's <a href=\"https://docs.godotengine.org/en/stable/classes/class_canvasitem.html#class-canvasitem-property-self-modulate\">self_modulate</a>."
             ),
 
             ParameterSpec(
                 name = "POINT_SIZE",
                 type = FLOAT,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Point size for point drawing."
             ),
 
             ParameterSpec(
                 name = "CUSTOM0",
                 type = VEC4,
+                description = "Custom value from vertex primitive."
             ),
 
             ParameterSpec(
                 name = "CUSTOM1",
                 type = VEC4,
+                description = "Custom value from vertex primitive."
             ),
         ),
 
@@ -876,108 +1015,122 @@ object Builtins {
             ParameterSpec(
                 name = "FRAGCOORD",
                 type = VEC4,
+                description = "Coordinate of pixel center. In screen space. <code>xy</code> specifies position in viewport. Upper-left of the viewport is the origin, <code>(0.0, 0.0)</code>."
             ),
 
             ParameterSpec(
                 name = "SCREEN_PIXEL_SIZE",
                 type = VEC2,
+                description = "Size of individual pixels. Equal to the inverse of resolution."
             ),
 
             ParameterSpec(
                 name = "REGION_RECT",
                 type = VEC4,
+                description = "Visible area of the sprite region in format <code>(x, y, width, height)</code>. Varies according to Sprite2D's <code>region_enabled</code> property."
             ),
 
             ParameterSpec(
                 name = "POINT_COORD",
                 type = VEC2,
+                description = "Coordinate for drawing points."
             ),
 
             ParameterSpec(
                 name = "TEXTURE",
                 type = SAMPLER2D,
+                description = "Default 2D texture."
             ),
 
             ParameterSpec(
                 name = "TEXTURE_PIXEL_SIZE",
                 type = VEC2,
+                description = "Normalized pixel size of the default 2D texture. For a Sprite2D with a texture of size 64x32px, <code>TEXTURE_PIXEL_SIZE</code> = <code>vec2(1/64, 1/32)</code>"
             ),
 
             ParameterSpec(
                 name = "AT_LIGHT_PASS",
                 type = BOOL,
+                description = "Always <code>false</code>."
             ),
 
             ParameterSpec(
                 name = "SPECULAR_SHININESS_TEXTURE",
                 type = SAMPLER2D,
+                description = "Specular shininess texture of this object."
             ),
 
             ParameterSpec(
                 name = "SPECULAR_SHININESS",
                 type = VEC4,
+                description = "Specular shininess color, as sampled from the texture."
             ),
 
             ParameterSpec(
                 name = "UV",
                 type = VEC2,
+                description = "UV from the <code>vertex()</code> function. For a Sprite2D with region enabled, this will sample the entire texture. Use <code>REGION_RECT</code> instead to sample only the region defined in the Sprite2D's properties."
             ),
 
             ParameterSpec(
                 name = "SCREEN_UV",
                 type = VEC2,
-            ),
-
-            ParameterSpec(
-                name = "SCREEN_TEXTURE",
-                type = SAMPLER2D,
+                description = "Screen UV coordinate for the current pixel."
             ),
 
             ParameterSpec(
                 name = "NORMAL",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Normal read from <code>NORMAL_TEXTURE</code>. Writable."
             ),
 
             ParameterSpec(
                 name = "NORMAL_TEXTURE",
                 type = SAMPLER2D,
+                description = "Default 2D normal texture."
             ),
 
             ParameterSpec(
                 name = "NORMAL_MAP",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Configures normal maps meant for 3D for use in 2D. If used, overrides <code>NORMAL</code>."
             ),
 
             ParameterSpec(
                 name = "NORMAL_MAP_DEPTH",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Normal map depth for scaling."
             ),
 
             ParameterSpec(
                 name = "VERTEX",
                 type = VEC2,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Pixel position in screen space."
             ),
 
             ParameterSpec(
                 name = "SHADOW_VERTEX",
                 type = VEC2,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Same as <code>VERTEX</code> but can be written to alter shadows."
             ),
 
             ParameterSpec(
                 name = "LIGHT_VERTEX",
                 type = VEC3,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Same as <code>VERTEX</code> but can be written to alter lighting. Z component represents height."
             ),
 
             ParameterSpec(
                 name = "COLOR",
                 type = VEC4,
                 qualifier = ParameterQualifier.INOUT,
+                description = "<code>COLOR</code> from the <code>vertex()</code> function multiplied by the <code>TEXTURE</code> color. Also output color value."
             ),
         ),
 
@@ -985,366 +1138,171 @@ object Builtins {
             ParameterSpec(
                 name = "FRAGCOORD",
                 type = VEC4,
+                description = "Coordinate of pixel center. In screen space. <code>xy</code> specifies position in viewport. Upper-left of the viewport is the origin, <code>(0.0, 0.0)</code>."
             ),
             
             ParameterSpec(
                 name = "NORMAL",
                 type = VEC3,
+                description = "Input normal."
             ),
             
             ParameterSpec(
                 name = "COLOR",
                 type = VEC4,
+                description = "Input color. This is the output of the <code>fragment()</code> function."
             ),
 
             ParameterSpec(
                 name = "UV",
                 type = VEC2,
+                description = "UV from the <code>vertex()</code> function, equivalent to the UV in the <code>fragment()</code> function."
             ),
 
             ParameterSpec(
                 name = "TEXTURE",
                 type = SAMPLER2D,
+                description = "Current texture in use for the CanvasItem."
             ),
 
             ParameterSpec(
                 name = "TEXTURE_PIXEL_SIZE",
                 type = VEC2,
+                description = "Normalized pixel size of <code>TEXTURE</code>. For a Sprite2D with a <code>TEXTURE</code> of size <code>64x32</code> pixels, <code>TEXTURE_PIXEL_SIZE</code> = <code>vec2(1/64, 1/32)</code>"
             ),
 
             ParameterSpec(
                 name = "SCREEN_UV",
                 type = VEC2,
+                description = "Screen UV coordinate for the current pixel."
             ),
 
             ParameterSpec(
                 name = "POINT_COORD",
                 type = VEC2,
+                description = "UV for Point Sprite."
             ),
 
             ParameterSpec(
                 name = "LIGHT_COLOR",
                 type = VEC4,
+                description = "<a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d-property-color\">Color</a> of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d\">Light2D</a>. If the light is a <a href=\"https://docs.godotengine.org/en/stable/classes/class_pointlight2d.html#class-pointlight2d\">PointLight2D</a>, multiplied by the light's <a href=\"https://docs.godotengine.org/en/stable/classes/class_pointlight2d.html#class-pointlight2d-property-texture\">texture</a>."
             ),
 
             ParameterSpec(
                 name = "LIGHT_ENERGY",
                 type = FLOAT,
+                description = "<a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d-property-energy\">Energy multiplier</a> of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d\">Light2D</a>."
             ),
 
             ParameterSpec(
                 name = "LIGHT_POSITION",
                 type = VEC3,
+                description = "Position of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d\">Light2D</a> in screen space. If using a <a href=\"https://docs.godotengine.org/en/stable/classes/class_directionallight2d.html#class-directionallight2d\">DirectionalLight2D</a> this is always <code>(0.0, 0.0, 0.0)</code>."
             ),
 
             ParameterSpec(
                 name = "LIGHT_DIRECTION",
                 type = VEC3,
+                description = "Direction of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d\">Light2D</a> in screen space."
             ),
 
             ParameterSpec(
                 name = "LIGHT_IS_DIRECTIONAL",
                 type = BOOL,
+                description = "<code>true</code> if this pass is a <a href=\"https://docs.godotengine.org/en/stable/classes/class_directionallight2d.html#class-directionallight2d\">DirectionalLight2D</a>."
             ),
 
             ParameterSpec(
                 name = "LIGHT_VERTEX",
                 type = VEC3,
+                description = "Pixel position, in screen space as modified in the <code>fragment()</code> function."
             ),
 
             ParameterSpec(
                 name = "LIGHT",
                 type = VEC4,
                 qualifier = ParameterQualifier.INOUT,
+                description = "Output color for this <a href=\"https://docs.godotengine.org/en/stable/classes/class_light2d.html#class-light2d\">Light2D</a>."
             ),
 
             ParameterSpec(
                 name = "SPECULAR_SHININESS",
                 type = VEC4,
+                description = "Specular shininess, as set in the object's texture."
             ),
 
             ParameterSpec(
                 name = "SHADOW_MODULATE",
                 type = VEC4,
                 qualifier = ParameterQualifier.OUT,
+                description = "Multiply shadows cast at this point by this color."
             ),
         ),
 
         ShaderType.PARTICLES to FunctionContext.COMMON to globalVariables,
         
-        ShaderType.PARTICLES to FunctionContext.START to listOf(
-            ParameterSpec(
-                name = "LIFETIME",
-                type = FLOAT,
-            ),
-
-            ParameterSpec(
-                name = "DELTA",
-                type = FLOAT,
-            ),
-
-            ParameterSpec(
-                name = "NUMBER",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "INDEX",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "EMISSION_TRANSFORM",
-                type = MAT4,
-            ),
-
-            ParameterSpec(
-                name = "RANDOM_SEED",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "ACTIVE",
-                type = BOOL,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "COLOR",
-                type = VEC4,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "VELOCITY",
-                type = VEC3,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "TRANSFORM",
-                type = MAT4,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "CUSTOM",
-                type = VEC4,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "MASS",
-                type = FLOAT,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "USERDATAX",
-                type = VEC4,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_POSITION",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_ROT_SCALE",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_VELOCITY",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_COLOR",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_CUSTOM",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "EMITTER_VELOCITY",
-                type = VEC3,
-            ),
-
-            ParameterSpec(
-                name = "INTERPOLATE_TO_END",
-                type = FLOAT,
-            ),
-
-            ParameterSpec(
-                name = "AMOUNT_RATIO",
-                type = UINT,
-            ),
-
+        ShaderType.PARTICLES to FunctionContext.START to particlesStartAndProcessVariables + listOf(
             ParameterSpec(
                 name = "RESTART_POSITION",
                 type = BOOL,
+                description = "<code>true</code> if particle is restarted, or emitted without a custom position (i.e. this particle was created by <code>emit_subparticle()</code> without the <code>FLAG_EMIT_POSITION</code> flag)."
             ),
 
             ParameterSpec(
                 name = "RESTART_ROT_SCALE",
                 type = BOOL,
+                description = "<code>true</code> if particle is restarted, or emitted without a custom rotation or scale (i.e. this particle was created by <code>emit_subparticle()</code> without the <code>FLAG_EMIT_ROT_SCALE</code> flag)."
             ),
 
             ParameterSpec(
                 name = "RESTART_VELOCITY",
                 type = BOOL,
+                description = "<code>true</code> if particle is restarted, or emitted without a custom velocity (i.e. this particle was created by <code>emit_subparticle()</code> without the <code>FLAG_EMIT_VELOCITY</code> flag)."
             ),
 
             ParameterSpec(
                 name = "RESTART_COLOR",
                 type = BOOL,
+                description = "<code>true</code> if particle is restarted, or emitted without a custom color (i.e. this particle was created by <code>emit_subparticle()</code> without the <code>FLAG_EMIT_COLOR</code> flag)."
             ),
 
             ParameterSpec(
                 name = "RESTART_CUSTOM",
                 type = BOOL,
+                description = "<code>true</code> if particle is restarted, or emitted without a custom property (i.e. this particle was created by <code>emit_subparticle()</code> without the <code>FLAG_EMIT_CUSTOM</code> flag)."
             ),
         ),
 
-        ShaderType.PARTICLES to FunctionContext.PROCESS to listOf(
-            ParameterSpec(
-                name = "LIFETIME",
-                type = FLOAT,
-            ),
-
-            ParameterSpec(
-                name = "DELTA",
-                type = FLOAT,
-            ),
-
-            ParameterSpec(
-                name = "NUMBER",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "INDEX",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "EMISSION_TRANSFORM",
-                type = MAT4,
-            ),
-
-            ParameterSpec(
-                name = "RANDOM_SEED",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "ACTIVE",
-                type = BOOL,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "COLOR",
-                type = VEC4,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "VELOCITY",
-                type = VEC3,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "TRANSFORM",
-                type = MAT4,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "CUSTOM",
-                type = VEC4,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "MASS",
-                type = FLOAT,
-                qualifier = ParameterQualifier.INOUT,
-            ),
-
-            ParameterSpec(
-                name = "USERDATAX",
-                type = VEC4,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_POSITION",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_ROT_SCALE",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_VELOCITY",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_COLOR",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "FLAG_EMIT_CUSTOM",
-                type = UINT,
-            ),
-
-            ParameterSpec(
-                name = "EMITTER_VELOCITY",
-                type = VEC3,
-            ),
-
-            ParameterSpec(
-                name = "INTERPOLATE_TO_END",
-                type = FLOAT,
-            ),
-
-            ParameterSpec(
-                name = "AMOUNT_RATIO",
-                type = UINT,
-            ),
-
+        ShaderType.PARTICLES to FunctionContext.PROCESS to particlesStartAndProcessVariables + listOf(
             ParameterSpec(
                 name = "RESTART",
                 type = BOOL,
+                description = "<code>true</code> if the current process frame is the first for the particle."
             ),
 
             ParameterSpec(
                 name = "COLLIDED",
                 type = BOOL,
+                description = "<code>true</code> when the particle has collided with a particle collider."
             ),
 
             ParameterSpec(
                 name = "COLLISION_NORMAL",
                 type = BOOL,
+                description = "A normal of the last collision. If there is no collision detected it is equal to <code>(0.0, 0.0, 0.0)</code>."
             ),
 
             ParameterSpec(
                 name = "COLLISION_DEPTH",
                 type = BOOL,
+                description = "A length of the normal of the last collision. If there is no collision detected it is equal to <code>0.0</code>."
             ),
 
             ParameterSpec(
                 name = "ATTRACTOR_FORCE",
                 type = VEC3,
+                description = "A combined force of the attractors at the moment on that particle."
             ),
         ),
 
@@ -1352,51 +1310,61 @@ object Builtins {
             ParameterSpec(
                 name = "POSITION",
                 type = VEC3,
+                description = "Camera position, in world space."
             ),
 
             ParameterSpec(
                 name = "RADIANCE",
                 type = SAMPLERCUBE,
+                description = "Radiance cubemap. Can only be read from during the background pass. Check <code>!AT_CUBEMAP_PASS</code> before using."
             ),
 
             ParameterSpec(
                 name = "AT_HALF_RES_PASS",
                 type = BOOL,
+                description = "<code>true</code> when rendering to the half resolution pass."
             ),
 
             ParameterSpec(
                 name = "AT_QUARTER_RES_PASS",
                 type = BOOL,
+                description = "<code>true</code> when rendering to the quarter resolution pass."
             ),
 
             ParameterSpec(
                 name = "AT_CUBEMAP_PASS",
                 type = BOOL,
+                description = "<code>true</code> when rendering to the radiance cubemap."
             ),
 
             ParameterSpec(
                 name = "LIGHTX_ENABLED",
                 type = BOOL,
+                description = "<code>true</code> if <code>LIGHTX</code> is visible and in the scene. If <code>false</code>, other light properties may be garbage."
             ),
 
             ParameterSpec(
                 name = "LIGHTX_ENERGY",
                 type = FLOAT,
+                description = "Energy multiplier for <code>LIGHTX</code>."
             ),
 
             ParameterSpec(
                 name = "LIGHTX_DIRECTION",
                 type = VEC3,
+                description = "Direction that <code>LIGHTX</code> is facing."
             ),
 
             ParameterSpec(
                 name = "LIGHTX_COLOR",
                 type = VEC3,
+                description = "Color of <code>LIGHTX</code>."
             ),
 
             ParameterSpec(
                 name = "LIGHTX_SIZE",
                 type = FLOAT,
+                description = "Angular diameter of <code>LIGHTX</code> in the sky. Expressed in radians. For reference, the sun from earth is about .0087 radians (0.5 degrees)."
             ),
         ),
         
@@ -1404,38 +1372,45 @@ object Builtins {
             ParameterSpec(
                 name = "EYEDIR",
                 type = VEC3,
+                description = "Normalized direction of the current pixel. Use this as your basic direction for procedural effects."
             ),
 
             ParameterSpec(
                 name = "SCREEN_UV",
                 type = VEC2,
+                description = "Screen UV coordinate for the current pixel. Used to map a texture to the full screen."
             ),
 
             ParameterSpec(
                 name = "SKY_COORDS",
                 type = VEC2,
+                description = "Sphere UV. Used to map a panorama texture to the sky."
             ),
 
             ParameterSpec(
                 name = "HALF_RES_COLOR",
                 type = VEC4,
+                description = "Color value of the corresponding pixel from the half resolution pass. Uses linear filter."
             ),
 
             ParameterSpec(
                 name = "QUARTER_RES_COLOR",
                 type = VEC4,
+                description = "Color value of the corresponding pixel from the quarter resolution pass. Uses linear filter."
             ),
 
             ParameterSpec(
                 name = "COLOR",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Output color."
             ),
 
             ParameterSpec(
                 name = "ALPHA",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Output alpha value, can only be used in subpasses."
             ),
 
             ParameterSpec(
@@ -1451,44 +1426,52 @@ object Builtins {
             ParameterSpec(
                 name = "WORLD_POSITION",
                 type = VEC3,
+                description = "Position of current froxel cell in world space."
             ),
 
             ParameterSpec(
                 name = "OBJECT_POSITION",
                 type = VEC3,
+                description = "Position of the center of the current <a href=\"https://docs.godotengine.org/en/stable/classes/class_fogvolume.html#class-fogvolume\">FogVolume</a> in world space."
             ),
 
             ParameterSpec(
                 name = "UVW",
                 type = VEC3,
+                description = "3-dimensional UV, used to map a 3D texture to the current <a href=\"https://docs.godotengine.org/en/stable/classes/class_fogvolume.html#class-fogvolume\">FogVolume</a>."
             ),
 
             ParameterSpec(
                 name = "SIZE",
                 type = VEC3,
+                description = "Size of the current <a href=\"https://docs.godotengine.org/en/stable/classes/class_fogvolume.html#class-fogvolume\">FogVolume</a> when its <a href=\"https://docs.godotengine.org/en/stable/classes/class_fogvolume.html#class-fogvolume-property-shape\">shape</a> has a size."
             ),
 
             ParameterSpec(
                 name = "SDF",
                 type = VEC3,
+                description = "Signed distance field to the surface of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_fogvolume.html#class-fogvolume\">FogVolume</a>. Negative if inside volume, positive otherwise."
             ),
 
             ParameterSpec(
                 name = "ALBEDO",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Output base color value, interacts with light to produce final color. Only written to fog volume if used."
             ),
 
             ParameterSpec(
                 name = "DENSITY",
                 type = FLOAT,
                 qualifier = ParameterQualifier.OUT,
+                description = "Output density value. Can be negative to allow subtracting one volume from another. Density must be used for fog shader to write anything at all."
             ),
 
             ParameterSpec(
                 name = "EMISSION",
                 type = VEC3,
                 qualifier = ParameterQualifier.OUT,
+                description = "Output emission color value, added to color during light pass to produce final color. Only written to fog volume if used."
             ),
         ),
     ) }
@@ -4689,21 +4672,159 @@ object Builtins {
         ParameterSpec(
             name = "TIME",
             type = FLOAT,
+            description = "Global time since the engine has started, in seconds. It repeats after every <code>3,600</code> seconds (which can be changed with the <a href=\"https://docs.godotengine.org/en/stable/classes/class_projectsettings.html#class-projectsettings-property-rendering-limits-time-time-rollover-secs\">rollover</a> setting). It's affected by <a href=\"https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-property-time-scale\">time_scale</a> but not by pausing. If you need a <code>TIME</code> variable that is not affected by time scale, add your own <a href=\"https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shading_language.html#doc-shading-language-global-uniforms\">global shader uniform</a> and update it each frame."
         ),
     
         ParameterSpec(
             name = "PI",
             type = FLOAT,
+            description = "A <code>PI</code> constant (<code>3.141592</code>). The ratio of a circle's circumference to its diameter and the number of radians in a half turn."
         ),
     
         ParameterSpec(
             name = "TAU",
             type = FLOAT,
+            description = "A <code>TAU</code> constant (<code>6.283185</code>). Equivalent to PI * 2 and the number of radians in a full turn."
         ),
     
         ParameterSpec(
             name = "E",
             type = FLOAT,
+            description = "An <code>E</code> constant (<code>2.718281</code>). Euler's number, the base of the natural logarithm."
+        ),
+    )
+    
+    private val particlesStartAndProcessVariables = listOf(
+        ParameterSpec(
+            name = "LIFETIME",
+            type = FLOAT,
+            description = "Particle lifetime."
+        ),
+
+        ParameterSpec(
+            name = "DELTA",
+            type = FLOAT,
+            description = "Delta process time."
+        ),
+
+        ParameterSpec(
+            name = "NUMBER",
+            type = UINT,
+            description = "Unique number since emission start."
+        ),
+
+        ParameterSpec(
+            name = "INDEX",
+            type = UINT,
+            description = "Particle index (from total particles)."
+        ),
+
+        ParameterSpec(
+            name = "EMISSION_TRANSFORM",
+            type = MAT4,
+            description = "Emitter transform (used for non-local systems)."
+        ),
+
+        ParameterSpec(
+            name = "RANDOM_SEED",
+            type = UINT,
+            description = "Random seed used as base for random."
+        ),
+
+        ParameterSpec(
+            name = "ACTIVE",
+            type = BOOL,
+            qualifier = ParameterQualifier.INOUT,
+            description = "<code>true</code> when the particle is active, can be set to <code>false</code>."
+        ),
+
+        ParameterSpec(
+            name = "COLOR",
+            type = VEC4,
+            qualifier = ParameterQualifier.INOUT,
+            description = "Particle color, can be written to and accessed in the mesh's vertex function."
+        ),
+
+        ParameterSpec(
+            name = "VELOCITY",
+            type = VEC3,
+            qualifier = ParameterQualifier.INOUT,
+            description = "Particle velocity, can be modified."
+        ),
+
+        ParameterSpec(
+            name = "TRANSFORM",
+            type = MAT4,
+            qualifier = ParameterQualifier.INOUT,
+            description = "Particle transform."
+        ),
+
+        ParameterSpec(
+            name = "CUSTOM",
+            type = VEC4,
+            qualifier = ParameterQualifier.INOUT,
+            description = "Custom particle data. Accessible from the mesh's shader as <code>INSTANCE_CUSTOM</code>."
+        ),
+
+        ParameterSpec(
+            name = "MASS",
+            type = FLOAT,
+            qualifier = ParameterQualifier.INOUT,
+            description = "Particle mass, intended to be used with attractors. <code>1.0</code> by default."
+        ),
+
+        ParameterSpec(
+            name = "USERDATAX",
+            type = VEC4,
+            description = "Vector that enables the integration of supplementary user-defined data into the particle process shader. <code>USERDATAX</code> are six built-ins identified by number, <code>X</code> can be numbers between 1 and 6, for example <code>USERDATA3</code>."
+        ),
+
+        ParameterSpec(
+            name = "FLAG_EMIT_POSITION",
+            type = UINT,
+            description = "A flag for the last argument of the <code>emit_subparticle()</code> function to assign a position to a new particle's transform."
+        ),
+
+        ParameterSpec(
+            name = "FLAG_EMIT_ROT_SCALE",
+            type = UINT,
+            description = "A flag for the last argument of the <code>emit_subparticle()</code> function to assign a rotation and scale to a new particle's transform."
+        ),
+
+        ParameterSpec(
+            name = "FLAG_EMIT_VELOCITY",
+            type = UINT,
+            description = "A flag for the last argument of the <code>emit_subparticle()</code> function to assign a velocity to a new particle."
+        ),
+
+        ParameterSpec(
+            name = "FLAG_EMIT_COLOR",
+            type = UINT,
+            description = "A flag for the last argument of the <code>emit_subparticle()</code> function to assign a color to a new particle."
+        ),
+
+        ParameterSpec(
+            name = "FLAG_EMIT_CUSTOM",
+            type = UINT,
+            description = "A flag for the last argument of the <code>emit_subparticle()</code> function to assign a custom data vector to a new particle."
+        ),
+
+        ParameterSpec(
+            name = "EMITTER_VELOCITY",
+            type = VEC3,
+            description = "Velocity of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles2d.html#class-gpuparticles2d\">Particles2D</a> (<a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles3d.html#class-gpuparticles3d\">3D</a>) node."
+        ),
+
+        ParameterSpec(
+            name = "INTERPOLATE_TO_END",
+            type = FLOAT,
+            description = "Value of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles2d.html#class-gpuparticles2d-property-interp-to-end\">interp_to_end</a> (<a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles3d.html#class-gpuparticles3d-property-interp-to-end\">3D</a>) property of the Particles node."
+        ),
+
+        ParameterSpec(
+            name = "AMOUNT_RATIO",
+            type = UINT,
+            description = "Value of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles2d.html#class-gpuparticles2d-property-amount-ratio\">amount_ratio</a> (<a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles3d.html#class-gpuparticles3d-property-amount-ratio\">3D</a>) property of the Particles node."
         ),
     )
 
