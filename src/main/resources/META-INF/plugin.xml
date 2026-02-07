@@ -16,6 +16,7 @@
                 <li>Code formatting support</li>
                 <li>Rename refactoring support</li>
                 <li>Color preview and picker</li>
+                <li>Documentation for built-in functions</li>
             </ul>
         ]]>
     </description>

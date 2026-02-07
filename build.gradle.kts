@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.5.0-beta"
+version = "0.6.0-beta"
 
 sourceSets {
     main {
@@ -44,11 +44,13 @@ intellijPlatform {
         
         changeNotes = """
             <ul>
-              <li>Added completion prioritization</li>
-              <li>Added find usages feature</li>
-              <li>Added folding support</li>
-              <li>Added go to symbols feature</li>
-              <li>Fixed bugs</li>
+              <li>Added parameter info support</li>
+              <li>Added struct member reference and completion support</li>
+              <li>Added structure view feature</li>
+              <li>Added breadcrumbs support</li>
+              <li>Added structure-aware navigation bar feature</li>
+              <li>Added documentation feature</li>
+              <li>Minor feature improvements</li>
             </ul>
         """.trimIndent()
     }
