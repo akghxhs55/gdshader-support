@@ -78,6 +78,7 @@
         <breadcrumbsInfoProvider implementation="kr.jaehoyi.gdshader.editor.GdsBreadcrumbsProvider" />
         <navbar implementation="kr.jaehoyi.gdshader.editor.GdsNavBarExtension" />
         <gotoSymbolContributor implementation="kr.jaehoyi.gdshader.editor.GdsChooseByNameContributor" />
+        <lang.commenter language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsCommenter" />
         
         <!-- Completions -->
         <completion.contributor

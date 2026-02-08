@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased]
+- Added commenter support
+
 ## 0.6.0-beta (2026-02-07)
 - Added parameter info support
 - Added struct member reference and completion support
