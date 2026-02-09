@@ -19,6 +19,47 @@ object GdsTokenSets {
         GdsTypes.OP_ADD, GdsTypes.OP_SUB, GdsTypes.OP_MUL, GdsTypes.OP_DIV,
         GdsTypes.OP_MOD, GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT,  
     )
+
+    val ASSIGNMENT_OPERATORS = TokenSet.create(
+        GdsTypes.OP_ASSIGN, GdsTypes.OP_ASSIGN_ADD, GdsTypes.OP_ASSIGN_SUB,
+        GdsTypes.OP_ASSIGN_MUL, GdsTypes.OP_ASSIGN_DIV, GdsTypes.OP_ASSIGN_MOD,
+        GdsTypes.OP_ASSIGN_SHIFT_LEFT, GdsTypes.OP_ASSIGN_SHIFT_RIGHT,
+        GdsTypes.OP_ASSIGN_BIT_AND, GdsTypes.OP_ASSIGN_BIT_OR, GdsTypes.OP_ASSIGN_BIT_XOR
+    )
+
+    val EQUALITY_OPERATORS = TokenSet.create(
+        GdsTypes.OP_EQUAL, GdsTypes.OP_NOT_EQUAL
+    )
+
+    val RELATIONAL_OPERATORS = TokenSet.create(
+        GdsTypes.OP_LESS, GdsTypes.OP_LESS_EQUAL,
+        GdsTypes.OP_GREATER, GdsTypes.OP_GREATER_EQUAL
+    )
+
+    val BITWISE_OPERATORS = TokenSet.create(
+        GdsTypes.OP_BIT_AND, GdsTypes.OP_BIT_OR, GdsTypes.OP_BIT_XOR
+    )
+
+    val ADDITIVE_OPERATORS = TokenSet.create(
+        GdsTypes.OP_ADD, GdsTypes.OP_SUB
+    )
+
+    val MULTIPLICATIVE_OPERATORS = TokenSet.create(
+        GdsTypes.OP_MUL, GdsTypes.OP_DIV, GdsTypes.OP_MOD
+    )
+
+    val SHIFT_OPERATORS = TokenSet.create(
+        GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT
+    )
+
+    val LOGICAL_OPERATORS = TokenSet.create(
+        GdsTypes.OP_AND, GdsTypes.OP_OR
+    )
+
+    val UNARY_OPERATORS = TokenSet.create(
+        GdsTypes.OP_NOT, GdsTypes.OP_BIT_INVERT,
+        GdsTypes.OP_INCREMENT, GdsTypes.OP_DECREMENT
+    )
     
     val STRING_LITERALS = TokenSet.create(GdsTypes.STRING_CONSTANT, GdsTypes.UNTERMINATED_STRING_CONSTANT)
     
