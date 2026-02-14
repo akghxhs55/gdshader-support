@@ -60,16 +60,18 @@
         <lang.formatter
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.formatter.GdsFormattingModelBuilder" />
+        <codeStyleSettingsProvider implementation="kr.jaehoyi.gdshader.formatter.GdsCodeStyleSettingsProvider" />
+        <langCodeStyleSettingsProvider implementation="kr.jaehoyi.gdshader.formatter.GdsLanguageCodeStyleSettingsProvider" />
+        
+        <!-- Editor Features -->
+        <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />
+        <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
         <lang.braceMatcher
                 language="GDShader"
                 implementationClass="kr.jaehoyi.gdshader.editor.GdsBraceMatcher" />
         <lang.quoteHandler
                 language="GDShader"
                 implementationClass="kr.jaehoyi.gdshader.editor.GdsQuoteHandler" />
-        
-        <!-- Editor Features -->
-        <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />
-        <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
         <lang.findUsagesProvider language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFindUsagesProvider" />
         <readWriteAccessDetector implementation="kr.jaehoyi.gdshader.codeinsight.GdsReadWriteAccessDetector" />
         <usageTypeProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUsageTypeProvider" />

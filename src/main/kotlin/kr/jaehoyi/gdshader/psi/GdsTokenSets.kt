@@ -58,7 +58,8 @@ object GdsTokenSets {
 
     val UNARY_OPERATORS = TokenSet.create(
         GdsTypes.OP_NOT, GdsTypes.OP_BIT_INVERT,
-        GdsTypes.OP_INCREMENT, GdsTypes.OP_DECREMENT
+        GdsTypes.OP_INCREMENT, GdsTypes.OP_DECREMENT,
+        GdsTypes.OP_ADD, GdsTypes.OP_SUB
     )
     
     val STRING_LITERALS = TokenSet.create(GdsTypes.STRING_CONSTANT, GdsTypes.UNTERMINATED_STRING_CONSTANT)

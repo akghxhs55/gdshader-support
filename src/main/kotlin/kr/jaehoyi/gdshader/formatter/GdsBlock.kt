@@ -21,18 +21,34 @@ class GdsBlock(
 
         while (child != null) {
             if (child.elementType != TokenType.WHITE_SPACE && child.textRange.length > 0) {
-                // [핵심] 첫 번째 자식인지 여부를 확인하여 Indent 계산에 활용
-                val isFirst = blocks.isEmpty() // 지금 추가하려는 블록이 첫 번째라면 true
-                val indent = computeIndent(child, isFirst)
 
-                val block = GdsBlock(
-                    child,
-                    Wrap.createWrap(WrapType.NONE, false),
-                    null,
-                    indent,
-                    spacingBuilder
-                )
-                blocks.add(block)
+                // [수정] HINT_SECTION도 투명하게 처리 (Flatten)
+                // 이렇게 해야 COLON이 상위 블록(UNIFORM_DECLARATION)에 직접 노출되어 Spacing 규칙이 먹힘
+                if (child.elementType == GdsTypes.STATEMENT_BODY ||
+                    child.elementType == GdsTypes.HINT_SECTION) {
+
+                    var grandChild = child.firstChildNode
+                    while (grandChild != null) {
+                        if (grandChild.elementType != TokenType.WHITE_SPACE && grandChild.textRange.length > 0) {
+                            val isFirst = blocks.isEmpty()
+                            val indent = computeIndent(grandChild, isFirst)
+
+                            blocks.add(GdsBlock(
+                                grandChild,
+                                Wrap.createWrap(WrapType.NONE, false),
+                                null,
+                                indent,
+                                spacingBuilder
+                            ))
+                        }
+                        grandChild = grandChild.treeNext
+                    }
+                } else {
+                    // ... 기존 일반 로직 ...
+                    val isFirst = blocks.isEmpty()
+                    val indent = computeIndent(child, isFirst)
+                    blocks.add(GdsBlock(child, Wrap.createWrap(WrapType.NONE, false), null, indent, spacingBuilder))
+                }
             }
             child = child.treeNext
         }
