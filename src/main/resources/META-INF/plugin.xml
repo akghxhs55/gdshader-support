@@ -32,7 +32,7 @@
             implementationClass="kr.jaehoyi.gdshader.GdsFileType"
             fieldName="INSTANCE"
             language="GDShader"
-            extensions="gdshader;gdshaderinc" />
+            extensions="gdshader" />
         <fileType
             name="GDShader Include File"
             implementationClass="kr.jaehoyi.gdshader.GdsIncludeFileType"
