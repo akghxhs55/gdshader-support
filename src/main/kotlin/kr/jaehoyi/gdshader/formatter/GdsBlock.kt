@@ -17,37 +17,17 @@ class GdsBlock(
 
     override fun buildChildren(): List<Block> {
         val blocks = mutableListOf<Block>()
-        var child = myNode.firstChildNode
 
-        while (child != null) {
-            if (child.elementType != TokenType.WHITE_SPACE && child.textRange.length > 0) {
-                if (child.elementType == GdsTypes.STATEMENT_BODY ||
-                    child.elementType == GdsTypes.HINT_SECTION) {
-
-                    var grandChild = child.firstChildNode
-                    while (grandChild != null) {
-                        if (grandChild.elementType != TokenType.WHITE_SPACE && grandChild.textRange.length > 0) {
-                            val isFirst = blocks.isEmpty()
-                            val indent = computeIndent(grandChild, isFirst)
-
-                            blocks.add(GdsBlock(
-                                grandChild,
-                                Wrap.createWrap(WrapType.NONE, false),
-                                null,
-                                indent,
-                                spacingBuilder
-                            ))
-                        }
-                        grandChild = grandChild.treeNext
-                    }
-                } else {
-                    val isFirst = blocks.isEmpty()
-                    val indent = computeIndent(child, isFirst)
-                    blocks.add(GdsBlock(child, Wrap.createWrap(WrapType.NONE, false), null, indent, spacingBuilder))
+        for (child in myNode.children()) {
+            if (child.elementType in TRANSPARENT_NODES) {
+                for (grandChild in child.children()) {
+                    blocks.addBlock(grandChild)
                 }
+            } else {
+                blocks.addBlock(child)
             }
-            child = child.treeNext
         }
+
         return blocks
     }
 
@@ -56,15 +36,13 @@ class GdsBlock(
     override fun isLeaf(): Boolean = myNode.firstChildNode == null
 
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
-        val type = myNode.elementType
-
-        if (type in BLOCKS || type in BODY_CONTAINERS || type == GdsTypes.INITIALIZER_LIST) {
-            return ChildAttributes(Indent.getNormalIndent(), null)
+        val indent = when (myNode.elementType) {
+            in BLOCKS, in BODY_CONTAINERS, GdsTypes.INITIALIZER_LIST -> Indent.getNormalIndent()
+            in CONTAINERS, in PARENTHESIZED, in EXPRESSIONS -> Indent.getNormalIndent()
+            in CONTROL_STATEMENTS, GdsTypes.FUNCTION_CALL -> Indent.getNormalIndent()
+            else -> Indent.getNoneIndent()
         }
-        if (type in CONTAINERS || type in EXPRESSIONS) {
-            return ChildAttributes(Indent.getNormalIndent(), null)
-        }
-        return ChildAttributes(Indent.getNoneIndent(), null)
+        return ChildAttributes(indent, null)
     }
 
     private fun computeIndent(child: ASTNode, isFirst: Boolean): Indent {
@@ -73,33 +51,40 @@ class GdsBlock(
 
         if (parentType == GdsTypes.ITEM) return Indent.getNoneIndent()
         if (childType in BRACKETS) return Indent.getNoneIndent()
-        
-        if (parentType in BLOCKS && childType in BODY_CONTAINERS) return Indent.getNoneIndent()
-        if (parentType in BODY_CONTAINERS) return Indent.getNormalIndent()
-        if (parentType == GdsTypes.INITIALIZER_LIST) return Indent.getNormalIndent()
 
-        if (parentType in CONTAINERS) return Indent.getNormalIndent()
-
-        if (parentType in EXPRESSIONS) {
-            if (isFirst) {
-                return Indent.getNoneIndent()
+        return when (parentType) {
+            in BLOCKS -> Indent.getNoneIndent()
+            in BODY_CONTAINERS -> Indent.getNormalIndent()
+            GdsTypes.INITIALIZER_LIST -> Indent.getNormalIndent()
+            in CONTAINERS -> Indent.getNormalIndent()
+            in PARENTHESIZED -> if (isFirst) Indent.getNoneIndent() else Indent.getNormalIndent()
+            in EXPRESSIONS -> if (isFirst) Indent.getNoneIndent() else Indent.getContinuationIndent()
+            in CONTROL_STATEMENTS -> {
+                if (childType !in BRACKETS && childType !in KEYWORDS && childType !in BLOCKS) {
+                    Indent.getNormalIndent()
+                } else {
+                    Indent.getNoneIndent()
+                }
             }
-            return Indent.getContinuationIndent()
+            else -> Indent.getNoneIndent()
         }
+    }
 
-        if (parentType in CONTROL_STATEMENTS) {
-            if (childType != GdsTypes.PARENTHESIS_OPEN &&
-                childType != GdsTypes.PARENTHESIS_CLOSE &&
-                childType !in KEYWORDS &&
-                childType !in BLOCKS) {
-                return Indent.getNormalIndent()
-            }
-        }
-
-        return Indent.getNoneIndent()
+    private fun MutableList<Block>.addBlock(node: ASTNode) {
+        val indent = computeIndent(node, isEmpty())
+        add(GdsBlock(node, Wrap.createWrap(WrapType.NONE, false), null, indent, spacingBuilder))
     }
 
     companion object {
+        private fun ASTNode.children(): Sequence<ASTNode> = generateSequence(firstChildNode) { it.treeNext }
+            .filter { it.elementType != TokenType.WHITE_SPACE && it.textRange.length > 0 }
+
+        private val TRANSPARENT_NODES = TokenSet.create(
+            GdsTypes.STATEMENT_BODY,
+            GdsTypes.STATEMENT,
+            GdsTypes.HINT_SECTION
+        )
+
         private val BLOCKS = TokenSet.create(
             GdsTypes.BLOCK,
             GdsTypes.STRUCT_BLOCK,
@@ -116,8 +101,17 @@ class GdsBlock(
         private val CONTAINERS = TokenSet.create(
             GdsTypes.PARAMETER_LIST,
             GdsTypes.ARGUMENT_LIST,
-            GdsTypes.PARENTHESIS_OPEN,
-            GdsTypes.PARENTHESIS_CLOSE
+            GdsTypes.LOCAL_VARIABLE_DECLARATOR_LIST,
+            GdsTypes.CONSTANT_DECLARATOR_LIST,
+            GdsTypes.RENDER_MODE_DECLARATOR_LIST,
+            GdsTypes.STENCIL_MODE_DECLARATOR_LIST,
+            GdsTypes.HINT_LIST
+        )
+
+        private val PARENTHESIZED = TokenSet.create(
+            GdsTypes.ENUM_HINT,
+            GdsTypes.RANGE_HINT,
+            GdsTypes.INSTANCE_INDEX_HINT
         )
 
         private val EXPRESSIONS = TokenSet.create(

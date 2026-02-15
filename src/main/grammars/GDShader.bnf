@@ -61,7 +61,7 @@ render_mode_declaration ::= RENDER_MODE render_mode_declarator_list SEMICOLON
 {
 	pin=1
 }
-render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)*
+render_mode_declarator_list ::= render_mode_name (COMMA render_mode_name)* { pin(".*")=1 }
 render_mode_name ::= IDENTIFIER
 
 // Stencil Mode Declaration
@@ -69,7 +69,7 @@ stencil_mode_declaration ::= STENCIL_MODE stencil_mode_declarator_list SEMICOLON
 {
 	pin=1
 }
-stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)*
+stencil_mode_declarator_list ::= stencil_mode_name (COMMA stencil_mode_name)* { pin(".*")=1 }
 stencil_mode_name ::= IDENTIFIER | INT_CONSTANT
 
 // Uniform Group Declaration
@@ -98,16 +98,16 @@ hint_section ::= COLON hint_list
 }
 private hint_section_recover ::= !(SEMICOLON | OP_ASSIGN)
 
-hint_list ::= hint (COMMA hint)*
+hint_list ::= hint (COMMA hint)* { pin(".*")=1 }
 
 hint ::= simple_hint
 	   | range_hint
 	   | enum_hint
 	   | instance_index_hint
 	   
-simple_hint ::= hint_identifier (COMMA hint_identifier)*
-range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
-enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE
+simple_hint ::= hint_identifier (COMMA hint_identifier)* { pin(".*")=1 }
+range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE { pin(".*")=1 }
+enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE { pin(".*")=1 }
 instance_index_hint ::= HINT_INSTANCE_INDEX PARENTHESIS_OPEN INT_CONSTANT PARENTHESIS_CLOSE
 
 hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
@@ -141,7 +141,7 @@ constant_declaration ::= CONST precision? type array_size? constant_declarator_l
 	pin=1
 }
 
-constant_declarator_list ::= constant_declarator (COMMA constant_declarator)*
+constant_declarator_list ::= constant_declarator (COMMA constant_declarator)* { pin(".*")=1 }
 constant_declarator ::= variable_name_decl array_size? OP_ASSIGN initializer
 {
 	pin=1
@@ -155,9 +155,13 @@ varying_declaration ::= VARYING interpolation_qualifier? precision? type array_s
 interpolation_qualifier ::= INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
 
 // Local Variable Declaration
-local_variable_declaration ::= precision? type array_size? local_variable_declarator_list SEMICOLON
+local_variable_declaration ::= precision? type array_size? local_variable_declarator_list SEMICOLON {
+	pin=4
+}
 
-local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)*
+local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)* {
+	pin(".*")=1
+}
 local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initializer)?
 
 variable_name_decl ::= IDENTIFIER
@@ -167,7 +171,7 @@ variable_name_decl ::= IDENTIFIER
 }
 
 initializer ::= expression | initializer_list
-initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE
+initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE { pin(".*")=1 }
 
 array_size ::= BRACKET_OPEN expression? BRACKET_CLOSE
        
@@ -185,6 +189,7 @@ function_name_decl ::= IDENTIFIER
 
 parameter_list ::= parameter (COMMA parameter)*
 {
+	pin(".*")=1
 	recoverWhile=parameter_list_recover
 }
 private parameter_list_recover ::= !(PARENTHESIS_CLOSE)
@@ -327,7 +332,7 @@ function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argume
 	pin(".*")="PARENTHESIS_OPEN"
 }
 
-argument_list ::= [ initializer (COMMA initializer)* ]
+argument_list ::= [ initializer (COMMA initializer)* ] { pin(".*")=1 }
 
 variable_name_ref ::= IDENTIFIER
 {
