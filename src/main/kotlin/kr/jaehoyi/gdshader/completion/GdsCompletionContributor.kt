@@ -13,45 +13,20 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
+import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
-import kr.jaehoyi.gdshader.psi.GdsBlock
-import kr.jaehoyi.gdshader.psi.GdsBlockBody
-import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
-import kr.jaehoyi.gdshader.psi.GdsDoWhileStatement
-import kr.jaehoyi.gdshader.psi.GdsFile
-import kr.jaehoyi.gdshader.psi.GdsForStatement
-import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
-import kr.jaehoyi.gdshader.psi.GdsHintList
-import kr.jaehoyi.gdshader.psi.GdsIfStatement
-import kr.jaehoyi.gdshader.psi.GdsRenderModeDeclaration
-import kr.jaehoyi.gdshader.psi.GdsShaderTypeDeclaration
-import kr.jaehoyi.gdshader.psi.GdsStencilModeDeclaration
-import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
-import kr.jaehoyi.gdshader.psi.GdsSwitchStatement
-import kr.jaehoyi.gdshader.psi.GdsTokenSets
-import kr.jaehoyi.gdshader.psi.GdsTypes
-import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
-import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
-import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
-import kr.jaehoyi.gdshader.psi.GdsWhileStatement
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.model.ShaderType
-import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
-import kr.jaehoyi.gdshader.psi.GdsPatterns
-import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.model.VectorType
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 import kotlin.collections.plusAssign
 
-import kr.jaehoyi.gdshader.model.StructType
-import kr.jaehoyi.gdshader.model.VectorType
-import kr.jaehoyi.gdshader.psi.GdsExpression
-import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
-import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 
 class GdsCompletionContributor : CompletionContributor() {
     
@@ -242,7 +217,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     
                     // 6. After COMMA
                     if (prevLeaf.elementType == GdsTypes.COMMA) {
-                        if (getPrevCodeLeaf(prevLeaf)?.parentOfType<GdsHintList>() == null) {
+                        if (prevLeaf.parentOfType<GdsHint>() != null) {
                             return
                         }
                         

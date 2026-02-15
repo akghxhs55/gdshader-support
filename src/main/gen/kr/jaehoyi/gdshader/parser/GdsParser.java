@@ -1961,39 +1961,14 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // hint_identifier (COMMA hint_identifier)*
+  // hint_identifier
   public static boolean simple_hint(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simple_hint")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, SIMPLE_HINT, "<simple hint>");
     r = hint_identifier(b, l + 1);
-    p = r; // pin = 1
-    r = r && simple_hint_1(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (COMMA hint_identifier)*
-  private static boolean simple_hint_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "simple_hint_1")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!simple_hint_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "simple_hint_1", c)) break;
-    }
-    return true;
-  }
-
-  // COMMA hint_identifier
-  private static boolean simple_hint_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "simple_hint_1_0")) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, COMMA);
-    p = r; // pin = 1
-    r = r && hint_identifier(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */

@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GdsSimpleHint extends PsiElement {
 
   @NotNull
-  List<GdsHintIdentifier> getHintIdentifierList();
+  GdsHintIdentifier getHintIdentifier();
 
 }

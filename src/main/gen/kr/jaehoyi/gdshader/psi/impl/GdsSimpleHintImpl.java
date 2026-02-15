@@ -29,8 +29,8 @@ public class GdsSimpleHintImpl extends ASTWrapperPsiElement implements GdsSimple
 
   @Override
   @NotNull
-  public List<GdsHintIdentifier> getHintIdentifierList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsHintIdentifier.class);
+  public GdsHintIdentifier getHintIdentifier() {
+    return findNotNullChildByClass(GdsHintIdentifier.class);
   }
 
 }
