@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.formatter
 import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.psi.TokenType
+import com.intellij.application.options.CodeStyle
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.TokenSet
 import kr.jaehoyi.gdshader.psi.GdsTypes
@@ -36,10 +37,20 @@ class GdsBlock(
     override fun isLeaf(): Boolean = myNode.firstChildNode == null
 
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
+        if (myNode.elementType == GdsTypes.SWITCH_BODY && newChildIndex > 0) {
+            val prev = subBlocks.getOrNull(newChildIndex - 1) as? GdsBlock
+            if (prev?.node?.elementType == GdsTypes.CASE_CLAUSE) {
+                val indentSize = myNode.psi?.containingFile?.let {
+                    CodeStyle.getIndentOptions(it).INDENT_SIZE
+                } ?: 4
+                return ChildAttributes(Indent.getSpaceIndent(indentSize * 2), null)
+            }
+        }
+
         val indent = when (myNode.elementType) {
             in BLOCKS, in BODY_CONTAINERS, GdsTypes.INITIALIZER_LIST -> Indent.getNormalIndent()
             in CONTAINERS, in PARENTHESIZED, in EXPRESSIONS -> Indent.getNormalIndent()
-            in CONTROL_STATEMENTS, GdsTypes.FUNCTION_CALL -> Indent.getNormalIndent()
+            in CONTROL_STATEMENTS, GdsTypes.FUNCTION_CALL, GdsTypes.CASE_CLAUSE -> Indent.getNormalIndent()
             else -> Indent.getNoneIndent()
         }
         return ChildAttributes(indent, null)
