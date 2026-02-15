@@ -34,15 +34,13 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
     override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
         if (settingsType == SettingsType.SPACING_SETTINGS) {
             consumer.showStandardOptions(
-                // 1. Before Parentheses
-                "SPACE_BEFORE_METHOD_PARENTHESES",
-                "SPACE_BEFORE_METHOD_CALL_PARENTHESES",
+                // Before Parentheses
                 "SPACE_BEFORE_IF_PARENTHESES",
                 "SPACE_BEFORE_FOR_PARENTHESES",
                 "SPACE_BEFORE_WHILE_PARENTHESES",
                 "SPACE_BEFORE_SWITCH_PARENTHESES",
-                
-                // 2. Around Operators
+
+                // Around Operators
                 "SPACE_AROUND_ASSIGNMENT_OPERATORS",
                 "SPACE_AROUND_LOGICAL_OPERATORS",
                 "SPACE_AROUND_EQUALITY_OPERATORS",
@@ -52,7 +50,7 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
                 "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
                 "SPACE_AROUND_SHIFT_OPERATORS",
 
-                // 3. Before Left Braces
+                // Before Left Braces
                 "SPACE_BEFORE_CLASS_LBRACE",
                 "SPACE_BEFORE_METHOD_LBRACE",
                 "SPACE_BEFORE_IF_LBRACE",
@@ -62,32 +60,19 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
                 "SPACE_BEFORE_DO_LBRACE",
                 "SPACE_BEFORE_SWITCH_LBRACE",
 
-                // 4. Before Keywords
+                // Before Keywords
                 "SPACE_BEFORE_ELSE_KEYWORD",
                 "SPACE_BEFORE_WHILE_KEYWORD",
-                
-                // 5. Within
+
+                // Within
                 "SPACE_WITHIN_BRACES",
-                "SPACE_WITHIN_BRACKETS",
-                "SPACE_WITHIN_PARENTHESES",
-                "SPACE_WITHIN_METHOD_PARENTHESES",
-                "SPACE_WITHIN_METHOD_CALL_PARENTHESES",
-                "SPACE_WITHIN_IF_PARENTHESES",
-                "SPACE_WITHIN_FOR_PARENTHESES",
-                "SPACE_WITHIN_WHILE_PARENTHESES",
-                "SPACE_WITHIN_SWITCH_PARENTHESES",
 
-                // 6. Other
+                // Other
                 "SPACE_AFTER_COMMA",
-                "SPACE_BEFORE_COMMA",
-                "SPACE_BEFORE_SEMICOLON",
                 "SPACE_AFTER_SEMICOLON"
-
             )
 
             consumer.renameStandardOption("SPACE_WITHIN_BRACES", "Braces")
-            consumer.renameStandardOption("SPACE_BEFORE_SEMICOLON", "Before semicolon")
-            consumer.renameStandardOption("SPACE_AFTER_SEMICOLON", "After semicolon")
 
             val forGroup = "Within 'for' header"
 
