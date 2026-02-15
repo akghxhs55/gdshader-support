@@ -118,6 +118,18 @@ class GdsFormattingModelBuilder : FormattingModelBuilder {
             // } while (...); -> front 'while'
             .beforeInside(GdsTypes.CF_WHILE, GdsTypes.DO_WHILE_STATEMENT).spaceIf(common.SPACE_BEFORE_WHILE_KEYWORD)
 
+            // After case colon: case 0: statement;
+            .afterInside(GdsTypes.COLON, GdsTypes.CASE_CLAUSE).spaces(1)
+
+            // After closing parenthesis (non-block body): if (true) statement;
+            .afterInside(GdsTypes.PARENTHESIS_CLOSE, GdsTypes.IF_STATEMENT).spaces(1)
+            .afterInside(GdsTypes.PARENTHESIS_CLOSE, GdsTypes.FOR_STATEMENT).spaces(1)
+            .afterInside(GdsTypes.PARENTHESIS_CLOSE, GdsTypes.WHILE_STATEMENT).spaces(1)
+
+            // After keywords (non-block body): else statement; / do statement;
+            .afterInside(GdsTypes.CF_ELSE, GdsTypes.ELSE_CLAUSE).spaces(1)
+            .afterInside(GdsTypes.CF_DO, GdsTypes.DO_WHILE_STATEMENT).spaces(1)
+
             // Binary Operators
             .around(GdsTokenSets.ASSIGNMENT_OPERATORS).spaceIf(common.SPACE_AROUND_ASSIGNMENT_OPERATORS)
             .around(GdsTokenSets.EQUALITY_OPERATORS).spaceIf(common.SPACE_AROUND_EQUALITY_OPERATORS)
