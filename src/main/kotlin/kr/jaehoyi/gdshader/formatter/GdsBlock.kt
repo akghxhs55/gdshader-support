@@ -21,9 +21,6 @@ class GdsBlock(
 
         while (child != null) {
             if (child.elementType != TokenType.WHITE_SPACE && child.textRange.length > 0) {
-
-                // [수정] HINT_SECTION도 투명하게 처리 (Flatten)
-                // 이렇게 해야 COLON이 상위 블록(UNIFORM_DECLARATION)에 직접 노출되어 Spacing 규칙이 먹힘
                 if (child.elementType == GdsTypes.STATEMENT_BODY ||
                     child.elementType == GdsTypes.HINT_SECTION) {
 
@@ -44,7 +41,6 @@ class GdsBlock(
                         grandChild = grandChild.treeNext
                     }
                 } else {
-                    // ... 기존 일반 로직 ...
                     val isFirst = blocks.isEmpty()
                     val indent = computeIndent(child, isFirst)
                     blocks.add(GdsBlock(child, Wrap.createWrap(WrapType.NONE, false), null, indent, spacingBuilder))
@@ -62,8 +58,6 @@ class GdsBlock(
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
         val type = myNode.elementType
 
-        // 엔터 쳤을 때 커서 위치 계산
-        // [수정] BLOCK_BODY 등 실제 내용을 담는 컨테이너도 처리
         if (type in BLOCKS || type in BODY_CONTAINERS || type == GdsTypes.INITIALIZER_LIST) {
             return ChildAttributes(Indent.getNormalIndent(), null)
         }
@@ -79,25 +73,20 @@ class GdsBlock(
 
         if (parentType == GdsTypes.ITEM) return Indent.getNoneIndent()
         if (childType in BRACKETS) return Indent.getNoneIndent()
-
-        // 1. 블록 ({...}) 내부 내용물 -> Normal
+        
         if (parentType in BLOCKS && childType in BODY_CONTAINERS) return Indent.getNoneIndent()
         if (parentType in BODY_CONTAINERS) return Indent.getNormalIndent()
         if (parentType == GdsTypes.INITIALIZER_LIST) return Indent.getNormalIndent()
 
-        // 2. 괄호 컨테이너 (파라미터 등) -> Normal
         if (parentType in CONTAINERS) return Indent.getNormalIndent()
 
-        // 3. [핵심 수정] 표현식 (Expression) 처리
-        // 수식이 깊게 중첩되어도 첫 번째 요소(왼쪽 항)는 들여쓰기를 하지 않아야 누적되지 않습니다.
         if (parentType in EXPRESSIONS) {
             if (isFirst) {
-                return Indent.getNoneIndent() // 첫 번째 자식은 들여쓰기 없음
+                return Indent.getNoneIndent()
             }
-            return Indent.getContinuationIndent() // 두 번째 이후(연산자, 우항)는 줄바꿈 시 들여쓰기
+            return Indent.getContinuationIndent()
         }
 
-        // 4. 제어문 (if, for 등) 하위 구문
         if (parentType in CONTROL_STATEMENTS) {
             if (childType != GdsTypes.PARENTHESIS_OPEN &&
                 childType != GdsTypes.PARENTHESIS_CLOSE &&
@@ -156,7 +145,7 @@ class GdsBlock(
         )
 
         private val KEYWORDS = TokenSet.create(
-            GdsTypes.CF_IF, GdsTypes.CF_ELSE, GdsTypes.CF_FOR, GdsTypes.CF_WHILE
+            GdsTypes.CF_IF, GdsTypes.CF_ELSE, GdsTypes.CF_FOR, GdsTypes.CF_WHILE, GdsTypes.CF_DO
         )
     }
 }
