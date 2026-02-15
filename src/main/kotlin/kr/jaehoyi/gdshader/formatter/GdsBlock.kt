@@ -131,6 +131,12 @@ class GdsBlock(
             GdsTypes.ASSIGN_EXPR,
             GdsTypes.LOGIC_OR_EXPR,
             GdsTypes.LOGIC_AND_EXPR,
+            GdsTypes.BITWISE_OR_EXPR,
+            GdsTypes.BITWISE_XOR_EXPR,
+            GdsTypes.BITWISE_AND_EXPR,
+            GdsTypes.EQUALITY_EXPR,
+            GdsTypes.RELATIONAL_EXPR,
+            GdsTypes.SHIFT_EXPR,
             GdsTypes.ADDITIVE_EXPR,
             GdsTypes.MULTIPLICATIVE_EXPR
         )
