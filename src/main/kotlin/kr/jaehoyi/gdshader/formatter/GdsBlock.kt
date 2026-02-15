@@ -53,7 +53,7 @@ class GdsBlock(
         if (childType in BRACKETS) return Indent.getNoneIndent()
 
         return when (parentType) {
-            in BLOCKS -> Indent.getNoneIndent()
+            in BLOCKS -> if (childType in BODY_CONTAINERS) Indent.getNoneIndent() else Indent.getNormalIndent()
             in BODY_CONTAINERS -> Indent.getNormalIndent()
             GdsTypes.INITIALIZER_LIST -> Indent.getNormalIndent()
             in CONTAINERS -> Indent.getNormalIndent()
