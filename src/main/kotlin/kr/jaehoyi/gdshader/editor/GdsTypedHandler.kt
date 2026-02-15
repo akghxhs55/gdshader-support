@@ -7,6 +7,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import kr.jaehoyi.gdshader.GdsLanguage
+import kr.jaehoyi.gdshader.psi.GdsTypes
 
 class GdsTypedHandler : TypedHandlerDelegate() {
     
@@ -19,13 +20,21 @@ class GdsTypedHandler : TypedHandlerDelegate() {
         val offset = editor.caretModel.offset
         
         when (c) {
-            ';' -> {
+            ';', ':' -> {
                 PsiDocumentManager.getInstance(project).commitDocument(document)
+
+                if (c == ':') {
+                    val element = file.findElementAt(offset - 1)
+                    if (element?.node?.elementType != GdsTypes.COLON ||
+                        element.parent?.node?.elementType != GdsTypes.CASE_CLAUSE) {
+                        return Result.CONTINUE
+                    }
+                }
 
                 val lineNumber = document.getLineNumber(offset)
                 val lineStartOffset = document.getLineStartOffset(lineNumber)
 
-                CodeStyleManager.getInstance(project).adjustLineIndent(file, lineStartOffset)    
+                CodeStyleManager.getInstance(project).adjustLineIndent(file, lineStartOffset)
             }
             
             '*' -> {

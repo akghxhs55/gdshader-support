@@ -40,10 +40,17 @@ class GdsBlock(
         if (myNode.elementType == GdsTypes.SWITCH_BODY && newChildIndex > 0) {
             val prev = subBlocks.getOrNull(newChildIndex - 1) as? GdsBlock
             if (prev?.node?.elementType == GdsTypes.CASE_CLAUSE) {
-                val indentSize = myNode.psi?.containingFile?.let {
-                    CodeStyle.getIndentOptions(it).INDENT_SIZE
-                } ?: 4
-                return ChildAttributes(Indent.getSpaceIndent(indentSize * 2), null)
+                return ChildAttributes(caseBodyIndent(), null)
+            }
+        }
+
+        if (myNode.elementType == GdsTypes.SWITCH_BLOCK && newChildIndex > 0) {
+            val prev = subBlocks.getOrNull(newChildIndex - 1) as? GdsBlock
+            if (prev?.node?.elementType == GdsTypes.SWITCH_BODY) {
+                val lastCase = prev.subBlocks.lastOrNull() as? GdsBlock
+                if (lastCase?.node?.elementType == GdsTypes.CASE_CLAUSE) {
+                    return ChildAttributes(caseBodyIndent(), null)
+                }
             }
         }
 
@@ -54,6 +61,13 @@ class GdsBlock(
             else -> Indent.getNoneIndent()
         }
         return ChildAttributes(indent, null)
+    }
+
+    private fun caseBodyIndent(): Indent {
+        val indentSize = myNode.psi?.containingFile?.let {
+            CodeStyle.getIndentOptions(it).INDENT_SIZE
+        } ?: 4
+        return Indent.getSpaceIndent(indentSize * 2)
     }
 
     private fun computeIndent(child: ASTNode, isFirst: Boolean): Indent {
