@@ -10,18 +10,15 @@ import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSpec> {
 
     override fun findElementForParameterInfo(context: CreateParameterInfoContext): GdsArgumentList? {
-        val element = context.file.findElementAt(context.offset)
-        println("GdsParameterInfoHandler: findElementForParameterInfo offset=${context.offset}, element=$element, parent=${element?.parent}")
-        
-        if (element == null) return null
-        
+        val element = context.file.findElementAt(context.offset) ?: return null
+
         var argumentList = PsiTreeUtil.getParentOfType(element, GdsArgumentList::class.java)
         
         if (argumentList == null) {
             var functionCall = PsiTreeUtil.getParentOfType(element, GdsFunctionCall::class.java)
             
             if (functionCall == null) {
-                var prev = element
+                var prev: PsiElement? = element
                 while (prev != null && prev !is GdsFile) {
                     val elementType = prev.node.elementType
                     if (elementType == GdsTypes.PARENTHESIS_OPEN) {
