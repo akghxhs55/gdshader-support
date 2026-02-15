@@ -60,6 +60,7 @@
         <lang.formatter
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.formatter.GdsFormattingModelBuilder" />
+        <postFormatProcessor implementation="kr.jaehoyi.gdshader.formatter.GdsCommentFormatProcessor" />
         <codeStyleSettingsProvider implementation="kr.jaehoyi.gdshader.formatter.GdsCodeStyleSettingsProvider" />
         <langCodeStyleSettingsProvider implementation="kr.jaehoyi.gdshader.formatter.GdsLanguageCodeStyleSettingsProvider" />
         
