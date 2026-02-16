@@ -24,41 +24,51 @@ object GdsLookupElements {
     val SHADER_TYPE_KEYWORD = LookupElementBuilder.create("shader_type")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val RENDER_MODE_KEYWORD = LookupElementBuilder.create("render_mode")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val STENCIL_MODE_KEYWORD = LookupElementBuilder.create("stencil_mode")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val UNIFORM_GROUP_KEYWORD = LookupElementBuilder.create("group_uniforms")
         .withBoldness(true)
+        .withPriority(PRIORITY_NORMAL)
 
     val GLOBAL_KEYWORD = LookupElementBuilder.create("global")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val INSTANCE_KEYWORD = LookupElementBuilder.create("instance")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val UNIFORM_KEYWORD = LookupElementBuilder.create("uniform")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
     
     val CONST_KEYWORD = LookupElementBuilder.create("const")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val VARYING_KEYWORD = LookupElementBuilder.create("varying")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
 
     val STRUCT_KEYWORD = LookupElementBuilder.create("struct")
         .withBoldness(true)
         .withInsertHandler(AddSpaceInsertHandler(true))
+        .withPriority(PRIORITY_NORMAL)
     
     val CONTROL_STATEMENT_STARTERS = listOf("if", "for", "while", "switch").map {
         LookupElementBuilder.create(it)
