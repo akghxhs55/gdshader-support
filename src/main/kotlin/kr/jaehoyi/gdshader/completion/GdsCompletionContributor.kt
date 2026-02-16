@@ -217,7 +217,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     
                     // 6. After COMMA
                     if (prevLeaf.elementType == GdsTypes.COMMA) {
-                        if (prevLeaf.parentOfType<GdsHint>() != null) {
+                        if (position.parentOfType<GdsHintSection>() == null || prevLeaf.parentOfType<GdsHint>() != null) {
                             return
                         }
                         
