@@ -211,6 +211,7 @@ public interface GdsTypes {
   IElementType PP_INCLUDE_LINE = new GdsTokenType("Preprocessor include line");
   IElementType PP_PRAGMA_LINE = new GdsTokenType("Preprocessor pragma line");
   IElementType PP_UNDEF_LINE = new GdsTokenType("Preprocessor undef line");
+  IElementType PP_UNKNOWN_LINE = new GdsTokenType("Preprocessor unknown line");
   IElementType PRECISION_HIGH = new GdsTokenType("PRECISION_HIGH");
   IElementType PRECISION_LOW = new GdsTokenType("PRECISION_LOW");
   IElementType PRECISION_MEDIUM = new GdsTokenType("PRECISION_MEDIUM");

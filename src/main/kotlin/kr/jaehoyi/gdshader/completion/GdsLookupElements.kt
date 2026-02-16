@@ -266,6 +266,19 @@ object GdsLookupElements {
             .withInsertHandler(AddSpaceInsertHandler(true))
             .withPriority(PRIORITY_HIGH)
     }
+
+    val PREPROCESSOR_DIRECTIVES = listOf(
+        "define", "undef", "if", "ifdef", "ifndef", "elif", "else", "endif", "error", "pragma", "include"
+    ).map {
+        var builder = LookupElementBuilder.create(it)
+            .withBoldness(true)
+            
+        if (it != "else" && it != "endif") {
+            builder = builder.withInsertHandler(AddSpaceInsertHandler(true))
+        }
+            
+        builder.withPriority(PRIORITY_HIGHEST)
+    }
     
     val UNIFORM_HINTS: Map<DataType, List<LookupElement>>
         = GdsKeywords.UNIFORM_HINTS.mapValues { entry ->

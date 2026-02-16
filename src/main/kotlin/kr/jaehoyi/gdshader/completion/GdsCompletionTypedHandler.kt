@@ -15,7 +15,7 @@ class GdsCompletionTypedHandler : TypedHandlerDelegate() {
         }
         
         when (charTyped) {
-            ',' -> AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
+            ',', '#' -> AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
         
             ' ' -> {
                 val offset = editor.caretModel.offset

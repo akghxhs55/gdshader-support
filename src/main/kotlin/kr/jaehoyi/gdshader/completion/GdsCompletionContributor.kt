@@ -43,6 +43,7 @@ class GdsCompletionContributor : CompletionContributor() {
         extendStructDeclaration()
         extendStatement()
         extendPostfixExpression()
+        extendPreprocessorDirective()
     }
 
     private fun extendShaderTypeDeclaration() =
@@ -711,6 +712,26 @@ class GdsCompletionContributor : CompletionContributor() {
                     }
 
                     result.addAllElements(completions)
+                }
+            }
+        )
+
+    private fun extendPreprocessorDirective() =
+        extend(
+            CompletionType.BASIC,
+            psiElement(GdsTypes.PP_UNKNOWN_LINE),
+            object : CompletionProvider<CompletionParameters>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    val position = parameters.position
+                    val text = position.text
+                    
+                    if (!text.startsWith("#")) return
+                    
+                    result.addAllElements(GdsLookupElements.PREPROCESSOR_DIRECTIVES)
                 }
             }
         )

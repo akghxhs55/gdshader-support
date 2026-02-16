@@ -185,7 +185,7 @@ class GdsSyntaxHighlighter : SyntaxHighlighterBase() {
                 GdsTypes.PP_DEFINE_LINE, GdsTypes.PP_UNDEF_LINE, GdsTypes.PP_IF_LINE,
                 GdsTypes.PP_ELSE_LINE, GdsTypes.PP_ELIF_LINE, GdsTypes.PP_ENDIF_LINE,
                 GdsTypes.PP_IFDEF_LINE, GdsTypes.PP_IFNDEF_LINE, GdsTypes.PP_ERROR_LINE,
-                GdsTypes.PP_INCLUDE_LINE, GdsTypes.PP_PRAGMA_LINE
+                GdsTypes.PP_INCLUDE_LINE, GdsTypes.PP_PRAGMA_LINE, GdsTypes.PP_UNKNOWN_LINE
                     -> PREPROCESSOR_KEYS
 
                 TokenType.BAD_CHARACTER

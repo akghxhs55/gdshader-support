@@ -199,6 +199,7 @@ PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
 	"#error"{PreprocessorLine}   	{ return GdsTypes.PP_ERROR_LINE; }
 	"#include"{PreprocessorLine} 	{ return GdsTypes.PP_INCLUDE_LINE; }
 	"#pragma"{PreprocessorLine}  	{ return GdsTypes.PP_PRAGMA_LINE; }
+	"#"[a-zA-Z]*					{ return GdsTypes.PP_UNKNOWN_LINE; }
 	  
 	{Whitespace} 				{ return TokenType.WHITE_SPACE; }
 	{Identifier} 				{ return GdsTypes.IDENTIFIER; }

@@ -31,6 +31,7 @@
     PP_ERROR_LINE = "Preprocessor error line"
     PP_INCLUDE_LINE = "Preprocessor include line"
     PP_PRAGMA_LINE = "Preprocessor pragma line"
+    PP_UNKNOWN_LINE = "Preprocessor unknown line"
   ]
 }
 
