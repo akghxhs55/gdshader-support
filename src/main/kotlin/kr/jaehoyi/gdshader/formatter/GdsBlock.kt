@@ -6,6 +6,7 @@ import com.intellij.psi.TokenType
 import com.intellij.application.options.CodeStyle
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.TokenSet
+import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 class GdsBlock(
@@ -74,6 +75,7 @@ class GdsBlock(
         val parentType = myNode.elementType
         val childType = child.elementType
 
+        if (childType in GdsTokenSets.PREPROCESSORS) return Indent.getAbsoluteNoneIndent()
         if (parentType == GdsTypes.ITEM) return Indent.getNoneIndent()
         if (childType in BRACKETS) return Indent.getNoneIndent()
 
