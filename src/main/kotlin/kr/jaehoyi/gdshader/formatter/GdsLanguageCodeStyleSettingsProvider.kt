@@ -26,9 +26,25 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
         commonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS = true
 
         commonSettings.SPACE_AFTER_COMMA = true
+        commonSettings.SPACE_AFTER_SEMICOLON = true
         commonSettings.SPACE_BEFORE_METHOD_LBRACE = true
         commonSettings.SPACE_BEFORE_IF_LBRACE = true
         commonSettings.SPACE_BEFORE_ELSE_LBRACE = true
+        commonSettings.SPACE_BEFORE_FOR_LBRACE = true
+        commonSettings.SPACE_BEFORE_WHILE_LBRACE = true
+        commonSettings.SPACE_BEFORE_DO_LBRACE = true
+        commonSettings.SPACE_BEFORE_SWITCH_LBRACE = true
+
+        commonSettings.SPACE_BEFORE_IF_PARENTHESES = true
+        commonSettings.SPACE_BEFORE_FOR_PARENTHESES = true
+        commonSettings.SPACE_BEFORE_WHILE_PARENTHESES = true
+        commonSettings.SPACE_BEFORE_SWITCH_PARENTHESES = true
+
+        commonSettings.SPACE_WITHIN_BRACES = true
+        
+        commonSettings.SPACE_BEFORE_QUEST = true
+        commonSettings.SPACE_AFTER_QUEST = true
+        commonSettings.SPACE_BEFORE_ELSE_KEYWORD = true
     }
 
     override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
@@ -69,7 +85,9 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
 
                 // Other
                 "SPACE_AFTER_COMMA",
-                "SPACE_AFTER_SEMICOLON"
+                "SPACE_AFTER_SEMICOLON",
+                "SPACE_BEFORE_QUEST",
+                "SPACE_AFTER_QUEST"
             )
 
             consumer.renameStandardOption("SPACE_WITHIN_BRACES", "Braces")

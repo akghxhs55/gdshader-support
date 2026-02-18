@@ -209,6 +209,7 @@ PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
 
 <IN_BLOCK_COMMENT> {
 	"*/"						{ yybegin(YYINITIAL); return GdsTypes.BLOCK_COMMENT_END; }
-	[^*]+						{ return GdsTypes.BLOCK_COMMENT_CONTENT; }
+	[\n]						{ return TokenType.WHITE_SPACE; }
+	[^*\n]+						{ return GdsTypes.BLOCK_COMMENT_CONTENT; }
 	"*"							{ return GdsTypes.BLOCK_COMMENT_CONTENT; }
 }

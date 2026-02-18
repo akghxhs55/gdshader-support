@@ -109,7 +109,8 @@ class GdsBlock(
         private val TRANSPARENT_NODES = TokenSet.create(
             GdsTypes.STATEMENT_BODY,
             GdsTypes.STATEMENT,
-            GdsTypes.HINT_SECTION
+            GdsTypes.HINT_SECTION,
+            GdsTypes.ASSIGNMENT_OPERATOR
         )
 
         private val BLOCKS = TokenSet.create(
