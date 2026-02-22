@@ -2,10 +2,12 @@ package kr.jaehoyi.gdshader.documentation
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider
 import com.intellij.lang.documentation.DocumentationMarkup
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.ColorUtil
@@ -50,8 +52,26 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
             is GdsFunction -> generateFunctionDoc(element)
             is GdsVariable -> generateVariableDoc(element)
             is GdsStructNameDecl -> generateStructDoc(element)
-            else -> null
+            else -> {
+                if (GdsHintDocumentation.HINT_DOCS.containsKey(element.node.elementType)) {
+                    generateHintDoc(element)
+                } else {
+                    null
+                }
+            }
         }
+    }
+
+    override fun getCustomDocumentationElement(
+        editor: Editor,
+        file: PsiFile,
+        contextElement: PsiElement?,
+        targetOffset: Int
+    ): PsiElement? {
+        if (contextElement != null && GdsHintDocumentation.HINT_DOCS.containsKey(contextElement.node.elementType)) {
+            return contextElement
+        }
+        return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset)
     }
 
     override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
@@ -68,6 +88,20 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
             }
             else -> null
         }
+    }
+
+    private fun generateHintDoc(element: PsiElement): String {
+        val doc = GdsHintDocumentation.HINT_DOCS[element.node.elementType] ?: return ""
+        val sb = StringBuilder()
+        sb.append(DocumentationMarkup.DEFINITION_START)
+        sb.append(colorize("hint", GdsSyntaxHighlighter.KEYWORD))
+        sb.append(" ")
+        sb.append(colorize(element.text, GdsSyntaxHighlighter.KEYWORD))
+        sb.append(DocumentationMarkup.DEFINITION_END)
+        sb.append(DocumentationMarkup.CONTENT_START)
+        sb.append(doc)
+        sb.append(DocumentationMarkup.CONTENT_END)
+        return sb.toString()
     }
 
     private fun generateBuiltinFunctionDoc(element: GdsLightFunction): String {
