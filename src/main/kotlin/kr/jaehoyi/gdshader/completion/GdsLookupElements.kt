@@ -84,7 +84,17 @@ object GdsLookupElements {
     
     val DO_KEYWORD = LookupElementBuilder.create("do")
         .withBoldness(true)
-        .withInsertHandler(AddSpaceInsertHandler(true))
+        .withInsertHandler { context, _ ->
+            val offset = context.tailOffset
+            val document = context.document
+            val lineStart = document.getLineStartOffset(document.getLineNumber(context.startOffset))
+            val linePrefix = document.charsSequence.subSequence(lineStart, context.startOffset).toString()
+            val indent = linePrefix.takeWhile { it == ' ' || it == '\t' }
+            val innerIndent = "$indent    "
+            val textToInsert = " {\n$innerIndent\n$indent} while ();"
+            document.insertString(offset, textToInsert)
+            context.editor.caretModel.moveToOffset(offset + " {\n".length + innerIndent.length)
+        }
         .withPriority(PRIORITY_HIGH)
     
     val ELSE_KEYWORD = LookupElementBuilder.create("else")
