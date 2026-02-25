@@ -91,6 +91,13 @@
         
         <!-- Code Insights -->
         <codeInsight.parameterInfo language="GDShader" implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsParameterInfoHandler" />
+        <codeInsight.declarativeInlayProvider
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsInlayHintsProvider"
+            isEnabledByDefault="false"
+            group="PARAMETERS_GROUP"
+            providerId="gdshader.parameter.hints"
+            nameKey="inlay.hints.parameter.names" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUniformColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsConstantColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsLocalVariableColorProvider" />
