@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -28,7 +29,7 @@ dependencies {
     intellijPlatform {
         intellijIdeaCommunity("2025.1.2")
         plugin("PsiViewer", "2025.1")
-        
+
         testFramework(TestFrameworkType.Platform)
     }
     
@@ -37,9 +38,18 @@ dependencies {
 }
 
 intellijPlatform {
+    pluginVerification {
+        ides {
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.2")
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.3")
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.1")
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
+        }
+    }
+
     pluginConfiguration {
         ideaVersion {
-            sinceBuild = "233"
+            sinceBuild = "242"
         }
         
         changeNotes = """
