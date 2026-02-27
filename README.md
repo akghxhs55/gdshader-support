@@ -9,19 +9,24 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-orange.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 ![GitHub Stars](https://img.shields.io/github/stars/akghxhs55/gdshader-support?style=for-the-badge&color=yellow)
 
-This plugin adds basic support for GDShader (Godot Shading Language) in JetBrains IDE, including syntax highlighting and file type recognition.
+This plugin adds GDShader (Godot Shading Language) support for JetBrains IDEs.
 
 ---
 
 ## ✨ Features
 
-- 🎨 Syntax highlighting for GDShader (`.gdshader`) files
-- 🔍 Indexing of GDShader files for file search
-- 📄 Creation of new GDShader files from templates
-- 💡 Code completion for keywords, standard functions, and custom variables
-- 🧹 Code formatting support
-- 🔧 Rename refactoring support
+- 🎨 Syntax highlighting
+- 💡 Code completion for keywords, built-in functions, and user-defined symbols
+- 🧹 Code formatting with configurable style
+- 🔍 Find Usages and Go to Definition
+- 🔧 Rename refactoring
+- 📋 Parameter info and parameter name hints
+- 🏗️ Structure view
+- 🔲 Surround with (if, for, while, do-while)
+- 📂 Code folding
 - 🌈 Color preview and picker
+- 📖 Documentation for built-in functions and uniforms
+- 📄 File templates for shader types
 
 ## 💻 Supported IDEs
 

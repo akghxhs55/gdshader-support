@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.6.0-beta"
+version = "0.7.0-beta"
 
 sourceSets {
     main {
@@ -44,13 +44,11 @@ intellijPlatform {
         
         changeNotes = """
             <ul>
-              <li>Added parameter info support</li>
-              <li>Added struct member reference and completion support</li>
-              <li>Added structure view feature</li>
-              <li>Added breadcrumbs support</li>
-              <li>Added structure-aware navigation bar feature</li>
-              <li>Added documentation feature</li>
-              <li>Minor feature improvements</li>
+              <li>Added commenter support</li>
+              <li>Added formatting and code style settings</li>
+              <li>Added uniform hint documentation support</li>
+              <li>Added inlay parameter hints feature</li>
+              <li>Added surround with support</li>
             </ul>
         """.trimIndent()
     }

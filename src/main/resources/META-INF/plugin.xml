@@ -9,14 +9,18 @@
         <![CDATA[
             Adds support for GDShader (Godot Shading Language) for Godot 4.0+.<br />
             <ul>
-                <li>Syntax highlighting for GDShader files</li>
-                <li>Indexing of .gdshader files for file search</li>
-                <li>Creation of new GDShader files from templates</li>
-                <li>Code completion for keywords, standard functions, and custom variables</li>
-                <li>Code formatting support</li>
-                <li>Rename refactoring support</li>
+                <li>Syntax highlighting</li>
+                <li>Code completion for keywords, built-in functions, and user-defined symbols</li>
+                <li>Code formatting with configurable style</li>
+                <li>Find Usages and Go to Definition</li>
+                <li>Rename refactoring</li>
+                <li>Parameter info and parameter name hints</li>
+                <li>Structure view</li>
+                <li>Surround with (if, for, while, do-while)</li>
+                <li>Code folding</li>
                 <li>Color preview and picker</li>
-                <li>Documentation for built-in functions</li>
+                <li>Documentation for built-in functions and uniforms</li>
+                <li>File templates for shader types</li>
             </ul>
         ]]>
     </description>
