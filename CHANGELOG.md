@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Added formatting and code style settings
 - Added uniform hint documentation support
 - Added inlay parameter hints feature
+- Added surrounding support
 
 ## 0.6.0-beta (2026-02-07)
 - Added parameter info support
