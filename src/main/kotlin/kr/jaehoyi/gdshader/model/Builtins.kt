@@ -3251,7 +3251,7 @@ object Builtins {
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER2D),
                     ParameterSpec("p", VEC2),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Retrieves texels from a texture.<br>Samples texels from the texture bound to <code>s</code> at texture coordinate <code>p</code>. An optional bias, specified in <code>bias</code> is included in the level-of-detail computation that is used to choose mipmap(s) from which to sample.<br>For shadow forms, the last component of <code>p</code> is used as Dsub and the array layer is specified in the second to last component of <code>p</code>. (The second component of <code>p</code> is unused for 1D shadow lookups.)<br>For non-shadow variants, the array layer comes from the last component of P.""",
@@ -3264,14 +3264,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "texture",
                 returnType = GVEC4_TYPE,
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER2DARRAY),
                     ParameterSpec("p", VEC3),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Retrieves texels from a texture.<br>Samples texels from the texture bound to <code>s</code> at texture coordinate <code>p</code>. An optional bias, specified in <code>bias</code> is included in the level-of-detail computation that is used to choose mipmap(s) from which to sample.<br>For shadow forms, the last component of <code>p</code> is used as Dsub and the array layer is specified in the second to last component of <code>p</code>. (The second component of <code>p</code> is unused for 1D shadow lookups.)<br>For non-shadow variants, the array layer comes from the last component of P.""",
@@ -3284,14 +3284,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "texture",
                 returnType = GVEC4_TYPE,
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER3D),
                     ParameterSpec("p", VEC3),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Retrieves texels from a texture.<br>Samples texels from the texture bound to <code>s</code> at texture coordinate <code>p</code>. An optional bias, specified in <code>bias</code> is included in the level-of-detail computation that is used to choose mipmap(s) from which to sample.<br>For shadow forms, the last component of <code>p</code> is used as Dsub and the array layer is specified in the second to last component of <code>p</code>. (The second component of <code>p</code> is unused for 1D shadow lookups.)<br>For non-shadow variants, the array layer comes from the last component of P.""",
@@ -3304,14 +3304,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "texture",
                 returnType = VEC4,
                 parameters = listOf(
                     ParameterSpec("s", SAMPLERCUBE),
                     ParameterSpec("p", VEC3),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Retrieves texels from a texture.<br>Samples texels from the texture bound to <code>s</code> at texture coordinate <code>p</code>. An optional bias, specified in <code>bias</code> is included in the level-of-detail computation that is used to choose mipmap(s) from which to sample.<br>For shadow forms, the last component of <code>p</code> is used as Dsub and the array layer is specified in the second to last component of <code>p</code>. (The second component of <code>p</code> is unused for 1D shadow lookups.)<br>For non-shadow variants, the array layer comes from the last component of P.""",
@@ -3324,14 +3324,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "texture",
                 returnType = VEC4,
                 parameters = listOf(
                     ParameterSpec("s", SAMPLERCUBEARRAY),
                     ParameterSpec("p", VEC4),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Retrieves texels from a texture.<br>Samples texels from the texture bound to <code>s</code> at texture coordinate <code>p</code>. An optional bias, specified in <code>bias</code> is included in the level-of-detail computation that is used to choose mipmap(s) from which to sample.<br>For shadow forms, the last component of <code>p</code> is used as Dsub and the array layer is specified in the second to last component of <code>p</code>. (The second component of <code>p</code> is unused for 1D shadow lookups.)<br>For non-shadow variants, the array layer comes from the last component of P.""",
@@ -3344,14 +3344,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "texture",
                 returnType = VEC4,
                 parameters = listOf(
                     ParameterSpec("s", SAMPLEREXTERNALOES),
                     ParameterSpec("p", VEC2),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Retrieves texels from a texture.<br>Samples texels from the texture bound to <code>s</code> at texture coordinate <code>p</code>. An optional bias, specified in <code>bias</code> is included in the level-of-detail computation that is used to choose mipmap(s) from which to sample.<br>For shadow forms, the last component of <code>p</code> is used as Dsub and the array layer is specified in the second to last component of <code>p</code>. (The second component of <code>p</code> is unused for 1D shadow lookups.)<br>For non-shadow variants, the array layer comes from the last component of P.""",
@@ -3371,7 +3371,7 @@ object Builtins {
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER2D),
                     ParameterSpec("p", VEC3),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Perform a texture lookup with projection.<br>The texture coordinates consumed from <code>p</code>, not including the last component of <code>p</code>, are divided by the last component of <code>p</code>. The resulting 3rd component of <code>p</code> in the shadow forms is used as Dref. After these values are computed, the texture lookup proceeds as in texture.""",
@@ -3384,14 +3384,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureProj.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "textureProj",
                 returnType = GVEC4_TYPE,
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER2D),
                     ParameterSpec("p", VEC4),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Perform a texture lookup with projection.<br>The texture coordinates consumed from <code>p</code>, not including the last component of <code>p</code>, are divided by the last component of <code>p</code>. The resulting 3rd component of <code>p</code> in the shadow forms is used as Dref. After these values are computed, the texture lookup proceeds as in texture.""",
@@ -3404,14 +3404,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureProj.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "textureProj",
                 returnType = GVEC4_TYPE,
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER3D),
                     ParameterSpec("p", VEC4),
-                    ParameterSpec("bias", FLOAT)
+                    ParameterSpec("bias", FLOAT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Perform a texture lookup with projection.<br>The texture coordinates consumed from <code>p</code>, not including the last component of <code>p</code>, are divided by the last component of <code>p</code>. The resulting 3rd component of <code>p</code> in the shadow forms is used as Dref. After these values are computed, the texture lookup proceeds as in texture.""",
@@ -3842,7 +3842,7 @@ object Builtins {
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER2D),
                     ParameterSpec("p", VEC2),
-                    ParameterSpec("comps", INT)
+                    ParameterSpec("comps", INT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Gathers four texels from a texture.<br>Returns the value:<br><pre><code>
@@ -3860,14 +3860,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureGather.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "textureGather",
                 returnType = GVEC4_TYPE,
                 parameters = listOf(
                     ParameterSpec("s", GSAMPLER2DARRAY),
                     ParameterSpec("p", VEC3),
-                    ParameterSpec("comps", INT)
+                    ParameterSpec("comps", INT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Gathers four texels from a texture.<br>Returns the value:<br><pre><code>
@@ -3885,14 +3885,14 @@ object Builtins {
                     link = "https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureGather.xhtml"
                 )
             ),
-    
+
             FunctionSpec(
                 name = "textureGather",
                 returnType = VEC4,
                 parameters = listOf(
                     ParameterSpec("s", SAMPLERCUBE),
                     ParameterSpec("p", VEC3),
-                    ParameterSpec("comps", INT)
+                    ParameterSpec("comps", INT, isOptional = true)
                 ),
                 description = functionDoc(
                     description = """Gathers four texels from a texture.<br>Returns the value:<br><pre><code>

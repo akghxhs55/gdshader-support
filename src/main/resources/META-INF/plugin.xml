@@ -60,6 +60,7 @@
             implementation="kr.jaehoyi.gdshader.highlighting.GdsColorSettingsPage" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsHighlightingAnnotator" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceAnnotator" />
+        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallAnnotator" />
         
         <!-- Formatting -->
         <lang.formatter
