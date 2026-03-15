@@ -4,6 +4,21 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
 
+    // === shader_type must come first ===
+
+    fun `test shader_type first`() {
+        doHighlightTest("""
+            shader_type spatial;
+            uniform float x;
+        """)
+    }
+
+    fun `test missing shader_type`() {
+        doHighlightTest("""
+            <error descr="Expected 'shader_type' before the first declaration">uniform float x;</error>
+        """)
+    }
+    
     // === Empty struct ===
 
     fun `test empty struct`() {

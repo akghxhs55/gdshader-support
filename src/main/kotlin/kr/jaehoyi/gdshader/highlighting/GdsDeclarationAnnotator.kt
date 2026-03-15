@@ -10,6 +10,7 @@ import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
+import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
@@ -25,6 +26,7 @@ class GdsDeclarationAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when {
+            element is GdsItem -> checkShaderTypeFirst(element, holder)
             element is GdsStructDeclaration -> {
                 checkEmptyStruct(element, holder)
                 checkDuplicateStruct(element, holder)
@@ -53,6 +55,34 @@ class GdsDeclarationAnnotator : Annotator {
                     .range(element)
                     .create()
             }
+        }
+    }
+
+    // === shader_type must come first ===
+
+    private fun checkShaderTypeFirst(element: GdsItem, holder: AnnotationHolder) {
+        if (element.containingFile?.virtualFile?.extension == "gdshaderinc") return
+
+        val topLevel = element.topLevelDeclaration
+        if (topLevel.shaderTypeDeclaration != null) return
+
+        val file = element.containingFile ?: return
+        val allItems = PsiTreeUtil.findChildrenOfType(file, GdsItem::class.java)
+        val firstNonShaderType = allItems.firstOrNull {
+            it.topLevelDeclaration.shaderTypeDeclaration == null
+        }
+
+        if (firstNonShaderType !== element) return
+
+        val hasShaderType = allItems.any {
+            it.topLevelDeclaration.shaderTypeDeclaration != null &&
+                    it.textOffset < element.textOffset
+        }
+
+        if (!hasShaderType) {
+            holder.newAnnotation(HighlightSeverity.ERROR, "Expected 'shader_type' before the first declaration")
+                .range(element)
+                .create()
         }
     }
 
