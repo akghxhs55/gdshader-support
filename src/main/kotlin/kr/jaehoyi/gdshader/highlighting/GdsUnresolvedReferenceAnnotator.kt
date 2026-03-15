@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
-import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
@@ -77,16 +77,12 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
     }
 
     private fun checkStructMemberRef(element: GdsStructMemberNameRef, holder: AnnotationHolder) {
-        // Only check struct member access when the receiver type is a known StructType.
-        // Vector swizzles (vec.xyz), matrix indexing, etc. also use struct_member_name_ref
-        // but GdsStructMemberReference only resolves StructType members, returning null for others.
         val postfixExpr = element.parent as? GdsPostfixExpr ?: return
-        val receiverType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, element)
-        if (receiverType !is StructType) return
+        val receiverType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, element) ?: return
 
-        if (element.reference.resolve() != null) return
+        if (receiverType is MemberAccessible && receiverType.resolveMember(element.text) != null) return
 
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference '${element.text}'")
+        holder.newAnnotation(HighlightSeverity.ERROR, "Invalid member for '${receiverType.name}' expression: '.${element.text}'")
             .range(element)
             .create()
     }

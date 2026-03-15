@@ -131,7 +131,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             struct MyStruct { float value; };
             void fragment() {
                 MyStruct s = MyStruct(1.0);
-                float x = s.<error descr="Unresolved reference 'unknown_field'">unknown_field</error>;
+                float x = s.<error descr="Invalid member for 'MyStruct' expression: '.unknown_field'">unknown_field</error>;
             }
         """)
     }
@@ -166,6 +166,72 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             void fragment() {
                 vec4 c = vec4(1.0);
                 vec3 d = c.rgb;
+            }
+        """)
+    }
+
+    // === Invalid swizzle ===
+
+    fun `test invalid swizzle component for vec2`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(1.0, 2.0);
+                float z = v.<error descr="Invalid member for 'vec2' expression: '.z'">z</error>;
+            }
+        """)
+    }
+
+    fun `test invalid swizzle component w for vec3`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0, 2.0, 3.0);
+                float w = v.<error descr="Invalid member for 'vec3' expression: '.w'">w</error>;
+            }
+        """)
+    }
+
+    fun `test valid swizzle for vec4`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                float w = v.w;
+                vec2 xy = v.xy;
+                vec3 rgb = v.rgb;
+            }
+        """)
+    }
+
+    fun `test invalid multi-component swizzle for vec2`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(1.0, 2.0);
+                vec3 bad = v.<error descr="Invalid member for 'vec2' expression: '.xyz'">xyz</error>;
+            }
+        """)
+    }
+
+    // === Member access on non-member types ===
+
+    fun `test member access on float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = 1.0;
+                float y = x.<error descr="Invalid member for 'float' expression: '.value'">value</error>;
+            }
+        """)
+    }
+
+    fun `test member access on int`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int x = 1;
+                int y = x.<error descr="Invalid member for 'int' expression: '.z'">z</error>;
             }
         """)
     }
