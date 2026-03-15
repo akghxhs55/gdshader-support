@@ -1,4 +1,4 @@
-package kr.jaehoyi.gdshader.surround
+package kr.jaehoyi.gdshader.editor
 
 import com.intellij.lang.surroundWith.SurroundDescriptor
 import com.intellij.lang.surroundWith.Surrounder
