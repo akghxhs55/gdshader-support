@@ -4,7 +4,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsStatementAnnotatorTest : BasePlatformTestCase() {
 
-    // === discard ===
+    // === discard statement ===
 
     fun `test discard in fragment`() {
         doHighlightTest("""
@@ -78,6 +78,41 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
                 return 1.0;
             }
         """)
+    }
+    
+    // === switch statement ===
+    
+    fun `test int type in switch expression`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float my_func() {
+                int x = 1;
+                switch (x) {
+                }
+            }
+        """.trimIndent())
+    }
+    
+    fun `test uint type in switch expression`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float my_func() {
+                uint x = 1;
+                switch (x) {
+                }
+            }
+        """.trimIndent())
+    }
+    
+    fun `test float type in switch expression`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float my_func() {
+                float x = 1.0;
+                switch (<error descr="Expected an integer or unsigned integer expression">x</error>) {
+                }
+            }
+        """.trimIndent())
     }
 
     private fun doHighlightTest(code: String) {

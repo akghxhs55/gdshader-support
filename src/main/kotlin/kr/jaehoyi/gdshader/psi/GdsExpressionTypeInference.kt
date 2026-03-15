@@ -35,10 +35,6 @@ object GdsExpressionTypeInference {
     fun inferTypeBefore(postfixExpr: GdsPostfixExpr, targetChild: PsiElement): DataType? {
         var currentType = inferPrimaryType(postfixExpr.primary) ?: return null
         
-        // Iterate over children that modify the type (excluding primary)
-        // The children structure of PostfixExpr is: Primary (modifiers)*
-        // We need to iterate over modifiers.
-        
         var memberIdx = 0
         var functionIdx = 0
         var indexIdx = 0
