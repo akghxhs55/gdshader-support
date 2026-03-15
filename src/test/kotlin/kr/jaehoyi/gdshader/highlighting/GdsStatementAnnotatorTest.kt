@@ -114,6 +114,58 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
             }
         """.trimIndent())
     }
+    
+    // === control statements condition ===
+    
+    fun `test bool type in if statement condition`() {
+        doHighlightTest("""
+            shader_type spatial;
+            bool my_func() {
+                if (true) {
+                }
+            }
+        """.trimIndent())
+    }
+    
+    fun `test bool type in for statement condition`() {
+        doHighlightTest("""
+            shader_type spatial;
+            bool my_func() {
+                for (;true;) {
+                }
+            }
+        """.trimIndent())
+    }
+
+    fun `test bool type in while statement condition`() {
+        doHighlightTest("""
+            shader_type spatial;
+            bool my_func() {
+                while (true) {
+                }
+            }
+        """.trimIndent())
+    }
+    
+    fun `test bool type in do-while statement condition`() {
+        doHighlightTest("""
+            shader_type spatial;
+            bool my_func() {
+                do {
+                } while (true);
+            }
+        """.trimIndent())
+    }
+
+    fun `test float type in if statement condition`() {
+        doHighlightTest("""
+            shader_type spatial;
+            bool my_func() {
+                if (<error descr="Expected a boolean expression">1.0</error>) {
+                }
+            }
+        """.trimIndent())
+    }
 
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
