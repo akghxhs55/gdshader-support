@@ -8,6 +8,7 @@ import kr.jaehoyi.gdshader.psi.GdsItem
 
 class GdsScopeProcessor<T : PsiElement>(
     private val targetType: Class<T>,
+    private val startOffset: Int,
     private val processor: (element: T) -> Boolean
 ) : PsiScopeProcessor {
 
@@ -15,11 +16,12 @@ class GdsScopeProcessor<T : PsiElement>(
         val targetElement = when (element) {
             is GdsItem -> extractDeclaration(element)
             else -> element
-        }
+        } ?: return true
+        
+        if (targetElement.textOffset >= startOffset) return true
         
         if (targetType.isInstance(targetElement)) {
-            @Suppress("UNCHECKED_CAST")
-            return processor(targetElement as T)
+            return processor(targetType.cast(targetElement))
         }
         
         return true

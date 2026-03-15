@@ -4,9 +4,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.ResolveState
 import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
+import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariable
@@ -17,8 +19,23 @@ import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 object GdsResolver {
 
     fun processVariableDeclaration(startElement: PsiElement, processor: (element: GdsVariable) -> Boolean): Boolean {
+        val startOffset = startElement.textOffset
         val keepGoing = walkUpLocalScope(startElement) { scope ->
             when (scope) {
+                is GdsLocalVariableDeclarator -> {
+                    if (!processor(scope.variableNameDecl)) return@walkUpLocalScope false
+                }
+                
+                is GdsConstantDeclarator -> {
+                    if (!processor(scope.variableNameDecl)) return@walkUpLocalScope false
+                }
+
+                is GdsForInit -> {
+                    scope.localVariableDeclaratorList.localVariableDeclaratorList.forEach {
+                        if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
+                    }
+                }
+
                 is GdsStatementBody -> {
                     scope.statement?.localVariableDeclaration?.localVariableDeclaratorList?.localVariableDeclaratorList?.forEach {
                         if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
@@ -28,14 +45,10 @@ object GdsResolver {
                     }
                 }
 
-                is GdsForInit -> {
-                    scope.localVariableDeclaratorList.localVariableDeclaratorList.forEach {
-                        if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
-                    }
-                }
-
                 is GdsFunctionDeclaration -> {
                     scope.parameterList?.parameterList?.forEach {
+                        val decl = it.variableNameDecl
+                        if (decl.textOffset >= startOffset) return@forEach
                         if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
                     }
                 }
@@ -47,7 +60,7 @@ object GdsResolver {
         
         val file = startElement.containingFile
         if (!file.processDeclarations(
-                GdsScopeProcessor(GdsVariable::class.java, processor),
+                GdsScopeProcessor(GdsVariable::class.java, startElement.textOffset, processor),
                 ResolveState.initial(),
                 null,
                 startElement
@@ -62,7 +75,7 @@ object GdsResolver {
     fun processFunctionDeclaration(startElement: PsiElement, processor: (element: GdsFunction) -> Boolean): Boolean {
         val file = startElement.containingFile
         if (!file.processDeclarations(
-                GdsScopeProcessor(GdsFunction::class.java, processor),
+                GdsScopeProcessor(GdsFunction::class.java, startElement.textOffset, processor),
                 ResolveState.initial(),
                 null,
                 startElement
@@ -76,7 +89,7 @@ object GdsResolver {
     fun processStructDeclaration(startElement: PsiElement, processor: (element: GdsStructNameDecl) -> Boolean): Boolean {
         val file = startElement.containingFile
         return file.processDeclarations(
-            GdsScopeProcessor(GdsStructNameDecl::class.java, processor),
+            GdsScopeProcessor(GdsStructNameDecl::class.java, startElement.textOffset, processor),
             ResolveState.initial(),
             null,
             startElement
@@ -130,5 +143,4 @@ object GdsResolver {
         }
         return true
     }
-    
 }

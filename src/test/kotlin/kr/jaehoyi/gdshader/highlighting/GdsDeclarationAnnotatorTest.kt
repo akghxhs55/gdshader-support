@@ -174,6 +174,59 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
             const float MAX = 10.0;
         """)
     }
+    
+    fun `test duplicate parameters`() {
+        doHighlightTest("""
+            shader_type spatial;
+            uniform float t = 1.0;
+            void my_func(float <error descr="Redefinition of 't'">t</error>) {
+            }
+        """.trimIndent())
+    }
+    
+    fun `test duplicate local variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            uniform float t = 1.0;
+            void my_func() {
+                float <error descr="Redefinition of 't'">t</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test duplicate local constant`() {
+        doHighlightTest("""
+            shader_type spatial;
+            uniform float t = 1.0;
+            void my_func() {
+                const float <error descr="Redefinition of 't'">t</error> = 1.0;
+            }
+        """.trimIndent())
+    }
+    
+    fun `test duplicate inside constant declaration`() {
+        doHighlightTest("""
+            shader_type spatial;
+            const int x = 1, <error descr="Redefinition of 'x'">x</error> = 1;
+        """.trimIndent())
+    }
+    
+    fun `test duplicate inside parameter declaration`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void my_func(int p, int <error descr="Redefinition of 'p'">p</error>) {
+            }
+        """.trimIndent())
+    }
+    
+    fun `test duplicate inside local variable declaration`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void my_func() {
+                int x = 1, <error descr="Redefinition of 'x'">x</error> = 1;
+            }
+        """.trimIndent())
+    }
 
     // === Unknown preprocessor directive ===
 

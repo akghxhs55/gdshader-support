@@ -93,20 +93,6 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    fun `test shadowing resolve`() {
-        val code = """
-            uniform float value;
-            void fragment() {
-                float value = 1.0;
-                float a = <caret>value;
-            }
-        """
-        doTest(code) { spec ->
-            assertEquals("value", spec.name)
-            assertInstanceOf(spec, LocalVariableSpec::class.java)
-        }
-    }
-
     private fun doTest(code: String, checkSpec: (VariableSpec) -> Unit) {
         myFixture.configureByText("test_shader.gdshader", code)
 
