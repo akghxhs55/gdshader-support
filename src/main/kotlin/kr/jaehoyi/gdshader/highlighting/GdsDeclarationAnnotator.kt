@@ -48,6 +48,11 @@ class GdsDeclarationAnnotator : Annotator {
             element is GdsLocalVariableDeclarator -> checkSplitDoubleArraySize(element, holder)
             element is GdsConstantDeclarator -> checkSplitDoubleArraySize(element, holder)
             element.node.elementType == GdsTypes.PP_INCLUDE_LINE -> checkIncludeLine(element, holder)
+            element.node.elementType == GdsTypes.PP_UNKNOWN_LINE -> {
+                holder.newAnnotation(HighlightSeverity.ERROR, "Unknown preprocessor directive '${element.text}'")
+                    .range(element)
+                    .create()
+            }
         }
     }
 

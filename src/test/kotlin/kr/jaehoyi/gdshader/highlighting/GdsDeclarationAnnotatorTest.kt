@@ -160,6 +160,22 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """)
     }
 
+    // === Unknown preprocessor directive ===
+
+    fun `test unknown preprocessor directive`() {
+        doHighlightTest("""
+            shader_type spatial;
+            <error descr="Unknown preprocessor directive '#foo'">#foo</error>
+        """)
+    }
+
+    fun `test known preprocessor directives`() {
+        doHighlightTest("""
+            shader_type spatial;
+            #define FOO
+        """)
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
