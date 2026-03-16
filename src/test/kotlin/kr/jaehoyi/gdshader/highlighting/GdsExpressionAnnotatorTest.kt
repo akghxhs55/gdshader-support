@@ -207,6 +207,208 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    // === Relational operators ===
+
+    fun `test valid float less than`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = 2.0;
+                bool c = a < b;
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid int greater equal`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                int b = 2;
+                bool c = a >= b;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid int less than float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                float b = 2.0;
+                bool c = <error descr="Invalid arguments to operator '<': 'int, float'">a < b</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid vec3 less than`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 a = vec3(1.0);
+                vec3 b = vec3(2.0);
+                bool c = <error descr="Invalid arguments to operator '<': 'vec3, vec3'">a < b</error>;
+            }
+        """.trimIndent())
+    }
+
+    // === Equality operators ===
+
+    fun `test valid vec3 equality`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 a = vec3(1.0);
+                vec3 b = vec3(2.0);
+                bool c = a == b;
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid bool not equal`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = false;
+                bool c = a != b;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid vec2 equal vec3`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec2 a = vec2(1.0);
+                vec3 b = vec3(2.0);
+                bool c = <error descr="Invalid arguments to operator '==': 'vec2, vec3'">a == b</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid int equal float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                float b = 1.0;
+                bool c = <error descr="Invalid arguments to operator '==': 'int, float'">a == b</error>;
+            }
+        """.trimIndent())
+    }
+
+    // === Unary operators ===
+
+    fun `test valid negation float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = -a;
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid negation vec3`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                vec3 w = -v;
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid logical not`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = !a;
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid bitwise invert`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int a = 5;
+                int b = ~a;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid logical not on int`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                bool b = <error descr="Invalid arguments to unary operator '!': int">!a</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid bitwise invert on float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = <error descr="Invalid arguments to unary operator '~': float">~a</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid negation on bool`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = <error descr="Invalid arguments to unary operator '-': bool">-a</error>;
+            }
+        """.trimIndent())
+    }
+
+    // === Ternary operator ===
+
+    fun `test valid ternary`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                bool c = true;
+                float a = 1.0;
+                float b = 2.0;
+                float r = c ? a : b;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid ternary condition`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int c = 1;
+                float a = 1.0;
+                float b = 2.0;
+                float r = <error descr="Invalid argument to ternary operator: 'int, float, float'">c ? a : b</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid ternary type mismatch`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                bool c = true;
+                float a = 1.0;
+                int b = 1;
+                <error descr="Invalid argument to ternary operator: 'bool, float, int'">c ? a : b</error>;
+            }
+        """.trimIndent())
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

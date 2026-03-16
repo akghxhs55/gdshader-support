@@ -12,15 +12,57 @@ class GdsExpressionAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
+            is GdsUnaryExpr -> checkUnaryExpr(element, holder)
             is GdsMultiplicativeExpr -> checkArithmeticExpr(element, element.unaryExprList, holder)
             is GdsAdditiveExpr -> checkArithmeticExpr(element, element.multiplicativeExprList, holder)
             is GdsShiftExpr -> checkShiftExpr(element, holder)
             is GdsBitwiseAndExpr -> checkBitwiseExpr(element, element.equalityExprList, holder)
             is GdsBitwiseXorExpr -> checkBitwiseExpr(element, element.bitwiseAndExprList, holder)
             is GdsBitwiseOrExpr -> checkBitwiseExpr(element, element.bitwiseXorExprList, holder)
+            is GdsRelationalExpr -> checkRelationalExpr(element, holder)
+            is GdsEqualityExpr -> checkEqualityExpr(element, holder)
             is GdsLogicAndExpr -> checkLogicExpr(element, element.bitwiseOrExprList, holder)
             is GdsLogicOrExpr -> checkLogicExpr(element, element.logicAndExprList, holder)
             is GdsAssignExpr -> checkAssignExpr(element, holder)
+            is GdsConditionalExpr -> checkConditionalExpr(element, holder)
+        }
+    }
+
+    private fun checkUnaryExpr(element: GdsUnaryExpr, holder: AnnotationHolder) {
+        val operand = element.unaryExpr ?: element.postfixExpr ?: return
+        val operandType = GdsExpressionTypeInference.inferType(operand) ?: return
+
+        val hasNot = element.node.findChildByType(GdsTypes.OP_NOT) != null
+        val hasBitInvert = element.node.findChildByType(GdsTypes.OP_BIT_INVERT) != null
+        val hasMinus = element.node.findChildByType(GdsTypes.OP_SUB) != null
+        val hasPlus = element.node.findChildByType(GdsTypes.OP_ADD) != null
+
+        val op = when {
+            hasNot && operandType !is BoolType -> "!"
+            hasBitInvert && !isIntegerType(operandType) -> "~"
+            hasMinus && !isNumericType(operandType) -> "-"
+            hasPlus && !isNumericType(operandType) -> "+"
+            else -> return
+        }
+        holder.newAnnotation(
+            HighlightSeverity.ERROR,
+            "Invalid arguments to unary operator '$op': ${operandType.name}"
+        ).range(element).create()
+    }
+
+    private fun checkConditionalExpr(element: GdsConditionalExpr, holder: AnnotationHolder) {
+        val expressions = element.expressionList
+        if (expressions.size < 2) return
+
+        val conditionType = GdsExpressionTypeInference.inferType(element.assignExpr) ?: return
+        val trueType = GdsExpressionTypeInference.inferType(expressions[0]) ?: return
+        val falseType = GdsExpressionTypeInference.inferType(expressions[1]) ?: return
+
+        if (conditionType !is BoolType || trueType.name != falseType.name) {
+            holder.newAnnotation(
+                HighlightSeverity.ERROR,
+                "Invalid argument to ternary operator: '${conditionType.name}, ${trueType.name}, ${falseType.name}'"
+            ).range(element).create()
         }
     }
 
@@ -51,6 +93,28 @@ class GdsExpressionAnnotator : Annotator {
         val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
 
         if (!isIntegerType(leftType) || !isIntegerType(rightType)) {
+            annotateInvalidOperator(element, leftType, rightType, holder)
+        }
+    }
+
+    private fun checkRelationalExpr(element: GdsRelationalExpr, holder: AnnotationHolder) {
+        val operands = element.shiftExprList
+        if (operands.size < 2) return
+        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
+        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
+
+        if (leftType !is Scalar || rightType !is Scalar || leftType.name != rightType.name) {
+            annotateInvalidOperator(element, leftType, rightType, holder)
+        }
+    }
+
+    private fun checkEqualityExpr(element: GdsEqualityExpr, holder: AnnotationHolder) {
+        val operands = element.relationalExprList
+        if (operands.size < 2) return
+        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
+        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
+
+        if (leftType.name != rightType.name) {
             annotateInvalidOperator(element, leftType, rightType, holder)
         }
     }
@@ -120,6 +184,8 @@ class GdsExpressionAnnotator : Annotator {
             GdsTypes.OP_MUL, GdsTypes.OP_DIV, GdsTypes.OP_MOD,
             GdsTypes.OP_ADD, GdsTypes.OP_SUB,
             GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT,
+            GdsTypes.OP_LESS, GdsTypes.OP_LESS_EQUAL, GdsTypes.OP_GREATER, GdsTypes.OP_GREATER_EQUAL,
+            GdsTypes.OP_EQUAL, GdsTypes.OP_NOT_EQUAL,
             GdsTypes.OP_BIT_AND, GdsTypes.OP_BIT_XOR, GdsTypes.OP_BIT_OR,
             GdsTypes.OP_AND, GdsTypes.OP_OR
         )
@@ -144,6 +210,15 @@ class GdsExpressionAnnotator : Annotator {
             is IntType -> vector.elementType is IntType
             is UIntType -> vector.elementType is UIntType
             is BoolType -> vector.elementType is BoolType
+        }
+    }
+
+    private fun isNumericType(type: DataType): Boolean {
+        return when (type) {
+            is FloatType, is IntType, is UIntType -> true
+            is VectorType -> type.elementType !is BoolType
+            is MatrixType -> true
+            else -> false
         }
     }
 
