@@ -97,7 +97,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             float my_func() {
-                uint x = 1;
+                uint x = 1u;
                 switch (x) {
                 }
             }

@@ -7,10 +7,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
+import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
+import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
+import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
+import kr.jaehoyi.gdshader.psi.GdsInitializer
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
@@ -38,6 +42,7 @@ class GdsDeclarationAnnotator : Annotator {
             element is GdsUniformDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
                 checkDuplicateVariable(element.variableNameDecl, holder)
+                checkUniformInitializerType(element, holder)
             }
             element is GdsVaryingDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
@@ -51,6 +56,7 @@ class GdsDeclarationAnnotator : Annotator {
             element is GdsLocalVariableDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
                 checkDuplicateLocalVariable(element.variableNameDecl, holder)
+                checkInitializerType(element.initializer, GdsDataTypeFactory.createFromLocalVariableDeclaration(element), holder)
             }
             element is GdsConstantDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
@@ -59,6 +65,7 @@ class GdsDeclarationAnnotator : Annotator {
                 } else {
                     checkDuplicateVariable(element.variableNameDecl, holder)
                 }
+                checkInitializerType(element.initializer, GdsDataTypeFactory.createFromConstantDeclaration(element), holder)
             }
             element.node.elementType == GdsTypes.PP_INCLUDE_LINE -> checkIncludeLine(element, holder)
             element.node.elementType == GdsTypes.PP_UNKNOWN_LINE -> {
@@ -209,6 +216,34 @@ class GdsDeclarationAnnotator : Annotator {
             holder.newAnnotation(HighlightSeverity.ERROR, "Array size is already defined")
                 .range(declaratorArraySize)
                 .create()
+        }
+    }
+
+    // === Initializer type checks ===
+
+    private fun checkInitializerType(initializer: GdsInitializer?, declaredType: DataType?, holder: AnnotationHolder) {
+        if (initializer == null || declaredType == null) return
+        val expr = initializer.expression ?: return
+        val exprType = GdsExpressionTypeInference.inferType(expr) ?: return
+
+        if (declaredType.name != exprType.name) {
+            holder.newAnnotation(
+                HighlightSeverity.ERROR,
+                "Cannot assign a value of type '${exprType.name}' to type '${declaredType.name}'"
+            ).range(initializer).create()
+        }
+    }
+
+    private fun checkUniformInitializerType(element: GdsUniformDeclaration, holder: AnnotationHolder) {
+        val expr = element.expression ?: return
+        val declaredType = GdsDataTypeFactory.createFromUniformDeclaration(element) ?: return
+        val exprType = GdsExpressionTypeInference.inferType(expr) ?: return
+
+        if (declaredType.name != exprType.name) {
+            holder.newAnnotation(
+                HighlightSeverity.ERROR,
+                "Cannot assign a value of type '${exprType.name}' to type '${declaredType.name}'"
+            ).range(expr).create()
         }
     }
 

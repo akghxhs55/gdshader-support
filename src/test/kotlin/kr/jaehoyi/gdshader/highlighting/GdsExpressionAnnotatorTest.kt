@@ -89,7 +89,7 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             void fragment() {
                 float a = 1.0;
-                int b = <error descr="Invalid arguments to operator '<<': 'float, int'">a << 2</error>;
+                float b = <error descr="Invalid arguments to operator '<<': 'float, int'">a << 2</error>;
             }
         """.trimIndent())
     }
@@ -149,6 +149,60 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
                 float a = 1.0;
                 float b = 0.0;
                 bool c = <error descr="Invalid arguments to operator '||': 'float, float'">a || b</error>;
+            }
+        """.trimIndent())
+    }
+
+    // === Simple assignment ===
+
+    fun `test valid assignment`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = 1.0;
+                x = 2.0;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid assignment int to float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = 1.0;
+                <error descr="Cannot assign a value of type 'int' to type 'float'">x = 1</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid assignment vec2 to vec3`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                <error descr="Cannot assign a value of type 'vec2' to type 'vec3'">v = vec2(1.0)</error>;
+            }
+        """.trimIndent())
+    }
+
+    // === Compound assignment ===
+
+    fun `test valid compound assignment vec3 plus float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                v += 1.0;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid compound assignment float plus bool`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = 1.0;
+                <error descr="Invalid arguments to operator '+=': 'float, bool'">x += true</error>;
             }
         """.trimIndent())
     }

@@ -273,6 +273,50 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    // === Initializer type mismatch ===
+
+    fun `test valid local variable initializer`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = 1.0;
+                vec3 v = vec3(1.0);
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid local variable initializer int to float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = <error descr="Cannot assign a value of type 'int' to type 'float'">1</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid local variable initializer bool to float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = <error descr="Cannot assign a value of type 'bool' to type 'float'">true</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid constant initializer`() {
+        doHighlightTest("""
+            shader_type spatial;
+            const float X = <error descr="Cannot assign a value of type 'int' to type 'float'">3</error>;
+        """.trimIndent())
+    }
+
+    fun `test invalid uniform default value`() {
+        doHighlightTest("""
+            shader_type spatial;
+            uniform float speed = <error descr="Cannot assign a value of type 'int' to type 'float'">1</error>;
+        """.trimIndent())
+    }
+
     // === Unknown preprocessor directive ===
 
     fun `test unknown preprocessor directive`() {

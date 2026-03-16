@@ -20,6 +20,7 @@ class GdsExpressionAnnotator : Annotator {
             is GdsBitwiseOrExpr -> checkBitwiseExpr(element, element.bitwiseXorExprList, holder)
             is GdsLogicAndExpr -> checkLogicExpr(element, element.bitwiseOrExprList, holder)
             is GdsLogicOrExpr -> checkLogicExpr(element, element.logicAndExprList, holder)
+            is GdsAssignExpr -> checkAssignExpr(element, holder)
         }
     }
 
@@ -64,6 +65,48 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
+    private fun checkAssignExpr(element: GdsAssignExpr, holder: AnnotationHolder) {
+        val operator = element.assignmentOperator ?: return
+        val lhsType = GdsExpressionTypeInference.inferType(element.logicOrExpr) ?: return
+        val rhsExpr = element.assignExpr ?: return
+        val rhsType = GdsExpressionTypeInference.inferType(rhsExpr) ?: return
+
+        val opText = operator.text
+
+        if (opText == "=") {
+            if (!isAssignable(lhsType, rhsType)) {
+                holder.newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Cannot assign a value of type '${rhsType.name}' to type '${lhsType.name}'"
+                ).range(element).create()
+            }
+        } else {
+            val isValid = when (opText) {
+                "+=", "-=", "*=", "/=", "%=" -> {
+                    val resultType = inferArithmeticResultType(lhsType, rhsType)
+                    resultType != null && isAssignable(lhsType, resultType)
+                }
+                "<<=", ">>=" ->
+                    isIntegerType(lhsType) && isIntegerType(rhsType)
+                "&=", "^=", "|=" ->
+                    isIntegerType(lhsType) && isIntegerType(rhsType)
+                else -> true
+            }
+            if (!isValid) {
+                holder.newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Invalid arguments to operator '$opText': '${lhsType.name}, ${rhsType.name}'"
+                ).range(element).create()
+            }
+        }
+    }
+
+    private fun isAssignable(target: DataType, source: DataType): Boolean {
+        if (target == source) return true
+        if (target.name == source.name) return true
+        return false
+    }
+
     private fun annotateInvalidOperator(element: PsiElement, leftType: DataType, rightType: DataType, holder: AnnotationHolder) {
         val op = findOperatorText(element)
         holder.newAnnotation(
@@ -81,6 +124,27 @@ class GdsExpressionAnnotator : Annotator {
             GdsTypes.OP_AND, GdsTypes.OP_OR
         )
         return element.node.getChildren(operatorTokens).firstOrNull()?.text ?: "?"
+    }
+
+    private fun inferArithmeticResultType(left: DataType, right: DataType): DataType? {
+        if (left.name == right.name) return left
+        if (left is VectorType && right is Scalar && areCompatibleScalarAndVector(right, left)) return left
+        if (right is VectorType && left is Scalar && areCompatibleScalarAndVector(left, right)) return right
+        if (left is MatrixType && right is VectorType && left.containerSize == right.containerSize) return right
+        if (left is VectorType && right is MatrixType && left.containerSize == right.containerSize) return left
+        if (left is MatrixType && right is MatrixType && left.containerSize == right.containerSize) return left
+        if (left is MatrixType && right is FloatType) return left
+        if (right is MatrixType && left is FloatType) return right
+        return null
+    }
+
+    private fun areCompatibleScalarAndVector(scalar: Scalar, vector: VectorType): Boolean {
+        return when (scalar) {
+            is FloatType -> vector.elementType is FloatType
+            is IntType -> vector.elementType is IntType
+            is UIntType -> vector.elementType is UIntType
+            is BoolType -> vector.elementType is BoolType
+        }
     }
 
     private fun isIntegerType(type: DataType): Boolean {
