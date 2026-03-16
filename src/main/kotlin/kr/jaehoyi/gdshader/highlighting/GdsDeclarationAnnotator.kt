@@ -6,6 +6,8 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
+import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
@@ -17,9 +19,9 @@ import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
+import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
-import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -48,11 +50,15 @@ class GdsDeclarationAnnotator : Annotator {
             element is GdsStructMember -> checkDoubleArraySize(element.arraySizeList, holder)
             element is GdsLocalVariableDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
-                checkDuplicateVariable(element.variableNameDecl, holder)
+                checkDuplicateLocalVariable(element.variableNameDecl, holder)
             }
             element is GdsConstantDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
-                checkDuplicateVariable(element.variableNameDecl, holder)
+                if (element.parentOfType<GdsFunctionDeclaration>() != null) {
+                    checkDuplicateLocalVariable(element.variableNameDecl, holder)
+                } else {
+                    checkDuplicateVariable(element.variableNameDecl, holder)
+                }
             }
             element.node.elementType == GdsTypes.PP_INCLUDE_LINE -> checkIncludeLine(element, holder)
             element.node.elementType == GdsTypes.PP_UNKNOWN_LINE -> {
@@ -130,29 +136,47 @@ class GdsDeclarationAnnotator : Annotator {
     private fun checkDuplicateVariable(nameDecl: GdsVariableNameDecl?, holder: AnnotationHolder) {
         if (nameDecl == null) return
         val name = nameDecl.name
-        
-        val allNames = collectVariableNames(nameDecl)
-        if (allNames.any { it == name }) {
+        if (collectVisibleVariables(nameDecl).any { it.name == name }) {
             holder.newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
                 .range(nameDecl)
                 .create()
         }
     }
 
-    private fun collectVariableNames(position: PsiElement): List<String> {
-        val result = mutableListOf<String>()
-        GdsResolver.processVariableDeclaration(position) { element ->
-            when (element) {
-                is GdsLightVariable -> {
-                    result += element.name
-                    return@processVariableDeclaration false
-                }
-                is GdsVariableNameDecl -> {
-                    result += element.name
-                    return@processVariableDeclaration true
+    private fun checkDuplicateLocalVariable(nameDecl: GdsVariableNameDecl?, holder: AnnotationHolder) {
+        if (nameDecl == null) return
+        val name = nameDecl.name
+        val myScope = PsiTreeUtil.getParentOfType(nameDecl, GdsBlockBody::class.java)
+
+        val hasDuplicate = collectVisibleVariables(nameDecl)
+            .filter { it.name == name }
+            .any { element ->
+                when (element) {
+                    is GdsVariableNameDecl -> {
+                        val parent = element.parent
+                        if (parent is GdsLocalVariableDeclarator || parent is GdsConstantDeclarator) {
+                            PsiTreeUtil.getParentOfType(element, GdsBlockBody::class.java) === myScope
+                        }
+                        else {
+                            true
+                        }
+                    }
+                    else -> true
                 }
             }
-            return@processVariableDeclaration true
+
+        if (hasDuplicate) {
+            holder.newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
+                .range(nameDecl)
+                .create()
+        }
+    }
+
+    private fun collectVisibleVariables(position: PsiElement): List<GdsVariable> {
+        val result = mutableListOf<GdsVariable>()
+        GdsResolver.processVariableDeclaration(position) { element ->
+            result += element
+            true
         }
         return result
     }

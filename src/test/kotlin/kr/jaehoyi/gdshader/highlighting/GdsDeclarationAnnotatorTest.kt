@@ -219,11 +219,56 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """.trimIndent())
     }
     
+    fun `test duplicate inside same scope`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void my_func() {
+                int x = 1;
+                int <error descr="Redefinition of 'x'">x</error> = 1;
+            }
+        """.trimIndent())
+    }
+    
     fun `test duplicate inside local variable declaration`() {
         doHighlightTest("""
             shader_type spatial;
             void my_func() {
                 int x = 1, <error descr="Redefinition of 'x'">x</error> = 1;
+            }
+        """.trimIndent())
+    }
+
+    fun `test local variable shadows parameter`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void my_func(float x) {
+                float <error descr="Redefinition of 'x'">x</error> = 1.0;
+            }
+        """.trimIndent())
+    }
+
+    // === Local variable shadowing (allowed) ===
+
+    fun `test local variable shadows another local variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void my_func() {
+                float x = 1.0;
+                {
+                    float x = 2.0;
+                }
+            }
+        """.trimIndent())
+    }
+
+    fun `test local constant shadows local variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void my_func() {
+                float x = 1.0;
+                {
+                    const float x = 2.0;
+                }
             }
         """.trimIndent())
     }
