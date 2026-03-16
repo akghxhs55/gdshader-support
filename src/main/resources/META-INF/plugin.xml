@@ -63,6 +63,7 @@
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallAnnotator" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsDeclarationAnnotator" />
         <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsStatementAnnotator" />
+        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionAnnotator" />
         
         <!-- Formatting -->
         <lang.formatter
