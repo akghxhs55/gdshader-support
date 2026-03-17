@@ -48,7 +48,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             void my_func() {
-                <error descr="Void function must not return a value">return 1.0;</error>
+                <error descr="'void' function cannot return a value">return 1.0;</error>
             }
         """)
     }
@@ -66,7 +66,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             float my_func() {
-                <error descr="Expected return value of type 'float'">return;</error>
+                <error descr="Expected return with an expression of type 'float'">return;</error>
             }
         """)
     }
@@ -153,6 +153,35 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
             bool my_func() {
                 do {
                 } while (true);
+            }
+        """.trimIndent())
+    }
+
+    // === return type mismatch ===
+
+    fun `test return type mismatch int to float`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float my_func() {
+                <error descr="Expected return with an expression of type 'float'">return 1;</error>
+            }
+        """.trimIndent())
+    }
+
+    fun `test return type mismatch vec2 to vec3`() {
+        doHighlightTest("""
+            shader_type spatial;
+            vec3 my_func() {
+                <error descr="Expected return with an expression of type 'vec3'">return vec2(1.0);</error>
+            }
+        """.trimIndent())
+    }
+
+    fun `test return correct type`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float my_func() {
+                return 1.0;
             }
         """.trimIndent())
     }

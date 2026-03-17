@@ -56,13 +56,21 @@ class GdsStatementAnnotator : Annotator {
         val hasExpression = element.expression != null
 
         if (returnType is VoidType && hasExpression) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Void function must not return a value")
+            holder.newAnnotation(HighlightSeverity.ERROR, "'void' function cannot return a value")
                 .range(element)
                 .create()
         } else if (returnType != null && returnType !is VoidType && !hasExpression) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected return value of type '${returnType.name}'")
+            holder.newAnnotation(HighlightSeverity.ERROR, "Expected return with an expression of type '${returnType.name}'")
                 .range(element)
                 .create()
+        } else if (returnType != null && returnType !is VoidType && hasExpression) {
+            val exprType = GdsExpressionTypeInference.inferType(element.expression!!) ?: return
+            if (returnType.name != exprType.name) {
+                holder.newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Expected return with an expression of type '${returnType.name}'"
+                ).range(element).create()
+            }
         }
     }
 
