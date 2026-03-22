@@ -21,7 +21,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             float add(float a, float b) { return a + b; }
             void fragment() {
-                float x = add(<error descr="Too few arguments for 'add': expected 2, got 1">1.0</error>);
+                float x = add(<error descr="Too few arguments for 'add(float, float)' call. Expected at least 2 but received 1.">1.0</error>);
             }
         """)
     }
@@ -31,7 +31,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             float add(float a, float b) { return a + b; }
             void fragment() {
-                float x = add(<error descr="Too many arguments for 'add': expected 2, got 3">1.0, 2.0, 3.0</error>);
+                float x = add(<error descr="Too many arguments for 'add(float, float)' call. Expected at most 2 but received 3.">1.0, 2.0, 3.0</error>);
             }
         """)
     }
@@ -41,7 +41,39 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             float get_value(float x) { return x; }
             void fragment() {
-                float x = get_value(<error descr="Too few arguments for 'get_value': expected 1, got 0"></error>);
+                float x = get_value(<error descr="Too few arguments for 'get_value(float)' call. Expected at least 1 but received 0."></error>);
+            }
+        """)
+    }
+
+    // === User-defined function argument type ===
+
+    fun `test correct argument types`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float add(float a, float b) { return a + b; }
+            void fragment() {
+                float x = add(1.0, 2.0);
+            }
+        """)
+    }
+
+    fun `test wrong argument type`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float f(int x) { return 1.0; }
+            void fragment() {
+                float x = f(<error descr="No matching function for 'f(int)' call: argument 1 should be int but is float">1.0</error>);
+            }
+        """)
+    }
+
+    fun `test wrong second argument type`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float f(float a, int b) { return a; }
+            void fragment() {
+                float x = f(<error descr="No matching function for 'f(float, int)' call: argument 2 should be int but is float">1.0, 2.0</error>);
             }
         """)
     }
@@ -61,7 +93,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             void fragment() {
-                float x = sin(<error descr="Too many arguments for 'sin': expected 1, got 2">1.0, 2.0</error>);
+                float x = sin(<error descr="Too many arguments for 'sin(vec_type)' call. Expected at most 1 but received 2.">1.0, 2.0</error>);
             }
         """)
     }
@@ -99,7 +131,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             void fragment() {
-                vec3 v = vec3(<error descr="Too many arguments for 'vec3': expected 1..3, got 5">1.0, 2.0, 3.0, 4.0, 5.0</error>);
+                vec3 v = vec3(<error descr="Too many arguments for 'vec3(float, float, float)' call. Expected at most 3 but received 5.">1.0, 2.0, 3.0, 4.0, 5.0</error>);
             }
         """)
     }
@@ -121,7 +153,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             struct MyData { float x; float y; };
             void fragment() {
-                MyData d = MyData(<error descr="Too few arguments for 'MyData': expected 2, got 1">1.0</error>);
+                MyData d = MyData(<error descr="Too few arguments for 'MyData(float, float)' call. Expected at least 2 but received 1.">1.0</error>);
             }
         """)
     }
@@ -153,7 +185,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             uniform sampler2D tex;
             void fragment() {
-                vec4 c = texture(<error descr="Too many arguments for 'texture': expected 2..3, got 4">tex, UV, 0.5, 1.0</error>);
+                vec4 c = texture(<error descr="Too many arguments for 'texture(gsampler2D, vec2, float)' call. Expected at most 3 but received 4.">tex, UV, 0.5, 1.0</error>);
             }
         """)
     }

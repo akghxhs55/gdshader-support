@@ -9,11 +9,13 @@ import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionSpec
 import kr.jaehoyi.gdshader.model.Instantiable
 import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsFunctionCallAnnotator : Annotator {
@@ -45,7 +47,7 @@ class GdsFunctionCallAnnotator : Annotator {
         if (constructors.isEmpty()) return
 
         val argCount = getArgumentCount(functionCall)
-        checkArgumentCount(constructors, argCount, typeName, functionCall, holder)
+        checkArguments(constructors, argCount, typeName, functionCall, holder)
     }
 
     private fun checkFunctionCall(
@@ -57,7 +59,7 @@ class GdsFunctionCallAnnotator : Annotator {
         if (candidates.isEmpty()) return
 
         val argCount = getArgumentCount(functionCall)
-        checkArgumentCount(candidates, argCount, functionName, functionCall, holder)
+        checkArguments(candidates, argCount, functionName, functionCall, holder)
     }
 
     private fun collectCandidates(functionCall: GdsFunctionCall, functionName: String): List<FunctionSpec> {
@@ -114,62 +116,83 @@ class GdsFunctionCallAnnotator : Annotator {
         return argList.initializerList.size
     }
 
-    private fun checkArgumentCount(
+    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType> {
+        val argList = functionCall.argumentList ?: return emptyList()
+        return argList.initializerList.mapNotNull { initializer ->
+            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) }
+        }
+    }
+
+    private fun checkArguments(
         candidates: List<FunctionSpec>,
         argCount: Int,
         name: String,
         functionCall: GdsFunctionCall,
         holder: AnnotationHolder
     ) {
-        val anyCountMatches = candidates.any { spec ->
+        val countMatches = candidates.filter { spec ->
             val requiredCount = spec.parameters.count { !it.isOptional }
             val totalCount = spec.parameters.size
             argCount in requiredCount..totalCount
         }
 
-        if (anyCountMatches) return
+        if (countMatches.isEmpty()) {
+            annotateArgumentCount(candidates, argCount, name, functionCall, holder)
+            return
+        }
 
+        val argTypes = collectArgumentTypes(functionCall)
+        if (argTypes.size != argCount) return
+
+        val resolved = GdsOverloadResolver.resolveOverload(countMatches, argTypes)
+        if (resolved != null) return
+
+        val bestCandidate = countMatches.firstOrNull() ?: return
+        for (i in argTypes.indices) {
+            if (i >= bestCandidate.parameters.size) break
+            val paramType = bestCandidate.parameters[i].type
+            val argType = argTypes[i]
+            if (paramType != argType) {
+                val signature = formatSignature(name, bestCandidate)
+                val argListElement = functionCall.argumentList ?: return
+                holder.newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "No matching function for '$signature' call: argument ${i + 1} should be ${paramType.name} but is ${argType.name}"
+                ).range(argListElement).create()
+                return
+            }
+        }
+    }
+
+    private fun annotateArgumentCount(
+        candidates: List<FunctionSpec>,
+        argCount: Int,
+        name: String,
+        functionCall: GdsFunctionCall,
+        holder: AnnotationHolder
+    ) {
         val minRequired = candidates.minOf { it.parameters.count { p -> !p.isOptional } }
+        val maxTotal = candidates.maxOf { it.parameters.size }
         val tooFew = argCount < minRequired
 
-        val validCounts = candidates.flatMap { spec ->
-            val required = spec.parameters.count { !it.isOptional }
-            val total = spec.parameters.size
-            (required..total).toList()
-        }.distinct().sorted()
+        val bestCandidate = if (tooFew) {
+            candidates.minByOrNull { it.parameters.count { p -> !p.isOptional } } ?: return
+        } else {
+            candidates.maxByOrNull { it.parameters.size } ?: return
+        }
 
-        val expected = formatExpectedCounts(validCounts)
+        val signature = formatSignature(name, bestCandidate)
+        val bound = if (tooFew) "at least $minRequired" else "at most $maxTotal"
 
         val argListElement = functionCall.argumentList ?: return
         holder.newAnnotation(
             HighlightSeverity.ERROR,
-            "Too ${if (tooFew) "few" else "many"} arguments for '$name': expected $expected, got $argCount"
-        )
-            .range(argListElement)
-            .create()
+            "Too ${if (tooFew) "few" else "many"} arguments for '$signature' call. Expected $bound but received $argCount."
+        ).range(argListElement).create()
     }
 
-    private fun formatExpectedCounts(counts: List<Int>): String {
-        if (counts.isEmpty()) return "0"
-        if (counts.size == 1) return "${counts.first()}"
-
-        // Collapse consecutive ranges: [2,3,4,6] -> "2..4 or 6"
-        val ranges = mutableListOf<IntRange>()
-        var start = counts.first()
-        var end = start
-        for (i in 1 until counts.size) {
-            if (counts[i] == end + 1) {
-                end = counts[i]
-            } else {
-                ranges.add(start..end)
-                start = counts[i]
-                end = start
-            }
-        }
-        ranges.add(start..end)
-
-        return ranges.joinToString(" or ") { range ->
-            if (range.first == range.last) "${range.first}" else "${range.first}..${range.last}"
-        }
+    private fun formatSignature(name: String, spec: FunctionSpec): String {
+        val params = spec.parameters.joinToString(", ") { it.type.name }
+        return "$name($params)"
     }
 }
