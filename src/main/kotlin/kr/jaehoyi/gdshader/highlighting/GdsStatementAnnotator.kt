@@ -64,7 +64,7 @@ class GdsStatementAnnotator : Annotator {
                 .range(element)
                 .create()
         } else if (returnType != null && returnType !is VoidType && hasExpression) {
-            val exprType = GdsExpressionTypeInference.inferType(element.expression!!) ?: return
+            val exprType = GdsExpressionTypeInference.inferType(element.expression ?: return) ?: return
             if (returnType.name != exprType.name) {
                 holder.newAnnotation(
                     HighlightSeverity.ERROR,

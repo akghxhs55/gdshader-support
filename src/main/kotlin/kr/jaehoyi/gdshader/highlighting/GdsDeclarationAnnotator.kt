@@ -253,12 +253,12 @@ class GdsDeclarationAnnotator : Annotator {
         val text = element.text
         val regex = Regex("[\"']([^\"']*)[\"']")
         val matchResult = regex.find(text) ?: return
-        val path = matchResult.groups[1]?.value ?: return
+        val pathGroup = matchResult.groups[1] ?: return
+        val path = pathGroup.value
 
         if (!path.endsWith(".gdshaderinc")) {
-            val pathRange = matchResult.groups[1]!!.range
-            val startOffset = element.textRange.startOffset + pathRange.first
-            val endOffset = element.textRange.startOffset + pathRange.last + 1
+            val startOffset = element.textRange.startOffset + pathGroup.range.first
+            val endOffset = element.textRange.startOffset + pathGroup.range.last + 1
             holder.newAnnotation(HighlightSeverity.ERROR, "Only '.gdshaderinc' files can be included")
                 .range(TextRange(startOffset, endOffset))
                 .create()
@@ -267,7 +267,7 @@ class GdsDeclarationAnnotator : Annotator {
 
         val resolved = GdsPathUtil.resolvePath(element.containingFile, path)
         if (resolved == null) {
-            val pathRange = matchResult.groups[1]!!.range
+            val pathRange = pathGroup.range
             val startOffset = element.textRange.startOffset + pathRange.first
             val endOffset = element.textRange.startOffset + pathRange.last + 1
             holder.newAnnotation(HighlightSeverity.ERROR, "Cannot resolve file '$path'")
