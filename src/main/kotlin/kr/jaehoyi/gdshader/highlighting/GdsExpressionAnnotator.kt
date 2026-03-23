@@ -13,6 +13,7 @@ class GdsExpressionAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
+            is GdsPostfixExpr -> checkPostfixExpr(element, holder)
             is GdsUnaryExpr -> checkUnaryExpr(element, holder)
             is GdsMultiplicativeExpr -> checkArithmeticExpr(element, element.unaryExprList, holder)
             is GdsAdditiveExpr -> checkArithmeticExpr(element, element.multiplicativeExprList, holder)
@@ -64,6 +65,18 @@ class GdsExpressionAnnotator : Annotator {
                 HighlightSeverity.ERROR,
                 "Invalid argument to ternary operator: '${conditionType.name}, ${trueType.name}, ${falseType.name}'"
             ).range(element).create()
+        }
+    }
+
+    private fun checkPostfixExpr(element: GdsPostfixExpr, holder: AnnotationHolder) {
+        for (indexExpr in element.expressionList) {
+            val indexType = GdsExpressionTypeInference.inferType(indexExpr) ?: continue
+            if (!isIntegerType(indexType)) {
+                holder.newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Only integer expressions are allowed for indexing"
+                ).range(indexExpr).create()
+            }
         }
     }
 

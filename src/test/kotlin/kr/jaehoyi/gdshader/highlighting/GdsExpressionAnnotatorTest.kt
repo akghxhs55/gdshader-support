@@ -451,6 +451,59 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    // === Array index type ===
+
+    fun `test valid int array index`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float arr[3] = { 1.0, 2.0, 3.0 };
+                float x = arr[0];
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid int variable array index`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float arr[3] = { 1.0, 2.0, 3.0 };
+                int i = 1;
+                float x = arr[i];
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid float array index`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float arr[3] = { 1.0, 2.0, 3.0 };
+                float x = arr[<error descr="Only integer expressions are allowed for indexing">1.0</error>];
+            }
+        """.trimIndent())
+    }
+
+    fun `test valid vector swizzle with int index`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                float x = v[0];
+            }
+        """.trimIndent())
+    }
+
+    fun `test invalid vector with float index`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                float x = v[<error descr="Only integer expressions are allowed for indexing">0.0</error>];
+            }
+        """.trimIndent())
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
