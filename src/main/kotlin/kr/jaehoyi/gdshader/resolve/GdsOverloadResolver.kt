@@ -97,6 +97,8 @@ object GdsOverloadResolver {
     ): Boolean {
         if (paramType == argType) return true
 
+        if (isImplicitlyConvertible(argType, paramType)) return true
+
         if (paramType is AliasType) {
             if (!matchesAliasType(paramType, argType)) return false
 
@@ -109,6 +111,14 @@ object GdsOverloadResolver {
         }
 
         return false
+    }
+
+    private fun isImplicitlyConvertible(from: DataType, to: DataType): Boolean {
+        return when (from) {
+            is IntType -> to is FloatType || to is UIntType
+            is UIntType -> to is FloatType || to is IntType
+            else -> false
+        }
     }
 
     private fun isGenericSampler(type: DataType): Boolean {

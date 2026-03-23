@@ -78,6 +78,54 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         """)
     }
 
+    // === Implicit conversion in arguments ===
+
+    fun `test int literal to float parameter`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(0, 0);
+            }
+        """)
+    }
+
+    fun `test int literal to float parameter mixed`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(1.0, 0);
+            }
+        """)
+    }
+
+    fun `test uint literal to int parameter`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                ivec2 v = ivec2(1u);
+            }
+        """)
+    }
+
+    fun `test int literal to uint parameter`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                uvec2 v = uvec2(1);
+            }
+        """)
+    }
+
+    fun `test int literal to float function parameter`() {
+        doHighlightTest("""
+            shader_type spatial;
+            float f(float a) { return a; }
+            void fragment() {
+                float x = f(1);
+            }
+        """)
+    }
+
     // === Builtin function argument count ===
 
     fun `test builtin function correct args`() {
