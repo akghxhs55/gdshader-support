@@ -117,6 +117,11 @@
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsProcessingFunctionLineMarkerProvider" />
         
+        <!-- Spell Checking -->
+        <spellchecker.support
+            language="GDShader"
+            implementationClass="kr.jaehoyi.gdshader.editor.GdsSpellcheckingStrategy" />
+
         <!-- Refactoring -->
         <lang.refactoringSupport
             language="GDShader"
