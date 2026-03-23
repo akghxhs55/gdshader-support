@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 
@@ -131,6 +132,25 @@ class GdsExpressionAnnotator : Annotator {
 
     private fun checkAssignExpr(element: GdsAssignExpr, holder: AnnotationHolder) {
         val operator = element.assignmentOperator ?: return
+
+        val varRef = PsiTreeUtil.findChildOfType(element.logicOrExpr, GdsVariableNameRef::class.java)
+        if (varRef != null) {
+            val resolved = varRef.reference.resolve()
+            if (resolved is GdsVariableNameDecl) {
+                val spec = resolved.variableSpec
+                if (spec != null && !spec.isMutable) {
+                    val message = when (spec) {
+                        is ConstantSpec -> "Constants cannot be modified"
+                        is UniformSpec -> "Assignment to uniform"
+                        else -> "Cannot assign to read-only variable"
+                    }
+                    holder.newAnnotation(HighlightSeverity.ERROR, message)
+                        .range(element).create()
+                    return
+                }
+            }
+        }
+
         val lhsType = GdsExpressionTypeInference.inferType(element.logicOrExpr) ?: return
         val rhsExpr = element.assignExpr ?: return
         val rhsType = GdsExpressionTypeInference.inferType(rhsExpr) ?: return

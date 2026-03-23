@@ -409,6 +409,48 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    // === Const/Uniform assignment ===
+
+    fun `test assign to const variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                const float x = 1.0;
+                <error descr="Constants cannot be modified">x = 2.0</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test compound assign to const variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                const int x = 1;
+                <error descr="Constants cannot be modified">x += 2</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test assign to uniform variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            uniform float speed;
+            void fragment() {
+                <error descr="Assignment to uniform">speed = 1.0</error>;
+            }
+        """.trimIndent())
+    }
+
+    fun `test assign to mutable variable`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                float x = 1.0;
+                x = 2.0;
+            }
+        """.trimIndent())
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
