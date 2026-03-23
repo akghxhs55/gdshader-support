@@ -26,7 +26,10 @@ class GdsStatementAnnotator : Annotator {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         when (element) {
-            is GdsSimpleStatement -> checkDiscardStatement(element, holder)
+            is GdsSimpleStatement -> {
+                checkDiscardStatement(element, holder)
+                checkBreakContinueStatement(element, holder)
+            }
             is GdsReturnStatement -> checkReturnStatement(element, holder)
             is GdsSwitchStatement -> checkSwitchStatement(element, holder)
             is GdsIfStatement -> checkIfStatement(element, holder)
@@ -47,6 +50,30 @@ class GdsStatementAnnotator : Annotator {
             holder.newAnnotation(HighlightSeverity.ERROR, "'discard' can only be used in 'fragment' or 'light' functions")
                 .range(element)
                 .create()
+        }
+    }
+
+    private fun checkBreakContinueStatement(element: GdsSimpleStatement, holder: AnnotationHolder) {
+        val firstChild = element.firstChild ?: return
+        val type = firstChild.node.elementType
+
+        if (type == GdsTypes.CF_BREAK) {
+            val inLoop = element.parentOfType<GdsForStatement>() != null
+                    || element.parentOfType<GdsWhileStatement>() != null
+                    || element.parentOfType<GdsDoWhileStatement>() != null
+            val inSwitch = element.parentOfType<GdsSwitchStatement>() != null
+            if (!inLoop && !inSwitch) {
+                holder.newAnnotation(HighlightSeverity.ERROR, "'break' is not allowed outside of a loop or 'switch' statement")
+                    .range(element).create()
+            }
+        } else if (type == GdsTypes.CF_CONTINUE) {
+            val inLoop = element.parentOfType<GdsForStatement>() != null
+                    || element.parentOfType<GdsWhileStatement>() != null
+                    || element.parentOfType<GdsDoWhileStatement>() != null
+            if (!inLoop) {
+                holder.newAnnotation(HighlightSeverity.ERROR, "'continue' is not allowed outside of a loop")
+                    .range(element).create()
+            }
         }
     }
 

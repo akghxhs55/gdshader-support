@@ -196,6 +196,85 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    // === break/continue ===
+
+    fun `test break in for loop`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                for (int i = 0; i < 10; i++) {
+                    break;
+                }
+            }
+        """.trimIndent())
+    }
+
+    fun `test break in while loop`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                while (true) {
+                    break;
+                }
+            }
+        """.trimIndent())
+    }
+
+    fun `test break in switch`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int x = 1;
+                switch (x) {
+                    case 0:
+                        break;
+                }
+            }
+        """.trimIndent())
+    }
+
+    fun `test break outside loop`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                <error descr="'break' is not allowed outside of a loop or 'switch' statement">break;</error>
+            }
+        """.trimIndent())
+    }
+
+    fun `test continue in for loop`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                for (int i = 0; i < 10; i++) {
+                    continue;
+                }
+            }
+        """.trimIndent())
+    }
+
+    fun `test continue outside loop`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                <error descr="'continue' is not allowed outside of a loop">continue;</error>
+            }
+        """.trimIndent())
+    }
+
+    fun `test continue in switch`() {
+        doHighlightTest("""
+            shader_type spatial;
+            void fragment() {
+                int x = 1;
+                switch (x) {
+                    case 0:
+                        <error descr="'continue' is not allowed outside of a loop">continue;</error>
+                }
+            }
+        """.trimIndent())
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
