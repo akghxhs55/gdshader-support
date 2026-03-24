@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - Added syntax validations for various contexts
 - Added spell checking support
+- Added code inspection for unsued variables and functions
 
 ## 0.7.0-beta (2026-02-27)
 - Added commenter support

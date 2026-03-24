@@ -116,7 +116,16 @@
         <codeInsight.lineMarkerProvider
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsProcessingFunctionLineMarkerProvider" />
-        
+        <localInspection
+            language="GDShader"
+            groupName="GDShader"
+            shortName="GdsUnusedSymbol"
+            key="inspection.unused.symbol.display.name"
+            bundle="messages.GDShaderBundle"
+            enabledByDefault="true"
+            level="WARNING"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnusedSymbolInspection" />
+
         <!-- Spell Checking -->
         <spellchecker.support
             language="GDShader"
