@@ -39,10 +39,12 @@ class GdsUnusedSymbolInspection : LocalInspectionTool() {
                         is GdsConstantDeclarator -> "Constant"
                         else -> "Variable"
                     }
+                    val fixes = arrayOf(GdsRemoveUnusedSymbolFix(element.name))
                     holder.registerProblem(
                         element,
                         GdsBundle.message("inspection.unused.symbol.message", kind, element.name),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        *fixes
                     )
                 }
             }
@@ -60,7 +62,8 @@ class GdsUnusedSymbolInspection : LocalInspectionTool() {
                     holder.registerProblem(
                         element,
                         GdsBundle.message("inspection.unused.symbol.message", "Function", element.name),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        GdsRemoveUnusedSymbolFix(element.name)
                     )
                 }
             }

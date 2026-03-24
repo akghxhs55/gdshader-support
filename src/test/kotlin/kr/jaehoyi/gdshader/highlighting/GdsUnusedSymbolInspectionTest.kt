@@ -103,8 +103,141 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
         """.trimIndent())
     }
 
+    fun `test remove unused parameter fix`() {
+        doFixTest(
+            before = """
+                shader_type spatial;
+                float my_func(float x) {
+                    return 1.0;
+                }
+                void fragment() {
+                    ALBEDO = vec3(my_func(0.5));
+                }
+            """.trimIndent(),
+            after = """
+                shader_type spatial;
+                float my_func() {
+                    return 1.0;
+                }
+                void fragment() {
+                    ALBEDO = vec3(my_func());
+                }
+            """.trimIndent(),
+            fixName = "Remove 'x'"
+        )
+    }
+
+    fun `test remove first parameter fix`() {
+        doFixTest(
+            before = """
+                shader_type spatial;
+                float my_func(float x, float y) {
+                    return y;
+                }
+                void fragment() {
+                    ALBEDO = vec3(my_func(0.5, 1.0));
+                }
+            """.trimIndent(),
+            after = """
+                shader_type spatial;
+                float my_func(float y) {
+                    return y;
+                }
+                void fragment() {
+                    ALBEDO = vec3(my_func(1.0));
+                }
+            """.trimIndent(),
+            fixName = "Remove 'x'"
+        )
+    }
+
+    fun `test remove single variable fix`() {
+        doFixTest(
+            before = """
+                shader_type spatial;
+                void fragment() {
+                    float x = 1.0;
+                }
+            """.trimIndent(),
+            after = """
+                shader_type spatial;
+                void fragment() {
+                }
+            """.trimIndent(),
+            fixName = "Remove 'x'"
+        )
+    }
+
+    fun `test remove first variable from multi-declaration fix`() {
+        doFixTest(
+            before = """
+                shader_type spatial;
+                void fragment() {
+                    float x = 1.0, y = 2.0;
+                    ALBEDO = vec3(y);
+                }
+            """.trimIndent(),
+            after = """
+                shader_type spatial;
+                void fragment() {
+                    float y = 2.0;
+                    ALBEDO = vec3(y);
+                }
+            """.trimIndent(),
+            fixName = "Remove 'x'"
+        )
+    }
+
+    fun `test remove last variable from multi-declaration fix`() {
+        doFixTest(
+            before = """
+                shader_type spatial;
+                void fragment() {
+                    float x = 1.0, y = 2.0;
+                    ALBEDO = vec3(x);
+                }
+            """.trimIndent(),
+            after = """
+                shader_type spatial;
+                void fragment() {
+                    float x = 1.0;
+                    ALBEDO = vec3(x);
+                }
+            """.trimIndent(),
+            fixName = "Remove 'y'"
+        )
+    }
+
+    fun `test remove unused function fix`() {
+        doFixTest(
+            before = """
+                shader_type spatial;
+                float my_func() {
+                    return 1.0;
+                }
+                void fragment() {
+                }
+            """.trimIndent(),
+            after = """
+                shader_type spatial;
+                void fragment() {
+                }
+            """.trimIndent(),
+            fixName = "Remove 'my_func'"
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(true, false, true)
+    }
+
+    private fun doFixTest(before: String, after: String, fixName: String) {
+        myFixture.configureByText("test_shader.gdshader", before)
+        val fixes = myFixture.getAllQuickFixes()
+        val action = fixes.firstOrNull { it.text == fixName }
+            ?: error("Quick fix '$fixName' not found. Available: ${fixes.map { it.text }}")
+        myFixture.launchAction(action)
+        myFixture.checkResult(after)
     }
 }
