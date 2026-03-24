@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [Unreleased]
+## 0.8.0-beta (2026-03-24)
 - Added syntax validations for various contexts
 - Added spell checking support
-- Added code inspection for unsued variables and functions
+- Added code inspection for unused variables and functions
+- Added quick fix for removing unused symbols
 
 ## 0.7.0-beta (2026-02-27)
 - Added commenter support

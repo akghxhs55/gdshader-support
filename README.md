@@ -27,6 +27,7 @@ This plugin adds GDShader (Godot Shading Language) support for JetBrains IDEs.
 - 🌈 Color preview and picker
 - 📖 Documentation for built-in functions and uniforms
 - 📄 File templates for shader types
+- ✅ Syntax validation and error highlighting
 
 ## 💻 Supported IDEs
 

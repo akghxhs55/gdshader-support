@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.7.0-beta"
+version = "0.8.0-beta"
 
 sourceSets {
     main {
@@ -54,11 +54,10 @@ intellijPlatform {
         
         changeNotes = """
             <ul>
-              <li>Added commenter support</li>
-              <li>Added formatting and code style settings</li>
-              <li>Added uniform hint documentation support</li>
-              <li>Added inlay parameter hints feature</li>
-              <li>Added surround with support</li>
+              <li>Added syntax validations for various contexts</li>
+              <li>Added spell checking support</li>
+              <li>Added code inspection for unused variables and functions</li>
+              <li>Added quick fix for removing unused symbols</li>
             </ul>
         """.trimIndent()
     }

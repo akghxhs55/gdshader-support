@@ -21,6 +21,7 @@
                 <li>Color preview and picker</li>
                 <li>Documentation for built-in functions and uniforms</li>
                 <li>File templates for shader types</li>
+                <li>Syntax validation and error highlighting</li>
             </ul>
         ]]>
     </description>
