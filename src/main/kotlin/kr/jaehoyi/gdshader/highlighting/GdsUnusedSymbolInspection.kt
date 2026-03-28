@@ -35,14 +35,14 @@ class GdsUnusedSymbolInspection : LocalInspectionTool() {
 
                 if (!hasReferences) {
                     val kind = when (parent) {
-                        is GdsParameter -> "Parameter"
-                        is GdsConstantDeclarator -> "Constant"
-                        else -> "Variable"
+                        is GdsParameter -> GdsBundle.message("inspection.unused.symbol.message.parameter")
+                        is GdsConstantDeclarator -> GdsBundle.message("inspection.unused.symbol.message.constant")
+                        else -> GdsBundle.message("inspection.unused.symbol.message.variable")
                     }
                     val fixes = arrayOf(GdsRemoveUnusedSymbolFix(element.name))
                     holder.registerProblem(
                         element,
-                        GdsBundle.message("inspection.unused.symbol.message", kind, element.name),
+                        "$kind ${GdsBundle.message("inspection.unused.symbol.message", element.name)}",
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         *fixes
                     )
