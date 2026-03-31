@@ -59,9 +59,10 @@ class GdsUnusedSymbolInspection : LocalInspectionTool() {
                 val hasReferences = ReferencesSearch.search(element, scope, false).findFirst() != null
 
                 if (!hasReferences) {
+                    val kind = GdsBundle.message("inspection.unused.symbol.message.function")
                     holder.registerProblem(
                         element,
-                        GdsBundle.message("inspection.unused.symbol.message", "Function", element.name),
+                        "$kind ${GdsBundle.message("inspection.unused.symbol.message", element.name)}",
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         GdsRemoveUnusedSymbolFix(element.name)
                     )

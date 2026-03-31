@@ -23,7 +23,7 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
         assertEquals(255, color.red)
     }
 
-    fun `test extract default black color from uninitialized variable`() {
+    fun `test no color from uninitialized variable`() {
         val code = """
             void main() {
                 vec3 my<caret>Color;
@@ -34,9 +34,7 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
         val offset = myFixture.editor.caretModel.offset
         val element = requireNotNull(myFixture.file.findElementAt(offset))
 
-        val color = requireNotNull(provider.getColorFrom(element))
-
-        assertEquals(Color.BLACK, color)
+        assertNull(provider.getColorFrom(element))
     }
 
     fun `test ignore variable if name is not color-related`() {

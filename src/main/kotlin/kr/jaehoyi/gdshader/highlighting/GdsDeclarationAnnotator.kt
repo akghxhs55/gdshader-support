@@ -192,7 +192,7 @@ class GdsDeclarationAnnotator : Annotator {
 
     private fun checkDoubleArraySize(arraySizes: List<*>, holder: AnnotationHolder) {
         if (arraySizes.size >= 2) {
-            val second = arraySizes[1] as PsiElement
+            val second = arraySizes[1] as? PsiElement ?: return
             holder.newAnnotation(HighlightSeverity.ERROR, "Array size is already defined")
                 .range(second)
                 .create()

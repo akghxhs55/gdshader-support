@@ -251,7 +251,7 @@ object GdsLookupElements {
     val CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST
         .filter { it.isInstantiable }
         .flatMap { type ->
-            (type as Instantiable).getConstructors().map { constructorSpec ->
+            (type as? Instantiable)?.getConstructors().orEmpty().map { constructorSpec ->
                 LookupElementBuilder.create(constructorSpec, constructorSpec.name)
                     .withBoldness(true)
                     .withIcon(AllIcons.Nodes.Function)
@@ -267,7 +267,7 @@ object GdsLookupElements {
     val INTEGER_TYPE_CONSTRUCTORS = Builtins.ALL_DATA_TYPE_LIST
         .filter { it == IntType || it == UIntType }
         .flatMap { type ->
-            (type as Instantiable).getConstructors().map { constructorSpec ->
+            (type as? Instantiable)?.getConstructors().orEmpty().map { constructorSpec ->
                 LookupElementBuilder.create(constructorSpec, constructorSpec.name)
                     .withBoldness(true)
                     .withIcon(AllIcons.Nodes.Function)

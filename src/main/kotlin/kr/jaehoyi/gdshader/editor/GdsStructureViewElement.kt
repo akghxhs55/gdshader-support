@@ -138,22 +138,22 @@ class GdsStructureViewElement(private val element: NavigatablePsiElement) :
                 if (decl == null) {
                     val constDecl = topLevel.constantDeclaration
                     constDecl?.constantDeclaratorList?.constantDeclaratorList
-                        ?.map { GdsStructureViewElement(it as NavigatablePsiElement) }
+                        ?.mapNotNull { (it as? NavigatablePsiElement)?.let(::GdsStructureViewElement) }
                         ?: emptyList()
                 } else {
-                    listOf(GdsStructureViewElement(decl as NavigatablePsiElement))
+                    listOfNotNull((decl as? NavigatablePsiElement)?.let(::GdsStructureViewElement))
                 }
             }?.toTypedArray() ?: emptyArray()
         }
         is GdsFunctionDeclaration -> {
             element.parameterList?.parameterList
-                ?.map { GdsStructureViewElement(it as NavigatablePsiElement) }
+                ?.mapNotNull { (it as? NavigatablePsiElement)?.let(::GdsStructureViewElement) }
                 ?.toTypedArray()
                 ?: emptyArray()
         }
         is GdsStructDeclaration -> {
             element.structBlock?.structMemberList?.structMemberList
-                ?.map { GdsStructureViewElement(it as NavigatablePsiElement) }
+                ?.mapNotNull { (it as? NavigatablePsiElement)?.let(::GdsStructureViewElement) }
                 ?.toTypedArray()
                 ?: emptyArray()
         }

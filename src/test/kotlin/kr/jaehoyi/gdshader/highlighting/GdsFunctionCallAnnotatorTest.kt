@@ -251,12 +251,13 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
     }
 
     fun `test unresolved function is not checked`() {
-        doHighlightTest("""
+        myFixture.configureByText("test_shader.gdshader", """
             shader_type spatial;
             void fragment() {
-                float x = <error descr="Unresolved reference 'unknown_func'">unknown_func</error>(1.0, 2.0, 3.0);
+                float x = <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>(1.0, 2.0, 3.0);
             }
         """)
+        myFixture.checkHighlighting(true, false, true)
     }
 
     private fun doHighlightTest(code: String) {
