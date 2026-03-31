@@ -10,7 +10,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             void fragment() {
-                float x = <error descr="Unresolved reference 'unknown_var'">unknown_var</error>;
+                float x = <warning descr="Unresolved reference 'unknown_var'">unknown_var</warning>;
             }
         """)
     }
@@ -69,7 +69,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest("""
             shader_type spatial;
             void fragment() {
-                float x = <error descr="Unresolved reference 'unknown_func'">unknown_func</error>(1.0);
+                float x = <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>(1.0);
             }
         """)
     }
@@ -260,6 +260,6 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
 
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
-        myFixture.checkHighlighting(false, false, true)
+        myFixture.checkHighlighting(true, false, true)
     }
 }

@@ -36,7 +36,7 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
     private fun checkVariableRef(element: GdsVariableNameRef, holder: AnnotationHolder) {
         if (element.reference.resolve() != null) return
 
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference '${element.text}'")
+        holder.newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
@@ -49,7 +49,7 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
 
         if (resolveAsStruct(element)) return
 
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference '${element.text}'")
+        holder.newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
