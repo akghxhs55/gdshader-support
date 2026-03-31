@@ -75,7 +75,7 @@ data class ParameterSpec(
         } 
 
     override val isMutable: Boolean
-        get() = qualifier == ParameterQualifier.OUT || qualifier == ParameterQualifier.INOUT
+        get() = qualifier != ParameterQualifier.CONST && qualifier != ParameterQualifier.CONST_IN
     
 }
 
