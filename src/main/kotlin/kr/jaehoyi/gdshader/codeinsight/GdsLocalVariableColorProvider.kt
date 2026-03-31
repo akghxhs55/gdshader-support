@@ -87,9 +87,9 @@ class GdsLocalVariableColorProvider : ElementColorProvider {
         }
     }
 
-    private fun extractLocalVariableColor(localVariableDeclarator: GdsLocalVariableDeclarator): Color {
-        val initializer = localVariableDeclarator.initializer ?: return Color.BLACK
-        return extractColorFromText(initializer.text) ?: Color.BLACK
+    private fun extractLocalVariableColor(localVariableDeclarator: GdsLocalVariableDeclarator): Color? {
+        val initializer = localVariableDeclarator.initializer ?: return null
+        return extractColorFromText(initializer.text)
     }
 
 }

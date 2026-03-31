@@ -63,9 +63,9 @@ class GdsConstantColorProvider : ElementColorProvider {
         }
     }
 
-    private fun extractConstantColor(constantDeclarator: GdsConstantDeclarator): Color {
-        val initializer = constantDeclarator.initializer ?: return Color.BLACK
-        return extractColorFromText(initializer.text) ?: Color.BLACK
+    private fun extractConstantColor(constantDeclarator: GdsConstantDeclarator): Color? {
+        val initializer = constantDeclarator.initializer ?: return null
+        return extractColorFromText(initializer.text)
     }
 
 }

@@ -77,9 +77,9 @@ class GdsUniformColorProvider : ElementColorProvider {
         }
     }
 
-    private fun extractUniformColor(uniformDeclaration: GdsUniformDeclaration): Color {
-        val initializer = uniformDeclaration.expression ?: return Color.BLACK
-        return extractColorFromText(initializer.text) ?: Color.BLACK
+    private fun extractUniformColor(uniformDeclaration: GdsUniformDeclaration): Color? {
+        val initializer = uniformDeclaration.expression ?: return null
+        return extractColorFromText(initializer.text)
     }
     
 }
