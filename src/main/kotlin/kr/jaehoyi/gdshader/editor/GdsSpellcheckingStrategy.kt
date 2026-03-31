@@ -15,6 +15,6 @@ class GdsSpellcheckingStrategy : SpellcheckingStrategy() {
         if (GdsTokenSets.STRING_LITERALS.contains(elementType)) {
             return TEXT_TOKENIZER
         }
-        return EMPTY_TOKENIZER
+        return super.getTokenizer(element)
     }
 }
