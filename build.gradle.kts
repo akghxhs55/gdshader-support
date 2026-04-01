@@ -32,7 +32,7 @@ dependencies {
 
         testFramework(TestFrameworkType.Platform)
     }
-    
+
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.13.4")
 }
@@ -40,10 +40,9 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.2")
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.3")
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.1")
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
+            ide(IntelliJPlatformType.Rider, "2024.2", useInstaller = false)
+            ide(IntelliJPlatformType.Rider, "2025.1", useInstaller = false)
+            ide(IntelliJPlatformType.Rider, "2026.1", useInstaller = false)
         }
     }
 
@@ -51,7 +50,7 @@ intellijPlatform {
         ideaVersion {
             sinceBuild = "242"
         }
-        
+
         changeNotes = """
             <ul>
               <li>Added syntax validations for various contexts</li>
@@ -68,12 +67,13 @@ tasks {
         sourceCompatibility = "17"
         targetCompatibility = "17"
     }
-    
+
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
     }
-    
+
     withType<Test> {
         useJUnitPlatform()
     }
+
 }

@@ -6,9 +6,8 @@
 
 [![JetBrains Plugin](https://img.shields.io/jetbrains/plugin/v/27949-gdshader?color=blue&label=Plugin%20Version)](https://plugins.jetbrains.com/plugin/27949-gdshader)
 [![MIT License](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
-![CI Status](https://img.shields.io/github/actions/workflow/status/akghxhs55/gdshader-support/ci.yml)
-
 [![JetBrains Plugin Downloads](https://img.shields.io/jetbrains/plugin/d/27949?color=yellow)](https://plugins.jetbrains.com/plugin/27949-gdshader)
+[![CI](https://github.com/akghxhs55/gdshader-support/actions/workflows/ci.yml/badge.svg)](https://github.com/akghxhs55/gdshader-support/actions/workflows/ci.yml)
 ![GitHub Stars](https://img.shields.io/github/stars/akghxhs55/gdshader-support)
 
 This plugin adds GDShader (Godot Shading Language) support for JetBrains IDEs.
