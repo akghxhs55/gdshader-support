@@ -3,14 +3,14 @@ package kr.jaehoyi.gdshader.codeinsight
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsProcessingFunctionLineMarkerProviderTest : BasePlatformTestCase() {
-
     fun `test valid vertex function in spatial shader has line marker`() {
-        val code = """
+        val code =
+            """
             shader_type spatial;
             
             void ver<caret>tex() {
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
 
@@ -25,12 +25,13 @@ class GdsProcessingFunctionLineMarkerProviderTest : BasePlatformTestCase() {
     }
 
     fun `test invalid function for shader type has no marker`() {
-        val code = """
+        val code =
+            """
             shader_type sky;
             
             void lig<caret>ht() {
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
 
@@ -40,12 +41,13 @@ class GdsProcessingFunctionLineMarkerProviderTest : BasePlatformTestCase() {
     }
 
     fun `test custom function has no marker`() {
-        val code = """
+        val code =
+            """
             shader_type spatial;
             
             void my_cust<caret>om_function() {
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
 
@@ -53,5 +55,4 @@ class GdsProcessingFunctionLineMarkerProviderTest : BasePlatformTestCase() {
 
         assertEmpty(gutters)
     }
-    
 }

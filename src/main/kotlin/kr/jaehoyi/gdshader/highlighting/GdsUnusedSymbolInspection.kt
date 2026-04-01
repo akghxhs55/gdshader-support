@@ -20,31 +20,36 @@ import kr.jaehoyi.gdshader.psi.GdsVisitor
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
 class GdsUnusedSymbolInspection : LocalInspectionTool() {
-
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+    ): PsiElementVisitor {
         return object : GdsVisitor() {
             override fun visitVariableNameDecl(element: GdsVariableNameDecl) {
                 val parent = element.parent
                 if (parent !is GdsLocalVariableDeclarator &&
                     parent !is GdsConstantDeclarator &&
                     parent !is GdsParameter
-                ) return
+                ) {
+                    return
+                }
 
                 val scope = GlobalSearchScope.projectScope(element.project)
                 val hasReferences = ReferencesSearch.search(element, scope, false).findFirst() != null
 
                 if (!hasReferences) {
-                    val kind = when (parent) {
-                        is GdsParameter -> GdsBundle.message("inspection.unused.symbol.message.parameter")
-                        is GdsConstantDeclarator -> GdsBundle.message("inspection.unused.symbol.message.constant")
-                        else -> GdsBundle.message("inspection.unused.symbol.message.variable")
-                    }
+                    val kind =
+                        when (parent) {
+                            is GdsParameter -> GdsBundle.message("inspection.unused.symbol.message.parameter")
+                            is GdsConstantDeclarator -> GdsBundle.message("inspection.unused.symbol.message.constant")
+                            else -> GdsBundle.message("inspection.unused.symbol.message.variable")
+                        }
                     val fixes = arrayOf(GdsRemoveUnusedSymbolFix(element.name))
                     holder.registerProblem(
                         element,
                         "$kind ${GdsBundle.message("inspection.unused.symbol.message", element.name)}",
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        *fixes
+                        *fixes,
                     )
                 }
             }
@@ -64,7 +69,7 @@ class GdsUnusedSymbolInspection : LocalInspectionTool() {
                         element,
                         "$kind ${GdsBundle.message("inspection.unused.symbol.message", element.name)}",
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        GdsRemoveUnusedSymbolFix(element.name)
+                        GdsRemoveUnusedSymbolFix(element.name),
                     )
                 }
             }

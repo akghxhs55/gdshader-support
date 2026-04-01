@@ -3,19 +3,18 @@ package kr.jaehoyi.gdshader.codeinsight
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
 import com.intellij.psi.PsiElement
+import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.convertColorToVecString
+import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.extractColorFromText
+import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.isColorVariableName
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
-import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.convertColorToVecString
-import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.extractColorFromText
-import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.isColorVariableName
-import kr.jaehoyi.gdshader.model.Builtins
 import java.awt.Color
 
 class GdsConstantColorProvider : ElementColorProvider {
-
     override fun getColorFrom(element: PsiElement): Color? {
         if (element.node.elementType != GdsTypes.IDENTIFIER) {
             return null
@@ -30,23 +29,25 @@ class GdsConstantColorProvider : ElementColorProvider {
         if (constantDeclarator.arraySize != null) {
             return null
         }
-        
+
         val constantDeclaration = constantDeclarator.parent.parent as? GdsConstantDeclaration ?: return null
         if (constantDeclaration.arraySize != null) {
             return null
         }
-        
+
         val typeText = constantDeclaration.type?.text ?: return null
 
         if (typeText != Builtins.VEC3.name && typeText != Builtins.VEC4.name) {
             return null
         }
-        
 
         return extractConstantColor(constantDeclarator)
     }
 
-    override fun setColorTo(element: PsiElement, color: Color) {
+    override fun setColorTo(
+        element: PsiElement,
+        color: Color,
+    ) {
         val project = element.project
         val constantDeclarator = element.parent?.parent as? GdsConstantDeclarator ?: return
         val constantDeclaration = constantDeclarator.parent.parent as? GdsConstantDeclaration ?: return
@@ -67,5 +68,4 @@ class GdsConstantColorProvider : ElementColorProvider {
         val initializer = constantDeclarator.initializer ?: return null
         return extractColorFromText(initializer.text)
     }
-
 }

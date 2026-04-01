@@ -3,20 +3,17 @@ package kr.jaehoyi.gdshader.codeinsight
 import com.intellij.psi.PsiElement
 import com.intellij.usages.impl.rules.UsageType
 import com.intellij.usages.impl.rules.UsageTypeProvider
+import kr.jaehoyi.gdshader.GdsBundle
 import kr.jaehoyi.gdshader.psi.*
 
-import kr.jaehoyi.gdshader.GdsBundle
-
 class GdsUsageTypeProvider : UsageTypeProvider {
-
-    override fun getUsageType(element: PsiElement): UsageType? {
-        return when (element) {
+    override fun getUsageType(element: PsiElement): UsageType? =
+        when (element) {
             is GdsFunctionNameRef -> FUNCTION_CALL
             is GdsStructNameRef -> getStructUsageType(element)
             is GdsStructMemberNameRef -> STRUCT_MEMBER_ACCESS
             else -> null
         }
-    }
 
     private fun getStructUsageType(element: GdsStructNameRef): UsageType {
         val type = element.parent as? GdsType ?: return TYPE_REFERENCE

@@ -3,12 +3,12 @@ package kr.jaehoyi.gdshader.parsing
 import com.intellij.testFramework.ParsingTestCase
 import kr.jaehoyi.gdshader.GdsParserDefinition
 
-class ExpressionParsingTest : ParsingTestCase(
-    "parsing/expressions",
-    "gdshader",
-    GdsParserDefinition()
-) {
-
+class ExpressionParsingTest :
+    ParsingTestCase(
+        "parsing/expressions",
+        "gdshader",
+        GdsParserDefinition(),
+    ) {
     override fun getTestDataPath(): String = "src/test/testData"
 
     fun testConditionalExpression() {
@@ -90,5 +90,4 @@ class ExpressionParsingTest : ParsingTestCase(
     fun testUintConstant() {
         doTest(true)
     }
-
 }

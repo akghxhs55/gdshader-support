@@ -1,13 +1,15 @@
 package kr.jaehoyi.gdshader.completion
 
 class StatementCompletionTest : GdsCompletionTestBase() {
-
     fun `test in function body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -16,11 +18,14 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test inside if condition`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 if (<caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -28,13 +33,16 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test inside if body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 if (true) {
                     <caret>
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -42,14 +50,17 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test else after if statement`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 if (true) {
 
                 }
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -57,14 +68,17 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test if after else`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 if (true) {
 
                 }
                 else <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -73,11 +87,14 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test inside for init`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 for (<caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -86,11 +103,14 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test inside for condition`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 for (int i = 1; <caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -99,11 +119,14 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test inside for iteration`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 for (int i = 1; i < 10; <caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -112,17 +135,19 @@ class StatementCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after statement`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 for (;;) {
                 }
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
         assertContainsElements(completions, "int", "float", "if", "for", "return")
     }
-
 }

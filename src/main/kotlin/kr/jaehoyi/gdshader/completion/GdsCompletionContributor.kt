@@ -6,14 +6,13 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.or
+import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
 import com.intellij.util.ProcessingContext
-import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
@@ -21,15 +20,14 @@ import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.model.StructType
 import kr.jaehoyi.gdshader.model.VectorType
+import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 import kotlin.collections.plusAssign
 
-
 class GdsCompletionContributor : CompletionContributor() {
-    
     init {
         extendShaderTypeDeclaration()
         extendRenderModeDeclaration()
@@ -57,7 +55,7 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
 
@@ -72,9 +70,9 @@ class GdsCompletionContributor : CompletionContributor() {
                     // 2. After SHADER_TYPE
                     result.addAllElements(GdsLookupElements.SHADER_TYPES)
                 }
-            }
+            },
         )
-    
+
     private fun extendRenderModeDeclaration() =
         extend(
             CompletionType.BASIC,
@@ -86,7 +84,7 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
 
@@ -101,9 +99,9 @@ class GdsCompletionContributor : CompletionContributor() {
                     // 2. After RENDER_MODE
                     result.addAllElements(GdsLookupElements.RENDER_MODES)
                 }
-            }
+            },
         )
-    
+
     private fun extendStencilModeDeclaration() =
         extend(
             CompletionType.BASIC,
@@ -115,7 +113,7 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
 
@@ -130,9 +128,9 @@ class GdsCompletionContributor : CompletionContributor() {
                     // 2. After STENCIL_MODE
                     result.addAllElements(GdsLookupElements.STENCIL_MODES)
                 }
-            }
+            },
         )
-    
+
     private fun extendUniformGroupDeclaration() =
         extend(
             CompletionType.BASIC,
@@ -141,16 +139,16 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     // uniform_group_declaration ::= UNIFORM_GROUP uniform_group_name? (PERIOD uniform_group_name)* SEMICOLON
 
                     // 1.
                     result.addElement(GdsLookupElements.UNIFORM_GROUP_KEYWORD)
                 }
-            }
+            },
         )
-    
+
     private fun extendUniformDeclaration() =
         extend(
             CompletionType.BASIC,
@@ -164,7 +162,7 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val prevLeaf = getPrevCodeLeaf(position)
@@ -211,44 +209,45 @@ class GdsCompletionContributor : CompletionContributor() {
                         val type = Builtins.getType(typeText) ?: return
 
                         result.addAllElements(
-                            GdsLookupElements.UNIFORM_HINTS[type] ?: emptyList()
+                            GdsLookupElements.UNIFORM_HINTS[type] ?: emptyList(),
                         )
                         return
                     }
-                    
+
                     // 6. After COMMA
                     if (prevLeaf.elementType == GdsTypes.COMMA) {
                         if (position.parentOfType<GdsHintSection>() == null || prevLeaf.parentOfType<GdsHint>() != null) {
                             return
                         }
-                        
+
                         val uniformDeclaration = position.parentOfType<GdsUniformDeclaration>()
                         val typeText = uniformDeclaration?.type?.text ?: return
                         val type = Builtins.getType(typeText) ?: return
 
                         result.addAllElements(
-                            GdsLookupElements.UNIFORM_HINTS[type] ?: emptyList()
+                            GdsLookupElements.UNIFORM_HINTS[type] ?: emptyList(),
                         )
                         return
                     }
-                    
+
                     // 6. Inside initializer expression
                     if (position.parent.elementType == GdsTypes.VARIABLE_NAME_REF) {
                         result.addAllElements(getExpressionCompletions(position))
                     }
                 }
-            }
+            },
         )
-    
+
     private fun extendConstantDeclaration() =
         extend(
             CompletionType.BASIC,
             or(
                 GdsPatterns.TOP_LEVEL,
-                psiElement().inside(GdsBlockBody::class.java)
+                psiElement()
+                    .inside(GdsBlockBody::class.java)
                     .andOr(
                         psiElement().afterLeaf(psiElement(GdsTypes.CURLY_BRACKET_OPEN)),
-                        psiElement().afterLeaf(psiElement(GdsTypes.SEMICOLON))
+                        psiElement().afterLeaf(psiElement(GdsTypes.SEMICOLON)),
                     ),
                 psiElement().inside(GdsConstantDeclaration::class.java),
             ),
@@ -256,7 +255,7 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val prevLeaf = getPrevCodeLeaf(position)
@@ -265,7 +264,10 @@ class GdsCompletionContributor : CompletionContributor() {
 
                     // 1.
                     if (position.parent is GdsFile ||
-                        (position.parentOfType<GdsBlock>() != null && (prevLeaf.elementType == GdsTypes.CURLY_BRACKET_OPEN || prevLeaf.elementType == GdsTypes.SEMICOLON))
+                        (
+                            position.parentOfType<GdsBlock>() != null &&
+                                (prevLeaf.elementType == GdsTypes.CURLY_BRACKET_OPEN || prevLeaf.elementType == GdsTypes.SEMICOLON)
+                        )
                     ) {
                         result.addElement(GdsLookupElements.CONST_KEYWORD)
                         return
@@ -293,27 +295,27 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 4. Inside initializer expression
                     if (position.parent.elementType == GdsTypes.VARIABLE_NAME_REF) {
                         result.addAllElements(getExpressionCompletions(position))
                     }
                 }
-            }
+            },
         )
-        
+
     private fun extendVaryingDeclaration() =
         extend(
             CompletionType.BASIC,
             or(
                 GdsPatterns.TOP_LEVEL,
-                psiElement().inside(GdsVaryingDeclaration::class.java)
+                psiElement().inside(GdsVaryingDeclaration::class.java),
             ),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val prevLeaf = getPrevCodeLeaf(position)
@@ -351,23 +353,24 @@ class GdsCompletionContributor : CompletionContributor() {
                         return
                     }
                 }
-            }
+            },
         )
-    
+
     private fun extendFunctionDeclaration() =
         extend(
             CompletionType.BASIC,
             or(
                 GdsPatterns.TOP_LEVEL,
                 psiElement().withParent(GdsFile::class.java),
-                psiElement().inside(GdsFunctionDeclaration::class.java)
-                    .andNot(psiElement().inside(GdsBlock::class.java))
+                psiElement()
+                    .inside(GdsFunctionDeclaration::class.java)
+                    .andNot(psiElement().inside(GdsBlock::class.java)),
             ),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val prevLeaf = getPrevCodeLeaf(position)
@@ -380,11 +383,11 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.RETURNABLE_BUILTIN_TYPES)
                         return
                     }
-                    
+
                     if (prevLeaf == null) {
                         return
                     }
-                    
+
                     // 2. After precision
                     if (position.parent !is GdsFunctionDeclaration &&
                         GdsKeywords.PRECISIONS.contains(prevLeaf.text)
@@ -392,7 +395,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.RETURNABLE_BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 3. After return type
                     if (position.parentOfType<GdsFunctionDeclaration>() == null &&
                         prevLeaf.text == "void"
@@ -406,7 +409,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     if (position.parentOfType<GdsFunctionDeclaration>() == null) {
                         return
                     }
-                    
+
                     // 4. Inside the parameter list, after COMMA or PARENTHESIS_OPEN
                     if (prevLeaf.elementType == GdsTypes.COMMA || prevLeaf.elementType == GdsTypes.PARENTHESIS_OPEN) {
                         result.addElement(GdsLookupElements.CONST_KEYWORD)
@@ -416,7 +419,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.PARAMETER_QUALIFIERS)
                         return
                     }
-                    
+
                     // 5. Inside the parameter list, after CONST
                     if (prevLeaf.elementType == GdsTypes.CONST) {
                         result.addElement(GdsLookupElements.IN_KEYWORD)
@@ -425,7 +428,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 6. Inside parameter list, after parameter qualifier
                     if (GdsKeywords.PARAMETER_QUALIFIERS.contains(prevLeaf.text)) {
                         result.addAllElements(GdsLookupElements.PRECISIONS)
@@ -433,22 +436,22 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 7. Inside parameter list, after precision
                     if (GdsKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
                         return
                     }
-                    
+
                     // 8. Inside array size
                     if (prevLeaf.elementType == GdsTypes.BRACKET_OPEN) {
                         result.addAllElements(GdsLookupElements.INTEGER_TYPE_CONSTRUCTORS)
                     }
                 }
-            }
+            },
         )
-    
+
     private fun extendProcessingFunctionDeclaration() =
         extend(
             CompletionType.BASIC,
@@ -457,46 +460,46 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
-                    
+
                     val file = position.containingFile as? GdsFile ?: return
                     val shaderType = GdsPsiImplUtil.getShaderType(file) ?: return
-                    
+
                     result.addAllElements(GdsLookupElements.PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE[shaderType] ?: emptyList())
                 }
-            }
+            },
         )
-    
+
     private fun extendStructDeclaration() =
         extend(
             CompletionType.BASIC,
             or(
                 GdsPatterns.TOP_LEVEL,
-                psiElement().inside(GdsStructDeclaration::class.java)
+                psiElement().inside(GdsStructDeclaration::class.java),
             ),
             object : CompletionProvider<CompletionParameters>() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val prevLeaf = getPrevCodeLeaf(position)
-                    
+
                     // struct_declaration ::= STRUCT struct_name_decl struct_block SEMICOLON
-                    
+
                     // 1.
                     if (position.parent is GdsFile) {
                         result.addElement(GdsLookupElements.STRUCT_KEYWORD)
                         return
                     }
-                    
+
                     if (position.parentOfType<GdsStructDeclaration>() == null) {
                         return
                     }
-                    
+
                     // 2. After CURLY_BRACKET_OPEN or SEMICOLON
                     if (prevLeaf.elementType == GdsTypes.CURLY_BRACKET_OPEN || prevLeaf.elementType == GdsTypes.SEMICOLON) {
                         result.addAllElements(GdsLookupElements.PRECISIONS)
@@ -507,7 +510,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         }
                         return
                     }
-                    
+
                     // 3. After precision
                     if (GdsKeywords.PRECISIONS.contains(prevLeaf?.text)) {
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
@@ -517,13 +520,13 @@ class GdsCompletionContributor : CompletionContributor() {
                         }
                         return
                     }
-                    
+
                     // 4. Inside array size
                     if (prevLeaf.elementType == GdsTypes.BRACKET_OPEN) {
                         result.addAllElements(GdsLookupElements.INTEGER_TYPE_CONSTRUCTORS)
                     }
                 }
-            }
+            },
         )
 
     private fun extendStatement() =
@@ -536,7 +539,7 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val completions = arrayListOf<LookupElement>()
 
@@ -550,7 +553,8 @@ class GdsCompletionContributor : CompletionContributor() {
                     when (prevLeaf.elementType) {
                         GdsTypes.CURLY_BRACKET_OPEN,
                         GdsTypes.CF_ELSE,
-                        GdsTypes.CF_DO -> {
+                        GdsTypes.CF_DO,
+                        -> {
                             completions += getStatementCompletions(position)
                         }
 
@@ -565,7 +569,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         }
 
                         GdsTypes.SEMICOLON -> {
-                            completions += 
+                            completions +=
                                 if (prevLeaf.parent is GdsForStatement) {
                                     getExpressionCompletions(position)
                                 } else {
@@ -595,10 +599,11 @@ class GdsCompletionContributor : CompletionContributor() {
                         GdsTypes.CF_CASE,
                         GdsTypes.CF_RETURN,
                         GdsTypes.QUESTION,
-                        in GdsTokenSets.OPERATORS -> {
+                        in GdsTokenSets.OPERATORS,
+                        -> {
                             completions += getExpressionCompletions(position)
                         }
-                        
+
                         GdsTypes.COMMA -> {
                             val nextLeaf = PsiTreeUtil.nextVisibleLeaf(position) ?: return
                             if (nextLeaf.elementType == GdsTypes.PARENTHESIS_CLOSE) {
@@ -615,10 +620,10 @@ class GdsCompletionContributor : CompletionContributor() {
                             }
                         }
                     }
-                    
+
                     result.addAllElements(completions)
                 }
-            }
+            },
         )
 
     private fun extendPostfixExpression() =
@@ -629,14 +634,14 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val dot = PsiTreeUtil.prevVisibleLeaf(position)
                     if (dot == null || dot.node.elementType != GdsTypes.PERIOD) return
 
                     var baseType: DataType? = null
-                    
+
                     val postfixExpr = dot.parent as? GdsPostfixExpr
                     if (postfixExpr != null) {
                         baseType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, dot)
@@ -644,7 +649,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         var curr = PsiTreeUtil.prevVisibleLeaf(dot) ?: return
                         val chain = mutableListOf<String>()
                         var startExpr: GdsExpression? = null
-                        
+
                         while (true) {
                             if (curr.node.elementType == GdsTypes.IDENTIFIER) {
                                 val prevDot = PsiTreeUtil.prevVisibleLeaf(curr)
@@ -661,22 +666,23 @@ class GdsCompletionContributor : CompletionContributor() {
                                 break
                             }
                         }
-                        
+
                         if (startExpr != null) {
                             var currentType = GdsExpressionTypeInference.inferType(startExpr)
                             for (memberName in chain) {
-                                currentType = if (currentType is MemberAccessible) {
-                                    currentType.resolveMember(memberName)
-                                } else {
-                                    null
-                                }
+                                currentType =
+                                    if (currentType is MemberAccessible) {
+                                        currentType.resolveMember(memberName)
+                                    } else {
+                                        null
+                                    }
                                 if (currentType == null) break
                             }
                             baseType = currentType
                         } else if (curr.node.elementType == GdsTypes.IDENTIFIER) {
                             val name = curr.text
                             var currentType: DataType? = null
-                            
+
                             GdsResolver.processVariableDeclaration(curr) { variable ->
                                 if (variable.name == name) {
                                     currentType = variable.variableSpec?.type
@@ -684,14 +690,15 @@ class GdsCompletionContributor : CompletionContributor() {
                                 }
                                 true
                             }
-                            
+
                             if (currentType != null) {
                                 for (memberName in chain) {
-                                    currentType = if (currentType is MemberAccessible) {
-                                        (currentType as MemberAccessible).resolveMember(memberName)
-                                    } else {
-                                        null
-                                    }
+                                    currentType =
+                                        if (currentType is MemberAccessible) {
+                                            (currentType as MemberAccessible).resolveMember(memberName)
+                                        } else {
+                                            null
+                                        }
                                     if (currentType == null) break
                                 }
                                 baseType = currentType
@@ -701,19 +708,20 @@ class GdsCompletionContributor : CompletionContributor() {
 
                     if (baseType == null) return
 
-                    val completions = when (baseType) {
-                        is StructType -> {
-                            baseType.members.map { (name, type) ->
-                                GdsLookupElements.createStructMember(name, type)
+                    val completions =
+                        when (baseType) {
+                            is StructType -> {
+                                baseType.members.map { (name, type) ->
+                                    GdsLookupElements.createStructMember(name, type)
+                                }
                             }
+                            is VectorType -> getVectorSwizzles(baseType)
+                            else -> emptyList()
                         }
-                        is VectorType -> getVectorSwizzles(baseType)
-                        else -> emptyList()
-                    }
 
                     result.addAllElements(completions)
                 }
-            }
+            },
         )
 
     private fun extendPreprocessorDirective() =
@@ -724,27 +732,28 @@ class GdsCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     val position = parameters.position
                     val text = position.text
-                    
+
                     if (!text.startsWith("#")) return
-                    
+
                     result.addAllElements(GdsLookupElements.PREPROCESSOR_DIRECTIVES)
                 }
-            }
+            },
         )
 
     private fun getVectorSwizzles(vectorType: VectorType): List<LookupElement> {
         val size = vectorType.containerSize
         val components = mutableListOf<String>()
 
-        val sets = listOf(
-            listOf("x", "y", "z", "w"),
-            listOf("r", "g", "b", "a"),
-            listOf("s", "t", "p", "q")
-        )
+        val sets =
+            listOf(
+                listOf("x", "y", "z", "w"),
+                listOf("r", "g", "b", "a"),
+                listOf("s", "t", "p", "q"),
+            )
 
         for (set in sets) {
             val validComponents = set.take(size)
@@ -767,19 +776,20 @@ class GdsCompletionContributor : CompletionContributor() {
         }
 
         return components.map {
-            val resultType = if (it.length == 1) {
-                vectorType.elementType
-            } else {
-                VectorType.of(vectorType.elementType, it.length) ?: vectorType
-            }
-            
+            val resultType =
+                if (it.length == 1) {
+                    vectorType.elementType
+                } else {
+                    VectorType.of(vectorType.elementType, it.length) ?: vectorType
+                }
+
             GdsLookupElements.createVectorSwizzle(it, resultType)
         }
     }
-    
+
     private fun getStatementCompletions(position: PsiElement): List<LookupElement> {
         val completions = arrayListOf<LookupElement>()
-        
+
         completions += GdsLookupElements.CONTROL_STATEMENT_STARTERS
         completions += GdsLookupElements.DO_KEYWORD
         completions += GdsLookupElements.RETURN_KEYWORD
@@ -790,10 +800,10 @@ class GdsCompletionContributor : CompletionContributor() {
             completions += GdsLookupElements.createTypeDeclarationFromStructNameDecl(element)
             return@processStructDeclaration true
         }
-        
+
         completions += GdsLookupElements.PRECISIONS
         completions += GdsLookupElements.CONST_KEYWORD
-        
+
         if (position.parentOfType<GdsForStatement>() != null ||
             position.parentOfType<GdsWhileStatement>() != null ||
             position.parentOfType<GdsDoWhileStatement>() != null
@@ -801,28 +811,30 @@ class GdsCompletionContributor : CompletionContributor() {
             completions += GdsLookupElements.BREAK_KEYWORD
             completions += GdsLookupElements.CONTINUE_KEYWORD
         }
-        
+
         if (position.parentOfType<GdsSwitchStatement>() != null) {
             completions += GdsLookupElements.BREAK_KEYWORD
         }
-        
+
         return completions + getExpressionCompletions(position)
     }
-    
+
     private fun getExpressionCompletions(position: PsiElement): List<LookupElement> {
         val file = position.containingFile as? GdsFile ?: return emptyList()
         val shaderType = GdsPsiImplUtil.getShaderType(file) ?: ShaderType.SPATIAL
         val functionContext = GdsPsiImplUtil.getFunctionContext(position)
-        
+
         val completions = arrayListOf<LookupElement>()
-        
+
         completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList()
         completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
 
         GdsResolver.processVariableDeclaration(position) { element ->
             when (element) {
                 is GdsLightVariable -> return@processVariableDeclaration false
-                is GdsVariableNameDecl -> completions += GdsLookupElements.createFromVariableNameDecl(element) ?: return@processVariableDeclaration true
+                is GdsVariableNameDecl ->
+                    completions +=
+                        GdsLookupElements.createFromVariableNameDecl(element) ?: return@processVariableDeclaration true
             }
             return@processVariableDeclaration true
         }
@@ -830,7 +842,9 @@ class GdsCompletionContributor : CompletionContributor() {
         GdsResolver.processFunctionDeclaration(position) { element ->
             when (element) {
                 is GdsLightFunction -> return@processFunctionDeclaration false
-                is GdsFunctionNameDecl -> completions += GdsLookupElements.createFromFunctionNameDecl(element) ?: return@processFunctionDeclaration true
+                is GdsFunctionNameDecl ->
+                    completions +=
+                        GdsLookupElements.createFromFunctionNameDecl(element) ?: return@processFunctionDeclaration true
             }
             return@processFunctionDeclaration true
         }
@@ -845,10 +859,10 @@ class GdsCompletionContributor : CompletionContributor() {
 
         completions += GdsLookupElements.CONSTRUCTORS
         completions += GdsLookupElements.BOOLEAN_LITERALS
-        
+
         return completions
     }
-    
+
     private fun getPrevCodeLeaf(position: PsiElement): PsiElement? {
         var prevLeaf = PsiTreeUtil.prevVisibleLeaf(position) ?: return null
 
@@ -858,5 +872,4 @@ class GdsCompletionContributor : CompletionContributor() {
 
         return prevLeaf
     }
-    
 }

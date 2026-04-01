@@ -14,22 +14,23 @@ import kr.jaehoyi.gdshader.psi.GdsStructBlock
 import kr.jaehoyi.gdshader.psi.GdsSwitchBlock
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
-class GdsFoldingBuilder : CustomFoldingBuilder(), DumbAware {
+class GdsFoldingBuilder :
+    CustomFoldingBuilder(),
+    DumbAware {
+    private val foldingTargets =
+        listOf(
+            GdsBlock::class.java,
+            GdsStructBlock::class.java,
+            GdsSwitchBlock::class.java,
+            GdsInitializerList::class.java,
+        )
 
-    private val foldingTargets = listOf(
-        GdsBlock::class.java,
-        GdsStructBlock::class.java,
-        GdsSwitchBlock::class.java,
-        GdsInitializerList::class.java
-    )
-    
     override fun buildLanguageFoldRegions(
         descriptors: MutableList<FoldingDescriptor>,
         root: PsiElement,
         document: Document,
-        quick: Boolean
+        quick: Boolean,
     ) {
-
         for (type in foldingTargets) {
             val elements = PsiTreeUtil.findChildrenOfType(root, type)
             for (element in elements) {
@@ -38,9 +39,10 @@ class GdsFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             }
         }
 
-        val commentStarts = PsiTreeUtil.collectElements(root) {
-            it.node.elementType == GdsTypes.BLOCK_COMMENT_START
-        }
+        val commentStarts =
+            PsiTreeUtil.collectElements(root) {
+                it.node.elementType == GdsTypes.BLOCK_COMMENT_START
+            }
 
         for (startNode in commentStarts) {
             var endNode = startNode.nextSibling
@@ -63,7 +65,10 @@ class GdsFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         }
     }
 
-    override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String {
+    override fun getLanguagePlaceholderText(
+        node: ASTNode,
+        range: TextRange,
+    ): String {
         val elementType = node.elementType
         return when (elementType) {
             GdsTypes.BLOCK_COMMENT_START -> "/*...*/"

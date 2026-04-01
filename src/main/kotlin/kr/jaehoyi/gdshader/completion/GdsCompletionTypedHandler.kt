@@ -8,15 +8,19 @@ import com.intellij.psi.PsiFile
 import kr.jaehoyi.gdshader.GdsLanguage
 
 class GdsCompletionTypedHandler : TypedHandlerDelegate() {
-
-    override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {
+    override fun checkAutoPopup(
+        charTyped: Char,
+        project: Project,
+        editor: Editor,
+        file: PsiFile,
+    ): Result {
         if (file.language != GdsLanguage) {
             return Result.CONTINUE
         }
-        
+
         when (charTyped) {
             ',', '#' -> AutoPopupController.getInstance(project).scheduleAutoPopup(editor)
-        
+
             ' ' -> {
                 val offset = editor.caretModel.offset
                 if (offset >= 2) {
@@ -27,7 +31,7 @@ class GdsCompletionTypedHandler : TypedHandlerDelegate() {
                     }
                 }
             }
-            
+
             '"' -> {
                 val document = editor.document
                 val offset = editor.caretModel.offset
@@ -43,8 +47,7 @@ class GdsCompletionTypedHandler : TypedHandlerDelegate() {
                 }
             }
         }
-        
+
         return Result.CONTINUE
     }
-    
 }

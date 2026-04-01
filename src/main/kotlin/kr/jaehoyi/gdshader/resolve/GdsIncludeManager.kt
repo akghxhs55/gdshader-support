@@ -14,9 +14,8 @@ import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 object GdsIncludeManager {
-
     private val INCLUDED_FILES_KEY = Key.create<CachedValue<Set<PsiFile>>>("GDS_INCLUDED_FILES")
-    
+
     private val INCLUDE_PATH_REGEX = Regex("\"([^\"]+)\"")
 
     fun processIncludedDeclarations(
@@ -24,7 +23,7 @@ object GdsIncludeManager {
         processor: PsiScopeProcessor,
         state: ResolveState,
         lastParent: PsiElement?,
-        place: PsiElement
+        place: PsiElement,
     ): Boolean {
         val includedFiles = getIncludedFiles(currentFile)
 
@@ -36,14 +35,14 @@ object GdsIncludeManager {
 
         return true
     }
-    
+
     fun getIncludedFiles(file: PsiFile): Set<PsiFile> {
         if (file !is GdsFile) return emptySet()
-        
+
         return CachedValuesManager.getCachedValue(file, INCLUDED_FILES_KEY) {
             val result = mutableSetOf<PsiFile>()
             collectIncludesRecursive(file, result, 0)
-            
+
             result.remove(file)
 
             CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
@@ -53,12 +52,12 @@ object GdsIncludeManager {
     private fun collectIncludesRecursive(
         currentFile: PsiFile,
         visited: MutableSet<PsiFile>,
-        depth: Int
+        depth: Int,
     ) {
         if (depth > 25) return
 
         if (!visited.add(currentFile)) return
-        
+
         val includePaths = findIncludePathsInFile(currentFile)
 
         for (path in includePaths) {
@@ -73,20 +72,21 @@ object GdsIncludeManager {
 
     private fun findIncludePathsInFile(file: PsiFile): List<String> {
         val paths = mutableListOf<String>()
-        
-        val elements = SyntaxTraverser.psiTraverser(file)
-            .filter { it.node.elementType == GdsTypes.PP_INCLUDE_LINE }
-        
+
+        val elements =
+            SyntaxTraverser
+                .psiTraverser(file)
+                .filter { it.node.elementType == GdsTypes.PP_INCLUDE_LINE }
+
         for (element in elements) {
             val text = element.text
-            
+
             val matchResult = INCLUDE_PATH_REGEX.find(text)
             if (matchResult != null) {
                 paths.add(matchResult.groupValues[1])
             }
         }
-        
+
         return paths
     }
-    
 }

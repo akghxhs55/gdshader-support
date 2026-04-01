@@ -15,7 +15,6 @@ abstract class GdsSurrounder(
     private val caretInSuffix: Boolean = false,
     private val caretLocalOffset: Int,
 ) : Surrounder {
-
     override fun getTemplateDescription(): String = templateDescription
 
     override fun isApplicable(elements: Array<out PsiElement>): Boolean = elements.isNotEmpty()
@@ -31,11 +30,12 @@ abstract class GdsSurrounder(
         val selectedText = document.getText(TextRange(startOffset, endOffset))
 
         val newText = "$prefix\n$selectedText\n$suffix"
-        val caretPos = if (caretInSuffix) {
-            startOffset + prefix.length + 1 + selectedText.length + 1 + caretLocalOffset
-        } else {
-            startOffset + caretLocalOffset
-        }
+        val caretPos =
+            if (caretInSuffix) {
+                startOffset + prefix.length + 1 + selectedText.length + 1 + caretLocalOffset
+            } else {
+                startOffset + caretLocalOffset
+            }
 
         document.replaceString(startOffset, endOffset, newText)
         val marker = document.createRangeMarker(caretPos, caretPos)
@@ -52,7 +52,11 @@ abstract class GdsSurrounder(
 }
 
 class GdsIfSurrounder : GdsSurrounder("if", "if () {", "}", caretLocalOffset = 4)
+
 class GdsIfElseSurrounder : GdsSurrounder("if / else", "if () {", "} else {\n}", caretLocalOffset = 4)
+
 class GdsForSurrounder : GdsSurrounder("for", "for () {", "}", caretLocalOffset = 5)
+
 class GdsWhileSurrounder : GdsSurrounder("while", "while () {", "}", caretLocalOffset = 7)
+
 class GdsDoWhileSurrounder : GdsSurrounder("do / while", "do {", "} while ();", caretInSuffix = true, caretLocalOffset = 9)

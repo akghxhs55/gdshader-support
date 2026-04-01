@@ -43,8 +43,10 @@ import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 
 class GdsDocumentationProvider : AbstractDocumentationProvider() {
-
-    override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
+    override fun generateDoc(
+        element: PsiElement?,
+        originalElement: PsiElement?,
+    ): String? {
         if (element == null) return null
         return when (element) {
             is GdsLightFunction -> generateBuiltinFunctionDoc(element)
@@ -66,7 +68,7 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         editor: Editor,
         file: PsiFile,
         contextElement: PsiElement?,
-        targetOffset: Int
+        targetOffset: Int,
     ): PsiElement? {
         if (contextElement != null && GdsHintDocumentation.HINT_DOCS.containsKey(contextElement.node.elementType)) {
             return contextElement
@@ -74,7 +76,10 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset)
     }
 
-    override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
+    override fun getQuickNavigateInfo(
+        element: PsiElement?,
+        originalElement: PsiElement?,
+    ): String? {
         if (element == null) return null
         return when (element) {
             is GdsLightFunction -> getFunctionSignature(element.functionSpec)
@@ -158,14 +163,15 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         sb.append(getVariableSignature(spec))
         sb.append(DocumentationMarkup.DEFINITION_END)
 
-        val targetElement = when (val parent = element.parent) {
-            is GdsUniformDeclaration -> parent
-            is GdsVaryingDeclaration -> parent
-            is GdsConstantDeclarator -> (parent.parent as? GdsConstantDeclaratorList)?.parent as? GdsConstantDeclaration
-            is GdsLocalVariableDeclarator -> (parent.parent as? GdsLocalVariableDeclaratorList)?.parent as? GdsLocalVariableDeclaration
-            is GdsParameter -> parent
-            else -> element
-        }
+        val targetElement =
+            when (val parent = element.parent) {
+                is GdsUniformDeclaration -> parent
+                is GdsVaryingDeclaration -> parent
+                is GdsConstantDeclarator -> (parent.parent as? GdsConstantDeclaratorList)?.parent as? GdsConstantDeclaration
+                is GdsLocalVariableDeclarator -> (parent.parent as? GdsLocalVariableDeclaratorList)?.parent as? GdsLocalVariableDeclaration
+                is GdsParameter -> parent
+                else -> element
+            }
 
         if (targetElement != null) {
             val comment = findDocumentationComment(targetElement)
@@ -201,65 +207,85 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         val returnType = colorize(spec.returnType.presentationText, GdsSyntaxHighlighter.TYPE)
         val name = colorize(spec.name, GdsSyntaxHighlighter.FUNCTION)
 
-        val params = spec.parameters.joinToString(", ") { param ->
-            val qualifierText = if (param.qualifier != ParameterQualifier.IN) {
-                colorize(param.qualifier.text, GdsSyntaxHighlighter.KEYWORD) + " "
-            } else ""
+        val params =
+            spec.parameters.joinToString(", ") { param ->
+                val qualifierText =
+                    if (param.qualifier != ParameterQualifier.IN) {
+                        colorize(param.qualifier.text, GdsSyntaxHighlighter.KEYWORD) + " "
+                    } else {
+                        ""
+                    }
 
-            val type = colorize(param.type.presentationText, GdsSyntaxHighlighter.TYPE)
-            val paramName = colorize(param.name, GdsSyntaxHighlighter.PARAMETER)
+                val type = colorize(param.type.presentationText, GdsSyntaxHighlighter.TYPE)
+                val paramName = colorize(param.name, GdsSyntaxHighlighter.PARAMETER)
 
-            "$qualifierText$type $paramName"
-        }
+                "$qualifierText$type $paramName"
+            }
         return "$returnType $name($params)"
     }
 
     private fun getVariableSignature(spec: VariableSpec): String {
         val type = colorize(spec.type.presentationText, GdsSyntaxHighlighter.TYPE)
 
-        val nameKey = when (spec) {
-            is UniformSpec -> GdsSyntaxHighlighter.UNIFORM_VARIABLE
-            is VaryingSpec -> GdsSyntaxHighlighter.VARYING_VARIABLE
-            is ConstantSpec -> GdsSyntaxHighlighter.CONSTANT
-            is ParameterSpec -> GdsSyntaxHighlighter.PARAMETER
-            is LocalVariableSpec -> GdsSyntaxHighlighter.LOCAL_VARIABLE
-        }
+        val nameKey =
+            when (spec) {
+                is UniformSpec -> GdsSyntaxHighlighter.UNIFORM_VARIABLE
+                is VaryingSpec -> GdsSyntaxHighlighter.VARYING_VARIABLE
+                is ConstantSpec -> GdsSyntaxHighlighter.CONSTANT
+                is ParameterSpec -> GdsSyntaxHighlighter.PARAMETER
+                is LocalVariableSpec -> GdsSyntaxHighlighter.LOCAL_VARIABLE
+            }
         val name = colorize(spec.name, nameKey)
 
-        val prefix = when (spec) {
-            is UniformSpec -> {
-                val q = if (spec.qualifier != UniformQualifier.NORMAL) colorize(
-                    spec.qualifier.text,
-                    GdsSyntaxHighlighter.KEYWORD
-                ) + " " else ""
-                "${q}${colorize("uniform", GdsSyntaxHighlighter.KEYWORD)} "
-            }
+        val prefix =
+            when (spec) {
+                is UniformSpec -> {
+                    val q =
+                        if (spec.qualifier != UniformQualifier.NORMAL) {
+                            colorize(
+                                spec.qualifier.text,
+                                GdsSyntaxHighlighter.KEYWORD,
+                            ) + " "
+                        } else {
+                            ""
+                        }
+                    "${q}${colorize("uniform", GdsSyntaxHighlighter.KEYWORD)} "
+                }
 
-            is VaryingSpec -> {
-                val q = if (spec.qualifier != InterpolationQualifier.SMOOTH) colorize(
-                    spec.qualifier.text,
-                    GdsSyntaxHighlighter.KEYWORD
-                ) + " " else ""
-                "${q}${colorize("varying", GdsSyntaxHighlighter.KEYWORD)} "
-            }
+                is VaryingSpec -> {
+                    val q =
+                        if (spec.qualifier != InterpolationQualifier.SMOOTH) {
+                            colorize(
+                                spec.qualifier.text,
+                                GdsSyntaxHighlighter.KEYWORD,
+                            ) + " "
+                        } else {
+                            ""
+                        }
+                    "${q}${colorize("varying", GdsSyntaxHighlighter.KEYWORD)} "
+                }
 
-            is ConstantSpec -> "${colorize("const", GdsSyntaxHighlighter.KEYWORD)} "
-            is ParameterSpec -> {
-                if (spec.qualifier != ParameterQualifier.IN) colorize(
-                    spec.qualifier.text,
-                    GdsSyntaxHighlighter.KEYWORD
-                ) + " " else ""
-            }
+                is ConstantSpec -> "${colorize("const", GdsSyntaxHighlighter.KEYWORD)} "
+                is ParameterSpec -> {
+                    if (spec.qualifier != ParameterQualifier.IN) {
+                        colorize(
+                            spec.qualifier.text,
+                            GdsSyntaxHighlighter.KEYWORD,
+                        ) + " "
+                    } else {
+                        ""
+                    }
+                }
 
-            is LocalVariableSpec -> ""
-        }
+                is LocalVariableSpec -> ""
+            }
 
         return "$prefix$type $name"
     }
 
     private fun findDocumentationComment(element: PsiElement?): String? {
         if (element == null) return null
-        
+
         var anchor = element
         while (anchor != null) {
             val parent = anchor.parent
@@ -267,11 +293,11 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
                 break
             }
             if (anchor.prevSibling != null && anchor.prevSibling !is PsiWhiteSpace && anchor.prevSibling !is PsiComment) {
-                 break
+                break
             }
             anchor = parent
         }
-        
+
         if (anchor == null) return null
 
         var current = anchor.prevSibling
@@ -295,9 +321,10 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         return comments.joinToString("\n")
     }
 
-    private fun formatDocComment(comment: String): String {
-        return comment.lines().joinToString("<br>") { line ->
-            line.trim()
+    private fun formatDocComment(comment: String): String =
+        comment.lines().joinToString("<br>") { line ->
+            line
+                .trim()
                 .removePrefix("//")
                 .removePrefix("/*")
                 .removeSuffix("*/")
@@ -305,9 +332,11 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
         }
-    }
 
-    private fun colorize(text: String, key: TextAttributesKey): String {
+    private fun colorize(
+        text: String,
+        key: TextAttributesKey,
+    ): String {
         val scheme = EditorColorsManager.getInstance().globalScheme
         val attributes = scheme.getAttributes(key)
         val color = attributes?.foregroundColor

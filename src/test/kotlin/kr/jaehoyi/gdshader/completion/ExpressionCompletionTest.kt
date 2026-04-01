@@ -1,13 +1,15 @@
 package kr.jaehoyi.gdshader.completion
 
 class ExpressionCompletionTest : GdsCompletionTestBase() {
-
     fun `test in initializer`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             uniform bool t = <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -15,13 +17,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in function body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -29,14 +34,17 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in function body after statement`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 ;
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -44,14 +52,17 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in function body before statement`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 <caret>
                 ;
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -59,7 +70,9 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in function body between statements`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
@@ -67,7 +80,8 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
                 <caret>
                 test;
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -75,13 +89,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in if statement condition`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 if (<caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -89,14 +106,17 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after if statement condition`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 if (true)
                     <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -104,13 +124,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test if statement body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 if (test) <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -118,13 +141,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in for statement condition`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 for (; <caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -132,13 +158,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in for statement iteration`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 for (;;<caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -146,13 +175,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in switch statement expression`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 switch (<caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -160,7 +192,9 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in switch body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
@@ -169,7 +203,8 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
                     <caret>
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -177,7 +212,9 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after case keyword`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
@@ -185,7 +222,8 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
                     case <caret>
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -193,13 +231,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after do keyword`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 do <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -207,13 +248,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after return keyword`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 return <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -221,13 +265,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in function argument`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 test(<caret>)
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -235,11 +282,14 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after operator`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             uniform int t = 1 + <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -247,13 +297,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after primary`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 1 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -261,11 +314,14 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test uniform declaration initializer`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             uniform int test = <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -273,11 +329,14 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test constant declaration initializer`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             const int test = <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -285,13 +344,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test local variable declaration initializer`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 int test = <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -299,11 +361,14 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in initializer list`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             const int t[1] = { <caret> }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -311,13 +376,16 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in array size`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             void f() {
                 test[<caret>]
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -325,15 +393,17 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in constant declaration array size`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             const int test[<caret>]
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
         assertContainsElements(completions, "radians")
     }
-
 }

@@ -8,11 +8,12 @@ import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 
 class GdsRefactoringSupportProvider : RefactoringSupportProvider() {
-
-    override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean =
+    override fun isMemberInplaceRenameAvailable(
+        element: PsiElement,
+        context: PsiElement?,
+    ): Boolean =
         element is GdsVariableNameDecl ||
-        element is GdsFunctionNameDecl ||
-        element is GdsStructNameDecl ||
-        element is GdsStructMemberNameDecl
-    
+            element is GdsFunctionNameDecl ||
+            element is GdsStructNameDecl ||
+            element is GdsStructMemberNameDecl
 }

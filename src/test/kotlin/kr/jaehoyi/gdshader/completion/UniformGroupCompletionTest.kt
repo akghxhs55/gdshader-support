@@ -1,11 +1,13 @@
 package kr.jaehoyi.gdshader.completion
 
 class UniformGroupCompletionTest : GdsCompletionTestBase() {
-
     fun `test uniform group keyword`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -13,13 +15,15 @@ class UniformGroupCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test uniform group values`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             group_uniforms <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
         assertDoesntContain(completions, "shader_type", "group_uniforms", "void", "uniform")
     }
-
 }

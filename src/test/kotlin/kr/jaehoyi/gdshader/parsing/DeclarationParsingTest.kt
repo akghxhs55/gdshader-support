@@ -3,12 +3,12 @@ package kr.jaehoyi.gdshader.parsing
 import com.intellij.testFramework.ParsingTestCase
 import kr.jaehoyi.gdshader.GdsParserDefinition
 
-class DeclarationParsingTest : ParsingTestCase(
-    "parsing/declarations",
-    "gdshader",
-    GdsParserDefinition()
-) {
-
+class DeclarationParsingTest :
+    ParsingTestCase(
+        "parsing/declarations",
+        "gdshader",
+        GdsParserDefinition(),
+    ) {
     override fun getTestDataPath(): String = "src/test/testData"
 
     fun testShaderTypeDeclaration() {
@@ -46,5 +46,4 @@ class DeclarationParsingTest : ParsingTestCase(
     fun testStructDeclaration() {
         doTest(true)
     }
-
 }

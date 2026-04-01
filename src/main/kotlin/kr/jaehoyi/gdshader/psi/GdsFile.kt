@@ -11,17 +11,18 @@ import kr.jaehoyi.gdshader.GdsFileType
 import kr.jaehoyi.gdshader.GdsLanguage
 import kr.jaehoyi.gdshader.resolve.GdsIncludeManager
 
-class GdsFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, GdsLanguage) {
-    
+class GdsFile(
+    viewProvider: FileViewProvider,
+) : PsiFileBase(viewProvider, GdsLanguage) {
     override fun getFileType(): FileType = GdsFileType
-    
+
     override fun toString(): String = "GDShader File"
 
     override fun processDeclarations(
         processor: PsiScopeProcessor,
         state: ResolveState,
         lastParent: PsiElement?,
-        place: PsiElement
+        place: PsiElement,
     ): Boolean {
         val children = PsiTreeUtil.getChildrenOfType(this, GdsItem::class.java)
         if (children != null) {
@@ -31,8 +32,7 @@ class GdsFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, GdsLan
                 }
             }
         }
-        
+
         return GdsIncludeManager.processIncludedDeclarations(this, processor, state, lastParent, place)
     }
-    
 }

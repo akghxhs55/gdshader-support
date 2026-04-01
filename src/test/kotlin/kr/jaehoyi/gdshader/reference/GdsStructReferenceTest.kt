@@ -4,9 +4,9 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 
 class GdsStructReferenceTest : BasePlatformTestCase() {
-
     fun `test struct reference resolve`() {
-        val code = """
+        val code =
+            """
             shader_type canvas_item;
 
             struct MyCustomData {
@@ -16,7 +16,7 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
             void fragment() {
                 <caret>MyCustomData data;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
 
@@ -29,13 +29,14 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
     }
 
     fun `test struct usage inside another struct`() {
-        val code = """
+        val code =
+            """
             struct Inner { float a; };
             
             struct Outer {
                 <caret>Inner inner_member;
             };
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val resolvedElement = myFixture.elementAtCaret
@@ -45,7 +46,8 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
     }
 
     fun `test struct completion`() {
-        val code = """
+        val code =
+            """
             shader_type canvas_item;
             
             struct PlayerInfo {};
@@ -53,7 +55,7 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
             void fragment() {
                 Pla<caret>
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         myFixture.completeBasic()
@@ -63,5 +65,4 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
 
         assertTrue("Should contain 'PlayerInfo'", lookupStrings.contains("PlayerInfo"))
     }
-    
 }

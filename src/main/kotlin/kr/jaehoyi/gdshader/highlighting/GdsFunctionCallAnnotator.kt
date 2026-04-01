@@ -19,8 +19,10 @@ import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsFunctionCallAnnotator : Annotator {
-
-    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    override fun annotate(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
         if (element !is GdsFunctionCall) return
         if (element.containingFile?.virtualFile?.extension == "gdshaderinc") return
 
@@ -37,7 +39,7 @@ class GdsFunctionCallAnnotator : Annotator {
     private fun checkConstructorCall(
         functionCall: GdsFunctionCall,
         typeName: String,
-        holder: AnnotationHolder
+        holder: AnnotationHolder,
     ) {
         val baseType = Builtins.getType(typeName) ?: return
         if (baseType !is Instantiable) return
@@ -53,7 +55,7 @@ class GdsFunctionCallAnnotator : Annotator {
     private fun checkFunctionCall(
         functionCall: GdsFunctionCall,
         functionName: String,
-        holder: AnnotationHolder
+        holder: AnnotationHolder,
     ) {
         val candidates = collectCandidates(functionCall, functionName)
         if (candidates.isEmpty()) return
@@ -62,7 +64,10 @@ class GdsFunctionCallAnnotator : Annotator {
         checkArguments(candidates, argCount, functionName, functionCall, holder)
     }
 
-    private fun collectCandidates(functionCall: GdsFunctionCall, functionName: String): List<FunctionSpec> {
+    private fun collectCandidates(
+        functionCall: GdsFunctionCall,
+        functionName: String,
+    ): List<FunctionSpec> {
         val nameRef = functionCall.functionNameRef ?: return emptyList()
         val resolved = nameRef.reference.resolve()
 
@@ -89,7 +94,10 @@ class GdsFunctionCallAnnotator : Annotator {
         return emptyList()
     }
 
-    private fun resolveStructType(element: PsiElement, name: String): DataType? {
+    private fun resolveStructType(
+        element: PsiElement,
+        name: String,
+    ): DataType? {
         var result: DataType? = null
         GdsResolver.processStructDeclaration(element) { decl ->
             if (decl.name == name) {
@@ -128,13 +136,14 @@ class GdsFunctionCallAnnotator : Annotator {
         argCount: Int,
         name: String,
         functionCall: GdsFunctionCall,
-        holder: AnnotationHolder
+        holder: AnnotationHolder,
     ) {
-        val countMatches = candidates.filter { spec ->
-            val requiredCount = spec.parameters.count { !it.isOptional }
-            val totalCount = spec.parameters.size
-            argCount in requiredCount..totalCount
-        }
+        val countMatches =
+            candidates.filter { spec ->
+                val requiredCount = spec.parameters.count { !it.isOptional }
+                val totalCount = spec.parameters.size
+                argCount in requiredCount..totalCount
+            }
 
         if (countMatches.isEmpty()) {
             annotateArgumentCount(candidates, argCount, name, functionCall, holder)
@@ -155,10 +164,12 @@ class GdsFunctionCallAnnotator : Annotator {
             if (paramType != argType) {
                 val signature = formatSignature(name, bestCandidate)
                 val argListElement = functionCall.argumentList ?: return
-                holder.newAnnotation(
-                    HighlightSeverity.ERROR,
-                    "No matching function for '$signature' call: argument ${i + 1} should be ${paramType.name} but is ${argType.name}"
-                ).range(argListElement).create()
+                holder
+                    .newAnnotation(
+                        HighlightSeverity.ERROR,
+                        "No matching function for '$signature' call: argument ${i + 1} should be ${paramType.name} but is ${argType.name}",
+                    ).range(argListElement)
+                    .create()
                 return
             }
         }
@@ -169,29 +180,35 @@ class GdsFunctionCallAnnotator : Annotator {
         argCount: Int,
         name: String,
         functionCall: GdsFunctionCall,
-        holder: AnnotationHolder
+        holder: AnnotationHolder,
     ) {
         val minRequired = candidates.minOf { it.parameters.count { p -> !p.isOptional } }
         val maxTotal = candidates.maxOf { it.parameters.size }
         val tooFew = argCount < minRequired
 
-        val bestCandidate = if (tooFew) {
-            candidates.minByOrNull { it.parameters.count { p -> !p.isOptional } } ?: return
-        } else {
-            candidates.maxByOrNull { it.parameters.size } ?: return
-        }
+        val bestCandidate =
+            if (tooFew) {
+                candidates.minByOrNull { it.parameters.count { p -> !p.isOptional } } ?: return
+            } else {
+                candidates.maxByOrNull { it.parameters.size } ?: return
+            }
 
         val signature = formatSignature(name, bestCandidate)
         val bound = if (tooFew) "at least $minRequired" else "at most $maxTotal"
 
         val argListElement = functionCall.argumentList ?: return
-        holder.newAnnotation(
-            HighlightSeverity.ERROR,
-            "Too ${if (tooFew) "few" else "many"} arguments for '$signature' call. Expected $bound but received $argCount."
-        ).range(argListElement).create()
+        holder
+            .newAnnotation(
+                HighlightSeverity.ERROR,
+                "Too ${if (tooFew) "few" else "many"} arguments for '$signature' call. Expected $bound but received $argCount.",
+            ).range(argListElement)
+            .create()
     }
 
-    private fun formatSignature(name: String, spec: FunctionSpec): String {
+    private fun formatSignature(
+        name: String,
+        spec: FunctionSpec,
+    ): String {
         val params = spec.parameters.joinToString(", ") { it.type.name }
         return "$name($params)"
     }

@@ -6,7 +6,6 @@ import com.intellij.spellchecker.tokenizer.Tokenizer
 import kr.jaehoyi.gdshader.psi.GdsTokenSets
 
 class GdsSpellcheckingStrategy : SpellcheckingStrategy() {
-
     override fun getTokenizer(element: PsiElement): Tokenizer<*> {
         val elementType = element.node.elementType
         if (GdsTokenSets.COMMENTS.contains(elementType)) {

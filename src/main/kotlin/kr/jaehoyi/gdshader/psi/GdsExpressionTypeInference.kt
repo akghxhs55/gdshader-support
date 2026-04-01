@@ -6,9 +6,8 @@ import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 
 object GdsExpressionTypeInference {
-
-    fun inferType(element: PsiElement): DataType? {
-        return when (element) {
+    fun inferType(element: PsiElement): DataType? =
+        when (element) {
             is GdsLiteral -> inferLiteralType(element)
             is GdsVariableNameRef -> inferVariableRefType(element)
             is GdsPrimary -> inferPrimaryType(element)
@@ -30,19 +29,21 @@ object GdsExpressionTypeInference {
             is GdsExpression -> inferExpressionType(element)
             else -> null
         }
-    }
-    
-    fun inferTypeBefore(postfixExpr: GdsPostfixExpr, targetChild: PsiElement): DataType? {
+
+    fun inferTypeBefore(
+        postfixExpr: GdsPostfixExpr,
+        targetChild: PsiElement,
+    ): DataType? {
         var currentType = inferPrimaryType(postfixExpr.primary) ?: return null
-        
+
         var memberIdx = 0
         var functionIdx = 0
         var indexIdx = 0
-        
+
         for (child in postfixExpr.children) {
             if (child == postfixExpr.primary) continue
             if (child == targetChild) return currentType
-            
+
             when (child) {
                 is GdsStructMemberNameRef -> {
                     val memberRefs = postfixExpr.structMemberNameRefList
@@ -67,12 +68,12 @@ object GdsExpressionTypeInference {
                 }
             }
         }
-        
+
         return currentType
     }
 
-    private fun inferLiteralType(literal: GdsLiteral): DataType? {
-        return when {
+    private fun inferLiteralType(literal: GdsLiteral): DataType? =
+        when {
             literal.node.findChildByType(GdsTypes.TRUE) != null -> BoolType
             literal.node.findChildByType(GdsTypes.FALSE) != null -> BoolType
             literal.node.findChildByType(GdsTypes.FLOAT_CONSTANT) != null -> FloatType.DEFAULT
@@ -80,7 +81,6 @@ object GdsExpressionTypeInference {
             literal.node.findChildByType(GdsTypes.UINT_CONSTANT) != null -> UIntType
             else -> null
         }
-    }
 
     private fun inferVariableRefType(varRef: GdsVariableNameRef): DataType? {
         val resolved = varRef.reference.resolve() as? GdsVariable ?: return null
@@ -111,11 +111,15 @@ object GdsExpressionTypeInference {
         return null
     }
 
-    private fun inferConstructorType(functionCall: GdsFunctionCall, typeNode: GdsType): DataType? {
+    private fun inferConstructorType(
+        functionCall: GdsFunctionCall,
+        typeNode: GdsType,
+    ): DataType? {
         val typeText = typeNode.text
-        val baseType = Builtins.getType(typeText)
-            ?: resolveStructType(typeNode)
-            ?: return null
+        val baseType =
+            Builtins.getType(typeText)
+                ?: resolveStructType(typeNode)
+                ?: return null
 
         val arraySize = functionCall.arraySize
         if (arraySize != null) {
@@ -169,7 +173,10 @@ object GdsExpressionTypeInference {
         return baseType
     }
 
-    private fun inferFunctionReturnType(functionCall: GdsFunctionCall, nameRef: GdsFunctionNameRef): DataType? {
+    private fun inferFunctionReturnType(
+        functionCall: GdsFunctionCall,
+        nameRef: GdsFunctionNameRef,
+    ): DataType? {
         val functionName = nameRef.text
 
         val resolved = nameRef.reference.resolve()
@@ -181,7 +188,10 @@ object GdsExpressionTypeInference {
         return inferBuiltinFunctionReturnType(functionCall, functionName)
     }
 
-    private fun inferBuiltinFunctionReturnType(functionCall: GdsFunctionCall, functionName: String): DataType? {
+    private fun inferBuiltinFunctionReturnType(
+        functionCall: GdsFunctionCall,
+        functionName: String,
+    ): DataType? {
         val shaderType = GdsPsiImplUtil.getShaderType(functionCall) ?: return null
         val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return null
 
@@ -253,19 +263,20 @@ object GdsExpressionTypeInference {
         return currentType
     }
 
-    private fun inferMemberAccessType(baseType: DataType, memberName: String): DataType? {
-        return when (baseType) {
+    private fun inferMemberAccessType(
+        baseType: DataType,
+        memberName: String,
+    ): DataType? =
+        when (baseType) {
             is MemberAccessible -> baseType.resolveMember(memberName)
             else -> null
         }
-    }
 
-    private fun inferIndexingType(baseType: DataType): DataType? {
-        return when (baseType) {
+    private fun inferIndexingType(baseType: DataType): DataType? =
+        when (baseType) {
             is Indexable -> baseType.elementType
             else -> null
         }
-    }
 
     private fun inferUnaryExprType(unaryExpr: GdsUnaryExpr): DataType? {
         val hasNot = unaryExpr.node.findChildByType(GdsTypes.OP_NOT) != null
@@ -273,9 +284,10 @@ object GdsExpressionTypeInference {
 
         if (hasNot) return BoolType
 
-        val operandType = unaryExpr.unaryExpr?.let { inferType(it) }
-            ?: unaryExpr.postfixExpr?.let { inferPostfixExprType(it) }
-            ?: return null
+        val operandType =
+            unaryExpr.unaryExpr?.let { inferType(it) }
+                ?: unaryExpr.postfixExpr?.let { inferPostfixExprType(it) }
+                ?: return null
 
         if (hasBitInvert) {
             return if (isIntegerType(operandType)) operandType else null
@@ -310,7 +322,10 @@ object GdsExpressionTypeInference {
         }
     }
 
-    private fun inferArithmeticResultType(left: DataType, right: DataType): DataType? {
+    private fun inferArithmeticResultType(
+        left: DataType,
+        right: DataType,
+    ): DataType? {
         if (left == right) return left
 
         if (left is VectorType && right is Scalar) {
@@ -338,14 +353,16 @@ object GdsExpressionTypeInference {
         return null
     }
 
-    private fun areCompatibleScalarAndVector(scalar: Scalar, vector: VectorType): Boolean {
-        return when (scalar) {
+    private fun areCompatibleScalarAndVector(
+        scalar: Scalar,
+        vector: VectorType,
+    ): Boolean =
+        when (scalar) {
             is FloatType -> vector.elementType is FloatType
             is IntType -> vector.elementType is IntType
             is UIntType -> vector.elementType is UIntType
             is BoolType -> vector.elementType is BoolType
         }
-    }
 
     private fun inferShiftExprType(shiftExpr: GdsShiftExpr): DataType? {
         val operands = shiftExpr.additiveExprList
@@ -374,12 +391,13 @@ object GdsExpressionTypeInference {
     }
 
     private fun inferBitwiseExprType(bitwiseExpr: PsiElement): DataType? {
-        val operands = when (bitwiseExpr) {
-            is GdsBitwiseAndExpr -> bitwiseExpr.equalityExprList
-            is GdsBitwiseXorExpr -> bitwiseExpr.bitwiseAndExprList
-            is GdsBitwiseOrExpr -> bitwiseExpr.bitwiseXorExprList
-            else -> return null
-        }
+        val operands =
+            when (bitwiseExpr) {
+                is GdsBitwiseAndExpr -> bitwiseExpr.equalityExprList
+                is GdsBitwiseXorExpr -> bitwiseExpr.bitwiseAndExprList
+                is GdsBitwiseOrExpr -> bitwiseExpr.bitwiseXorExprList
+                else -> return null
+            }
 
         if (operands.isEmpty()) return null
 
@@ -390,9 +408,7 @@ object GdsExpressionTypeInference {
         return if (isIntegerType(leftType)) leftType else null
     }
 
-    private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? {
-        return inferType(assignExpr.logicOrExpr)
-    }
+    private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? = inferType(assignExpr.logicOrExpr)
 
     private fun inferConditionalExprType(conditionalExpr: GdsConditionalExpr): DataType? {
         val expressions = conditionalExpr.expressionList
@@ -407,17 +423,14 @@ object GdsExpressionTypeInference {
         return if (trueType == falseType) trueType else trueType
     }
 
-    private fun inferExpressionType(expression: GdsExpression): DataType? {
-        return inferConditionalExprType(expression.conditionalExpr)
-    }
+    private fun inferExpressionType(expression: GdsExpression): DataType? = inferConditionalExprType(expression.conditionalExpr)
 
-    private fun isIntegerType(type: DataType): Boolean {
-        return when (type) {
+    private fun isIntegerType(type: DataType): Boolean =
+        when (type) {
             is IntType, is UIntType -> true
             is VectorType -> type.elementType is IntType || type.elementType is UIntType
             else -> false
         }
-    }
 
     private fun parseArraySize(arraySize: GdsArraySize): Int? {
         val expression = arraySize.expression ?: return null

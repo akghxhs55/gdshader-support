@@ -4,19 +4,18 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
-import kr.jaehoyi.gdshader.psi.GdsElementFactory
-import kr.jaehoyi.gdshader.psi.GdsTypes
-import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.convertColorToVecString
 import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.extractColorFromText
 import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.isColorVariableName
 import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
+import kr.jaehoyi.gdshader.psi.GdsTypes
+import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import java.awt.Color
 
 class GdsLocalVariableColorProvider : ElementColorProvider {
-
     override fun getColorFrom(element: PsiElement): Color? {
         if (element.node.elementType != GdsTypes.IDENTIFIER) {
             return null
@@ -31,23 +30,25 @@ class GdsLocalVariableColorProvider : ElementColorProvider {
         if (localVariableDeclarator.arraySize != null) {
             return null
         }
-        
+
         val localVariableDeclaration = localVariableDeclarator.parent.parent as? GdsLocalVariableDeclaration ?: return null
         if (localVariableDeclaration.arraySize != null) {
             return null
         }
-        
+
         val typeText = localVariableDeclaration.type.text ?: return null
 
         if (typeText != Builtins.VEC3.name && typeText != Builtins.VEC4.name) {
             return null
         }
-        
 
         return extractLocalVariableColor(localVariableDeclarator)
     }
 
-    override fun setColorTo(element: PsiElement, color: Color) {
+    override fun setColorTo(
+        element: PsiElement,
+        color: Color,
+    ) {
         val project = element.project
         val localVariableDeclarator = element.parent?.parent as? GdsLocalVariableDeclarator ?: return
         val localVariableDeclaration = localVariableDeclarator.parent.parent as? GdsLocalVariableDeclaration ?: return
@@ -62,11 +63,11 @@ class GdsLocalVariableColorProvider : ElementColorProvider {
             if (oldInitializer != null) {
                 val newInitializer = GdsElementFactory.createInitializer(project, newText) ?: return@runWriteCommandAction
                 oldInitializer.replace(newInitializer)
-            }
-            else {
+            } else {
                 val dummyText = "vec4 dummy = $newText;"
-                val dummyDeclarator = GdsElementFactory.createLocalVariableDeclarator(project, dummyText)
-                    ?: return@runWriteCommandAction
+                val dummyDeclarator =
+                    GdsElementFactory.createLocalVariableDeclarator(project, dummyText)
+                        ?: return@runWriteCommandAction
 
                 val eqTokenFromDummy = dummyDeclarator.node.findChildByType(GdsTypes.OP_ASSIGN)?.psi
                 val initializerFromDummy = dummyDeclarator.initializer
@@ -91,5 +92,4 @@ class GdsLocalVariableColorProvider : ElementColorProvider {
         val initializer = localVariableDeclarator.initializer ?: return null
         return extractColorFromText(initializer.text)
     }
-
 }

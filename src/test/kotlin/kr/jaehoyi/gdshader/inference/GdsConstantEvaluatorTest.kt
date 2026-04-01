@@ -5,17 +5,17 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.psi.*
 
 class GdsConstantEvaluatorTest : BasePlatformTestCase() {
-
     override fun getTestDataPath(): String = "src/test/testData"
 
     private fun evaluateExpression(expression: String): Any? {
-        val code = """
+        val code =
+            """
             shader_type spatial;
 
             void fragment() {
                 int x = $expression;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val file = myFixture.file
@@ -30,13 +30,14 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
     }
 
     private fun evaluateAsIntExpression(expression: String): Int? {
-        val code = """
+        val code =
+            """
             shader_type spatial;
 
             void fragment() {
                 int x = $expression;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val file = myFixture.file
@@ -214,7 +215,8 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
     // ===== Const Variable Reference Tests =====
 
     fun `test const variable reference`() {
-        val code = """
+        val code =
+            """
             shader_type spatial;
 
             const int SIZE = 10;
@@ -222,7 +224,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
             void fragment() {
                 int x = SIZE;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val file = myFixture.file
@@ -236,7 +238,8 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
     }
 
     fun `test const variable in expression`() {
-        val code = """
+        val code =
+            """
             shader_type spatial;
 
             const int SIZE = 10;
@@ -244,7 +247,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
             void fragment() {
                 int x = SIZE + 5;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val file = myFixture.file
@@ -258,7 +261,8 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
     }
 
     fun `test chained const references`() {
-        val code = """
+        val code =
+            """
             shader_type spatial;
 
             const int A = 5;
@@ -267,7 +271,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
             void fragment() {
                 int x = B;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val file = myFixture.file
@@ -311,14 +315,15 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
     // ===== Non-Constant Expression Tests =====
 
     fun `test non-const variable returns null`() {
-        val code = """
+        val code =
+            """
             shader_type spatial;
 
             void fragment() {
                 int y = 5;
                 int x = y;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val file = myFixture.file

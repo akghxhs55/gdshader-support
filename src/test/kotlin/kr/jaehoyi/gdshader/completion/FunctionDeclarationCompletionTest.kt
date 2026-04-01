@@ -1,11 +1,13 @@
 package kr.jaehoyi.gdshader.completion
 
 class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
-
     fun `test toplevel`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -13,9 +15,12 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test return type after precision`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             highp <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -24,9 +29,12 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after return type`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             float <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -34,9 +42,12 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test parameter header`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f(<caret>)
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -45,9 +56,12 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test parameter header after const`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f(const <caret>)
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -56,9 +70,12 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test parameter header after qualifier`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f(in <caret>)
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -67,9 +84,12 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test parameter header after precision`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f(highp <caret>)
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -78,19 +98,39 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after parameter header`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f(float <caret>)
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
-        assertDoesntContain(completions, "int", "float", "highp", "mediump", "lowp", "in", "out", "inout", "shader_type", "uniform", "const", "void")
+        assertDoesntContain(
+            completions,
+            "int",
+            "float",
+            "highp",
+            "mediump",
+            "lowp",
+            "in",
+            "out",
+            "inout",
+            "shader_type",
+            "uniform",
+            "const",
+            "void",
+        )
     }
 
     fun `test multiple parameters`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f(float a, <caret>)
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -99,15 +139,17 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test no toplevel completion in function body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
         assertDoesntContain(completions, "shader_type", "uniform", "varying", "struct")
     }
-
 }

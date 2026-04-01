@@ -14,11 +14,16 @@ import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
 class GdsInlayHintsProvider : InlayHintsProvider {
-
-    override fun createCollector(file: PsiFile, editor: Editor): InlayHintsCollector = Collector()
+    override fun createCollector(
+        file: PsiFile,
+        editor: Editor,
+    ): InlayHintsCollector = Collector()
 
     private class Collector : SharedBypassCollector {
-        override fun collectFromElement(element: PsiElement, sink: InlayTreeSink) {
+        override fun collectFromElement(
+            element: PsiElement,
+            sink: InlayTreeSink,
+        ) {
             if (element !is GdsArgumentList) return
 
             val functionCall = element.parent as? GdsFunctionCall ?: return
@@ -33,7 +38,7 @@ class GdsInlayHintsProvider : InlayHintsProvider {
                 val argument = arguments[i]
                 sink.addPresentation(
                     position = InlineInlayPosition(argument.textRange.startOffset, relatedToPrevious = false),
-                    hintFormat = HintFormat.default
+                    hintFormat = HintFormat.default,
                 ) {
                     text("$paramName:")
                 }
@@ -87,11 +92,13 @@ class GdsInlayHintsProvider : InlayHintsProvider {
             return StructType(structDecl.text, members)
         }
 
-        private fun pickBestOverload(candidates: List<FunctionSpec>, argCount: Int): FunctionSpec? {
-            return candidates.firstOrNull { spec ->
+        private fun pickBestOverload(
+            candidates: List<FunctionSpec>,
+            argCount: Int,
+        ): FunctionSpec? =
+            candidates.firstOrNull { spec ->
                 val required = spec.parameters.count { !it.isOptional }
                 argCount in required..spec.parameters.size
             } ?: candidates.firstOrNull()
-        }
     }
 }

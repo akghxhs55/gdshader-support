@@ -8,11 +8,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 
 object GdsPathUtil {
-    
-    fun resolvePath(contextFile: PsiFile, rawPath: String): PsiFile? {
+    fun resolvePath(
+        contextFile: PsiFile,
+        rawPath: String,
+    ): PsiFile? {
         val project = contextFile.project
         val cleanPath = rawPath.trim().removeSurrounding("\"")
-        
+
         if (cleanPath.isEmpty()) {
             return null
         }
@@ -26,7 +28,7 @@ object GdsPathUtil {
             } else {
                 val currentFile = contextFile.originalFile.virtualFile ?: return null
                 val parentDir = currentFile.parent ?: return null
-                
+
                 parentDir.findFileByRelativePath(cleanPath)
             }
 
@@ -44,5 +46,4 @@ object GdsPathUtil {
         val basePath = project.basePath ?: return null
         return LocalFileSystem.getInstance().findFileByPath(basePath)
     }
-    
 }

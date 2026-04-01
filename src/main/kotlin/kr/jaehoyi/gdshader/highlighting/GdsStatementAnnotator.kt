@@ -23,8 +23,10 @@ import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsWhileStatement
 
 class GdsStatementAnnotator : Annotator {
-
-    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    override fun annotate(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
         when (element) {
             is GdsSimpleStatement -> {
                 checkDiscardStatement(element, holder)
@@ -39,7 +41,10 @@ class GdsStatementAnnotator : Annotator {
         }
     }
 
-    private fun checkDiscardStatement(element: GdsSimpleStatement, holder: AnnotationHolder) {
+    private fun checkDiscardStatement(
+        element: GdsSimpleStatement,
+        holder: AnnotationHolder,
+    ) {
         val firstChild = element.firstChild ?: return
         if (firstChild.node.elementType != GdsTypes.CF_DISCARD) return
 
@@ -47,110 +52,147 @@ class GdsStatementAnnotator : Annotator {
         val context = FunctionContext.fromText(functionDecl.functionNameDecl.text)
 
         if (context != FunctionContext.COMMON && context != FunctionContext.FRAGMENT && context != FunctionContext.LIGHT) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "'discard' can only be used in 'fragment' or 'light' functions")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "'discard' can only be used in 'fragment' or 'light' functions")
                 .range(element)
                 .create()
         }
     }
 
-    private fun checkBreakContinueStatement(element: GdsSimpleStatement, holder: AnnotationHolder) {
+    private fun checkBreakContinueStatement(
+        element: GdsSimpleStatement,
+        holder: AnnotationHolder,
+    ) {
         val firstChild = element.firstChild ?: return
         val type = firstChild.node.elementType
 
         if (type == GdsTypes.CF_BREAK) {
-            val inLoop = element.parentOfType<GdsForStatement>() != null
-                    || element.parentOfType<GdsWhileStatement>() != null
-                    || element.parentOfType<GdsDoWhileStatement>() != null
+            val inLoop =
+                element.parentOfType<GdsForStatement>() != null ||
+                    element.parentOfType<GdsWhileStatement>() != null ||
+                    element.parentOfType<GdsDoWhileStatement>() != null
             val inSwitch = element.parentOfType<GdsSwitchStatement>() != null
             if (!inLoop && !inSwitch) {
-                holder.newAnnotation(HighlightSeverity.ERROR, "'break' is not allowed outside of a loop or 'switch' statement")
-                    .range(element).create()
+                holder
+                    .newAnnotation(HighlightSeverity.ERROR, "'break' is not allowed outside of a loop or 'switch' statement")
+                    .range(element)
+                    .create()
             }
         } else if (type == GdsTypes.CF_CONTINUE) {
-            val inLoop = element.parentOfType<GdsForStatement>() != null
-                    || element.parentOfType<GdsWhileStatement>() != null
-                    || element.parentOfType<GdsDoWhileStatement>() != null
+            val inLoop =
+                element.parentOfType<GdsForStatement>() != null ||
+                    element.parentOfType<GdsWhileStatement>() != null ||
+                    element.parentOfType<GdsDoWhileStatement>() != null
             if (!inLoop) {
-                holder.newAnnotation(HighlightSeverity.ERROR, "'continue' is not allowed outside of a loop")
-                    .range(element).create()
+                holder
+                    .newAnnotation(HighlightSeverity.ERROR, "'continue' is not allowed outside of a loop")
+                    .range(element)
+                    .create()
             }
         }
     }
 
-    private fun checkReturnStatement(element: GdsReturnStatement, holder: AnnotationHolder) {
+    private fun checkReturnStatement(
+        element: GdsReturnStatement,
+        holder: AnnotationHolder,
+    ) {
         val functionDecl = element.parentOfType<GdsFunctionDeclaration>() ?: return
         val returnType = GdsDataTypeFactory.createFromFunctionDeclaration(functionDecl)
         val hasExpression = element.expression != null
 
         if (returnType is VoidType && hasExpression) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "'void' function cannot return a value")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "'void' function cannot return a value")
                 .range(element)
                 .create()
         } else if (returnType != null && returnType !is VoidType && !hasExpression) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected return with an expression of type '${returnType.name}'")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Expected return with an expression of type '${returnType.name}'")
                 .range(element)
                 .create()
         } else if (returnType != null && returnType !is VoidType && hasExpression) {
             val exprType = GdsExpressionTypeInference.inferType(element.expression ?: return) ?: return
             if (returnType.name != exprType.name) {
-                holder.newAnnotation(
-                    HighlightSeverity.ERROR,
-                    "Expected return with an expression of type '${returnType.name}'"
-                ).range(element).create()
+                holder
+                    .newAnnotation(
+                        HighlightSeverity.ERROR,
+                        "Expected return with an expression of type '${returnType.name}'",
+                    ).range(element)
+                    .create()
             }
         }
     }
 
-    private fun checkSwitchStatement(element: GdsSwitchStatement, holder: AnnotationHolder) {
+    private fun checkSwitchStatement(
+        element: GdsSwitchStatement,
+        holder: AnnotationHolder,
+    ) {
         val expression = element.expression ?: return
         val type = GdsExpressionTypeInference.inferType(expression) ?: return
-        
+
         if (type !is IntType && type !is UIntType) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected an integer or unsigned integer expression")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Expected an integer or unsigned integer expression")
                 .range(expression)
                 .create()
         }
     }
-    
-    private fun checkIfStatement(element: GdsIfStatement, holder: AnnotationHolder) {
+
+    private fun checkIfStatement(
+        element: GdsIfStatement,
+        holder: AnnotationHolder,
+    ) {
         val expression = element.expression ?: return
         val type = GdsExpressionTypeInference.inferType(expression) ?: return
-        
+
         if (type !is BoolType) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
                 .range(expression)
                 .create()
         }
     }
-    
-    private fun checkForStatement(element: GdsForStatement, holder: AnnotationHolder) {
+
+    private fun checkForStatement(
+        element: GdsForStatement,
+        holder: AnnotationHolder,
+    ) {
         val expression = element.forCondition?.expression ?: return
         val type = GdsExpressionTypeInference.inferType(expression) ?: return
-        
+
         if (type !is BoolType) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
                 .range(expression)
                 .create()
         }
     }
-    
-    private fun checkWhileStatement(element: GdsWhileStatement, holder: AnnotationHolder) {
+
+    private fun checkWhileStatement(
+        element: GdsWhileStatement,
+        holder: AnnotationHolder,
+    ) {
         val expression = element.expression ?: return
         val type = GdsExpressionTypeInference.inferType(expression) ?: return
-        
+
         if (type !is BoolType) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
                 .range(expression)
                 .create()
         }
     }
-    
-    private fun checkDoWhileStatement(element: GdsDoWhileStatement, holder: AnnotationHolder) {
+
+    private fun checkDoWhileStatement(
+        element: GdsDoWhileStatement,
+        holder: AnnotationHolder,
+    ) {
         val expression = element.expression ?: return
         val type = GdsExpressionTypeInference.inferType(expression) ?: return
-        
+
         if (type !is BoolType) {
-            holder.newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
                 .range(expression)
                 .create()
         }

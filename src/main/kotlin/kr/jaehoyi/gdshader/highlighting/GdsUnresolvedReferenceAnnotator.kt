@@ -6,9 +6,9 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.FunctionContext
-import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
+import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
@@ -17,8 +17,10 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsUnresolvedReferenceAnnotator : Annotator {
-
-    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    override fun annotate(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
         if (isIncludeFile(element)) return
 
         when (element) {
@@ -29,19 +31,24 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         }
     }
 
-    private fun isIncludeFile(element: PsiElement): Boolean {
-        return element.containingFile?.virtualFile?.extension == "gdshaderinc"
-    }
+    private fun isIncludeFile(element: PsiElement): Boolean = element.containingFile?.virtualFile?.extension == "gdshaderinc"
 
-    private fun checkVariableRef(element: GdsVariableNameRef, holder: AnnotationHolder) {
+    private fun checkVariableRef(
+        element: GdsVariableNameRef,
+        holder: AnnotationHolder,
+    ) {
         if (element.reference.resolve() != null) return
 
-        holder.newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
+        holder
+            .newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
 
-    private fun checkFunctionRef(element: GdsFunctionNameRef, holder: AnnotationHolder) {
+    private fun checkFunctionRef(
+        element: GdsFunctionNameRef,
+        holder: AnnotationHolder,
+    ) {
         val enclosingFunction = element.parentOfType<GdsFunctionDeclaration>() ?: return
         FunctionContext.fromText(enclosingFunction.functionNameDecl.text)
 
@@ -49,7 +56,8 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
 
         if (resolveAsStruct(element)) return
 
-        holder.newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
+        holder
+            .newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
@@ -68,21 +76,29 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         return found
     }
 
-    private fun checkStructRef(element: GdsStructNameRef, holder: AnnotationHolder) {
+    private fun checkStructRef(
+        element: GdsStructNameRef,
+        holder: AnnotationHolder,
+    ) {
         if (element.reference.resolve() != null) return
 
-        holder.newAnnotation(HighlightSeverity.ERROR, "Unresolved reference '${element.text}'")
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
 
-    private fun checkStructMemberRef(element: GdsStructMemberNameRef, holder: AnnotationHolder) {
+    private fun checkStructMemberRef(
+        element: GdsStructMemberNameRef,
+        holder: AnnotationHolder,
+    ) {
         val postfixExpr = element.parent as? GdsPostfixExpr ?: return
         val receiverType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, element) ?: return
 
         if (receiverType is MemberAccessible && receiverType.resolveMember(element.text) != null) return
 
-        holder.newAnnotation(HighlightSeverity.ERROR, "Invalid member for '${receiverType.name}' expression: '.${element.text}'")
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Invalid member for '${receiverType.name}' expression: '.${element.text}'")
             .range(element)
             .create()
     }

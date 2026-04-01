@@ -10,18 +10,14 @@ import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 
 class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
+    override fun isReadWriteAccessible(element: PsiElement): Boolean = element is GdsVariableNameDecl
 
-    override fun isReadWriteAccessible(element: PsiElement): Boolean {
-        return element is GdsVariableNameDecl
-    }
+    override fun isDeclarationWriteAccess(element: PsiElement): Boolean = false
 
-    override fun isDeclarationWriteAccess(element: PsiElement): Boolean {
-        return false
-    }
-
-    override fun getReferenceAccess(element: PsiElement, reference: PsiReference): Access {
-        return getExpressionAccess(reference.element)
-    }
+    override fun getReferenceAccess(
+        element: PsiElement,
+        reference: PsiReference,
+    ): Access = getExpressionAccess(reference.element)
 
     override fun getExpressionAccess(expression: PsiElement): Access {
         if (expression !is GdsVariableNameRef) return Access.Read
@@ -48,7 +44,8 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
         val postfixExpr = PsiTreeUtil.getParentOfType(ref, GdsPostfixExpr::class.java) ?: return null
         val node = postfixExpr.node
         if (node.findChildByType(GdsTypes.OP_INCREMENT) != null ||
-            node.findChildByType(GdsTypes.OP_DECREMENT) != null) {
+            node.findChildByType(GdsTypes.OP_DECREMENT) != null
+        ) {
             return Access.ReadWrite
         }
         return null
@@ -58,7 +55,8 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
         val unaryExpr = PsiTreeUtil.getParentOfType(ref, GdsUnaryExpr::class.java) ?: return null
         val node = unaryExpr.node
         if (node.findChildByType(GdsTypes.OP_INCREMENT) != null ||
-            node.findChildByType(GdsTypes.OP_DECREMENT) != null) {
+            node.findChildByType(GdsTypes.OP_DECREMENT) != null
+        ) {
             return Access.ReadWrite
         }
         return null
@@ -81,7 +79,10 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
         }
     }
 
-    private fun resolveParameterQualifier(functionCall: GdsFunctionCall, argIndex: Int): ParameterQualifier? {
+    private fun resolveParameterQualifier(
+        functionCall: GdsFunctionCall,
+        argIndex: Int,
+    ): ParameterQualifier? {
         functionCall.functionNameRef?.let { nameRef ->
             val resolved = nameRef.reference.resolve()
             if (resolved is GdsFunctionNameDecl) {
@@ -100,7 +101,7 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
     private fun resolveBuiltinParameterQualifier(
         functionCall: GdsFunctionCall,
         functionName: String,
-        argIndex: Int
+        argIndex: Int,
     ): ParameterQualifier? {
         val shaderType = GdsPsiImplUtil.getShaderType(functionCall) ?: return null
         val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return null

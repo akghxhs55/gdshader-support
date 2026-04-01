@@ -16,21 +16,19 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 
 class GdsFindUsagesProvider : FindUsagesProvider {
-
     override fun getWordsScanner(): WordsScanner =
         DefaultWordsScanner(
             GdsLexerAdapter(),
             TokenSet.create(GdsTypes.IDENTIFIER),
             GdsTokenSets.COMMENTS,
-            GdsTokenSets.STRING_LITERALS
+            GdsTokenSets.STRING_LITERALS,
         )
 
-    override fun canFindUsagesFor(element: PsiElement): Boolean {
-        return element is GdsVariableNameDecl ||
-                element is GdsFunctionNameDecl ||
-                element is GdsStructNameDecl ||
-                element is GdsStructMemberNameDecl
-    }
+    override fun canFindUsagesFor(element: PsiElement): Boolean =
+        element is GdsVariableNameDecl ||
+            element is GdsFunctionNameDecl ||
+            element is GdsStructNameDecl ||
+            element is GdsStructMemberNameDecl
 
     override fun getHelpId(element: PsiElement): @NonNls String? = null
 
@@ -43,7 +41,7 @@ class GdsFindUsagesProvider : FindUsagesProvider {
             else -> ""
         }
 
-    override fun getDescriptiveName(element: PsiElement): @Nls String = 
+    override fun getDescriptiveName(element: PsiElement): @Nls String =
         when (element) {
             is GdsVariableNameDecl -> element.name
             is GdsFunctionNameDecl -> element.name
@@ -52,7 +50,8 @@ class GdsFindUsagesProvider : FindUsagesProvider {
             else -> ""
         }
 
-    override fun getNodeText(element: PsiElement, useFullName: Boolean): @Nls String =
-        getDescriptiveName(element)
-
+    override fun getNodeText(
+        element: PsiElement,
+        useFullName: Boolean,
+    ): @Nls String = getDescriptiveName(element)
 }

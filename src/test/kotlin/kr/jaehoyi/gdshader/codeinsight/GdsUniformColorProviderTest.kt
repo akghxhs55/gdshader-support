@@ -4,18 +4,17 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.awt.Color
 
 class GdsUniformColorProviderTest : BasePlatformTestCase() {
-    
     private val provider = GdsUniformColorProvider()
-    
+
     fun `test extract color from vec3`() {
         val code = "uniform vec3 my<caret>Color : source_color = vec3(1.0, 0.0, 0.0);"
-        
+
         myFixture.configureByText("test.gdshader", code)
         val offset = myFixture.editor.caretModel.offset
         val element = requireNotNull(myFixture.file.findElementAt(offset))
-        
+
         val color = requireNotNull(provider.getColorFrom(element))
-        
+
         assertEquals(255, color.red)
         assertEquals(0, color.green)
         assertEquals(0, color.blue)
@@ -63,5 +62,4 @@ class GdsUniformColorProviderTest : BasePlatformTestCase() {
 
         myFixture.checkResult(after)
     }
-    
 }

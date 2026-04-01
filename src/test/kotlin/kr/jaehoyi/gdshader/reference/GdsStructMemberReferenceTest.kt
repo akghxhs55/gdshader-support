@@ -6,7 +6,6 @@ import kr.jaehoyi.gdshader.psi.GdsStructMemberNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 
 class GdsStructMemberReferenceTest : BasePlatformTestCase() {
-
     fun `test struct member reference`() {
         val code = """
             shader_type spatial;
@@ -63,5 +62,4 @@ class GdsStructMemberReferenceTest : BasePlatformTestCase() {
         assertTrue("Resolved element should be GdsStructMemberNameDecl", resolved is GdsStructMemberNameDecl)
         assertEquals("val", (resolved as GdsStructMemberNameDecl).name)
     }
-
 }

@@ -11,34 +11,34 @@ import com.intellij.psi.search.GlobalSearchScope
 import kr.jaehoyi.gdshader.completion.GdsLookupElements
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 
-class GdsFileReference(element: PsiElement, textRange: TextRange) :
-    PsiReferenceBase<PsiElement>(element, textRange) {
-
+class GdsFileReference(
+    element: PsiElement,
+    textRange: TextRange,
+) : PsiReferenceBase<PsiElement>(element, textRange) {
     override fun resolve(): PsiElement? {
         val pathString = rangeInElement.substring(element.text)
-        
+
         return GdsPathUtil.resolvePath(element.containingFile, pathString)
     }
 
     override fun getVariants(): Array<out Any> {
         val project = element.project
-        
+
         val contentRoots = ProjectRootManager.getInstance(project).contentRoots
         if (contentRoots.isEmpty()) return emptyArray()
-        
+
         val projectBaseDir = contentRoots[0]
-        
+
         val result = mutableListOf<LookupElement>()
-        
+
         val virtualFiles = FilenameIndex.getAllFilesByExt(project, "gdshaderinc", GlobalSearchScope.projectScope(project))
         for (file in virtualFiles) {
             val relativeFilePath = VfsUtilCore.getRelativePath(file, projectBaseDir) ?: continue
             val resPath = "res://$relativeFilePath"
-            
+
             result.add(GdsLookupElements.createFromIncludeFilePath(resPath))
         }
-        
+
         return result.toTypedArray()
     }
-    
 }

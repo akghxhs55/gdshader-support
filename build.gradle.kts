@@ -6,6 +6,7 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "2.1.21"
     id("org.jetbrains.intellij.platform") version "2.6.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
 }
 
 group = "kr.jaehoyi"
@@ -51,14 +52,15 @@ intellijPlatform {
             sinceBuild = "242"
         }
 
-        changeNotes = """
+        changeNotes =
+            """
             <ul>
               <li>Added syntax validations for various contexts</li>
               <li>Added spell checking support</li>
               <li>Added code inspection for unused variables and functions</li>
               <li>Added quick fix for removing unused symbols</li>
             </ul>
-        """.trimIndent()
+            """.trimIndent()
     }
 }
 
@@ -75,5 +77,4 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
     }
-
 }

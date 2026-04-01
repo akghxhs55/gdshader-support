@@ -20,18 +20,20 @@ import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaratorList
 import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsParameterList
-import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsTypes
+import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 
-class GdsRemoveUnusedSymbolFix(private val symbolName: String) : LocalQuickFix {
+class GdsRemoveUnusedSymbolFix(
+    private val symbolName: String,
+) : LocalQuickFix {
+    override fun getName(): String = GdsBundle.message("inspection.unused.symbol.fix", symbolName)
 
-    override fun getName(): String =
-        GdsBundle.message("inspection.unused.symbol.fix", symbolName)
+    override fun getFamilyName(): String = GdsBundle.message("inspection.unused.symbol.fix.family")
 
-    override fun getFamilyName(): String =
-        GdsBundle.message("inspection.unused.symbol.fix.family")
-
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    override fun applyFix(
+        project: Project,
+        descriptor: ProblemDescriptor,
+    ) {
         val element = descriptor.psiElement ?: return
 
         when (element) {
@@ -64,7 +66,10 @@ class GdsRemoveUnusedSymbolFix(private val symbolName: String) : LocalQuickFix {
         }
     }
 
-    private fun removeParameter(parameter: GdsParameter, project: Project) {
+    private fun removeParameter(
+        parameter: GdsParameter,
+        project: Project,
+    ) {
         val parameterList = parameter.parent as? GdsParameterList ?: return
         val functionDecl = parameterList.parent as? GdsFunctionDeclaration ?: return
         val functionNameDecl = functionDecl.functionNameDecl
@@ -82,7 +87,10 @@ class GdsRemoveUnusedSymbolFix(private val symbolName: String) : LocalQuickFix {
         removeFromList(parameter)
     }
 
-    private fun removeArgumentAt(argumentList: GdsArgumentList?, paramIndex: Int) {
+    private fun removeArgumentAt(
+        argumentList: GdsArgumentList?,
+        paramIndex: Int,
+    ) {
         val args = argumentList?.initializerList ?: return
         if (paramIndex >= args.size) return
         val arg = args[paramIndex]
@@ -105,7 +113,10 @@ class GdsRemoveUnusedSymbolFix(private val symbolName: String) : LocalQuickFix {
         element.delete()
     }
 
-    private fun findAdjacentComma(element: PsiElement, searchForward: Boolean): PsiElement? {
+    private fun findAdjacentComma(
+        element: PsiElement,
+        searchForward: Boolean,
+    ): PsiElement? {
         var sibling = if (searchForward) element.nextSibling else element.prevSibling
         while (sibling != null) {
             if (sibling.node.elementType == GdsTypes.COMMA) return sibling

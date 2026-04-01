@@ -1,14 +1,16 @@
 package kr.jaehoyi.gdshader.completion
 
 class VariableCompletionTest : GdsCompletionTestBase() {
-
     fun `test local variable completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void fragment() {
                 float my_local_var = 1.0;
                 my_loc<caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -16,11 +18,14 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test parameter completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void my_func(vec3 my_param_vec) {
                 my_par<caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -28,7 +33,9 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test global variable completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type canvas_item;
 
             uniform float u_time;
@@ -38,7 +45,8 @@ class VariableCompletionTest : GdsCompletionTestBase() {
             void fragment() {
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -48,12 +56,15 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test builtin variable completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type canvas_item;
             void fragment() {
                 TIM<caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -61,7 +72,9 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test variable scope visibility`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void func_a() {
                 float invisible_var = 1.0;
             }
@@ -69,25 +82,31 @@ class VariableCompletionTest : GdsCompletionTestBase() {
             void func_b() {
                 invis<caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         myFixture.completeBasic()
         val lookupStrings = myFixture.lookupElementStrings
 
         if (lookupStrings != null) {
-            assertFalse("Should NOT contain 'invisible_var' from another function",
-                lookupStrings.contains("invisible_var"))
+            assertFalse(
+                "Should NOT contain 'invisible_var' from another function",
+                lookupStrings.contains("invisible_var"),
+            )
         }
     }
 
     fun `test for loop variable completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void fragment() {
                 for (int i = 0; i < 10; i++) {
                     i<caret>
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -95,12 +114,15 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test for loop variable in condition`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void fragment() {
                 for (int i = 0; i<caret> < 10; i++) {
                 }
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -110,13 +132,16 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     fun `test completion shows variables from included file`() {
         myFixture.addFileToProject("constants.gdshaderinc", "const int MAX_LIGHTS = 10;")
 
-        myFixture.configureByText("main.gdshader", """
+        myFixture.configureByText(
+            "main.gdshader",
+            """
             #include "res://constants.gdshaderinc"
 
             void light() {
                 int count = MAX_<caret>;
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -126,22 +151,27 @@ class VariableCompletionTest : GdsCompletionTestBase() {
     fun `test transitive include resolution`() {
         myFixture.addFileToProject("level_a.gdshaderinc", "uniform vec3 deep_color;")
 
-        myFixture.addFileToProject("level_b.gdshaderinc", """
+        myFixture.addFileToProject(
+            "level_b.gdshaderinc",
+            """
             #include "res://level_a.gdshaderinc"
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
-        myFixture.configureByText("main.gdshader", """
+        myFixture.configureByText(
+            "main.gdshader",
+            """
             #include "res://level_b.gdshaderinc"
 
             void fragment() {
                 vec3 c = deep_<caret>color;
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val element = myFixture.elementAtCaret
 
         assertEquals("deep_color", element.text)
         assertEquals("level_a.gdshaderinc", element.containingFile.name)
     }
-
 }

@@ -1,12 +1,12 @@
 package kr.jaehoyi.gdshader.inference
 
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiTreeUtil.findChildrenOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 
 class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
-
     fun `test bool literal true`() {
         doLiteralTest("true", BoolType)
     }
@@ -54,7 +54,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         myFixture.configureByText("test.gdshader", code)
 
         val file = myFixture.file
-        val functionCalls = PsiTreeUtil.findChildrenOfType(file, GdsFunctionCall::class.java)
+        val functionCalls = findChildrenOfType(file, GdsFunctionCall::class.java)
         val arrayConstructor = functionCalls.find { it.text.startsWith("int[3]") }
 
         val nonNullArrayConstructor = requireNotNull(arrayConstructor) { "Should find array constructor" }
@@ -348,7 +348,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val functionCalls = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
+        val functionCalls = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
         val functionCall = functionCalls.find { it.text == "vec3(1.0, 1.0)" }
 
         val nonNullFunctionCall = requireNotNull(functionCall) { "Should find function call: vec3(1.0, 1.0)" }
@@ -366,7 +366,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val functionCalls = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
+        val functionCalls = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
         val functionCall = functionCalls.find { it.text.contains("min") }
 
         val nonNullFunctionCall = requireNotNull(functionCall) { "Should find function call: min" }
@@ -377,7 +377,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
 
     // ===== Helper Methods =====
 
-    private fun doLiteralTest(literalText: String, expectedType: DataType) {
+    private fun doLiteralTest(
+        literalText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -386,7 +389,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val literals = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsLiteral::class.java)
+        val literals = findChildrenOfType(myFixture.file, GdsLiteral::class.java)
         val literal = literals.find { it.text == literalText }
 
         val nonNullLiteral = requireNotNull(literal) { "Should find literal: $literalText" }
@@ -395,7 +398,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for literal: $literalText", expectedType, inferredType)
     }
 
-    private fun doConstructorTest(constructorText: String, expectedType: DataType) {
+    private fun doConstructorTest(
+        constructorText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -404,7 +410,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val functionCalls = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
+        val functionCalls = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
         val constructorCall = functionCalls.find { it.text == constructorText }
 
         val nonNullConstructorCall = requireNotNull(constructorCall) { "Should find constructor: $constructorText" }
@@ -413,7 +419,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for constructor: $constructorText", expectedType, inferredType)
     }
 
-    private fun doBuiltinFunctionTest(functionCallText: String, expectedType: DataType) {
+    private fun doBuiltinFunctionTest(
+        functionCallText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -422,7 +431,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val functionCalls = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
+        val functionCalls = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
         val functionCall = functionCalls.find { it.text == functionCallText }
 
         val nonNullFunctionCall = requireNotNull(functionCall) { "Should find function call: $functionCallText" }
@@ -431,7 +440,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for function: $functionCallText", expectedType, inferredType)
     }
 
-    private fun doBinaryExprTest(expressionText: String, expectedType: DataType) {
+    private fun doBinaryExprTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -440,11 +452,12 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val additiveExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsAdditiveExpr::class.java)
-        val multiplicativeExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsMultiplicativeExpr::class.java)
+        val additiveExprs = findChildrenOfType(myFixture.file, GdsAdditiveExpr::class.java)
+        val multiplicativeExprs = findChildrenOfType(myFixture.file, GdsMultiplicativeExpr::class.java)
 
-        val binaryExpr = additiveExprs.find { it.text == expressionText }
-            ?: multiplicativeExprs.find { it.text == expressionText }
+        val binaryExpr =
+            additiveExprs.find { it.text == expressionText }
+                ?: multiplicativeExprs.find { it.text == expressionText }
 
         val nonNullBinaryExpr = requireNotNull(binaryExpr) { "Should find binary expression: $expressionText" }
 
@@ -452,7 +465,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for expression: $expressionText", expectedType, inferredType)
     }
 
-    private fun doShiftExprTest(expressionText: String, expectedType: DataType) {
+    private fun doShiftExprTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -461,7 +477,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val shiftExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsShiftExpr::class.java)
+        val shiftExprs = findChildrenOfType(myFixture.file, GdsShiftExpr::class.java)
         val shiftExpr = shiftExprs.find { it.text == expressionText }
 
         val nonNullShiftExpr = requireNotNull(shiftExpr) { "Should find shift expression: $expressionText" }
@@ -470,7 +486,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for shift expression: $expressionText", expectedType, inferredType)
     }
 
-    private fun doBitwiseExprTest(expressionText: String, expectedType: DataType) {
+    private fun doBitwiseExprTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -479,13 +498,14 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val andExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsBitwiseAndExpr::class.java)
-        val xorExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsBitwiseXorExpr::class.java)
-        val orExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsBitwiseOrExpr::class.java)
+        val andExprs = findChildrenOfType(myFixture.file, GdsBitwiseAndExpr::class.java)
+        val xorExprs = findChildrenOfType(myFixture.file, GdsBitwiseXorExpr::class.java)
+        val orExprs = findChildrenOfType(myFixture.file, GdsBitwiseOrExpr::class.java)
 
-        val bitwiseExpr = andExprs.find { it.text == expressionText }
-            ?: xorExprs.find { it.text == expressionText }
-            ?: orExprs.find { it.text == expressionText }
+        val bitwiseExpr =
+            andExprs.find { it.text == expressionText }
+                ?: xorExprs.find { it.text == expressionText }
+                ?: orExprs.find { it.text == expressionText }
 
         val nonNullBitwiseExpr = requireNotNull(bitwiseExpr) { "Should find bitwise expression: $expressionText" }
 
@@ -493,7 +513,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for bitwise expression: $expressionText", expectedType, inferredType)
     }
 
-    private fun doComparisonTest(expressionText: String, expectedType: DataType) {
+    private fun doComparisonTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -502,19 +525,24 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val relationalExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsRelationalExpr::class.java)
-        val equalityExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsEqualityExpr::class.java)
+        val relationalExprs = findChildrenOfType(myFixture.file, GdsRelationalExpr::class.java)
+        val equalityExprs = findChildrenOfType(myFixture.file, GdsEqualityExpr::class.java)
 
-        val comparisonExpr = relationalExprs.find { it.text == expressionText }
-            ?: equalityExprs.find { it.text == expressionText }
+        val comparisonExpr =
+            relationalExprs.find { it.text == expressionText }
+                ?: equalityExprs.find { it.text == expressionText }
 
-        val nonNullComparisonExpr = requireNotNull(comparisonExpr) { "Should find comparison expression: $expressionText" }
+        val nonNullComparisonExpr =
+            requireNotNull(comparisonExpr) { "Should find comparison expression: $expressionText" }
 
         val inferredType = GdsExpressionTypeInference.inferType(nonNullComparisonExpr)
         assertEquals("Type mismatch for expression: $expressionText", expectedType, inferredType)
     }
 
-    private fun doLogicalTest(expressionText: String, expectedType: DataType) {
+    private fun doLogicalTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -523,11 +551,12 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val logicAndExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsLogicAndExpr::class.java)
-        val logicOrExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsLogicOrExpr::class.java)
+        val logicAndExprs = findChildrenOfType(myFixture.file, GdsLogicAndExpr::class.java)
+        val logicOrExprs = findChildrenOfType(myFixture.file, GdsLogicOrExpr::class.java)
 
-        val logicalExpr = logicAndExprs.find { it.text == expressionText }
-            ?: logicOrExprs.find { it.text == expressionText }
+        val logicalExpr =
+            logicAndExprs.find { it.text == expressionText }
+                ?: logicOrExprs.find { it.text == expressionText }
 
         val nonNullLogicalExpr = requireNotNull(logicalExpr) { "Should find logical expression: $expressionText" }
 
@@ -535,7 +564,10 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals("Type mismatch for expression: $expressionText", expectedType, inferredType)
     }
 
-    private fun doConditionalTest(expressionText: String, expectedType: DataType) {
+    private fun doConditionalTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -544,16 +576,20 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val conditionalExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsConditionalExpr::class.java)
+        val conditionalExprs = findChildrenOfType(myFixture.file, GdsConditionalExpr::class.java)
         val conditionalExpr = conditionalExprs.find { it.text == expressionText }
 
-        val nonNullConditionalExpr = requireNotNull(conditionalExpr) { "Should find conditional expression: $expressionText" }
+        val nonNullConditionalExpr =
+            requireNotNull(conditionalExpr) { "Should find conditional expression: $expressionText" }
 
         val inferredType = GdsExpressionTypeInference.inferType(nonNullConditionalExpr)
         assertEquals("Type mismatch for conditional expression: $expressionText", expectedType, inferredType)
     }
 
-    private fun doUnaryTest(expressionText: String, expectedType: DataType) {
+    private fun doUnaryTest(
+        expressionText: String,
+        expectedType: DataType,
+    ) {
         val code = """
             shader_type spatial;
             void fragment() {
@@ -562,7 +598,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         """
         myFixture.configureByText("test.gdshader", code)
 
-        val unaryExprs = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsUnaryExpr::class.java)
+        val unaryExprs = findChildrenOfType(myFixture.file, GdsUnaryExpr::class.java)
         val unaryExpr = unaryExprs.find { it.text == expressionText }
 
         val nonNullUnaryExpr = requireNotNull(unaryExpr) { "Should find unary expression: $expressionText" }
@@ -580,5 +616,4 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.caretOffset) ?: return null
         return PsiTreeUtil.getParentOfType(elementAtCaret, GdsPostfixExpr::class.java)
     }
-
 }

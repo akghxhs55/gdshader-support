@@ -10,20 +10,29 @@ import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 
 object GdsPatterns {
+    val TOP_LEVEL: ElementPattern<PsiElement> =
+        PlatformPatterns
+            .psiElement(GdsTypes.IDENTIFIER)
+            .withParent(GdsFile::class.java)
+            .with(
+                object : PatternCondition<PsiElement>("AfterTopLevelSeperator") {
+                    override fun accepts(
+                        element: PsiElement,
+                        context: ProcessingContext?,
+                    ): Boolean {
+                        val prevLeaf = PsiTreeUtil.prevVisibleLeaf(element)
+                        return prevLeaf == null ||
+                            prevLeaf.elementType == GdsTypes.SEMICOLON ||
+                            prevLeaf.elementType == GdsTypes.CURLY_BRACKET_CLOSE ||
+                            prevLeaf.elementType in GdsTokenSets.COMMENTS
+                    }
+                },
+            )
 
-    val TOP_LEVEL: ElementPattern<PsiElement> = PlatformPatterns.psiElement(GdsTypes.IDENTIFIER)
-        .withParent(GdsFile::class.java)
-        .with(object : PatternCondition<PsiElement>("AfterTopLevelSeperator") {
-            override fun accepts(element: PsiElement, context: ProcessingContext?): Boolean {
-                val prevLeaf = PsiTreeUtil.prevVisibleLeaf(element)
-                return prevLeaf == null || prevLeaf.elementType == GdsTypes.SEMICOLON || prevLeaf.elementType == GdsTypes.CURLY_BRACKET_CLOSE || prevLeaf.elementType in GdsTokenSets.COMMENTS
-            }
-        })
-    
-    val AFTER_PRECISION: ElementPattern<PsiElement> = StandardPatterns.or(
-        PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_HIGH)),
-        PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_MEDIUM)),
-        PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_LOW))
-    )
-    
+    val AFTER_PRECISION: ElementPattern<PsiElement> =
+        StandardPatterns.or(
+            PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_HIGH)),
+            PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_MEDIUM)),
+            PlatformPatterns.psiElement().afterLeaf(PlatformPatterns.psiElement(GdsTypes.PRECISION_LOW)),
+        )
 }

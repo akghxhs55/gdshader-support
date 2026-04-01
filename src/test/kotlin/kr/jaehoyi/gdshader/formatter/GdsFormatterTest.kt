@@ -5,7 +5,6 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsFormatterTest : BasePlatformTestCase() {
-
     fun `test global definitions`() {
         doTest(
             """
@@ -23,7 +22,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             uniform float height;
             const float PI = 3.14159;
             varying vec3 v_normal;
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -38,7 +37,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             void fragment() {
             	ALBEDO = vec3(1.0, 0.0, 0.0);
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -57,7 +56,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             	vec3 color;
             	float intensity;
             };
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -96,7 +95,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             		keep_going();
             	}
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -133,7 +132,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             			handle_default();
             	}
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -154,7 +153,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             	vec3 v = vec3(a, b, c);
             	a += 1.0;
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -179,7 +178,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             		do_something();
             	}
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -236,7 +235,7 @@ class GdsFormatterTest : BasePlatformTestCase() {
             		}
             	}
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -249,11 +248,14 @@ class GdsFormatterTest : BasePlatformTestCase() {
             """
             void empty_block() { }
             void single_statement() { if (true) return; }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
-    private fun doTest(code: String, expected: String) {
+    private fun doTest(
+        code: String,
+        expected: String,
+    ) {
         myFixture.configureByText("test.gdshader", code)
         WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project).reformat(myFixture.file)

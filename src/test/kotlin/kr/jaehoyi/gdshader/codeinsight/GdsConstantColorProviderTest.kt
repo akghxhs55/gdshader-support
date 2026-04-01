@@ -4,7 +4,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.awt.Color
 
 class GdsConstantColorProviderTest : BasePlatformTestCase() {
-
     private val provider = GdsConstantColorProvider()
 
     fun `test extract color from const vec3`() {
@@ -64,13 +63,13 @@ class GdsConstantColorProviderTest : BasePlatformTestCase() {
         myFixture.configureByText("test.gdshader", before)
         val offset = myFixture.editor.caretModel.offset
         val element = requireNotNull(myFixture.file.findElementAt(offset))
-        
+
         val color = requireNotNull(provider.getColorFrom(element))
         assertEquals(255, color.red)
         assertTrue(color.alpha in 127..128)
-        
+
         provider.setColorTo(element, Color.RED)
-        
+
         myFixture.checkResult(after)
     }
 }

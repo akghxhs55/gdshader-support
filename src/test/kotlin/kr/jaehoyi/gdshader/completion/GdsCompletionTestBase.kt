@@ -4,7 +4,6 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 abstract class GdsCompletionTestBase : BasePlatformTestCase() {
-
     override fun setUp() {
         super.setUp()
         CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false

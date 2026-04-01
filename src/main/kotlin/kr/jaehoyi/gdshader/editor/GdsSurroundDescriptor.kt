@@ -10,14 +10,14 @@ import kr.jaehoyi.gdshader.psi.GdsCaseBody
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
 
 class GdsSurroundDescriptor : SurroundDescriptor {
-
-    private val surrounders = arrayOf<Surrounder>(
-        GdsIfSurrounder(),
-        GdsIfElseSurrounder(),
-        GdsForSurrounder(),
-        GdsWhileSurrounder(),
-        GdsDoWhileSurrounder(),
-    )
+    private val surrounders =
+        arrayOf<Surrounder>(
+            GdsIfSurrounder(),
+            GdsIfElseSurrounder(),
+            GdsForSurrounder(),
+            GdsWhileSurrounder(),
+            GdsDoWhileSurrounder(),
+        )
 
     override fun getElementsToSurround(
         file: PsiFile,
@@ -29,16 +29,19 @@ class GdsSurroundDescriptor : SurroundDescriptor {
         val startElement = file.findElementAt(startOffset) ?: return PsiElement.EMPTY_ARRAY
         val endElement = file.findElementAt(endOffset - 1) ?: return PsiElement.EMPTY_ARRAY
 
-        val commonParent = PsiTreeUtil.findCommonParent(startElement, endElement)
-            ?: return PsiElement.EMPTY_ARRAY
+        val commonParent =
+            PsiTreeUtil.findCommonParent(startElement, endElement)
+                ?: return PsiElement.EMPTY_ARRAY
 
-        val container = generateSequence(commonParent) { it.parent }
-            .firstOrNull { it is GdsBlockBody || it is GdsCaseBody }
-            ?: return PsiElement.EMPTY_ARRAY
+        val container =
+            generateSequence(commonParent) { it.parent }
+                .firstOrNull { it is GdsBlockBody || it is GdsCaseBody }
+                ?: return PsiElement.EMPTY_ARRAY
 
-        val statements = container.children
-            .filterIsInstance<GdsStatementBody>()
-            .filter { it.textRange.startOffset < endOffset && it.textRange.endOffset > startOffset }
+        val statements =
+            container.children
+                .filterIsInstance<GdsStatementBody>()
+                .filter { it.textRange.startOffset < endOffset && it.textRange.endOffset > startOffset }
 
         if (statements.isEmpty()) return PsiElement.EMPTY_ARRAY
         return statements.toTypedArray()

@@ -9,34 +9,44 @@ import kr.jaehoyi.gdshader.psi.GdsItem
 class GdsScopeProcessor<T : PsiElement>(
     private val targetType: Class<T>,
     private val startOffset: Int,
-    private val processor: (element: T) -> Boolean
+    private val processor: (element: T) -> Boolean,
 ) : PsiScopeProcessor {
+    override fun execute(
+        element: PsiElement,
+        state: ResolveState,
+    ): Boolean {
+        val targetElement =
+            when (element) {
+                is GdsItem -> extractDeclaration(element)
+                else -> element
+            } ?: return true
 
-    override fun execute(element: PsiElement, state: ResolveState): Boolean {
-        val targetElement = when (element) {
-            is GdsItem -> extractDeclaration(element)
-            else -> element
-        } ?: return true
-        
         if (targetElement.textOffset >= startOffset) return true
-        
+
         if (targetType.isInstance(targetElement)) {
             return processor(targetType.cast(targetElement))
         }
-        
+
         return true
     }
-    
+
     private fun extractDeclaration(item: GdsItem): PsiElement? =
         item.topLevelDeclaration.let { top ->
             top.uniformDeclaration?.variableNameDecl
-            ?: top.constantDeclaration?.constantDeclaratorList?.constantDeclaratorList?.firstOrNull()?.variableNameDecl
-            ?: top.varyingDeclaration?.variableNameDecl
-            ?: top.functionDeclaration?.functionNameDecl
-            ?: top.structDeclaration?.structNameDecl
+                ?: top.constantDeclaration
+                    ?.constantDeclaratorList
+                    ?.constantDeclaratorList
+                    ?.firstOrNull()
+                    ?.variableNameDecl
+                ?: top.varyingDeclaration?.variableNameDecl
+                ?: top.functionDeclaration?.functionNameDecl
+                ?: top.structDeclaration?.structNameDecl
         }
 
     override fun <T> getHint(hintKey: Key<T?>): T? = null
-    override fun handleEvent(event: PsiScopeProcessor.Event, associated: Any?) {}
-    
+
+    override fun handleEvent(
+        event: PsiScopeProcessor.Event,
+        associated: Any?,
+    ) {}
 }

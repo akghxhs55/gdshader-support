@@ -3,13 +3,10 @@ package kr.jaehoyi.gdshader.psi
 import com.intellij.psi.PsiElement
 
 object GdsConstantEvaluator {
+    fun evaluate(element: PsiElement): Any? = evaluate(element, mutableSetOf())
 
-    fun evaluate(element: PsiElement): Any? {
-        return evaluate(element, mutableSetOf())
-    }
-
-    fun evaluateAsInt(element: PsiElement): Int? {
-        return when (val value = evaluate(element)) {
+    fun evaluateAsInt(element: PsiElement): Int? =
+        when (val value = evaluate(element)) {
             is Int -> value
             is Long -> value.toInt()
             is Float -> value.toInt()
@@ -17,20 +14,18 @@ object GdsConstantEvaluator {
             is Boolean -> if (value) 1 else 0
             else -> null
         }
-    }
 
-    fun evaluateAsFloat(element: PsiElement): Float? {
-        return when (val value = evaluate(element)) {
+    fun evaluateAsFloat(element: PsiElement): Float? =
+        when (val value = evaluate(element)) {
             is Int -> value.toFloat()
             is Long -> value.toFloat()
             is Float -> value
             is Double -> value.toFloat()
             else -> null
         }
-    }
 
-    fun evaluateAsBoolean(element: PsiElement): Boolean? {
-        return when (val value = evaluate(element)) {
+    fun evaluateAsBoolean(element: PsiElement): Boolean? =
+        when (val value = evaluate(element)) {
             is Boolean -> value
             is Int -> value != 0
             is Long -> value != 0L
@@ -38,9 +33,11 @@ object GdsConstantEvaluator {
             is Double -> value != 0.0
             else -> null
         }
-    }
 
-    private fun evaluate(element: PsiElement, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluate(
+        element: PsiElement,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         if (element in visited) return null
         visited.add(element)
 
@@ -93,15 +90,14 @@ object GdsConstantEvaluator {
         return cleaned.toFloatOrNull()
     }
 
-    private fun parseInt(text: String): Int? {
-        return when {
+    private fun parseInt(text: String): Int? =
+        when {
             text.startsWith("0x") || text.startsWith("0X") ->
                 text.substring(2).toIntOrNull(16)
             text.startsWith("0") && text.length > 1 && text.all { it.isDigit() } ->
                 text.toIntOrNull(8)
             else -> text.toIntOrNull()
         }
-    }
 
     private fun parseUInt(text: String): Long? {
         val cleaned = text.trimEnd('u', 'U')
@@ -116,7 +112,10 @@ object GdsConstantEvaluator {
 
     // ===== Variable Reference Evaluation =====
 
-    private fun evaluateVariableRef(varRef: GdsVariableNameRef, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateVariableRef(
+        varRef: GdsVariableNameRef,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val resolved = varRef.reference.resolve() ?: return null
 
         return when (resolved) {
@@ -135,7 +134,10 @@ object GdsConstantEvaluator {
 
     // ===== Primary Expression Evaluation =====
 
-    private fun evaluatePrimary(primary: GdsPrimary, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluatePrimary(
+        primary: GdsPrimary,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         primary.literal?.let { return evaluateLiteral(it) }
         primary.variableNameRef?.let { return evaluateVariableRef(it, visited) }
         primary.functionCall?.let { return evaluateFunctionCall(it, visited) }
@@ -145,7 +147,10 @@ object GdsConstantEvaluator {
 
     // ===== Function Call Evaluation (Scalar Constructors) =====
 
-    private fun evaluateFunctionCall(functionCall: GdsFunctionCall, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateFunctionCall(
+        functionCall: GdsFunctionCall,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val typeNode = functionCall.type ?: return null
         val typeName = typeNode.text
 
@@ -165,10 +170,14 @@ object GdsConstantEvaluator {
 
     // ===== Postfix Expression Evaluation =====
 
-    private fun evaluatePostfixExpr(postfixExpr: GdsPostfixExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluatePostfixExpr(
+        postfixExpr: GdsPostfixExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         if (postfixExpr.structMemberNameRefList.isNotEmpty() ||
             postfixExpr.expressionList.isNotEmpty() ||
-            postfixExpr.functionCallList.isNotEmpty()) {
+            postfixExpr.functionCallList.isNotEmpty()
+        ) {
             return null
         }
         return evaluatePrimary(postfixExpr.primary, visited)
@@ -176,7 +185,10 @@ object GdsConstantEvaluator {
 
     // ===== Unary Expression Evaluation =====
 
-    private fun evaluateUnaryExpr(unaryExpr: GdsUnaryExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateUnaryExpr(
+        unaryExpr: GdsUnaryExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         unaryExpr.unaryExpr?.let { nested ->
             val value = evaluate(nested, visited) ?: return null
 
@@ -187,19 +199,21 @@ object GdsConstantEvaluator {
 
             return when {
                 hasNot -> !(toBoolean(value) ?: return null)
-                hasBitInvert -> when (value) {
-                    is Int -> value.inv()
-                    is Long -> value.inv()
-                    else -> null
-                }
+                hasBitInvert ->
+                    when (value) {
+                        is Int -> value.inv()
+                        is Long -> value.inv()
+                        else -> null
+                    }
                 hasPlus -> value
-                hasMinus -> when (value) {
-                    is Int -> -value
-                    is Long -> -value
-                    is Float -> -value
-                    is Double -> -value
-                    else -> null
-                }
+                hasMinus ->
+                    when (value) {
+                        is Int -> -value
+                        is Long -> -value
+                        is Float -> -value
+                        is Double -> -value
+                        else -> null
+                    }
                 else -> value
             }
         }
@@ -209,7 +223,10 @@ object GdsConstantEvaluator {
 
     // ===== Binary Expression Evaluation =====
 
-    private fun evaluateMultiplicativeExpr(expr: GdsMultiplicativeExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateMultiplicativeExpr(
+        expr: GdsMultiplicativeExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.unaryExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -224,12 +241,13 @@ object GdsConstantEvaluator {
                 val rightValue = evaluate(operands[operandIndex], visited) ?: return null
                 operandIndex++
 
-                result = when (elementType) {
-                    GdsTypes.OP_MUL -> multiply(result, rightValue) ?: return null
-                    GdsTypes.OP_DIV -> divide(result, rightValue) ?: return null
-                    GdsTypes.OP_MOD -> modulo(result, rightValue) ?: return null
-                    else -> return null
-                }
+                result =
+                    when (elementType) {
+                        GdsTypes.OP_MUL -> multiply(result, rightValue) ?: return null
+                        GdsTypes.OP_DIV -> divide(result, rightValue) ?: return null
+                        GdsTypes.OP_MOD -> modulo(result, rightValue) ?: return null
+                        else -> return null
+                    }
             }
             node = node.treeNext
         }
@@ -237,7 +255,10 @@ object GdsConstantEvaluator {
         return result
     }
 
-    private fun evaluateAdditiveExpr(expr: GdsAdditiveExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateAdditiveExpr(
+        expr: GdsAdditiveExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.multiplicativeExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -252,11 +273,12 @@ object GdsConstantEvaluator {
                 val rightValue = evaluate(operands[operandIndex], visited) ?: return null
                 operandIndex++
 
-                result = when (elementType) {
-                    GdsTypes.OP_ADD -> add(result, rightValue) ?: return null
-                    GdsTypes.OP_SUB -> subtract(result, rightValue) ?: return null
-                    else -> return null
-                }
+                result =
+                    when (elementType) {
+                        GdsTypes.OP_ADD -> add(result, rightValue) ?: return null
+                        GdsTypes.OP_SUB -> subtract(result, rightValue) ?: return null
+                        else -> return null
+                    }
             }
             node = node.treeNext
         }
@@ -264,7 +286,10 @@ object GdsConstantEvaluator {
         return result
     }
 
-    private fun evaluateShiftExpr(expr: GdsShiftExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateShiftExpr(
+        expr: GdsShiftExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.additiveExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -280,19 +305,22 @@ object GdsConstantEvaluator {
                 operandIndex++
 
                 val shift = toInt(rightValue) ?: return null
-                result = when (elementType) {
-                    GdsTypes.OP_SHIFT_LEFT -> when (result) {
-                        is Int -> result shl shift
-                        is Long -> result shl shift
+                result =
+                    when (elementType) {
+                        GdsTypes.OP_SHIFT_LEFT ->
+                            when (result) {
+                                is Int -> result shl shift
+                                is Long -> result shl shift
+                                else -> return null
+                            }
+                        GdsTypes.OP_SHIFT_RIGHT ->
+                            when (result) {
+                                is Int -> result shr shift
+                                is Long -> result shr shift
+                                else -> return null
+                            }
                         else -> return null
                     }
-                    GdsTypes.OP_SHIFT_RIGHT -> when (result) {
-                        is Int -> result shr shift
-                        is Long -> result shr shift
-                        else -> return null
-                    }
-                    else -> return null
-                }
             }
             node = node.treeNext
         }
@@ -300,7 +328,10 @@ object GdsConstantEvaluator {
         return result
     }
 
-    private fun evaluateRelationalExpr(expr: GdsRelationalExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateRelationalExpr(
+        expr: GdsRelationalExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.shiftExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -311,13 +342,14 @@ object GdsConstantEvaluator {
         var node = expr.node.firstChildNode
         while (node != null) {
             val elementType = node.elementType
-            val result = when (elementType) {
-                GdsTypes.OP_LESS -> compare(left, right)?.let { it < 0 }
-                GdsTypes.OP_LESS_EQUAL -> compare(left, right)?.let { it <= 0 }
-                GdsTypes.OP_GREATER -> compare(left, right)?.let { it > 0 }
-                GdsTypes.OP_GREATER_EQUAL -> compare(left, right)?.let { it >= 0 }
-                else -> null
-            }
+            val result =
+                when (elementType) {
+                    GdsTypes.OP_LESS -> compare(left, right)?.let { it < 0 }
+                    GdsTypes.OP_LESS_EQUAL -> compare(left, right)?.let { it <= 0 }
+                    GdsTypes.OP_GREATER -> compare(left, right)?.let { it > 0 }
+                    GdsTypes.OP_GREATER_EQUAL -> compare(left, right)?.let { it >= 0 }
+                    else -> null
+                }
             if (result != null) return result
             node = node.treeNext
         }
@@ -325,7 +357,10 @@ object GdsConstantEvaluator {
         return null
     }
 
-    private fun evaluateEqualityExpr(expr: GdsEqualityExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateEqualityExpr(
+        expr: GdsEqualityExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.relationalExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -336,11 +371,12 @@ object GdsConstantEvaluator {
         var node = expr.node.firstChildNode
         while (node != null) {
             val elementType = node.elementType
-            val result = when (elementType) {
-                GdsTypes.OP_EQUAL -> areEqual(left, right)
-                GdsTypes.OP_NOT_EQUAL -> areEqual(left, right)?.let { !it }
-                else -> null
-            }
+            val result =
+                when (elementType) {
+                    GdsTypes.OP_EQUAL -> areEqual(left, right)
+                    GdsTypes.OP_NOT_EQUAL -> areEqual(left, right)?.let { !it }
+                    else -> null
+                }
             if (result != null) return result
             node = node.treeNext
         }
@@ -348,7 +384,10 @@ object GdsConstantEvaluator {
         return null
     }
 
-    private fun evaluateBitwiseAndExpr(expr: GdsBitwiseAndExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateBitwiseAndExpr(
+        expr: GdsBitwiseAndExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.equalityExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -361,7 +400,10 @@ object GdsConstantEvaluator {
         return result
     }
 
-    private fun evaluateBitwiseXorExpr(expr: GdsBitwiseXorExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateBitwiseXorExpr(
+        expr: GdsBitwiseXorExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.bitwiseAndExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -374,7 +416,10 @@ object GdsConstantEvaluator {
         return result
     }
 
-    private fun evaluateBitwiseOrExpr(expr: GdsBitwiseOrExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateBitwiseOrExpr(
+        expr: GdsBitwiseOrExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.bitwiseXorExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -387,7 +432,10 @@ object GdsConstantEvaluator {
         return result
     }
 
-    private fun evaluateLogicAndExpr(expr: GdsLogicAndExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateLogicAndExpr(
+        expr: GdsLogicAndExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.bitwiseOrExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -399,7 +447,10 @@ object GdsConstantEvaluator {
         return true
     }
 
-    private fun evaluateLogicOrExpr(expr: GdsLogicOrExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateLogicOrExpr(
+        expr: GdsLogicOrExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val operands = expr.logicAndExprList
         if (operands.isEmpty()) return null
         if (operands.size == 1) return evaluate(operands[0], visited)
@@ -413,7 +464,10 @@ object GdsConstantEvaluator {
 
     // ===== Conditional Expression Evaluation =====
 
-    private fun evaluateConditionalExpr(expr: GdsConditionalExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateConditionalExpr(
+        expr: GdsConditionalExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         val expressions = expr.expressionList
 
         if (expressions.size < 2) {
@@ -428,60 +482,75 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun evaluateAssignExpr(expr: GdsAssignExpr, visited: MutableSet<PsiElement>): Any? {
+    private fun evaluateAssignExpr(
+        expr: GdsAssignExpr,
+        visited: MutableSet<PsiElement>,
+    ): Any? {
         if (expr.assignmentOperator != null) return null
         return evaluate(expr.logicOrExpr, visited)
     }
 
-    private fun evaluateExpression(expr: GdsExpression, visited: MutableSet<PsiElement>): Any? {
-        return evaluate(expr.conditionalExpr, visited)
-    }
+    private fun evaluateExpression(
+        expr: GdsExpression,
+        visited: MutableSet<PsiElement>,
+    ): Any? = evaluate(expr.conditionalExpr, visited)
 
-    private fun evaluateInitializer(initializer: GdsInitializer, visited: MutableSet<PsiElement>): Any? {
-        return initializer.expression?.let { evaluate(it, visited) }
-    }
+    private fun evaluateInitializer(
+        initializer: GdsInitializer,
+        visited: MutableSet<PsiElement>,
+    ): Any? =
+        initializer.expression?.let {
+            evaluate(it, visited)
+        }
 
     // ===== Type Conversion Helpers =====
 
-    private fun toInt(value: Any?): Int? = when (value) {
-        is Int -> value
-        is Long -> value.toInt()
-        is Float -> value.toInt()
-        is Double -> value.toInt()
-        is Boolean -> if (value) 1 else 0
-        else -> null
-    }
+    private fun toInt(value: Any?): Int? =
+        when (value) {
+            is Int -> value
+            is Long -> value.toInt()
+            is Float -> value.toInt()
+            is Double -> value.toInt()
+            is Boolean -> if (value) 1 else 0
+            else -> null
+        }
 
-    private fun toUInt(value: Any?): Long? = when (value) {
-        is Int -> value.toLong() and 0xFFFFFFFFL
-        is Long -> value and 0xFFFFFFFFL
-        is Float -> value.toLong() and 0xFFFFFFFFL
-        is Double -> value.toLong() and 0xFFFFFFFFL
-        is Boolean -> if (value) 1L else 0L
-        else -> null
-    }
+    private fun toUInt(value: Any?): Long? =
+        when (value) {
+            is Int -> value.toLong() and 0xFFFFFFFFL
+            is Long -> value and 0xFFFFFFFFL
+            is Float -> value.toLong() and 0xFFFFFFFFL
+            is Double -> value.toLong() and 0xFFFFFFFFL
+            is Boolean -> if (value) 1L else 0L
+            else -> null
+        }
 
-    private fun toFloat(value: Any?): Float? = when (value) {
-        is Int -> value.toFloat()
-        is Long -> value.toFloat()
-        is Float -> value
-        is Double -> value.toFloat()
-        is Boolean -> if (value) 1f else 0f
-        else -> null
-    }
+    private fun toFloat(value: Any?): Float? =
+        when (value) {
+            is Int -> value.toFloat()
+            is Long -> value.toFloat()
+            is Float -> value
+            is Double -> value.toFloat()
+            is Boolean -> if (value) 1f else 0f
+            else -> null
+        }
 
-    private fun toBoolean(value: Any?): Boolean? = when (value) {
-        is Boolean -> value
-        is Int -> value != 0
-        is Long -> value != 0L
-        is Float -> value != 0f
-        is Double -> value != 0.0
-        else -> null
-    }
+    private fun toBoolean(value: Any?): Boolean? =
+        when (value) {
+            is Boolean -> value
+            is Int -> value != 0
+            is Long -> value != 0L
+            is Float -> value != 0f
+            is Double -> value != 0.0
+            else -> null
+        }
 
     // ===== Arithmetic Operation Helpers =====
 
-    private fun add(left: Any, right: Any): Any? {
+    private fun add(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Float || right is Float || left is Double || right is Double -> {
                 val l = toFloat(left) ?: return null
@@ -501,7 +570,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun subtract(left: Any, right: Any): Any? {
+    private fun subtract(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Float || right is Float || left is Double || right is Double -> {
                 val l = toFloat(left) ?: return null
@@ -521,7 +593,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun multiply(left: Any, right: Any): Any? {
+    private fun multiply(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Float || right is Float || left is Double || right is Double -> {
                 val l = toFloat(left) ?: return null
@@ -541,7 +616,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun divide(left: Any, right: Any): Any? {
+    private fun divide(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Float || right is Float || left is Double || right is Double -> {
                 val l = toFloat(left) ?: return null
@@ -564,7 +642,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun modulo(left: Any, right: Any): Any? {
+    private fun modulo(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Long || right is Long -> {
                 val l = toUInt(left) ?: return null
@@ -581,7 +662,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun compare(left: Any, right: Any): Int? {
+    private fun compare(
+        left: Any,
+        right: Any,
+    ): Int? {
         return when {
             left is Float || right is Float || left is Double || right is Double -> {
                 val l = toFloat(left) ?: return null
@@ -601,7 +685,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun areEqual(left: Any, right: Any): Boolean? {
+    private fun areEqual(
+        left: Any,
+        right: Any,
+    ): Boolean? {
         return when {
             left is Boolean && right is Boolean -> left == right
             left is Float || right is Float || left is Double || right is Double -> {
@@ -617,7 +704,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun bitwiseAnd(left: Any, right: Any): Any? {
+    private fun bitwiseAnd(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Long || right is Long -> {
                 val l = toUInt(left) ?: return null
@@ -632,7 +722,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun bitwiseXor(left: Any, right: Any): Any? {
+    private fun bitwiseXor(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Long || right is Long -> {
                 val l = toUInt(left) ?: return null
@@ -647,7 +740,10 @@ object GdsConstantEvaluator {
         }
     }
 
-    private fun bitwiseOr(left: Any, right: Any): Any? {
+    private fun bitwiseOr(
+        left: Any,
+        right: Any,
+    ): Any? {
         return when {
             left is Long || right is Long -> {
                 val l = toUInt(left) ?: return null

@@ -9,11 +9,12 @@ import kr.jaehoyi.gdshader.psi.GdsFunction
 
 class GdsLightFunction(
     manager: PsiManager,
-    override val functionSpec: FunctionSpec
-) : LightElement(manager, GdsLanguage), GdsFunction {
-
+    override val functionSpec: FunctionSpec,
+) : LightElement(manager, GdsLanguage),
+    GdsFunction {
     override fun getName(): String = functionSpec.name
+
     override fun setName(name: String): PsiNamedElement = this
+
     override fun toString(): String = "GDShaderLightFunction(${functionSpec.name})"
-    
 }

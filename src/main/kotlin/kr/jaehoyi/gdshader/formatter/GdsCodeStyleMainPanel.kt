@@ -6,9 +6,8 @@ import kr.jaehoyi.gdshader.GdsLanguage
 
 class GdsCodeStyleMainPanel(
     currentSettings: CodeStyleSettings,
-    settings: CodeStyleSettings
+    settings: CodeStyleSettings,
 ) : TabbedLanguageCodeStylePanel(GdsLanguage, currentSettings, settings) {
-    
     override fun initTabs(settings: CodeStyleSettings) {
         addIndentOptionsTab(settings)
         addSpacesTab(settings)

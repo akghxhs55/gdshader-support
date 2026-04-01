@@ -4,15 +4,15 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.awt.Color
 
 class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
-
     private val provider = GdsLocalVariableColorProvider()
 
     fun `test extract color from initialized local variable`() {
-        val code = """
+        val code =
+            """
             void main() {
                 vec3 my<caret>Color = vec3(1.0, 0.0, 0.0);
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val offset = myFixture.editor.caretModel.offset
@@ -24,11 +24,12 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
     }
 
     fun `test no color from uninitialized variable`() {
-        val code = """
+        val code =
+            """
             void main() {
                 vec3 my<caret>Color;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val offset = myFixture.editor.caretModel.offset
@@ -38,11 +39,12 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
     }
 
     fun `test ignore variable if name is not color-related`() {
-        val code = """
+        val code =
+            """
             void main() {
                 vec3 <caret>position = vec3(1.0, 0.0, 0.0);
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", code)
         val offset = myFixture.editor.caretModel.offset
@@ -54,17 +56,19 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
     }
 
     fun `test update existing local variable initializer`() {
-        val before = """
+        val before =
+            """
             void main() {
                 vec3 my<caret>Color = vec3(1.0, 0.0, 0.0);
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        val after = """
+        val after =
+            """
             void main() {
                 vec3 myColor = vec3(0.0, 0.0, 1.0);
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", before)
         val offset = myFixture.editor.caretModel.offset
@@ -76,17 +80,19 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
     }
 
     fun `test insert initializer to uninitialized variable`() {
-        val before = """
+        val before =
+            """
             void main() {
                 vec3 my<caret>Color;
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        val after = """
+        val after =
+            """
             void main() {
                 vec3 myColor = vec3(1.0, 0.0, 0.0);
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", before)
         val offset = myFixture.editor.caretModel.offset
@@ -98,17 +104,19 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
     }
 
     fun `test insert initializer in multi-variable declaration`() {
-        val before = """
+        val before =
+            """
             void main() {
                 vec3 a, my<caret>Color, b;
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        val after = """
+        val after =
+            """
             void main() {
                 vec3 a, myColor = vec3(0.0, 1.0, 0.0), b;
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", before)
         val offset = myFixture.editor.caretModel.offset
@@ -120,17 +128,19 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
     }
 
     fun `test insert vec4 initializer with alpha`() {
-        val before = """
+        val before =
+            """
             void main() {
                 vec4 my<caret>Color;
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        val after = """
+        val after =
+            """
             void main() {
                 vec4 myColor = vec4(1.0, 0.0, 0.0, 1.0);
             }
-        """.trimIndent()
+            """.trimIndent()
 
         myFixture.configureByText("test.gdshader", before)
         val offset = myFixture.editor.caretModel.offset
@@ -140,5 +150,4 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
 
         myFixture.checkResult(after)
     }
-    
 }

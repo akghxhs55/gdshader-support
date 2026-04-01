@@ -1,11 +1,13 @@
 package kr.jaehoyi.gdshader.completion
 
 class ToplevelCompletionTest : GdsCompletionTestBase() {
-
     fun `test in empty file`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -13,11 +15,14 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test before toplevel declaration`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             <caret>
 
             shader_type spatial;
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -25,11 +30,14 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after toplevel declaration`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -37,14 +45,17 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test between toplevel declaration`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type spatial;
 
             <caret>
 
             void fragment() {
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -52,11 +63,14 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test in function body`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             void f() {
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -64,9 +78,26 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
     }
 
     private fun assertTopLevelKeywords(completions: List<String>) {
-        assertContainsElements(completions,
-            "shader_type", "render_mode", "stencil_mode", "group_uniforms", "uniform", "const", "varying",
-            "struct", "highp", "mediump", "lowp", "void", "bool", "int", "float", "vec2", "vec3", "vec4")
+        assertContainsElements(
+            completions,
+            "shader_type",
+            "render_mode",
+            "stencil_mode",
+            "group_uniforms",
+            "uniform",
+            "const",
+            "varying",
+            "struct",
+            "highp",
+            "mediump",
+            "lowp",
+            "void",
+            "bool",
+            "int",
+            "float",
+            "vec2",
+            "vec3",
+            "vec4",
+        )
     }
-
 }

@@ -3,16 +3,20 @@ package kr.jaehoyi.gdshader.formatter
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 
-class GdsCodeStyleSettings(container: CodeStyleSettings) : CustomCodeStyleSettings("GdsCodeStyleSettings", container) {
+class GdsCodeStyleSettings(
+    container: CodeStyleSettings,
+) : CustomCodeStyleSettings("GdsCodeStyleSettings", container) {
+    @JvmField var spaceBeforeForSemicolon = false
 
-    @JvmField var SPACE_BEFORE_FOR_SEMICOLON = false
-    @JvmField var SPACE_AFTER_FOR_SEMICOLON = true
-    
-    @JvmField var SPACE_BEFORE_HINT_COLON: Boolean = true
-    @JvmField var SPACE_AFTER_HINT_COLON: Boolean = true
-    
-    @JvmField var SPACE_BEFORE_TERNARY_COLON: Boolean = true
-    @JvmField var SPACE_AFTER_TERNARY_COLON: Boolean = true
-    
-    @JvmField var SPACE_BEFORE_CASE_COLON: Boolean = false
+    @JvmField var spaceAfterForSemicolon = true
+
+    @JvmField var spaceBeforeHintColon: Boolean = true
+
+    @JvmField var spaceAfterHintColon: Boolean = true
+
+    @JvmField var spaceBeforeTernaryColon: Boolean = true
+
+    @JvmField var spaceAfterTernaryColon: Boolean = true
+
+    @JvmField var spaceBeforeCaseColon: Boolean = false
 }

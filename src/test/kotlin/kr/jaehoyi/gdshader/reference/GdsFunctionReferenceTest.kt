@@ -7,7 +7,6 @@ import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 
 class GdsFunctionReferenceTest : BasePlatformTestCase() {
-
     fun `test user function resolve`() {
         val code = """
             shader_type canvas_item;
@@ -36,27 +35,32 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
         }
     }
 
-    private fun doTest(code: String, checkSpec: (FunctionSpec) -> Unit) {
+    private fun doTest(
+        code: String,
+        checkSpec: (FunctionSpec) -> Unit,
+    ) {
         myFixture.configureByText("test_shader.gdshader", code)
 
-        val elementAtCaret = requireNotNull(myFixture.file.findElementAt(myFixture.caretOffset)) {
-            "No element found at caret"
-        }
+        val elementAtCaret =
+            requireNotNull(myFixture.file.findElementAt(myFixture.caretOffset)) {
+                "No element found at caret"
+            }
 
-        val refElement = requireNotNull(elementAtCaret.parent as? GdsFunctionNameRef) {
-            "Parent is not GdsFunctionNameRef. Found: ${elementAtCaret.parent}"
-        }
+        val refElement =
+            requireNotNull(elementAtCaret.parent as? GdsFunctionNameRef) {
+                "Parent is not GdsFunctionNameRef. Found: ${elementAtCaret.parent}"
+            }
 
-        val resolvedElement = requireNotNull(refElement.reference.resolve()) {
-            "Reference failed to resolve: ${refElement.text}"
-        }
+        val resolvedElement =
+            requireNotNull(refElement.reference.resolve()) {
+                "Reference failed to resolve: ${refElement.text}"
+            }
 
         if (resolvedElement is GdsFunctionNameDecl) {
             val spec = requireNotNull(resolvedElement.functionSpec) { "FunctionSpec is null for Decl" }
             checkSpec(spec)
             return
-        }
-        else if (resolvedElement is GdsLightFunction) {
+        } else if (resolvedElement is GdsLightFunction) {
             val spec = requireNotNull(resolvedElement.functionSpec) { "FunctionSpec is null for LightFunction" }
             checkSpec(spec)
             return
@@ -68,17 +72,20 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
     fun `test resolve function from included file with relative path`() {
         myFixture.addFileToProject(
             "lib/math_utils.gdshaderinc",
-            "float calculate_pi() { return 3.14; }"
+            "float calculate_pi() { return 3.14; }",
         )
 
         val mainFile = "lib/mylib.gdshader"
-        myFixture.addFileToProject(mainFile, """
+        myFixture.addFileToProject(
+            mainFile,
+            """
             #include "math_utils.gdshaderinc"
 
             void run() {
                 float p = calculate<caret>_pi();
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         myFixture.configureFromTempProjectFile(mainFile)
 
@@ -88,5 +95,4 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
         assertEquals("calculate_pi", element.text)
         assertTrue(element.containingFile.name.contains("math_utils.gdshaderinc"))
     }
-
 }

@@ -1,11 +1,13 @@
 package kr.jaehoyi.gdshader.completion
 
 class VaryingCompletionTest : GdsCompletionTestBase() {
-
     fun `test varying keyword`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -13,9 +15,12 @@ class VaryingCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after varying`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             varying <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -24,9 +29,12 @@ class VaryingCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after interpolation modifier`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             varying flat <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -35,9 +43,12 @@ class VaryingCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after precision modifier`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             varying highp <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
@@ -46,13 +57,28 @@ class VaryingCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test after type`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             varying float <caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
-        assertDoesntContain(completions, "varying", "flat", "smooth", "highp", "mediump", "lowp", "int", "float", "vec2", "shader_type", "uniform")
+        assertDoesntContain(
+            completions,
+            "varying",
+            "flat",
+            "smooth",
+            "highp",
+            "mediump",
+            "lowp",
+            "int",
+            "float",
+            "vec2",
+            "shader_type",
+            "uniform",
+        )
     }
-
 }

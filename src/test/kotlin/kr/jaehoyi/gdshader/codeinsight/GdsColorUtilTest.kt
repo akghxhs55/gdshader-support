@@ -1,11 +1,14 @@
 package kr.jaehoyi.gdshader.codeinsight
 
-import org.junit.Assert.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import java.awt.Color
 
 class GdsColorUtilTest {
-    
     @Test
     fun `test extract standard vec3 color`() {
         val text = "vec3(1.0, 0.0, 0.0)"
@@ -96,7 +99,7 @@ class GdsColorUtilTest {
     @Test
     fun `test trimming zeros`() {
         val gray = Color(51, 51, 51)
-        
+
         val result = GdsColorUtil.convertColorToVecString(gray, isVec4 = false)
         assertEquals("vec3(0.2, 0.2, 0.2)", result)
     }

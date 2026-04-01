@@ -10,15 +10,19 @@ import kr.jaehoyi.gdshader.GdsLanguage
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 class GdsTypedHandler : TypedHandlerDelegate() {
-    
-    override fun charTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Result {
+    override fun charTyped(
+        c: Char,
+        project: Project,
+        editor: Editor,
+        file: PsiFile,
+    ): Result {
         if (file.language !is GdsLanguage) {
             return Result.CONTINUE
         }
-        
+
         val document = editor.document
         val offset = editor.caretModel.offset
-        
+
         when (c) {
             ';', ':' -> {
                 PsiDocumentManager.getInstance(project).commitDocument(document)
@@ -26,7 +30,8 @@ class GdsTypedHandler : TypedHandlerDelegate() {
                 if (c == ':') {
                     val element = file.findElementAt(offset - 1)
                     if (element?.node?.elementType != GdsTypes.COLON ||
-                        element.parent?.node?.elementType != GdsTypes.CASE_CLAUSE) {
+                        element.parent?.node?.elementType != GdsTypes.CASE_CLAUSE
+                    ) {
                         return Result.CONTINUE
                     }
                 }
@@ -36,23 +41,22 @@ class GdsTypedHandler : TypedHandlerDelegate() {
 
                 CodeStyleManager.getInstance(project).adjustLineIndent(file, lineStartOffset)
             }
-            
+
             '*' -> {
                 val text = document.charsSequence
-                
-                if (offset >= 2 && text[offset - 2] == '/' ) {
+
+                if (offset >= 2 && text[offset - 2] == '/') {
                     if (offset + 2 <= document.textLength && text.subSequence(offset, offset + 2) == "*/") {
                         return Result.CONTINUE
                     }
-                    
+
                     document.insertString(offset, "*/")
-                    
+
                     return Result.STOP
                 }
             }
         }
-        
+
         return Result.CONTINUE
     }
-    
 }

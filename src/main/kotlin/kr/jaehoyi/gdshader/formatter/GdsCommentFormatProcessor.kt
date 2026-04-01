@@ -11,10 +11,16 @@ import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 class GdsCommentFormatProcessor : PostFormatProcessor {
+    override fun processElement(
+        source: PsiElement,
+        settings: CodeStyleSettings,
+    ): PsiElement = source
 
-    override fun processElement(source: PsiElement, settings: CodeStyleSettings): PsiElement = source
-
-    override fun processText(source: PsiFile, rangeToReformat: TextRange, settings: CodeStyleSettings): TextRange {
+    override fun processText(
+        source: PsiFile,
+        rangeToReformat: TextRange,
+        settings: CodeStyleSettings,
+    ): TextRange {
         if (source !is GdsFile) return rangeToReformat
 
         val document = source.viewProvider.document ?: return rangeToReformat

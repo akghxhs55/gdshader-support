@@ -16,23 +16,21 @@ import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 class GdsParserDefinition : ParserDefinition {
-
     override fun createLexer(project: Project): Lexer = GdsLexerAdapter()
 
     override fun getCommentTokens(): TokenSet = GdsTokenSets.COMMENTS
-    
+
     override fun getStringLiteralElements(): TokenSet = TokenSet.EMPTY
 
     override fun getWhitespaceTokens(): TokenSet = TokenSet.WHITE_SPACE
-    
+
     override fun createParser(project: Project): PsiParser = GdsParser()
-    
+
     override fun getFileNodeType(): IFileElementType = FILE
 
     override fun createFile(viewProvider: FileViewProvider): PsiFile = GdsFile(viewProvider)
 
-    override fun createElement(node: ASTNode): PsiElement = GdsTypes.Factory.createElement(node) 
-    
+    override fun createElement(node: ASTNode): PsiElement = GdsTypes.Factory.createElement(node)
 }
 
 private val FILE: IFileElementType = IFileElementType(GdsLanguage)

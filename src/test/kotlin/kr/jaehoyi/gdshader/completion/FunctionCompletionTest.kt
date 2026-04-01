@@ -1,14 +1,16 @@
 package kr.jaehoyi.gdshader.completion
 
 class FunctionCompletionTest : GdsCompletionTestBase() {
-
     fun `test builtin function completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type canvas_item;
             void fragment() {
                 float x = si<caret>;
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -17,12 +19,15 @@ class FunctionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test constructor completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type canvas_item;
             void fragment() {
                 ve<caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
@@ -31,7 +36,9 @@ class FunctionCompletionTest : GdsCompletionTestBase() {
     }
 
     fun `test user defined function completion`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             shader_type canvas_item;
 
             void my_helper_func() {}
@@ -39,11 +46,11 @@ class FunctionCompletionTest : GdsCompletionTestBase() {
             void fragment() {
                 <caret>
             }
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val lookupStrings = completeAndGetStrings()
 
         assertTrue("Should contain 'my_helper_func'", lookupStrings.contains("my_helper_func"))
     }
-
 }

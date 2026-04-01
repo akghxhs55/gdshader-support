@@ -1,24 +1,40 @@
 package kr.jaehoyi.gdshader.completion
 
 class PreprocessorCompletionTest : GdsCompletionTestBase() {
-
     fun `test preprocessor directives completion after hash`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             #<caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 
-        val expected = listOf(
-            "define", "undef", "if", "ifdef", "ifndef", "elif", "else", "endif", "error", "pragma", "include"
-        )
+        val expected =
+            listOf(
+                "define",
+                "undef",
+                "if",
+                "ifdef",
+                "ifndef",
+                "elif",
+                "else",
+                "endif",
+                "error",
+                "pragma",
+                "include",
+            )
         assertContainsElements(completions, expected)
     }
 
     fun `test preprocessor directives completion with prefix`() {
-        myFixture.configureByText("test.gdshader", """
+        myFixture.configureByText(
+            "test.gdshader",
+            """
             #def<caret>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val completions = completeAndGetStrings()
 

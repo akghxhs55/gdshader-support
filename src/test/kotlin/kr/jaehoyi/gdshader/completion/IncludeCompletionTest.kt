@@ -1,16 +1,18 @@
 package kr.jaehoyi.gdshader.completion
 
 class IncludeCompletionTest : GdsCompletionTestBase() {
-
     fun `test include shows file list inside quotes`() {
         myFixture.addFileToProject("utils.gdshaderinc", "void util() {}")
         myFixture.addFileToProject("lib/math.gdshaderinc", "float pi = 3.14;")
         myFixture.addFileToProject("ignored.gdshader", "text file")
 
-        myFixture.configureByText("main.gdshader", """
+        myFixture.configureByText(
+            "main.gdshader",
+            """
             #include "<caret>"
             void main() {}
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         val suggestedStrings = completeAndGetStrings()
 
@@ -23,9 +25,12 @@ class IncludeCompletionTest : GdsCompletionTestBase() {
         myFixture.addFileToProject("utils.gdshaderinc", "")
 
         val filePath = "common/shader.gdshader"
-        myFixture.addFileToProject(filePath, """
+        myFixture.addFileToProject(
+            filePath,
+            """
             #include "<caret>"
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
         myFixture.configureFromTempProjectFile(filePath)
 
@@ -33,5 +38,4 @@ class IncludeCompletionTest : GdsCompletionTestBase() {
 
         assertContainsElements(suggestedStrings, "res://common/core.gdshaderinc", "res://utils.gdshaderinc")
     }
-
 }

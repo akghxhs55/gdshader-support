@@ -10,8 +10,10 @@ import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 
 class GdsExpressionAnnotator : Annotator {
-
-    override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+    override fun annotate(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
         when (element) {
             is GdsPostfixExpr -> checkPostfixExpr(element, holder)
             is GdsUnaryExpr -> checkUnaryExpr(element, holder)
@@ -30,7 +32,10 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkUnaryExpr(element: GdsUnaryExpr, holder: AnnotationHolder) {
+    private fun checkUnaryExpr(
+        element: GdsUnaryExpr,
+        holder: AnnotationHolder,
+    ) {
         val operand = element.unaryExpr ?: element.postfixExpr ?: return
         val operandType = GdsExpressionTypeInference.inferType(operand) ?: return
 
@@ -39,20 +44,26 @@ class GdsExpressionAnnotator : Annotator {
         val hasMinus = element.node.findChildByType(GdsTypes.OP_SUB) != null
         val hasPlus = element.node.findChildByType(GdsTypes.OP_ADD) != null
 
-        val op = when {
-            hasNot && operandType !is BoolType -> "!"
-            hasBitInvert && !isIntegerType(operandType) -> "~"
-            hasMinus && !isNumericType(operandType) -> "-"
-            hasPlus && !isNumericType(operandType) -> "+"
-            else -> return
-        }
-        holder.newAnnotation(
-            HighlightSeverity.ERROR,
-            "Invalid arguments to unary operator '$op': ${operandType.name}"
-        ).range(element).create()
+        val op =
+            when {
+                hasNot && operandType !is BoolType -> "!"
+                hasBitInvert && !isIntegerType(operandType) -> "~"
+                hasMinus && !isNumericType(operandType) -> "-"
+                hasPlus && !isNumericType(operandType) -> "+"
+                else -> return
+            }
+        holder
+            .newAnnotation(
+                HighlightSeverity.ERROR,
+                "Invalid arguments to unary operator '$op': ${operandType.name}",
+            ).range(element)
+            .create()
     }
 
-    private fun checkConditionalExpr(element: GdsConditionalExpr, holder: AnnotationHolder) {
+    private fun checkConditionalExpr(
+        element: GdsConditionalExpr,
+        holder: AnnotationHolder,
+    ) {
         val expressions = element.expressionList
         if (expressions.size < 2) return
 
@@ -61,26 +72,37 @@ class GdsExpressionAnnotator : Annotator {
         val falseType = GdsExpressionTypeInference.inferType(expressions[1]) ?: return
 
         if (conditionType !is BoolType || trueType.name != falseType.name) {
-            holder.newAnnotation(
-                HighlightSeverity.ERROR,
-                "Invalid argument to ternary operator: '${conditionType.name}, ${trueType.name}, ${falseType.name}'"
-            ).range(element).create()
+            holder
+                .newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Invalid argument to ternary operator: '${conditionType.name}, ${trueType.name}, ${falseType.name}'",
+                ).range(element)
+                .create()
         }
     }
 
-    private fun checkPostfixExpr(element: GdsPostfixExpr, holder: AnnotationHolder) {
+    private fun checkPostfixExpr(
+        element: GdsPostfixExpr,
+        holder: AnnotationHolder,
+    ) {
         for (indexExpr in element.expressionList) {
             val indexType = GdsExpressionTypeInference.inferType(indexExpr) ?: continue
             if (!isIntegerType(indexType)) {
-                holder.newAnnotation(
-                    HighlightSeverity.ERROR,
-                    "Only integer expressions are allowed for indexing"
-                ).range(indexExpr).create()
+                holder
+                    .newAnnotation(
+                        HighlightSeverity.ERROR,
+                        "Only integer expressions are allowed for indexing",
+                    ).range(indexExpr)
+                    .create()
             }
         }
     }
 
-    private fun checkArithmeticExpr(element: PsiElement, operands: List<PsiElement>, holder: AnnotationHolder) {
+    private fun checkArithmeticExpr(
+        element: PsiElement,
+        operands: List<PsiElement>,
+        holder: AnnotationHolder,
+    ) {
         if (operands.size < 2) return
         val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
         val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
@@ -90,7 +112,10 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkShiftExpr(element: GdsShiftExpr, holder: AnnotationHolder) {
+    private fun checkShiftExpr(
+        element: GdsShiftExpr,
+        holder: AnnotationHolder,
+    ) {
         val operands = element.additiveExprList
         if (operands.size < 2) return
         val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
@@ -101,7 +126,11 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkBitwiseExpr(element: PsiElement, operands: List<PsiElement>, holder: AnnotationHolder) {
+    private fun checkBitwiseExpr(
+        element: PsiElement,
+        operands: List<PsiElement>,
+        holder: AnnotationHolder,
+    ) {
         if (operands.size < 2) return
         val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
         val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
@@ -111,7 +140,10 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkRelationalExpr(element: GdsRelationalExpr, holder: AnnotationHolder) {
+    private fun checkRelationalExpr(
+        element: GdsRelationalExpr,
+        holder: AnnotationHolder,
+    ) {
         val operands = element.shiftExprList
         if (operands.size < 2) return
         val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
@@ -122,7 +154,10 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkEqualityExpr(element: GdsEqualityExpr, holder: AnnotationHolder) {
+    private fun checkEqualityExpr(
+        element: GdsEqualityExpr,
+        holder: AnnotationHolder,
+    ) {
         val operands = element.relationalExprList
         if (operands.size < 2) return
         val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
@@ -133,7 +168,11 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkLogicExpr(element: PsiElement, operands: List<PsiElement>, holder: AnnotationHolder) {
+    private fun checkLogicExpr(
+        element: PsiElement,
+        operands: List<PsiElement>,
+        holder: AnnotationHolder,
+    ) {
         if (operands.size < 2) return
         val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
         val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
@@ -143,7 +182,10 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkAssignExpr(element: GdsAssignExpr, holder: AnnotationHolder) {
+    private fun checkAssignExpr(
+        element: GdsAssignExpr,
+        holder: AnnotationHolder,
+    ) {
         val operator = element.assignmentOperator ?: return
 
         val varRef = PsiTreeUtil.findChildOfType(element.logicOrExpr, GdsVariableNameRef::class.java)
@@ -152,13 +194,16 @@ class GdsExpressionAnnotator : Annotator {
             if (resolved is GdsVariableNameDecl) {
                 val spec = resolved.variableSpec
                 if (spec != null && !spec.isMutable) {
-                    val message = when (spec) {
-                        is ConstantSpec -> "Constants cannot be modified"
-                        is UniformSpec -> "Assignment to uniform"
-                        else -> "Cannot assign to read-only variable"
-                    }
-                    holder.newAnnotation(HighlightSeverity.ERROR, message)
-                        .range(element).create()
+                    val message =
+                        when (spec) {
+                            is ConstantSpec -> "Constants cannot be modified"
+                            is UniformSpec -> "Assignment to uniform"
+                            else -> "Cannot assign to read-only variable"
+                        }
+                    holder
+                        .newAnnotation(HighlightSeverity.ERROR, message)
+                        .range(element)
+                        .create()
                     return
                 }
             }
@@ -172,60 +217,93 @@ class GdsExpressionAnnotator : Annotator {
 
         if (opText == "=") {
             if (!isAssignable(lhsType, rhsType)) {
-                holder.newAnnotation(
-                    HighlightSeverity.ERROR,
-                    "Cannot assign a value of type '${rhsType.name}' to type '${lhsType.name}'"
-                ).range(element).create()
+                holder
+                    .newAnnotation(
+                        HighlightSeverity.ERROR,
+                        "Cannot assign a value of type '${rhsType.name}' to type '${lhsType.name}'",
+                    ).range(element)
+                    .create()
             }
         } else {
-            val isValid = when (opText) {
-                "+=", "-=", "*=", "/=", "%=" -> {
-                    val resultType = inferArithmeticResultType(lhsType, rhsType)
-                    resultType != null && isAssignable(lhsType, resultType)
+            val isValid =
+                when (opText) {
+                    "+=", "-=", "*=", "/=", "%=" -> {
+                        val resultType = inferArithmeticResultType(lhsType, rhsType)
+                        resultType != null && isAssignable(lhsType, resultType)
+                    }
+                    "<<=", ">>=" ->
+                        isIntegerType(lhsType) && isIntegerType(rhsType)
+                    "&=", "^=", "|=" ->
+                        isIntegerType(lhsType) && isIntegerType(rhsType)
+                    else -> true
                 }
-                "<<=", ">>=" ->
-                    isIntegerType(lhsType) && isIntegerType(rhsType)
-                "&=", "^=", "|=" ->
-                    isIntegerType(lhsType) && isIntegerType(rhsType)
-                else -> true
-            }
             if (!isValid) {
-                holder.newAnnotation(
-                    HighlightSeverity.ERROR,
-                    "Invalid arguments to operator '$opText': '${lhsType.name}, ${rhsType.name}'"
-                ).range(element).create()
+                holder
+                    .newAnnotation(
+                        HighlightSeverity.ERROR,
+                        "Invalid arguments to operator '$opText': '${lhsType.name}, ${rhsType.name}'",
+                    ).range(element)
+                    .create()
             }
         }
     }
 
-    private fun isAssignable(target: DataType, source: DataType): Boolean {
+    private fun isAssignable(
+        target: DataType,
+        source: DataType,
+    ): Boolean {
         if (target == source) return true
         if (target.name == source.name) return true
         return false
     }
 
-    private fun annotateInvalidOperator(element: PsiElement, leftType: DataType, rightType: DataType, holder: AnnotationHolder) {
+    private fun annotateInvalidOperator(
+        element: PsiElement,
+        leftType: DataType,
+        rightType: DataType,
+        holder: AnnotationHolder,
+    ) {
         val op = findOperatorText(element)
-        holder.newAnnotation(
-            HighlightSeverity.ERROR,
-            "Invalid arguments to operator '$op': '${leftType.name}, ${rightType.name}'"
-        ).range(element).create()
+        holder
+            .newAnnotation(
+                HighlightSeverity.ERROR,
+                "Invalid arguments to operator '$op': '${leftType.name}, ${rightType.name}'",
+            ).range(element)
+            .create()
     }
 
     private fun findOperatorText(element: PsiElement): String {
-        val operatorTokens = TokenSet.create(
-            GdsTypes.OP_MUL, GdsTypes.OP_DIV, GdsTypes.OP_MOD,
-            GdsTypes.OP_ADD, GdsTypes.OP_SUB,
-            GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT,
-            GdsTypes.OP_LESS, GdsTypes.OP_LESS_EQUAL, GdsTypes.OP_GREATER, GdsTypes.OP_GREATER_EQUAL,
-            GdsTypes.OP_EQUAL, GdsTypes.OP_NOT_EQUAL,
-            GdsTypes.OP_BIT_AND, GdsTypes.OP_BIT_XOR, GdsTypes.OP_BIT_OR,
-            GdsTypes.OP_AND, GdsTypes.OP_OR
-        )
-        return element.node.getChildren(operatorTokens).firstOrNull()?.text ?: "?"
+        val operatorTokens =
+            TokenSet.create(
+                GdsTypes.OP_MUL,
+                GdsTypes.OP_DIV,
+                GdsTypes.OP_MOD,
+                GdsTypes.OP_ADD,
+                GdsTypes.OP_SUB,
+                GdsTypes.OP_SHIFT_LEFT,
+                GdsTypes.OP_SHIFT_RIGHT,
+                GdsTypes.OP_LESS,
+                GdsTypes.OP_LESS_EQUAL,
+                GdsTypes.OP_GREATER,
+                GdsTypes.OP_GREATER_EQUAL,
+                GdsTypes.OP_EQUAL,
+                GdsTypes.OP_NOT_EQUAL,
+                GdsTypes.OP_BIT_AND,
+                GdsTypes.OP_BIT_XOR,
+                GdsTypes.OP_BIT_OR,
+                GdsTypes.OP_AND,
+                GdsTypes.OP_OR,
+            )
+        return element.node
+            .getChildren(operatorTokens)
+            .firstOrNull()
+            ?.text ?: "?"
     }
 
-    private fun inferArithmeticResultType(left: DataType, right: DataType): DataType? {
+    private fun inferArithmeticResultType(
+        left: DataType,
+        right: DataType,
+    ): DataType? {
         if (left.name == right.name) return left
         if (left is VectorType && right is Scalar && areCompatibleScalarAndVector(right, left)) return left
         if (right is VectorType && left is Scalar && areCompatibleScalarAndVector(left, right)) return right
@@ -237,29 +315,29 @@ class GdsExpressionAnnotator : Annotator {
         return null
     }
 
-    private fun areCompatibleScalarAndVector(scalar: Scalar, vector: VectorType): Boolean {
-        return when (scalar) {
+    private fun areCompatibleScalarAndVector(
+        scalar: Scalar,
+        vector: VectorType,
+    ): Boolean =
+        when (scalar) {
             is FloatType -> vector.elementType is FloatType
             is IntType -> vector.elementType is IntType
             is UIntType -> vector.elementType is UIntType
             is BoolType -> vector.elementType is BoolType
         }
-    }
 
-    private fun isNumericType(type: DataType): Boolean {
-        return when (type) {
+    private fun isNumericType(type: DataType): Boolean =
+        when (type) {
             is FloatType, is IntType, is UIntType -> true
             is VectorType -> type.elementType !is BoolType
             is MatrixType -> true
             else -> false
         }
-    }
 
-    private fun isIntegerType(type: DataType): Boolean {
-        return when (type) {
+    private fun isIntegerType(type: DataType): Boolean =
+        when (type) {
             is IntType, is UIntType -> true
             is VectorType -> type.elementType is IntType || type.elementType is UIntType
             else -> false
         }
-    }
 }

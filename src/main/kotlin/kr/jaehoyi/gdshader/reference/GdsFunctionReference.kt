@@ -6,8 +6,10 @@ import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
-class GdsFunctionReference(element: PsiElement, textRange: TextRange) : PsiReferenceBase<PsiElement>(element, textRange) {
-    
+class GdsFunctionReference(
+    element: PsiElement,
+    textRange: TextRange,
+) : PsiReferenceBase<PsiElement>(element, textRange) {
     private val key: String = element.text
 
     override fun resolve(): PsiElement? {
@@ -20,7 +22,7 @@ class GdsFunctionReference(element: PsiElement, textRange: TextRange) : PsiRefer
             }
             return@processFunctionDeclaration true
         }
-        
+
         return result
     }
 
@@ -29,5 +31,4 @@ class GdsFunctionReference(element: PsiElement, textRange: TextRange) : PsiRefer
         element.firstChild.replace(identifier)
         return element
     }
-    
 }
