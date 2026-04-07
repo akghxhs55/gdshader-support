@@ -56,4 +56,6 @@ This plugin is licensed under the **MIT License**.
 ## 🤝 Contributing
 
 Contributions, bug reports, and suggestions are welcome!
-Feel free to open issues or pull requests on this repository.
+Please read the [Contributing Guide](CONTRIBUTING.md) for details on how to build, test, and submit changes.
+
+If you find a bug or have a feature request, feel free to [open an issue](https://github.com/akghxhs55/gdshader-support/issues).

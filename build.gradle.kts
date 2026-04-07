@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "0.8.0-beta"
+version = "1.0.0"
 
 sourceSets {
     main {
@@ -55,10 +55,8 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Added syntax validations for various contexts</li>
-              <li>Added spell checking support</li>
-              <li>Added code inspection for unused variables and functions</li>
-              <li>Added quick fix for removing unused symbols</li>
+              <li>Added Korean, German translations</li>
+              <li>Fixed various bugs and improved stability</li>
             </ul>
             """.trimIndent()
     }

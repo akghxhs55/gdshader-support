@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.0.0 (2026-04-07)
+- Added Korean, German translations
+- Fixed various bugs and improved stability
+
 ## 0.8.0-beta (2026-03-24)
 - Added syntax validations for various contexts
 - Added spell checking support
