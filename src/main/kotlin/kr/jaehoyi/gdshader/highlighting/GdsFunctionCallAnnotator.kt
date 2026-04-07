@@ -10,11 +10,8 @@ import kr.jaehoyi.gdshader.model.FunctionSpec
 import kr.jaehoyi.gdshader.model.Instantiable
 import kr.jaehoyi.gdshader.model.StructType
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
-import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
-import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
-import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -69,22 +66,19 @@ class GdsFunctionCallAnnotator : Annotator {
         functionName: String,
     ): List<FunctionSpec> {
         val nameRef = functionCall.functionNameRef ?: return emptyList()
-        val resolved = nameRef.reference.resolve()
+        val candidates = mutableListOf<FunctionSpec>()
 
-        if (resolved is GdsFunctionNameDecl) {
-            val spec = resolved.functionSpec ?: return emptyList()
-            return listOf(spec)
-        }
-
-        if (resolved is GdsFunction) {
-            val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
-            val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall)
-            if (shaderType != null && functionContext != null) {
-                return Builtins.getFunctions(shaderType, functionContext, functionName) ?: emptyList()
+        GdsResolver.processFunctionDeclaration(nameRef) { func ->
+            if (func.name == functionName) {
+                val spec = func.functionSpec
+                if (spec != null) {
+                    candidates.add(spec)
+                }
             }
-            val spec = resolved.functionSpec ?: return emptyList()
-            return listOf(spec)
+            true
         }
+
+        if (candidates.isNotEmpty()) return candidates
 
         val structType = resolveStructType(functionCall, functionName)
         if (structType is Instantiable) {
