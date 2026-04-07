@@ -136,9 +136,10 @@ class GdsDeclarationAnnotator : Annotator {
         val file = element.containingFile ?: return
         val allFunctions = PsiTreeUtil.findChildrenOfType(file, GdsFunctionDeclaration::class.java)
         val signature = getParameterSignature(element)
-        val first = allFunctions.firstOrNull {
-            it.functionNameDecl.text == name && getParameterSignature(it) == signature
-        } ?: return
+        val first =
+            allFunctions.firstOrNull {
+                it.functionNameDecl.text == name && getParameterSignature(it) == signature
+            } ?: return
         if (first !== element) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
@@ -147,9 +148,7 @@ class GdsDeclarationAnnotator : Annotator {
         }
     }
 
-    private fun getParameterSignature(function: GdsFunctionDeclaration): List<String> {
-        return function.parameterList?.parameterList?.map { it.type.text } ?: emptyList()
-    }
+    private fun getParameterSignature(function: GdsFunctionDeclaration): List<String> = function.parameterList?.parameterList?.map { it.type.text } ?: emptyList()
 
     private fun checkDuplicateStruct(
         element: GdsStructDeclaration,

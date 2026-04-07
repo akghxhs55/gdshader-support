@@ -6,8 +6,8 @@ import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
-import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunction
+import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -33,15 +33,17 @@ class GdsFunctionReference(
         val functionCall = findFunctionCall() ?: return candidates.first() as? PsiElement
         val argTypes = collectArgumentTypes(functionCall)
 
-        val specsWithElements = candidates.mapNotNull { candidate ->
-            candidate.functionSpec?.let { it to candidate }
-        }
+        val specsWithElements =
+            candidates.mapNotNull { candidate ->
+                candidate.functionSpec?.let { it to candidate }
+            }
 
         if (specsWithElements.isEmpty()) return candidates.first() as? PsiElement
 
         val specs = specsWithElements.map { it.first }
-        val resolved = GdsOverloadResolver.resolveOverload(specs, argTypes)
-            ?: return candidates.first() as? PsiElement
+        val resolved =
+            GdsOverloadResolver.resolveOverload(specs, argTypes)
+                ?: return candidates.first() as? PsiElement
 
         return specsWithElements.firstOrNull { it.first === resolved }?.second as? PsiElement
             ?: candidates.first() as? PsiElement
