@@ -113,6 +113,8 @@ class GdsColorUtilTest {
 
         assertTrue(GdsColorUtil.isColorVariableName("red"))
         assertTrue(GdsColorUtil.isColorVariableName("dark_blue"))
+        assertTrue(GdsColorUtil.isColorVariableName("col_mid"))
+        assertTrue(GdsColorUtil.isColorVariableName("grid_color"))
 
         assertTrue(GdsColorUtil.isColorVariableName("MyColor"))
         assertTrue(GdsColorUtil.isColorVariableName("RED"))
@@ -123,6 +125,7 @@ class GdsColorUtilTest {
         assertFalse(GdsColorUtil.isColorVariableName("colorPosition"))
         assertFalse(GdsColorUtil.isColorVariableName("normalMap"))
         assertFalse(GdsColorUtil.isColorVariableName("sceneDepth"))
+        assertFalse(GdsColorUtil.isColorVariableName("color_id"))
     }
 
     @Test

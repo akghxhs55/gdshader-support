@@ -55,18 +55,28 @@ object GdsColorUtil {
 
     fun isColorVariableName(name: String): Boolean {
         val lowerName = name.lowercase(Locale.getDefault())
-        if (colorExcludeKeywords.any { it in lowerName }) {
+        val words = lowerName.split(Regex("[_\\d]+"))
+        if (colorExcludeKeywords.any { keyword -> keyword.matchesColorExclude(lowerName, words) }) {
             return false
         }
         if (colorIncludeKeywords.any { it in lowerName }) {
             return true
         }
-        val words = lowerName.split(Regex("[_\\d]+"))
         if (words.any { it in colorNames }) {
             return true
         }
         return false
     }
+
+    private fun String.matchesColorExclude(
+        lowerName: String,
+        words: List<String>,
+    ): Boolean =
+        if (length <= 2) {
+            this in words
+        } else {
+            this in lowerName
+        }
 
     private fun formatFloat(value: Float): String {
         val formatted = String.format(Locale.US, "%.3f", value)

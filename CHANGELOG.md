@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added basic define macro support
 - Removed unsupported matrix constructors
 - Added sampler uniform hint completions
+- Fixed color picker detection logic
 
 ## 1.0.0 (2026-04-07)
 - Added Korean, German translations
