@@ -148,6 +148,43 @@ class VariableCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(lookupStrings, "MAX_LIGHTS")
     }
 
+    fun `test completion shows literal define`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            #define EPSILON 0.01
+
+            void fragment() {
+                float x = EPS<caret>;
+            }
+            """.trimIndent(),
+        )
+
+        val lookupStrings = completeAndGetStrings()
+
+        assertContainsElements(lookupStrings, "EPSILON")
+    }
+
+    fun `test completion shows literal define from included file`() {
+        myFixture.addFileToProject("constants.gdshaderinc", "#define MAX_LIGHTS 8")
+
+        myFixture.configureByText(
+            "main.gdshader",
+            """
+            #include "res://constants.gdshaderinc"
+
+            void light() {
+                int count = MAX_<caret>;
+            }
+            """.trimIndent(),
+        )
+
+        val lookupStrings = completeAndGetStrings()
+
+        assertContainsElements(lookupStrings, "MAX_LIGHTS")
+    }
+
     fun `test transitive include resolution`() {
         myFixture.addFileToProject("level_a.gdshaderinc", "uniform vec3 deep_color;")
 

@@ -74,6 +74,18 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test resolved literal define`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define EPS 0.01
+            void fragment() {
+                float x = EPS;
+            }
+        """,
+        )
+    }
+
     // === Function references ===
 
     fun `test unresolved function`() {

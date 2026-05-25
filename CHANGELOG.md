@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased]
+- Added basic define macro support
+
 ## 1.0.0 (2026-04-07)
 - Added Korean, German translations
 - Fixed various bugs and improved stability

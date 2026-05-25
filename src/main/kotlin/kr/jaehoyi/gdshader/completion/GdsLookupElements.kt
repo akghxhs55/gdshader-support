@@ -11,6 +11,7 @@ import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 
 object GdsLookupElements {
     private const val PRIORITY_HIGHEST = 100.0
@@ -466,6 +467,14 @@ object GdsLookupElements {
 
         return builder
     }
+
+    fun createFromLiteralDefine(define: GdsPreprocessorDefinitions.LiteralDefine): LookupElement =
+        LookupElementBuilder
+            .create(define.name)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Constant)
+            .withTypeText("#define ${define.value}", true)
+            .withPriority(PRIORITY_NORMAL)
 
     fun createFromFunctionNameDecl(nameDecl: GdsFunctionNameDecl): LookupElement? {
         val functionSpec = nameDecl.functionSpec ?: return null

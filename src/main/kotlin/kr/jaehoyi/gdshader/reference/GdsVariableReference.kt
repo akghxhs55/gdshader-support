@@ -4,6 +4,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsVariableReference(
@@ -23,7 +24,7 @@ class GdsVariableReference(
             return@processVariableDeclaration true
         }
 
-        return result
+        return result ?: GdsPreprocessorDefinitions.resolveLiteralDefine(element, key)
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {

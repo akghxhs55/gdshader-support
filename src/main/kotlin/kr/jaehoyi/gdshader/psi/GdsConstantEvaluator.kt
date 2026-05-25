@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.psi
 
 import com.intellij.psi.PsiElement
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 
 object GdsConstantEvaluator {
     fun evaluate(element: PsiElement): Any? = evaluate(element, mutableSetOf())
@@ -128,7 +129,7 @@ object GdsConstantEvaluator {
                     else -> null
                 }
             }
-            else -> null
+            else -> GdsPreprocessorDefinitions.evaluateLiteralDefine(resolved)
         }
     }
 

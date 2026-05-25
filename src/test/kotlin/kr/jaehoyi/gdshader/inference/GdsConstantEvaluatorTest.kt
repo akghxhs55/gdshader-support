@@ -284,6 +284,52 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         assertEquals(8, expr?.let { GdsConstantEvaluator.evaluate(it) })
     }
 
+    fun `test literal define reference`() {
+        val code =
+            """
+            shader_type spatial;
+
+            #define EPS 0.01
+
+            void fragment() {
+                float x = EPS;
+            }
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val file = myFixture.file
+
+        val declarators = PsiTreeUtil.findChildrenOfType(file, GdsLocalVariableDeclarator::class.java)
+        val declarator = declarators.find { it.variableNameDecl.text == "x" }
+        val initializer = declarator?.initializer
+        val expr = initializer?.expression
+
+        assertEquals(0.01f, expr?.let { GdsConstantEvaluator.evaluate(it) })
+    }
+
+    fun `test literal define in expression`() {
+        val code =
+            """
+            shader_type spatial;
+
+            #define SIZE 4
+
+            void fragment() {
+                int x = SIZE * 2;
+            }
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val file = myFixture.file
+
+        val declarators = PsiTreeUtil.findChildrenOfType(file, GdsLocalVariableDeclarator::class.java)
+        val declarator = declarators.find { it.variableNameDecl.text == "x" }
+        val initializer = declarator?.initializer
+        val expr = initializer?.expression
+
+        assertEquals(8, expr?.let { GdsConstantEvaluator.evaluate(it) })
+    }
+
     // ===== evaluateAsInt Tests =====
 
     fun `test evaluateAsInt with int`() {
