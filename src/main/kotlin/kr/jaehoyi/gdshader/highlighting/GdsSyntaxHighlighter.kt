@@ -261,6 +261,7 @@ class GdsSyntaxHighlighter : SyntaxHighlighterBase() {
                 GdsTypes.TYPE_UVEC4, GdsTypes.TYPE_FLOAT, GdsTypes.TYPE_VEC2, GdsTypes.TYPE_VEC3,
                 GdsTypes.TYPE_VEC4, GdsTypes.TYPE_MAT2, GdsTypes.TYPE_MAT3, GdsTypes.TYPE_MAT4,
                 GdsTypes.TYPE_SAMPLER2D, GdsTypes.TYPE_ISAMPLER2D, GdsTypes.TYPE_USAMPLER2D,
+                GdsTypes.TYPE_SAMPLER2DARRAY, GdsTypes.TYPE_ISAMPLER2DARRAY, GdsTypes.TYPE_USAMPLER2DARRAY,
                 GdsTypes.TYPE_SAMPLER3D, GdsTypes.TYPE_ISAMPLER3D, GdsTypes.TYPE_USAMPLER3D,
                 GdsTypes.TYPE_SAMPLERCUBE, GdsTypes.TYPE_SAMPLERCUBEARRAY, GdsTypes.TYPE_SAMPLEREXT,
                 -> TYPE_KEYS

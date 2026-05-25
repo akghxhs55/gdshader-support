@@ -153,6 +153,9 @@ PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
 	"sampler2D" 				{ return GdsTypes.TYPE_SAMPLER2D; }
 	"isampler2D" 				{ return GdsTypes.TYPE_ISAMPLER2D; }
 	"usampler2D" 				{ return GdsTypes.TYPE_USAMPLER2D; }
+	"sampler2DArray" 			{ return GdsTypes.TYPE_SAMPLER2DARRAY; }
+	"isampler2DArray" 			{ return GdsTypes.TYPE_ISAMPLER2DARRAY; }
+	"usampler2DArray" 			{ return GdsTypes.TYPE_USAMPLER2DARRAY; }
 	"sampler3D" 				{ return GdsTypes.TYPE_SAMPLER3D; }
 	"isampler3D" 				{ return GdsTypes.TYPE_ISAMPLER3D; }
 	"usampler3D" 				{ return GdsTypes.TYPE_USAMPLER3D; }

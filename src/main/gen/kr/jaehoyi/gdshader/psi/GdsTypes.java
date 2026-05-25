@@ -232,6 +232,7 @@ public interface GdsTypes {
   IElementType TYPE_FLOAT = new GdsTokenType("TYPE_FLOAT");
   IElementType TYPE_INT = new GdsTokenType("TYPE_INT");
   IElementType TYPE_ISAMPLER2D = new GdsTokenType("TYPE_ISAMPLER2D");
+  IElementType TYPE_ISAMPLER2DARRAY = new GdsTokenType("TYPE_ISAMPLER2DARRAY");
   IElementType TYPE_ISAMPLER3D = new GdsTokenType("TYPE_ISAMPLER3D");
   IElementType TYPE_IVEC2 = new GdsTokenType("TYPE_IVEC2");
   IElementType TYPE_IVEC3 = new GdsTokenType("TYPE_IVEC3");
@@ -240,12 +241,14 @@ public interface GdsTypes {
   IElementType TYPE_MAT3 = new GdsTokenType("TYPE_MAT3");
   IElementType TYPE_MAT4 = new GdsTokenType("TYPE_MAT4");
   IElementType TYPE_SAMPLER2D = new GdsTokenType("TYPE_SAMPLER2D");
+  IElementType TYPE_SAMPLER2DARRAY = new GdsTokenType("TYPE_SAMPLER2DARRAY");
   IElementType TYPE_SAMPLER3D = new GdsTokenType("TYPE_SAMPLER3D");
   IElementType TYPE_SAMPLERCUBE = new GdsTokenType("TYPE_SAMPLERCUBE");
   IElementType TYPE_SAMPLERCUBEARRAY = new GdsTokenType("TYPE_SAMPLERCUBEARRAY");
   IElementType TYPE_SAMPLEREXT = new GdsTokenType("TYPE_SAMPLEREXT");
   IElementType TYPE_UINT = new GdsTokenType("TYPE_UINT");
   IElementType TYPE_USAMPLER2D = new GdsTokenType("TYPE_USAMPLER2D");
+  IElementType TYPE_USAMPLER2DARRAY = new GdsTokenType("TYPE_USAMPLER2DARRAY");
   IElementType TYPE_USAMPLER3D = new GdsTokenType("TYPE_USAMPLER3D");
   IElementType TYPE_UVEC2 = new GdsTokenType("TYPE_UVEC2");
   IElementType TYPE_UVEC3 = new GdsTokenType("TYPE_UVEC3");

@@ -74,6 +74,17 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test sampler2DArray is recognized as builtin type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform sampler2DArray texture_array;
+            uniform isampler2DArray integer_texture_array;
+            uniform usampler2DArray unsigned_texture_array;
+        """,
+        )
+    }
+
     fun `test resolved literal define`() {
         doHighlightTest(
             """

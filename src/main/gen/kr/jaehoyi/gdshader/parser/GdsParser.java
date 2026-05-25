@@ -2317,6 +2317,9 @@ public class GdsParser implements PsiParser, LightPsiParser {
   //        | TYPE_SAMPLER2D
   //        | TYPE_ISAMPLER2D
   //        | TYPE_USAMPLER2D
+  //        | TYPE_SAMPLER2DARRAY
+  //        | TYPE_ISAMPLER2DARRAY
+  //        | TYPE_USAMPLER2DARRAY
   //        | TYPE_SAMPLER3D
   //        | TYPE_ISAMPLER3D
   //        | TYPE_USAMPLER3D
@@ -2332,6 +2335,9 @@ public class GdsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, TYPE_SAMPLER2D);
     if (!r) r = consumeToken(b, TYPE_ISAMPLER2D);
     if (!r) r = consumeToken(b, TYPE_USAMPLER2D);
+    if (!r) r = consumeToken(b, TYPE_SAMPLER2DARRAY);
+    if (!r) r = consumeToken(b, TYPE_ISAMPLER2DARRAY);
+    if (!r) r = consumeToken(b, TYPE_USAMPLER2DARRAY);
     if (!r) r = consumeToken(b, TYPE_SAMPLER3D);
     if (!r) r = consumeToken(b, TYPE_ISAMPLER3D);
     if (!r) r = consumeToken(b, TYPE_USAMPLER3D);

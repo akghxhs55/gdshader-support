@@ -90,6 +90,23 @@ object GdsKeywords {
             ShaderType.FOG to setOf(),
         )
 
+    private val SAMPLER3D_HINTS =
+        setOf(
+            "instance_index",
+            "source_color",
+            "hint_default_white",
+            "hint_default_black",
+            "hint_default_transparent",
+            "filter_nearest",
+            "filter_linear",
+            "filter_nearest_mipmap",
+            "filter_linear_mipmap",
+            "hint_nearest_mipmap_anisotropic",
+            "hint_linear_mipmap_anisotropic",
+            "repeat_enable",
+            "repeat_disable",
+        )
+
     val UNIFORM_HINTS =
         mapOf(
             Builtins.VEC3 to setOf("instance_index", "source_color", "color_conversion_disabled"),
@@ -123,6 +140,15 @@ object GdsKeywords {
                     "hint_depth_texture",
                     "hint_normal_roughness_texture",
                 ),
+            Builtins.SAMPLER3D to SAMPLER3D_HINTS,
+            Builtins.ISAMPLER3D to SAMPLER3D_HINTS,
+            Builtins.USAMPLER3D to SAMPLER3D_HINTS,
+            Builtins.SAMPLER2DARRAY to SAMPLER3D_HINTS,
+            Builtins.ISAMPLER2DARRAY to SAMPLER3D_HINTS,
+            Builtins.USAMPLER2DARRAY to SAMPLER3D_HINTS,
+            Builtins.SAMPLERCUBE to SAMPLER3D_HINTS,
+            Builtins.SAMPLERCUBEARRAY to SAMPLER3D_HINTS,
+            Builtins.SAMPLEREXTERNALOES to SAMPLER3D_HINTS,
         )
 
     val PRECISIONS =
