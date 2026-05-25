@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.0.0"
+version = "1.0.1"
 
 sourceSets {
     main {
@@ -55,8 +55,11 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Added Korean, German translations</li>
-              <li>Fixed various bugs and improved stability</li>
+              <li>Added basic define macro support</li>
+              <li>Removed unsupported matrix constructors</li>
+              <li>Added sampler uniform hint completions</li>
+              <li>Fixed color picker detection logic</li>
+              <li>Fixed to keep processing function template completions available for exact matches</li>
             </ul>
             """.trimIndent()
     }
