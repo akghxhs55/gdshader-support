@@ -41,6 +41,84 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
         assertDoesntContain(completions, "void", "int", "float", "highp", "mediump", "lowp", "shader_type", "uniform")
     }
 
+    fun `test processing function template completion with partial prefix`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+
+            verte<caret>
+            """.trimIndent(),
+        )
+
+        val completions = completeAndGetStrings()
+
+        assertTrue("Should contain 'vertex'", completions.any { it.trimEnd() == "vertex" })
+    }
+
+    fun `test processing function template completion with exact prefix`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+
+            vertex<caret>
+            """.trimIndent(),
+        )
+
+        val completions = completeAndGetStrings()
+
+        assertTrue("Should contain 'vertex'", completions.any { it.trimEnd() == "vertex" })
+    }
+
+    fun `test processing function template insert removes lookup padding`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+
+            vertex<caret>
+            """.trimIndent(),
+        )
+
+        myFixture.completeBasic()
+        myFixture.type('\n')
+
+        myFixture.checkResult(
+            """
+            shader_type spatial;
+
+            void vertex() {
+                
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test processing function insert after void removes lookup padding`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+
+            void vertex<caret>
+            """.trimIndent(),
+        )
+
+        myFixture.completeBasic()
+        myFixture.type('\n')
+
+        myFixture.checkResult(
+            """
+            shader_type spatial;
+
+            void vertex() {
+                
+            }
+            """.trimIndent(),
+        )
+    }
+
     fun `test parameter header`() {
         myFixture.configureByText(
             "test.gdshader",

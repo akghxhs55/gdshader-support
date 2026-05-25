@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.completion
 
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
@@ -257,13 +258,15 @@ object GdsLookupElements {
         Builtins.PROCESSING_FUNCTIONS.mapValues {
             it.value.map { functionContext ->
                 LookupElementBuilder
-                    .create(functionContext.text)
+                    .create("${functionContext.text} ")
+                    .withLookupString("${functionContext.text}()")
+                    .withPresentableText("${functionContext.text}()")
                     .withBoldness(true)
                     .withIcon(AllIcons.Nodes.AbstractMethod)
                     .appendTailText("()", true)
                     .withTypeText("void", true)
                     .withInsertHandler { context, _ ->
-                        val offset = context.tailOffset
+                        val offset = deleteLookupTrailingSpace(context)
                         val textToInsert = "() {\n    \n}"
 
                         context.document.insertString(offset, textToInsert)
@@ -276,7 +279,9 @@ object GdsLookupElements {
         Builtins.PROCESSING_FUNCTIONS.mapValues {
             it.value.map { functionContext ->
                 LookupElementBuilder
-                    .create(functionContext.text)
+                    .create("${functionContext.text} ")
+                    .withLookupString("${functionContext.text}()")
+                    .withPresentableText("${functionContext.text}()")
                     .withBoldness(true)
                     .withIcon(AllIcons.Nodes.Template)
                     .withTypeText("template")
@@ -285,7 +290,7 @@ object GdsLookupElements {
                         val editor = context.editor
 
                         val startOffset = context.startOffset
-                        val tailOffset = context.tailOffset
+                        val tailOffset = deleteLookupTrailingSpace(context)
 
                         val suffix = "() {\n    \n}"
                         document.insertString(tailOffset, suffix)
@@ -293,7 +298,7 @@ object GdsLookupElements {
                         val prefix = "void "
                         document.insertString(startOffset, prefix)
 
-                        val nameLength = element.lookupString.length
+                        val nameLength = element.lookupString.trimEnd().length
                         val cursorOffset = startOffset + prefix.length + nameLength + suffix.length - 2
 
                         editor.caretModel.moveToOffset(cursorOffset)
@@ -557,4 +562,19 @@ object GdsLookupElements {
             .withTypeText(type.presentationText)
 
     private fun LookupElement.withPriority(priority: Double): LookupElement = PrioritizedLookupElement.withPriority(this, priority)
+
+    private fun deleteLookupTrailingSpace(context: InsertionContext): Int {
+        val tailOffset = context.tailOffset
+        if (tailOffset <= context.startOffset) {
+            return tailOffset
+        }
+
+        val document = context.document
+        if (document.charsSequence[tailOffset - 1] != ' ') {
+            return tailOffset
+        }
+
+        document.deleteString(tailOffset - 1, tailOffset)
+        return tailOffset - 1
+    }
 }

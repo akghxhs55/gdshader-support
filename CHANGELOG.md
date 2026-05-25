@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Removed unsupported matrix constructors
 - Added sampler uniform hint completions
 - Fixed color picker detection logic
+- Fixed to keep processing function template completions available for exact matches
 
 ## 1.0.0 (2026-04-07)
 - Added Korean, German translations
