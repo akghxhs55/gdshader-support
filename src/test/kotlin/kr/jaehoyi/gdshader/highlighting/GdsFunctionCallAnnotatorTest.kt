@@ -219,6 +219,52 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test matrix scalar constructor is valid`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat4 m = mat4(1.0);
+            }
+        """,
+        )
+    }
+
+    fun `test matrix conversion constructor is valid`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat2 a = mat2(1.0);
+                mat3 b = mat3(a);
+                mat4 c = mat4(b);
+            }
+        """,
+        )
+    }
+
+    fun `test matrix component wise constructor is invalid`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat2 m = mat2(<error descr="Too many arguments for 'mat2(vec2, vec2)' call. Expected at most 2 but received 4.">1.0, 0.0, 0.0, 1.0</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test matrix column vector constructor is valid`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat4 m = mat4(vec4(1.0), vec4(0.0), vec4(0.0), vec4(1.0));
+            }
+        """,
+        )
+    }
+
     // === Struct constructor ===
 
     fun `test struct constructor correct`() {

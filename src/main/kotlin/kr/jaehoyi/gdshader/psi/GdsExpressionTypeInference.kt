@@ -140,7 +140,7 @@ object GdsExpressionTypeInference {
             }
         }
 
-        return baseType
+        return null
     }
 
     private fun resolveStructType(typeNode: GdsType): DataType? {

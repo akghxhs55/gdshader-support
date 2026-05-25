@@ -35,8 +35,34 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         doConstructorTest("vec4(1.0)", VectorType.VEC4)
     }
 
-    fun `test mat4 constructor`() {
+    fun `test matrix scalar constructor`() {
         doConstructorTest("mat4(1.0)", MatrixType.MAT4)
+    }
+
+    fun `test matrix conversion constructor`() {
+        doConstructorTest("mat3(mat2(1.0))", MatrixType.MAT3)
+    }
+
+    fun `test matrix column vector constructor`() {
+        doConstructorTest("mat4(vec4(1.0), vec4(0.0), vec4(0.0), vec4(1.0))", MatrixType.MAT4)
+    }
+
+    fun `test matrix component wise constructor has no type`() {
+        val code = """
+            shader_type spatial;
+            void fragment() {
+                mat2 dummy = mat2(1.0, 0.0, 0.0, 1.0);
+            }
+        """
+        myFixture.configureByText("test.gdshader", code)
+
+        val functionCalls = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java)
+        val constructorCall = functionCalls.find { it.text == "mat2(1.0, 0.0, 0.0, 1.0)" }
+
+        val nonNullConstructorCall = requireNotNull(constructorCall) { "Should find constructor: mat2(1.0, 0.0, 0.0, 1.0)" }
+
+        val inferredType = GdsExpressionTypeInference.inferType(nonNullConstructorCall)
+        assertNull("Should not infer type for matrix component-wise constructor", inferredType)
     }
 
     fun `test ivec2 constructor`() {
@@ -228,7 +254,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         val code = """
             shader_type spatial;
             void fragment() {
-                mat4 m = mat4(1.0);
+                mat4 m;
                 vec4 col = <caret>m[0];
             }
         """
@@ -253,11 +279,19 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
     }
 
     fun `test mat4 mul vec4`() {
-        doBinaryExprTest("mat4(1.0) * vec4(1.0)", VectorType.VEC4)
+        doBinaryExprTest(
+            expressionText = "m * v",
+            expectedType = VectorType.VEC4,
+            declarations = "mat4 m;\nvec4 v = vec4(1.0);",
+        )
     }
 
     fun `test mat4 mul mat4`() {
-        doBinaryExprTest("mat4(1.0) * mat4(1.0)", MatrixType.MAT4)
+        doBinaryExprTest(
+            expressionText = "a * b",
+            expectedType = MatrixType.MAT4,
+            declarations = "mat4 a;\nmat4 b;",
+        )
     }
 
     fun `test less than`() {
@@ -443,10 +477,12 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
     private fun doBinaryExprTest(
         expressionText: String,
         expectedType: DataType,
+        declarations: String = "",
     ) {
         val code = """
             shader_type spatial;
             void fragment() {
+                $declarations
                 float dummy = $expressionText;
             }
         """

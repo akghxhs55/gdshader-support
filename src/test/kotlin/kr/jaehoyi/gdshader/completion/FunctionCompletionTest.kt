@@ -35,6 +35,25 @@ class FunctionCompletionTest : GdsCompletionTestBase() {
         assertTrue("Should contain 'vec4'", lookupStrings.contains("vec4"))
     }
 
+    fun `test matrix constructor completion is shown`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            void fragment() {
+                mat4 m;
+                m = mat<caret>
+            }
+            """.trimIndent(),
+        )
+
+        val lookupStrings = completeAndGetStrings()
+
+        assertTrue("Should contain 'mat2'", lookupStrings.contains("mat2"))
+        assertTrue("Should contain 'mat3'", lookupStrings.contains("mat3"))
+        assertTrue("Should contain 'mat4'", lookupStrings.contains("mat4"))
+    }
+
     fun `test user defined function completion`() {
         myFixture.configureByText(
             "test.gdshader",

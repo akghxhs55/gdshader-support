@@ -185,16 +185,8 @@ object BuiltinConstructors {
     val MAT2_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(
             FunctionSpec("mat2", MAT2, listOf(ParameterSpec("scalar", FLOAT))),
-            FunctionSpec(
-                "mat2",
-                MAT2,
-                listOf(
-                    ParameterSpec("e00", FLOAT),
-                    ParameterSpec("e01", FLOAT),
-                    ParameterSpec("e10", FLOAT),
-                    ParameterSpec("e11", FLOAT),
-                ),
-            ),
+            FunctionSpec("mat2", MAT2, listOf(ParameterSpec("from", MAT3))),
+            FunctionSpec("mat2", MAT2, listOf(ParameterSpec("from", MAT4))),
             FunctionSpec("mat2", MAT2, listOf(ParameterSpec("col0", VEC2), ParameterSpec("col1", VEC2))),
         )
     }
@@ -202,21 +194,8 @@ object BuiltinConstructors {
     val MAT3_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(
             FunctionSpec("mat3", MAT3, listOf(ParameterSpec("scalar", FLOAT))),
-            FunctionSpec(
-                "mat3",
-                MAT3,
-                listOf(
-                    ParameterSpec("e00", FLOAT),
-                    ParameterSpec("e01", FLOAT),
-                    ParameterSpec("e02", FLOAT),
-                    ParameterSpec("e10", FLOAT),
-                    ParameterSpec("e11", FLOAT),
-                    ParameterSpec("e12", FLOAT),
-                    ParameterSpec("e20", FLOAT),
-                    ParameterSpec("e21", FLOAT),
-                    ParameterSpec("e22", FLOAT),
-                ),
-            ),
+            FunctionSpec("mat3", MAT3, listOf(ParameterSpec("from", MAT2))),
+            FunctionSpec("mat3", MAT3, listOf(ParameterSpec("from", MAT4))),
             FunctionSpec("mat3", MAT3, listOf(ParameterSpec("col0", VEC3), ParameterSpec("col1", VEC3), ParameterSpec("col2", VEC3))),
         )
     }
@@ -224,28 +203,8 @@ object BuiltinConstructors {
     val MAT4_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(
             FunctionSpec("mat4", MAT4, listOf(ParameterSpec("scalar", FLOAT))),
-            FunctionSpec(
-                "mat4",
-                MAT4,
-                listOf(
-                    ParameterSpec("e00", FLOAT),
-                    ParameterSpec("e01", FLOAT),
-                    ParameterSpec("e02", FLOAT),
-                    ParameterSpec("e03", FLOAT),
-                    ParameterSpec("e10", FLOAT),
-                    ParameterSpec("e11", FLOAT),
-                    ParameterSpec("e12", FLOAT),
-                    ParameterSpec("e13", FLOAT),
-                    ParameterSpec("e20", FLOAT),
-                    ParameterSpec("e21", FLOAT),
-                    ParameterSpec("e22", FLOAT),
-                    ParameterSpec("e23", FLOAT),
-                    ParameterSpec("e30", FLOAT),
-                    ParameterSpec("e31", FLOAT),
-                    ParameterSpec("e32", FLOAT),
-                    ParameterSpec("e33", FLOAT),
-                ),
-            ),
+            FunctionSpec("mat4", MAT4, listOf(ParameterSpec("from", MAT2))),
+            FunctionSpec("mat4", MAT4, listOf(ParameterSpec("from", MAT3))),
             FunctionSpec(
                 "mat4",
                 MAT4,

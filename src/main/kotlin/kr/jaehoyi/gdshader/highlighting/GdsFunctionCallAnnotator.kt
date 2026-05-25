@@ -39,8 +39,14 @@ class GdsFunctionCallAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val baseType = Builtins.getType(typeName) ?: return
-        if (baseType !is Instantiable) return
         if (functionCall.arraySize != null) return
+        if (baseType !is Instantiable) {
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Type '$typeName' has no constructor")
+                .range(functionCall)
+                .create()
+            return
+        }
 
         val constructors = baseType.getConstructors()
         if (constructors.isEmpty()) return
