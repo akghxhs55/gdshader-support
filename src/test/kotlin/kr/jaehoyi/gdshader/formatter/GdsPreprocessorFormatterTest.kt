@@ -20,9 +20,9 @@ class GdsPreprocessorFormatterTest : BasePlatformTestCase() {
             """
             void fragment() {
             #define TEST
-            	if (true) {
+                if (true) {
             #include "test.gdshaderinc"
-            	}
+                }
             }
             """.trimIndent()
 
