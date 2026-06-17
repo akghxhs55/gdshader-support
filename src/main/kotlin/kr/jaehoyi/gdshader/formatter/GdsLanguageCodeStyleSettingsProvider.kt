@@ -1,5 +1,6 @@
 package kr.jaehoyi.gdshader.formatter
 
+import com.intellij.application.options.SmartIndentOptionsEditor
 import com.intellij.lang.Language
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
@@ -9,13 +10,17 @@ import kr.jaehoyi.gdshader.GdsLanguage
 class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     override fun getLanguage(): Language = GdsLanguage
 
+    override fun getIndentOptionsEditor(): SmartIndentOptionsEditor = SmartIndentOptionsEditor(this)
+
     override fun customizeDefaults(
         commonSettings: CommonCodeStyleSettings,
         indentOptions: CommonCodeStyleSettings.IndentOptions,
     ) {
         indentOptions.INDENT_SIZE = 4
         indentOptions.TAB_SIZE = 4
-        indentOptions.USE_TAB_CHARACTER = true
+        indentOptions.CONTINUATION_INDENT_SIZE = 8
+        indentOptions.USE_TAB_CHARACTER = false
+        indentOptions.KEEP_INDENTS_ON_EMPTY_LINES = false
 
         commonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS = true
         commonSettings.SPACE_AROUND_LOGICAL_OPERATORS = true
@@ -50,66 +55,112 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
         consumer: CodeStyleSettingsCustomizable,
         settingsType: SettingsType,
     ) {
-        if (settingsType == SettingsType.SPACING_SETTINGS) {
-            consumer.showStandardOptions(
-                // Before Parentheses
-                "SPACE_BEFORE_IF_PARENTHESES",
-                "SPACE_BEFORE_FOR_PARENTHESES",
-                "SPACE_BEFORE_WHILE_PARENTHESES",
-                "SPACE_BEFORE_SWITCH_PARENTHESES",
-                // Around Operators
-                "SPACE_AROUND_ASSIGNMENT_OPERATORS",
-                "SPACE_AROUND_LOGICAL_OPERATORS",
-                "SPACE_AROUND_EQUALITY_OPERATORS",
-                "SPACE_AROUND_RELATIONAL_OPERATORS",
-                "SPACE_AROUND_BITWISE_OPERATORS",
-                "SPACE_AROUND_ADDITIVE_OPERATORS",
-                "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
-                "SPACE_AROUND_SHIFT_OPERATORS",
-                // Before Left Braces
-                "SPACE_BEFORE_CLASS_LBRACE",
-                "SPACE_BEFORE_METHOD_LBRACE",
-                "SPACE_BEFORE_IF_LBRACE",
-                "SPACE_BEFORE_ELSE_LBRACE",
-                "SPACE_BEFORE_FOR_LBRACE",
-                "SPACE_BEFORE_WHILE_LBRACE",
-                "SPACE_BEFORE_DO_LBRACE",
-                "SPACE_BEFORE_SWITCH_LBRACE",
-                // Before Keywords
-                "SPACE_BEFORE_ELSE_KEYWORD",
-                "SPACE_BEFORE_WHILE_KEYWORD",
-                // Within
-                "SPACE_WITHIN_BRACES",
-                // Other
-                "SPACE_AFTER_COMMA",
-                "SPACE_AFTER_SEMICOLON",
-                "SPACE_BEFORE_QUEST",
-                "SPACE_AFTER_QUEST",
-            )
+        when (settingsType) {
+            SettingsType.INDENT_SETTINGS -> {
+                consumer.showStandardOptions(
+                    "INDENT_SIZE",
+                    "TAB_SIZE",
+                    "CONTINUATION_INDENT_SIZE",
+                    "USE_TAB_CHARACTER",
+                    "KEEP_INDENTS_ON_EMPTY_LINES",
+                )
+            }
 
-            consumer.renameStandardOption("SPACE_WITHIN_BRACES", "Braces")
+            SettingsType.SPACING_SETTINGS -> {
+                consumer.showStandardOptions(
+                    // Before Parentheses
+                    "SPACE_BEFORE_IF_PARENTHESES",
+                    "SPACE_BEFORE_FOR_PARENTHESES",
+                    "SPACE_BEFORE_WHILE_PARENTHESES",
+                    "SPACE_BEFORE_SWITCH_PARENTHESES",
+                    // Around Operators
+                    "SPACE_AROUND_ASSIGNMENT_OPERATORS",
+                    "SPACE_AROUND_LOGICAL_OPERATORS",
+                    "SPACE_AROUND_EQUALITY_OPERATORS",
+                    "SPACE_AROUND_RELATIONAL_OPERATORS",
+                    "SPACE_AROUND_BITWISE_OPERATORS",
+                    "SPACE_AROUND_ADDITIVE_OPERATORS",
+                    "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
+                    "SPACE_AROUND_SHIFT_OPERATORS",
+                    // Before Left Braces
+                    "SPACE_BEFORE_CLASS_LBRACE",
+                    "SPACE_BEFORE_METHOD_LBRACE",
+                    "SPACE_BEFORE_IF_LBRACE",
+                    "SPACE_BEFORE_ELSE_LBRACE",
+                    "SPACE_BEFORE_FOR_LBRACE",
+                    "SPACE_BEFORE_WHILE_LBRACE",
+                    "SPACE_BEFORE_DO_LBRACE",
+                    "SPACE_BEFORE_SWITCH_LBRACE",
+                    // Before Keywords
+                    "SPACE_BEFORE_ELSE_KEYWORD",
+                    "SPACE_BEFORE_WHILE_KEYWORD",
+                    // Within
+                    "SPACE_WITHIN_BRACES",
+                    // Other
+                    "SPACE_AFTER_COMMA",
+                    "SPACE_AFTER_SEMICOLON",
+                    "SPACE_BEFORE_QUEST",
+                    "SPACE_AFTER_QUEST",
+                )
 
-            val forGroup = "Within 'for' header"
+                consumer.renameStandardOption("SPACE_WITHIN_BRACES", "Braces")
 
-            consumer.showCustomOption(GdsCodeStyleSettings::class.java, "SPACE_BEFORE_FOR_SEMICOLON", "Before 'for' semicolon", forGroup)
-            consumer.showCustomOption(GdsCodeStyleSettings::class.java, "SPACE_AFTER_FOR_SEMICOLON", "After 'for' semicolon", forGroup)
+                val forGroup = "Within 'for' header"
 
-            val colonGroup = "Colon"
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_BEFORE_FOR_SEMICOLON",
+                    "Before 'for' semicolon",
+                    forGroup,
+                )
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_AFTER_FOR_SEMICOLON",
+                    "After 'for' semicolon",
+                    forGroup,
+                )
 
-            consumer.showCustomOption(GdsCodeStyleSettings::class.java, "SPACE_BEFORE_HINT_COLON", "Before hint colon ':'", colonGroup)
-            consumer.showCustomOption(GdsCodeStyleSettings::class.java, "SPACE_AFTER_HINT_COLON", "After hint colon ':'", colonGroup)
+                val colonGroup = "Colon"
 
-            consumer.showCustomOption(
-                GdsCodeStyleSettings::class.java,
-                "SPACE_BEFORE_TERNARY_COLON",
-                "Before ternary colon ':'",
-                colonGroup,
-            )
-            consumer.showCustomOption(GdsCodeStyleSettings::class.java, "SPACE_AFTER_TERNARY_COLON", "After ternary colon ':'", colonGroup)
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_BEFORE_HINT_COLON",
+                    "Before hint colon ':'",
+                    colonGroup,
+                )
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_AFTER_HINT_COLON",
+                    "After hint colon ':'",
+                    colonGroup,
+                )
 
-            consumer.showCustomOption(GdsCodeStyleSettings::class.java, "SPACE_BEFORE_CASE_COLON", "Before case colon ':'", colonGroup)
-        } else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
-            consumer.showStandardOptions("KEEP_BLANK_LINES_IN_CODE")
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_BEFORE_TERNARY_COLON",
+                    "Before ternary colon ':'",
+                    colonGroup,
+                )
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_AFTER_TERNARY_COLON",
+                    "After ternary colon ':'",
+                    colonGroup,
+                )
+
+                consumer.showCustomOption(
+                    GdsCodeStyleSettings::class.java,
+                    "SPACE_BEFORE_CASE_COLON",
+                    "Before case colon ':'",
+                    colonGroup,
+                )
+            }
+
+            SettingsType.BLANK_LINES_SETTINGS -> {
+                consumer.showStandardOptions("KEEP_BLANK_LINES_IN_CODE")
+            }
+
+            else -> {}
         }
     }
 
@@ -136,7 +187,8 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
             }
             
             for (int i = 0; i < 10; i++) {
-                x += float(i) * 0.1;
+                x += float(i) 
+                    * 0.1;
             }
             
             while (x < 1.0) {
