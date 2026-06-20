@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.0.2 (2026-06-20)
+- Added configuration for indentation
+- Added configuration for inspections
+
 ## 1.0.1 (2026-05-26)
 - Added basic define macro support
 - Removed unsupported matrix constructors

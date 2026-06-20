@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.0.1"
+version = "1.0.2"
 
 sourceSets {
     main {
@@ -55,11 +55,8 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Added basic define macro support</li>
-              <li>Removed unsupported matrix constructors</li>
-              <li>Added sampler uniform hint completions</li>
-              <li>Fixed color picker detection logic</li>
-              <li>Fixed to keep processing function template completions available for exact matches</li>
+              <li>Added configuration for indentation</li>
+              <li>Added configuration for inspections</li>
             </ul>
             """.trimIndent()
     }
