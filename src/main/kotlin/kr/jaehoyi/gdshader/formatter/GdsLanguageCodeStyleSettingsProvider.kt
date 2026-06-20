@@ -109,13 +109,13 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
 
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_BEFORE_FOR_SEMICOLON",
+                    "spaceBeforeForSemicolon",
                     "Before 'for' semicolon",
                     forGroup,
                 )
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_AFTER_FOR_SEMICOLON",
+                    "spaceAfterForSemicolon",
                     "After 'for' semicolon",
                     forGroup,
                 )
@@ -124,33 +124,33 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
 
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_BEFORE_HINT_COLON",
+                    "spaceBeforeHintColon",
                     "Before hint colon ':'",
                     colonGroup,
                 )
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_AFTER_HINT_COLON",
+                    "spaceAfterHintColon",
                     "After hint colon ':'",
                     colonGroup,
                 )
 
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_BEFORE_TERNARY_COLON",
+                    "spaceBeforeTernaryColon",
                     "Before ternary colon ':'",
                     colonGroup,
                 )
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_AFTER_TERNARY_COLON",
+                    "spaceAfterTernaryColon",
                     "After ternary colon ':'",
                     colonGroup,
                 )
 
                 consumer.showCustomOption(
                     GdsCodeStyleSettings::class.java,
-                    "SPACE_BEFORE_CASE_COLON",
+                    "spaceBeforeCaseColon",
                     "Before case colon ':'",
                     colonGroup,
                 )

@@ -1,0 +1,16 @@
+<html>
+<body>
+Reports invalid GDShader expressions.
+<p>
+This inspection checks expression and assignment type rules, including invalid
+operator operands, invalid indexing expressions, incompatible ternary branches,
+and assignments to read-only values such as constants and uniforms.
+</p>
+<pre><code>vec2 a = vec2(1.0);
+vec3 b = vec3(1.0);
+vec3 c = a + b; // invalid operator operands
+
+const float PI = 3.14;
+PI = 1.0; // constants cannot be modified</code></pre>
+</body>
+</html>

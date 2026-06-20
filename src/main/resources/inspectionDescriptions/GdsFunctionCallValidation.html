@@ -1,0 +1,16 @@
+<html>
+<body>
+Reports invalid function and constructor calls.
+<p>
+This inspection checks whether calls match a known function or constructor
+signature. It reports wrong argument counts and incompatible argument types for
+user-defined functions, built-in functions, and type constructors.
+</p>
+<pre><code>float add(float a, float b) {
+    return a + b;
+}
+
+float x = add(1.0); // too few arguments
+float y = sin(1.0, 2.0); // too many arguments</code></pre>
+</body>
+</html>

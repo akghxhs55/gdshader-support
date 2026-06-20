@@ -34,6 +34,8 @@ class GdsDeclarationAnnotator : Annotator {
         element: PsiElement,
         holder: AnnotationHolder,
     ) {
+        if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.DECLARATION_VALIDATION)) return
+
         when {
             element is GdsItem -> checkShaderTypeFirst(element, holder)
             element is GdsStructDeclaration -> {

@@ -14,6 +14,8 @@ class GdsExpressionAnnotator : Annotator {
         element: PsiElement,
         holder: AnnotationHolder,
     ) {
+        if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.EXPRESSION_VALIDATION)) return
+
         when (element) {
             is GdsPostfixExpr -> checkPostfixExpr(element, holder)
             is GdsUnaryExpr -> checkUnaryExpr(element, holder)

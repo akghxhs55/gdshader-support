@@ -29,7 +29,6 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        
         <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GdsNestingRulesProvider" />
         
         <fileType
@@ -117,6 +116,51 @@
         <codeInsight.lineMarkerProvider
             language="GDShader"
             implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsProcessingFunctionLineMarkerProvider" />
+        <localInspection
+            language="GDShader"
+            groupName="GDShader"
+            shortName="GdsDeclarationValidation"
+            key="inspection.declaration.validation.display.name"
+            bundle="messages.GDShaderBundle"
+            enabledByDefault="true"
+            level="ERROR"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsDeclarationValidationInspection" />
+        <localInspection
+            language="GDShader"
+            groupName="GDShader"
+            shortName="GdsExpressionValidation"
+            key="inspection.expression.validation.display.name"
+            bundle="messages.GDShaderBundle"
+            enabledByDefault="true"
+            level="ERROR"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionValidationInspection" />
+        <localInspection
+            language="GDShader"
+            groupName="GDShader"
+            shortName="GdsFunctionCallValidation"
+            key="inspection.function.call.validation.display.name"
+            bundle="messages.GDShaderBundle"
+            enabledByDefault="true"
+            level="ERROR"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallValidationInspection" />
+        <localInspection
+            language="GDShader"
+            groupName="GDShader"
+            shortName="GdsStatementValidation"
+            key="inspection.statement.validation.display.name"
+            bundle="messages.GDShaderBundle"
+            enabledByDefault="true"
+            level="ERROR"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsStatementValidationInspection" />
+        <localInspection
+            language="GDShader"
+            groupName="GDShader"
+            shortName="GdsUnresolvedReference"
+            key="inspection.unresolved.reference.display.name"
+            bundle="messages.GDShaderBundle"
+            enabledByDefault="true"
+            level="WARNING"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceInspection" />
         <localInspection
             language="GDShader"
             groupName="GDShader"

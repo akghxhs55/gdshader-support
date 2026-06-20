@@ -1,0 +1,18 @@
+<html>
+<body>
+Reports unused GDShader symbols.
+<p>
+This inspection reports local variables, constants, parameters, and helper
+functions that are declared but never referenced. Built-in processing functions
+such as <code>fragment</code>, <code>vertex</code>, and <code>start</code> are
+not reported as unused.
+</p>
+<pre><code>void fragment() {
+    float unused = 1.0; // never used
+}
+
+float helper() {
+    return 1.0;
+} // never called</code></pre>
+</body>
+</html>

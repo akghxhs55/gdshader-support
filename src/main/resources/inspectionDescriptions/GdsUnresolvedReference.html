@@ -1,0 +1,15 @@
+<html>
+<body>
+Reports GDShader references that cannot be resolved.
+<p>
+This inspection checks references to variables, functions, structs, and struct
+members. It also validates vector swizzles against the receiver type.
+</p>
+<pre><code>void fragment() {
+    float x = missing_value; // unresolved variable
+
+    vec2 uv = vec2(0.0);
+    float z = uv.z; // invalid member for vec2
+}</code></pre>
+</body>
+</html>

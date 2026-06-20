@@ -1,0 +1,16 @@
+<html>
+<body>
+Reports invalid GDShader declarations.
+<p>
+This inspection checks declaration-level rules such as duplicate symbols, a missing
+or misplaced <code>shader_type</code> declaration, invalid include paths, empty
+structs, repeated array sizes, and initializer type mismatches.
+</p>
+<pre><code>uniform float speed;
+uniform float speed; // duplicate declaration
+
+uniform float[3] values[2]; // array size is already defined
+
+#include "res://helpers.gdshader" // only .gdshaderinc files can be included</code></pre>
+</body>
+</html>

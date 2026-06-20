@@ -27,6 +27,8 @@ class GdsStatementAnnotator : Annotator {
         element: PsiElement,
         holder: AnnotationHolder,
     ) {
+        if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.STATEMENT_VALIDATION)) return
+
         when (element) {
             is GdsSimpleStatement -> {
                 checkDiscardStatement(element, holder)

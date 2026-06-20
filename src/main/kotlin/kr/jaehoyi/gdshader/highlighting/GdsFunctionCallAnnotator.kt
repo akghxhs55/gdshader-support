@@ -21,6 +21,7 @@ class GdsFunctionCallAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         if (element !is GdsFunctionCall) return
+        if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.FUNCTION_CALL_VALIDATION)) return
         if (element.containingFile?.virtualFile?.extension == "gdshaderinc") return
 
         element.type?.let { typeNode ->

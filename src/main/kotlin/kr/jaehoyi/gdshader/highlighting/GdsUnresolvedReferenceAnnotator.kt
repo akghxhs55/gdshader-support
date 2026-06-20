@@ -21,6 +21,7 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         element: PsiElement,
         holder: AnnotationHolder,
     ) {
+        if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.UNRESOLVED_REFERENCE)) return
         if (isIncludeFile(element)) return
 
         when (element) {

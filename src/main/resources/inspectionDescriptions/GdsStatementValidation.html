@@ -1,0 +1,18 @@
+<html>
+<body>
+Reports invalid GDShader statements.
+<p>
+This inspection checks control-flow and statement rules, including return value
+compatibility, boolean conditions, <code>discard</code> placement, and
+<code>break</code> or <code>continue</code> outside valid control-flow blocks.
+</p>
+<pre><code>void fragment() {
+    if (1.0) { // condition must be boolean
+    }
+}
+
+float value() {
+    return; // expected a float expression
+}</code></pre>
+</body>
+</html>
