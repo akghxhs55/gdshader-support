@@ -1,6 +1,5 @@
 package kr.jaehoyi.gdshader.highlighting
 
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
@@ -19,7 +18,7 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVisitor
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
-class GdsUnusedSymbolInspection : LocalInspectionTool() {
+class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symbol.description") {
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,

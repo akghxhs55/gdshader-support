@@ -1,13 +1,11 @@
 package kr.jaehoyi.gdshader.highlighting
 
-import com.intellij.codeInspection.LocalInspectionTool
+class GdsDeclarationValidationInspection : GdsLocalizedInspection("inspection.declaration.validation.description")
 
-class GdsDeclarationValidationInspection : LocalInspectionTool()
+class GdsExpressionValidationInspection : GdsLocalizedInspection("inspection.expression.validation.description")
 
-class GdsExpressionValidationInspection : LocalInspectionTool()
+class GdsFunctionCallValidationInspection : GdsLocalizedInspection("inspection.function.call.validation.description")
 
-class GdsFunctionCallValidationInspection : LocalInspectionTool()
+class GdsStatementValidationInspection : GdsLocalizedInspection("inspection.statement.validation.description")
 
-class GdsStatementValidationInspection : LocalInspectionTool()
-
-class GdsUnresolvedReferenceInspection : LocalInspectionTool()
+class GdsUnresolvedReferenceInspection : GdsLocalizedInspection("inspection.unresolved.reference.description")

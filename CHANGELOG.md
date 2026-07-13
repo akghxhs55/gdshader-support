@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased]
+- Added internationalization for inspection settings
+
 ## 1.0.2 (2026-06-20)
 - Added configuration for indentation
 - Added configuration for inspections
