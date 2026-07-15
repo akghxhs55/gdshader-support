@@ -1,7 +1,5 @@
 # JetBrains plugin for GDShader 🤖
 
----
-
 ![Example Screenshot](screenshot.png)
 
 [![JetBrains Plugin](https://img.shields.io/jetbrains/plugin/v/27949-gdshader?color=blue&label=Plugin%20Version)](https://plugins.jetbrains.com/plugin/27949-gdshader)
