@@ -47,6 +47,8 @@ This plugin adds GDShader (Godot Shading Language) support for JetBrains IDEs.
   - Go to `Preferences` > `Plugins` > `Gear (⚙️) icon` > `Install Plugin from Disk…`.
   - Select the downloaded `.zip` file and click `OK`.
 
+If you want shader files to open in an external editor from Godot, see [akghxhs55/external-shader-editor](https://github.com/akghxhs55/external-shader-editor).
+
 ## 📜 License
 
 This plugin is licensed under the **MIT License**.
