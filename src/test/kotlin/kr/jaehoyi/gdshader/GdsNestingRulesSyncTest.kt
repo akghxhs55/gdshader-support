@@ -5,7 +5,24 @@ import com.intellij.ide.projectView.impl.ProjectViewFileNestingService.NestingRu
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsNestingRulesSyncTest : BasePlatformTestCase() {
+    private var originalRules: List<NestingRule>? = null
+
     private fun service(): ProjectViewFileNestingService = ProjectViewFileNestingService.getInstance()
+
+    override fun setUp() {
+        super.setUp()
+        originalRules = service().rules.toList()
+    }
+
+    override fun tearDown() {
+        try {
+            originalRules?.let { service().setRules(it) }
+        } catch (e: Throwable) {
+            addSuppressedException(e)
+        } finally {
+            super.tearDown()
+        }
+    }
 
     private fun hasRule(
         parent: String,
