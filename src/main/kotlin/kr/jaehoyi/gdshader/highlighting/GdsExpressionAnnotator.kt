@@ -69,7 +69,7 @@ class GdsExpressionAnnotator : Annotator {
         val expressions = element.expressionList
         if (expressions.size < 2) return
 
-        val conditionType = GdsExpressionTypeInference.inferType(element.assignExpr) ?: return
+        val conditionType = GdsExpressionTypeInference.inferType(element.logicOrExpr) ?: return
         val trueType = GdsExpressionTypeInference.inferType(expressions[0]) ?: return
         val falseType = GdsExpressionTypeInference.inferType(expressions[1]) ?: return
 
@@ -190,7 +190,7 @@ class GdsExpressionAnnotator : Annotator {
     ) {
         val operator = element.assignmentOperator ?: return
 
-        val varRef = PsiTreeUtil.findChildOfType(element.logicOrExpr, GdsVariableNameRef::class.java)
+        val varRef = PsiTreeUtil.findChildOfType(element.conditionalExpr, GdsVariableNameRef::class.java)
         if (varRef != null) {
             val resolved = varRef.reference.resolve()
             if (resolved is GdsVariableNameDecl) {
@@ -211,7 +211,7 @@ class GdsExpressionAnnotator : Annotator {
             }
         }
 
-        val lhsType = GdsExpressionTypeInference.inferType(element.logicOrExpr) ?: return
+        val lhsType = GdsExpressionTypeInference.inferType(element.conditionalExpr) ?: return
         val rhsExpr = element.assignExpr ?: return
         val rhsType = GdsExpressionTypeInference.inferType(rhsExpr) ?: return
 

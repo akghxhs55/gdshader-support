@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GdsExpression extends PsiElement {
 
   @NotNull
-  GdsConditionalExpr getConditionalExpr();
+  GdsAssignExpr getAssignExpr();
 
 }

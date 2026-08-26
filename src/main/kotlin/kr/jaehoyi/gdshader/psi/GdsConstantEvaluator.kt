@@ -472,10 +472,10 @@ object GdsConstantEvaluator {
         val expressions = expr.expressionList
 
         if (expressions.size < 2) {
-            return evaluate(expr.assignExpr, visited)
+            return evaluate(expr.logicOrExpr, visited)
         }
 
-        val condition = toBoolean(evaluate(expr.assignExpr, visited)) ?: return null
+        val condition = toBoolean(evaluate(expr.logicOrExpr, visited)) ?: return null
         return if (condition) {
             evaluate(expressions[0], visited)
         } else {
@@ -488,13 +488,13 @@ object GdsConstantEvaluator {
         visited: MutableSet<PsiElement>,
     ): Any? {
         if (expr.assignmentOperator != null) return null
-        return evaluate(expr.logicOrExpr, visited)
+        return evaluate(expr.conditionalExpr, visited)
     }
 
     private fun evaluateExpression(
         expr: GdsExpression,
         visited: MutableSet<PsiElement>,
-    ): Any? = evaluate(expr.conditionalExpr, visited)
+    ): Any? = evaluate(expr.assignExpr, visited)
 
     private fun evaluateInitializer(
         initializer: GdsInitializer,

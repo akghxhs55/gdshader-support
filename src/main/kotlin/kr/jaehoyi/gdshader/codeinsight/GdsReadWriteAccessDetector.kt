@@ -33,7 +33,7 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
     private fun getAssignmentAccess(ref: GdsVariableNameRef): Access? {
         val assignExpr = PsiTreeUtil.getParentOfType(ref, GdsAssignExpr::class.java) ?: return null
         val assignmentOperator = assignExpr.assignmentOperator ?: return null
-        val logicOrExpr = assignExpr.logicOrExpr
+        val logicOrExpr = assignExpr.conditionalExpr.logicOrExpr
 
         if (!PsiTreeUtil.isAncestor(logicOrExpr, ref, false)) return null
 

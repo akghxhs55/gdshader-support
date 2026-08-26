@@ -29,14 +29,14 @@ public class GdsConditionalExprImpl extends ASTWrapperPsiElement implements GdsC
 
   @Override
   @NotNull
-  public GdsAssignExpr getAssignExpr() {
-    return findNotNullChildByClass(GdsAssignExpr.class);
+  public List<GdsExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsExpression.class);
   }
 
   @Override
   @NotNull
-  public List<GdsExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsExpression.class);
+  public GdsLogicOrExpr getLogicOrExpr() {
+    return findNotNullChildByClass(GdsLogicOrExpr.class);
   }
 
 }

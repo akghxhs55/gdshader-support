@@ -14,6 +14,6 @@ public interface GdsAssignExpr extends PsiElement {
   GdsAssignmentOperator getAssignmentOperator();
 
   @NotNull
-  GdsLogicOrExpr getLogicOrExpr();
+  GdsConditionalExpr getConditionalExpr();
 
 }

@@ -452,6 +452,38 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test valid ternary with comparison condition`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            uniform int test_mode;
+            void fragment() {
+                vec3 color = vec3(0.0);
+                if (test_mode == 0 || test_mode == 4) {
+                    color = test_mode == 4 ? vec3(0.95, 0.36, 0.24) : vec3(0.24, 0.72, 0.98);
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid ternary with include function parameter`() {
+        myFixture.addFileToProject(
+            "pattern.gdshaderinc",
+            """
+            shader_type canvas_item;
+            struct Result { float mask; };
+            Result choose(bool draw_regions, float region_mask, float outline_mask) {
+                Result result;
+                result.mask = draw_regions ? region_mask : outline_mask;
+                return result;
+            }
+            """.trimIndent(),
+        )
+        myFixture.configureFromTempProjectFile("pattern.gdshaderinc")
+        myFixture.checkHighlighting(false, false, true)
+    }
+
     fun `test invalid ternary condition`() {
         doHighlightTest(
             """
