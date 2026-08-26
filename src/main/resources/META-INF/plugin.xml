@@ -30,7 +30,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNestingRulesProvider implementation="kr.jaehoyi.gdshader.GdsNestingRulesProvider" />
-        
+
         <fileType
             name="GDShader File"
             implementationClass="kr.jaehoyi.gdshader.GdsFileType"
@@ -195,7 +195,11 @@
         <internalFileTemplate name="Shader Include" />
         
     </extensions>
-    
+
+    <applicationListeners>
+        <listener class="kr.jaehoyi.gdshader.GdsAppLifecycleListener" topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
+
     <actions>
         
         <action
