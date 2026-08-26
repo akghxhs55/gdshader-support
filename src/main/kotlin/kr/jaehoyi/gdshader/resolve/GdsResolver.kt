@@ -62,8 +62,9 @@ object GdsResolver {
         if (!keepGoing) return false
 
         val file = startElement.containingFile
+        val originFile = file.originalFile
         if (!file.processDeclarations(
-                GdsScopeProcessor(GdsVariable::class.java, startElement.textOffset, processor),
+                GdsScopeProcessor(GdsVariable::class.java, startElement.textOffset, originFile, processor),
                 ResolveState.initial(),
                 null,
                 startElement,
@@ -80,8 +81,9 @@ object GdsResolver {
         processor: (element: GdsFunction) -> Boolean,
     ): Boolean {
         val file = startElement.containingFile
+        val originFile = file.originalFile
         if (!file.processDeclarations(
-                GdsScopeProcessor(GdsFunction::class.java, startElement.textOffset, processor),
+                GdsScopeProcessor(GdsFunction::class.java, startElement.textOffset, originFile, processor),
                 ResolveState.initial(),
                 null,
                 startElement,
@@ -98,8 +100,9 @@ object GdsResolver {
         processor: (element: GdsStructNameDecl) -> Boolean,
     ): Boolean {
         val file = startElement.containingFile
+        val originFile = file.originalFile
         return file.processDeclarations(
-            GdsScopeProcessor(GdsStructNameDecl::class.java, startElement.textOffset, processor),
+            GdsScopeProcessor(GdsStructNameDecl::class.java, startElement.textOffset, originFile, processor),
             ResolveState.initial(),
             null,
             startElement,

@@ -2,6 +2,7 @@ package kr.jaehoyi.gdshader.resolve
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import kr.jaehoyi.gdshader.psi.GdsItem
@@ -9,6 +10,7 @@ import kr.jaehoyi.gdshader.psi.GdsItem
 class GdsScopeProcessor<T : PsiElement>(
     private val targetType: Class<T>,
     private val startOffset: Int,
+    private val originFile: PsiFile?,
     private val processor: (element: T) -> Boolean,
 ) : PsiScopeProcessor {
     override fun execute(
@@ -21,7 +23,10 @@ class GdsScopeProcessor<T : PsiElement>(
                 else -> element
             } ?: return true
 
-        if (targetElement.textOffset >= startOffset) return true
+        // "Declared before use" only applies within the file that owns the use site.
+        // Included files contribute their declarations regardless of their own position.
+        val isSameFile = targetElement.containingFile?.originalFile == originFile
+        if (isSameFile && targetElement.textOffset >= startOffset) return true
 
         if (targetType.isInstance(targetElement)) {
             return processor(targetType.cast(targetElement))

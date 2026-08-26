@@ -1,7 +1,9 @@
 package kr.jaehoyi.gdshader.reference
 
+import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
+import kr.jaehoyi.gdshader.psi.GdsStructNameRef
 
 class GdsStructReferenceTest : BasePlatformTestCase() {
     fun `test struct reference resolve`() {
@@ -64,5 +66,47 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
         assertNotNull(lookupStrings)
 
         assertTrue("Should contain 'PlayerInfo'", lookupStrings.contains("PlayerInfo"))
+    }
+
+    fun `test struct declared at end of included file resolves`() {
+        // Pad the include so the struct declaration offset exceeds the use-site
+        // offset in the main file. Position inside the included file must not matter.
+        val padding = "// " + "p".repeat(600) + "\n"
+        myFixture.addFileToProject(
+            "lib/late_structs.gdshaderinc",
+            padding + "struct LateData { float value; };",
+        )
+
+        myFixture.addFileToProject(
+            "lib/main_structs.gdshader",
+            """
+            #include "late_structs.gdshaderinc"
+
+            void fragment() {
+                <caret>LateData data;
+            }
+            """.trimIndent(),
+        )
+
+        myFixture.configureFromTempProjectFile("lib/main_structs.gdshader")
+
+        val resolved = resolveStructAtCaret()
+
+        assertNotNull("Struct declared after the use-site offset in an included file should still resolve", resolved)
+        assertInstanceOf(resolved, GdsStructNameDecl::class.java)
+        assertEquals("LateData", (resolved as GdsStructNameDecl).name)
+    }
+
+    private fun resolveStructAtCaret(): PsiElement? {
+        val elementAtCaret = requireNotNull(myFixture.file.findElementAt(myFixture.caretOffset))
+
+        if (elementAtCaret is GdsStructNameDecl) return elementAtCaret
+
+        val refElement =
+            generateSequence(elementAtCaret) { it.parent }
+                .takeWhile { it != myFixture.file }
+                .firstOrNull { it is GdsStructNameRef } as? GdsStructNameRef
+
+        return refElement?.reference?.resolve()
     }
 }
