@@ -5,27 +5,54 @@ on:
     branches: [ main ]
   push:
     branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 1'
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  build-and-test:
     name: Build & Test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build & Test
         run: ./gradlew check
 
+  verify-plugin:
+    name: Verify Plugin (Rider ${{ matrix.rider-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rider-version: [ '2024.2', 'latest.release' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Verify Plugin
-        run: ./gradlew verifyPlugin
+        run: ./gradlew verifyPlugin -PpluginVerifierIdeVersion=${{ matrix.rider-version }}

@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [Unreleased]
+## 1.1.0 (2026-08-28)
 - Added internationalization for inspection settings
+- Added Chinese translations
+- Fix resolution of symbols declared in included files regardless of position
+- Add self-healing nesting rules on startup
 
 ## 1.0.2 (2026-06-20)
 - Added configuration for indentation
