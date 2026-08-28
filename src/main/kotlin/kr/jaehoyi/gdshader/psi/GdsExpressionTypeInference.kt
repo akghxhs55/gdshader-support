@@ -296,13 +296,12 @@ object GdsExpressionTypeInference {
         return operandType
     }
 
-    private fun inferBinaryExprType(binaryExpr: PsiElement): DataType? {
-        return when (binaryExpr) {
+    private fun inferBinaryExprType(binaryExpr: PsiElement): DataType? =
+        when (binaryExpr) {
             is GdsMultiplicativeExpr -> inferArithmeticChainType(binaryExpr.unaryExprList)
             is GdsAdditiveExpr -> inferArithmeticChainType(binaryExpr.multiplicativeExprList)
             else -> null
         }
-    }
 
     private fun <T : PsiElement> inferArithmeticChainType(operands: List<T>): DataType? {
         var resultType = operands.firstOrNull()?.let { inferType(it) } ?: return null
