@@ -156,6 +156,16 @@ object Builtins {
                         type = FLOAT,
                         description = "Clip space far <code>z</code> value. In the Forward+ or Mobile renderers, it's <code>0.0</code>. In the Compatibility renderer, it's <code>-1.0.</code>",
                     ),
+                    ParameterSpec(
+                        name = "IS_MULTIVIEW",
+                        type = BOOL,
+                        description = "<code>true</code> when output is stereoscopic (XR), <code>false</code> when output is monoscopic.",
+                    ),
+                    ParameterSpec(
+                        name = "IN_SHADOW_PASS",
+                        type = BOOL,
+                        description = "<code>true</code> when the shader is being rendered in a shadow mapping pass, <code>false</code> otherwise.",
+                    ),
                 ),
             ShaderType.SPATIAL to FunctionContext.VERTEX to
                 listOf(
@@ -535,6 +545,12 @@ object Builtins {
                         description = "Depth from <code>NORMAL_MAP</code>. Defaults to <code>1.0</code>.",
                     ),
                     ParameterSpec(
+                        name = "BENT_NORMAL_MAP",
+                        type = VEC3,
+                        qualifier = ParameterQualifier.OUT,
+                        description = "Bent normal map in tangent space for specular occlusion.",
+                    ),
+                    ParameterSpec(
                         name = "ALBEDO",
                         type = VEC3,
                         qualifier = ParameterQualifier.OUT,
@@ -616,7 +632,13 @@ object Builtins {
                         name = "CLEARCOAT_GLOSS",
                         type = FLOAT,
                         qualifier = ParameterQualifier.OUT,
-                        description = "Gloss of clearcoat. If used, Godot calculates clearcoat.",
+                        description = "Gloss of clearcoat in Godot 4.6 and earlier. If used, Godot calculates clearcoat.",
+                    ),
+                    ParameterSpec(
+                        name = "CLEARCOAT_ROUGHNESS",
+                        type = FLOAT,
+                        qualifier = ParameterQualifier.OUT,
+                        description = "Roughness of clearcoat in Godot 4.7 and later. If used, Godot calculates clearcoat.",
                     ),
                     ParameterSpec(
                         name = "ANISOTROPY",

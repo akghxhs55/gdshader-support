@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - Fix to parse chained assignments left to right
 - Fix type inference for constant conversion and expression chains
+- Add Godot 4.6 and 4.7 builtins
 
 ## 1.1.0 (2026-08-28)
 - Added internationalization for inspection settings

@@ -76,10 +76,11 @@ object GdsKeywords {
                 setOf(
                     "read",
                     "write",
-                    "write_depth_fail",
+                    "write_if_depth_fail",
                     "compare_always",
                     "compare_less",
                     "compare_equal",
+                    "compare_not_equal",
                     "compare_less_or_equal",
                     "compare_greater",
                     "compare_greater_or_equal",

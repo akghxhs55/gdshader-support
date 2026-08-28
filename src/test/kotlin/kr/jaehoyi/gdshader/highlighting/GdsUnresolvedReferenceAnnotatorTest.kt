@@ -51,6 +51,23 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test resolved Godot 4 7 spatial builtins`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void helper() {
+                bool multiview = IS_MULTIVIEW;
+                bool shadow_pass = IN_SHADOW_PASS;
+            }
+            void fragment() {
+                BENT_NORMAL_MAP = vec3(0.0, 0.0, 1.0);
+                CLEARCOAT_GLOSS = 1.0;
+                CLEARCOAT_ROUGHNESS = 0.5;
+            }
+        """,
+        )
+    }
+
     fun `test resolved parameter`() {
         doHighlightTest(
             """
