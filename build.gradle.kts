@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.1.0"
+version = "1.1.1"
 
 val pluginVerifierIdeVersion = providers.gradleProperty("pluginVerifierIdeVersion").orElse("latest.release")
 
@@ -58,10 +58,9 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Added internationalization for inspection settings</li>
-              <li>Added Chinese translations</li>
-              <li>Fixed resolution of symbols declared in included files regardless of position</li>
-              <li>Added self-healing nesting rules on startup</li>
+              <li>Fix to parse chained assignments left to right</li>
+              <li>Fix type inference for constant conversion and expression chains</li>
+              <li>Add Godot 4.6 and 4.7 builtins</li>
             </ul>
             """.trimIndent()
     }
