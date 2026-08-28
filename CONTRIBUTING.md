@@ -4,7 +4,7 @@ Thank you for your interest in contributing to the GDShader JetBrains plugin!
 
 ## Prerequisites
 
-- **JDK 17+**
+- **JDK 21+**
 - **IntelliJ IDEA** with the following plugins installed:
   - [Grammar-Kit](https://plugins.jetbrains.com/plugin/6606-grammar-kit) — for generating the parser and lexer from grammar files
   - [PsiViewer](https://plugins.jetbrains.com/plugin/227-psiviewer) — useful for inspecting the PSI tree during development
