@@ -196,6 +196,25 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test mix accepts scalar and vector multiplication chain`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float v_specular = 1.0;
+                float dielectric_f0_scale = 1.0;
+                vec3 dielectric_f0 = vec3(1.0);
+                vec3 Ctint = vec3(1.0);
+                float specularTint = 0.5;
+                vec3 Cdlin = vec3(1.0);
+                float v_metallic = 0.5;
+
+                vec3 Cspec0 = mix(v_specular * dielectric_f0_scale * dielectric_f0 * mix(vec3(1.0), Ctint, specularTint), Cdlin, v_metallic);
+            }
+        """,
+        )
+    }
+
     // === Constructor argument count ===
 
     fun `test vector conversion constructor`() {

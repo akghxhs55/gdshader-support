@@ -278,6 +278,20 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         doBinaryExprTest("2.0 * vec3(1.0)", VectorType.VEC3)
     }
 
+    fun `test float and vec3 multiplication chain`() {
+        doBinaryExprTest(
+            expressionText = "scalar_a * scalar_b * color_a * color_b",
+            expectedType = VectorType.VEC3,
+            declarations =
+                """
+                float scalar_a = 1.0;
+                float scalar_b = 1.0;
+                vec3 color_a = vec3(1.0);
+                vec3 color_b = vec3(1.0);
+                """.trimIndent(),
+        )
+    }
+
     fun `test mat4 mul vec4`() {
         doBinaryExprTest(
             expressionText = "m * v",

@@ -298,28 +298,21 @@ object GdsExpressionTypeInference {
 
     private fun inferBinaryExprType(binaryExpr: PsiElement): DataType? {
         return when (binaryExpr) {
-            is GdsMultiplicativeExpr -> {
-                val operands = binaryExpr.unaryExprList
-                if (operands.size < 2) {
-                    operands.firstOrNull()?.let { inferType(it) }
-                } else {
-                    val leftType = inferType(operands[0]) ?: return null
-                    val rightType = inferType(operands[1]) ?: return null
-                    inferArithmeticResultType(leftType, rightType)
-                }
-            }
-            is GdsAdditiveExpr -> {
-                val operands = binaryExpr.multiplicativeExprList
-                if (operands.size < 2) {
-                    operands.firstOrNull()?.let { inferType(it) }
-                } else {
-                    val leftType = inferType(operands[0]) ?: return null
-                    val rightType = inferType(operands[1]) ?: return null
-                    inferArithmeticResultType(leftType, rightType)
-                }
-            }
+            is GdsMultiplicativeExpr -> inferArithmeticChainType(binaryExpr.unaryExprList)
+            is GdsAdditiveExpr -> inferArithmeticChainType(binaryExpr.multiplicativeExprList)
             else -> null
         }
+    }
+
+    private fun <T : PsiElement> inferArithmeticChainType(operands: List<T>): DataType? {
+        var resultType = operands.firstOrNull()?.let { inferType(it) } ?: return null
+
+        for (operand in operands.drop(1)) {
+            val operandType = inferType(operand) ?: return null
+            resultType = inferArithmeticResultType(resultType, operandType) ?: return null
+        }
+
+        return resultType
     }
 
     private fun inferArithmeticResultType(
