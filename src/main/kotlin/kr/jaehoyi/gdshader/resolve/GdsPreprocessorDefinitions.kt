@@ -65,7 +65,9 @@ object GdsPreprocessorDefinitions {
             .toList()
 
     private fun parseDefine(element: PsiElement): Define? {
-        val match = DEFINE_REGEX.matchEntire(element.text) ?: return null
+        // Highlighting may inspect an incomplete PSI tree while the user edits a directive.
+        val text = element.text ?: return null
+        val match = DEFINE_REGEX.matchEntire(text) ?: return null
         return Define(
             element = element,
             name = match.groupValues[1],

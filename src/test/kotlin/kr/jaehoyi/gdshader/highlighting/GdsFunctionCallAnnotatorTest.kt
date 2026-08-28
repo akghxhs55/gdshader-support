@@ -149,6 +149,18 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test boolean literal to float function parameter is invalid`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f(float a) { return a; }
+            void fragment() {
+                float x = f(<error descr="No matching function for 'f(float)' call: argument 1 should be float but is bool">true</error>);
+            }
+        """,
+        )
+    }
+
     // === Builtin function argument count ===
 
     fun `test builtin function correct args`() {
@@ -185,6 +197,52 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
     }
 
     // === Constructor argument count ===
+
+    fun `test vector conversion constructor`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 size = ivec2(64, 32);
+                vec2 converted = vec2(size);
+            }
+        """,
+        )
+    }
+
+    fun `test texture size vector conversion constructor`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform sampler2D noise;
+            void fragment() {
+                vec2 size = vec2(textureSize(noise, 0));
+            }
+        """,
+        )
+    }
+
+    fun `test vector conversion constructor with scalar`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 converted = vec3(vec2(64.0, 32.0), 1);
+            }
+        """,
+        )
+    }
+
+    fun `test boolean vector constructor rejects numeric scalar`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bvec2 values = bvec2(<error descr="No matching function for 'bvec2(bool)' call: argument 1 should be bool but is int">1</error>);
+            }
+        """,
+        )
+    }
 
     fun `test vec3 correct constructor`() {
         doHighlightTest(

@@ -132,7 +132,7 @@ object GdsExpressionTypeInference {
             val constructors = baseType.getConstructors()
 
             if (constructors.isNotEmpty()) {
-                val resolvedConstructor = GdsOverloadResolver.resolveOverload(constructors, argTypes)
+                val resolvedConstructor = GdsOverloadResolver.resolveConstructorOverload(constructors, argTypes)
                 if (resolvedConstructor != null) {
                     return resolvedConstructor.returnType
                 }
@@ -199,7 +199,7 @@ object GdsExpressionTypeInference {
 
         val argTypes = collectArgumentTypes(functionCall)
 
-        val resolvedSpec = GdsOverloadResolver.resolveOverload(candidates, argTypes) ?: return null
+        val resolvedSpec = GdsOverloadResolver.resolveFunctionOverload(candidates, argTypes) ?: return null
 
         val returnType = resolvedSpec.returnType
         if (returnType is AliasType) {

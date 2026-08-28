@@ -3,9 +3,36 @@ package kr.jaehoyi.gdshader.resolve
 import kr.jaehoyi.gdshader.model.*
 
 object GdsOverloadResolver {
-    fun resolveOverload(
+    fun resolveFunctionOverload(
         candidates: List<FunctionSpec>,
         argumentTypes: List<DataType>,
+        constantArguments: List<Boolean> = emptyList(),
+    ): FunctionSpec? {
+        val allowConstantConversions = candidates.size == 1
+        return resolveOverload(candidates, argumentTypes) { paramType, argType, index, aliasBindings ->
+            isFunctionTypeCompatible(
+                paramType,
+                argType,
+                index,
+                constantArguments,
+                allowConstantConversions,
+                aliasBindings,
+            )
+        }
+    }
+
+    fun resolveConstructorOverload(
+        candidates: List<FunctionSpec>,
+        argumentTypes: List<DataType>,
+    ): FunctionSpec? =
+        resolveOverload(candidates, argumentTypes) { paramType, argType, _, aliasBindings ->
+            isConstructorTypeCompatible(paramType, argType, aliasBindings)
+        }
+
+    private fun resolveOverload(
+        candidates: List<FunctionSpec>,
+        argumentTypes: List<DataType>,
+        typeCompatible: (DataType, DataType, Int, MutableMap<AliasType, DataType>) -> Boolean,
     ): FunctionSpec? {
         val countMatches =
             candidates.filter { spec ->
@@ -24,7 +51,7 @@ object GdsOverloadResolver {
 
         val compatibleMatches =
             countMatches.filter { spec ->
-                matchesWithAliasTypes(spec.parameters, argumentTypes)
+                matchesWithCompatibleTypes(spec.parameters, argumentTypes, typeCompatible)
             }
 
         return compatibleMatches.firstOrNull()
@@ -95,9 +122,10 @@ object GdsOverloadResolver {
         return true
     }
 
-    private fun matchesWithAliasTypes(
+    private fun matchesWithCompatibleTypes(
         params: List<ParameterSpec>,
         argTypes: List<DataType>,
+        typeCompatible: (DataType, DataType, Int, MutableMap<AliasType, DataType>) -> Boolean,
     ): Boolean {
         val aliasBindings = mutableMapOf<AliasType, DataType>()
 
@@ -106,19 +134,24 @@ object GdsOverloadResolver {
             val paramType = params[i].type
             val argType = argTypes[i]
 
-            if (!isTypeCompatible(paramType, argType, aliasBindings)) return false
+            if (!typeCompatible(paramType, argType, i, aliasBindings)) return false
         }
         return true
     }
 
-    private fun isTypeCompatible(
+    private fun isFunctionTypeCompatible(
         paramType: DataType,
         argType: DataType,
+        argumentIndex: Int = 0,
+        constantArguments: List<Boolean> = emptyList(),
+        allowConstantConversions: Boolean = false,
         aliasBindings: MutableMap<AliasType, DataType>,
     ): Boolean {
         if (paramType == argType) return true
 
-        if (isImplicitlyConvertible(argType, paramType)) return true
+        if (allowConstantConversions && constantArguments.getOrElse(argumentIndex) { false }) {
+            if (paramType is Scalar && argType is Scalar && isNumericScalarConvertible(argType, paramType)) return true
+        }
 
         if (paramType is AliasType) {
             if (!matchesAliasType(paramType, argType)) return false
@@ -134,14 +167,38 @@ object GdsOverloadResolver {
         return false
     }
 
-    private fun isImplicitlyConvertible(
-        from: DataType,
-        to: DataType,
+    private fun isNumericScalarConvertible(
+        from: Scalar,
+        to: Scalar,
     ): Boolean =
         when (from) {
-            is IntType -> to is FloatType || to is UIntType
-            is UIntType -> to is FloatType || to is IntType
+            is IntType -> to is IntType || to is UIntType || to is FloatType
+            is UIntType -> to is IntType || to is UIntType || to is FloatType
             else -> false
+        }
+
+    private fun isConstructorTypeCompatible(
+        paramType: DataType,
+        argType: DataType,
+        aliasBindings: MutableMap<AliasType, DataType>,
+    ): Boolean {
+        if (isFunctionTypeCompatible(paramType, argType, aliasBindings = aliasBindings)) return true
+
+        return when {
+            paramType is Scalar && argType is Scalar -> isConstructorScalarConvertible(argType, paramType)
+            else -> false
+        }
+    }
+
+    private fun isConstructorScalarConvertible(
+        from: Scalar,
+        to: Scalar,
+    ): Boolean =
+        when (from) {
+            is BoolType -> to is BoolType || to is IntType || to is UIntType || to is FloatType
+            is IntType -> to is IntType || to is UIntType || to is FloatType
+            is UIntType -> to is IntType || to is UIntType || to is FloatType
+            is FloatType -> to is FloatType
         }
 
     private fun isGenericSampler(type: DataType): Boolean =

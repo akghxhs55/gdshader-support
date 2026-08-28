@@ -42,7 +42,7 @@ class GdsFunctionReference(
 
         val specs = specsWithElements.map { it.first }
         val resolved =
-            GdsOverloadResolver.resolveOverload(specs, argTypes)
+            GdsOverloadResolver.resolveFunctionOverload(specs, argTypes)
                 ?: return candidates.first() as? PsiElement
 
         return specsWithElements.firstOrNull { it.first === resolved }?.second as? PsiElement

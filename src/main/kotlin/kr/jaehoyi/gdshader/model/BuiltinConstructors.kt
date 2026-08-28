@@ -54,7 +54,7 @@ object BuiltinConstructors {
         listOf(
             FunctionSpec("vec2", VEC2, listOf(ParameterSpec("x", FLOAT))),
             FunctionSpec("vec2", VEC2, listOf(ParameterSpec("x", FLOAT), ParameterSpec("y", FLOAT))),
-        )
+        ) + vectorConversionConstructors("vec2", VEC2)
     }
 
     val VEC3_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -63,7 +63,7 @@ object BuiltinConstructors {
             FunctionSpec("vec3", VEC3, listOf(ParameterSpec("x", FLOAT), ParameterSpec("y", FLOAT), ParameterSpec("z", FLOAT))),
             FunctionSpec("vec3", VEC3, listOf(ParameterSpec("xy", VEC2), ParameterSpec("z", FLOAT))),
             FunctionSpec("vec3", VEC3, listOf(ParameterSpec("x", FLOAT), ParameterSpec("yz", VEC2))),
-        )
+        ) + vectorConversionConstructors("vec3", VEC3)
     }
 
     val VEC4_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -80,14 +80,14 @@ object BuiltinConstructors {
             FunctionSpec("vec4", VEC4, listOf(ParameterSpec("xy", VEC2), ParameterSpec("zw", VEC2))),
             FunctionSpec("vec4", VEC4, listOf(ParameterSpec("xyz", VEC3), ParameterSpec("w", FLOAT))),
             FunctionSpec("vec4", VEC4, listOf(ParameterSpec("x", FLOAT), ParameterSpec("yzw", VEC3))),
-        )
+        ) + vectorConversionConstructors("vec4", VEC4)
     }
 
     val IVEC2_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(
             FunctionSpec("ivec2", IVEC2, listOf(ParameterSpec("x", INT))),
             FunctionSpec("ivec2", IVEC2, listOf(ParameterSpec("x", INT), ParameterSpec("y", INT))),
-        )
+        ) + vectorConversionConstructors("ivec2", IVEC2)
     }
 
     val IVEC3_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -96,7 +96,7 @@ object BuiltinConstructors {
             FunctionSpec("ivec3", IVEC3, listOf(ParameterSpec("x", INT), ParameterSpec("y", INT), ParameterSpec("z", INT))),
             FunctionSpec("ivec3", IVEC3, listOf(ParameterSpec("xy", IVEC2), ParameterSpec("z", INT))),
             FunctionSpec("ivec3", IVEC3, listOf(ParameterSpec("x", INT), ParameterSpec("yz", IVEC2))),
-        )
+        ) + vectorConversionConstructors("ivec3", IVEC3)
     }
 
     val IVEC4_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -113,14 +113,14 @@ object BuiltinConstructors {
             FunctionSpec("ivec4", IVEC4, listOf(ParameterSpec("xy", IVEC2), ParameterSpec("zw", IVEC2))),
             FunctionSpec("ivec4", IVEC4, listOf(ParameterSpec("xyz", IVEC3), ParameterSpec("w", INT))),
             FunctionSpec("ivec4", IVEC4, listOf(ParameterSpec("x", INT), ParameterSpec("yzw", IVEC3))),
-        )
+        ) + vectorConversionConstructors("ivec4", IVEC4)
     }
 
     val UVEC2_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(
             FunctionSpec("uvec2", UVEC2, listOf(ParameterSpec("x", UINT))),
             FunctionSpec("uvec2", UVEC2, listOf(ParameterSpec("x", UINT), ParameterSpec("y", UINT))),
-        )
+        ) + vectorConversionConstructors("uvec2", UVEC2)
     }
 
     val UVEC3_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -129,7 +129,7 @@ object BuiltinConstructors {
             FunctionSpec("uvec3", UVEC3, listOf(ParameterSpec("x", UINT), ParameterSpec("y", UINT), ParameterSpec("z", UINT))),
             FunctionSpec("uvec3", UVEC3, listOf(ParameterSpec("xy", UVEC2), ParameterSpec("z", UINT))),
             FunctionSpec("uvec3", UVEC3, listOf(ParameterSpec("x", UINT), ParameterSpec("yz", UVEC2))),
-        )
+        ) + vectorConversionConstructors("uvec3", UVEC3)
     }
 
     val UVEC4_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -146,14 +146,14 @@ object BuiltinConstructors {
             FunctionSpec("uvec4", UVEC4, listOf(ParameterSpec("xy", UVEC2), ParameterSpec("zw", UVEC2))),
             FunctionSpec("uvec4", UVEC4, listOf(ParameterSpec("xyz", UVEC3), ParameterSpec("w", UINT))),
             FunctionSpec("uvec4", UVEC4, listOf(ParameterSpec("x", UINT), ParameterSpec("yzw", UVEC3))),
-        )
+        ) + vectorConversionConstructors("uvec4", UVEC4)
     }
 
     val BVEC2_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(
             FunctionSpec("bvec2", BVEC2, listOf(ParameterSpec("x", BOOL))),
             FunctionSpec("bvec2", BVEC2, listOf(ParameterSpec("x", BOOL), ParameterSpec("y", BOOL))),
-        )
+        ) + vectorConversionConstructors("bvec2", BVEC2)
     }
 
     val BVEC3_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -162,7 +162,7 @@ object BuiltinConstructors {
             FunctionSpec("bvec3", BVEC3, listOf(ParameterSpec("x", BOOL), ParameterSpec("y", BOOL), ParameterSpec("z", BOOL))),
             FunctionSpec("bvec3", BVEC3, listOf(ParameterSpec("xy", BVEC2), ParameterSpec("z", BOOL))),
             FunctionSpec("bvec3", BVEC3, listOf(ParameterSpec("x", BOOL), ParameterSpec("yz", BVEC2))),
-        )
+        ) + vectorConversionConstructors("bvec3", BVEC3)
     }
 
     val BVEC4_CONSTRUCTORS: List<FunctionSpec> by lazy {
@@ -179,8 +179,18 @@ object BuiltinConstructors {
             FunctionSpec("bvec4", BVEC4, listOf(ParameterSpec("xy", BVEC2), ParameterSpec("zw", BVEC2))),
             FunctionSpec("bvec4", BVEC4, listOf(ParameterSpec("xyz", BVEC3), ParameterSpec("w", BOOL))),
             FunctionSpec("bvec4", BVEC4, listOf(ParameterSpec("x", BOOL), ParameterSpec("yzw", BVEC3))),
-        )
+        ) + vectorConversionConstructors("bvec4", BVEC4)
     }
+
+    private fun vectorConversionConstructors(
+        name: String,
+        returnType: VectorType,
+    ): List<FunctionSpec> =
+        listOf(VEC2, VEC3, VEC4, IVEC2, IVEC3, IVEC4, UVEC2, UVEC3, UVEC4, BVEC2, BVEC3, BVEC4)
+            .filter { it.containerSize == returnType.containerSize }
+            .map { sourceType ->
+                FunctionSpec(name, returnType, listOf(ParameterSpec("from", sourceType)))
+            }
 
     val MAT2_CONSTRUCTORS: List<FunctionSpec> by lazy {
         listOf(

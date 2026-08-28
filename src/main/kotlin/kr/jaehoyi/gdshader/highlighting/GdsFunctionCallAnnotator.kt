@@ -9,6 +9,7 @@ import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionSpec
 import kr.jaehoyi.gdshader.model.Instantiable
 import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
@@ -53,7 +54,7 @@ class GdsFunctionCallAnnotator : Annotator {
         if (constructors.isEmpty()) return
 
         val argCount = getArgumentCount(functionCall)
-        checkArguments(constructors, argCount, typeName, functionCall, holder)
+        checkArguments(constructors, argCount, typeName, functionCall, holder, GdsOverloadResolver::resolveConstructorOverload)
     }
 
     private fun checkFunctionCall(
@@ -65,7 +66,9 @@ class GdsFunctionCallAnnotator : Annotator {
         if (candidates.isEmpty()) return
 
         val argCount = getArgumentCount(functionCall)
-        checkArguments(candidates, argCount, functionName, functionCall, holder)
+        checkArguments(candidates, argCount, functionName, functionCall, holder) { specs, argTypes ->
+            GdsOverloadResolver.resolveFunctionOverload(specs, argTypes, collectConstantArguments(functionCall))
+        }
     }
 
     private fun collectCandidates(
@@ -132,12 +135,20 @@ class GdsFunctionCallAnnotator : Annotator {
         }
     }
 
+    private fun collectConstantArguments(functionCall: GdsFunctionCall): List<Boolean> {
+        val argList = functionCall.argumentList ?: return emptyList()
+        return argList.initializerList.map { initializer ->
+            initializer.expression?.let { GdsConstantEvaluator.evaluate(it) != null } == true
+        }
+    }
+
     private fun checkArguments(
         candidates: List<FunctionSpec>,
         argCount: Int,
         name: String,
         functionCall: GdsFunctionCall,
         holder: AnnotationHolder,
+        resolveOverload: (List<FunctionSpec>, List<DataType>) -> FunctionSpec?,
     ) {
         val countMatches =
             candidates.filter { spec ->
@@ -154,7 +165,7 @@ class GdsFunctionCallAnnotator : Annotator {
         val argTypes = collectArgumentTypes(functionCall)
         if (argTypes.size != argCount) return
 
-        val resolved = GdsOverloadResolver.resolveOverload(countMatches, argTypes)
+        val resolved = resolveOverload(countMatches, argTypes)
         if (resolved != null) return
 
         val bestCandidate = countMatches.firstOrNull() ?: return
