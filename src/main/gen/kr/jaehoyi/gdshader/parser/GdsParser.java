@@ -145,7 +145,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // conditional_expr (assignment_operator assign_expr)?
+  // conditional_expr (assignment_operator conditional_expr)*
   public static boolean assign_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assign_expr")) return false;
     boolean r;
@@ -156,20 +156,24 @@ public class GdsParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (assignment_operator assign_expr)?
+  // (assignment_operator conditional_expr)*
   private static boolean assign_expr_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assign_expr_1")) return false;
-    assign_expr_1_0(b, l + 1);
+    while (true) {
+      int c = current_position_(b);
+      if (!assign_expr_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "assign_expr_1", c)) break;
+    }
     return true;
   }
 
-  // assignment_operator assign_expr
+  // assignment_operator conditional_expr
   private static boolean assign_expr_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assign_expr_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = assignment_operator(b, l + 1);
-    r = r && assign_expr(b, l + 1);
+    r = r && conditional_expr(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

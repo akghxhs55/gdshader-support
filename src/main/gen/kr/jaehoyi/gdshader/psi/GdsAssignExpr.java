@@ -7,13 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface GdsAssignExpr extends PsiElement {
 
-  @Nullable
-  GdsAssignExpr getAssignExpr();
-
-  @Nullable
-  GdsAssignmentOperator getAssignmentOperator();
+  @NotNull
+  List<GdsAssignmentOperator> getAssignmentOperatorList();
 
   @NotNull
-  GdsConditionalExpr getConditionalExpr();
+  List<GdsConditionalExpr> getConditionalExprList();
 
 }

@@ -28,21 +28,15 @@ public class GdsAssignExprImpl extends ASTWrapperPsiElement implements GdsAssign
   }
 
   @Override
-  @Nullable
-  public GdsAssignExpr getAssignExpr() {
-    return findChildByClass(GdsAssignExpr.class);
-  }
-
-  @Override
-  @Nullable
-  public GdsAssignmentOperator getAssignmentOperator() {
-    return findChildByClass(GdsAssignmentOperator.class);
+  @NotNull
+  public List<GdsAssignmentOperator> getAssignmentOperatorList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsAssignmentOperator.class);
   }
 
   @Override
   @NotNull
-  public GdsConditionalExpr getConditionalExpr() {
-    return findNotNullChildByClass(GdsConditionalExpr.class);
+  public List<GdsConditionalExpr> getConditionalExprList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsConditionalExpr.class);
   }
 
 }

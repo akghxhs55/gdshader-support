@@ -408,7 +408,7 @@ object GdsExpressionTypeInference {
         return if (isIntegerType(leftType)) leftType else null
     }
 
-    private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? = inferType(assignExpr.conditionalExpr)
+    private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? = assignExpr.conditionalExprList.firstOrNull()?.let { inferType(it) }
 
     private fun inferConditionalExprType(conditionalExpr: GdsConditionalExpr): DataType? {
         val expressions = conditionalExpr.expressionList

@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased]
+- Fix to parse chained assignments left to right
+
 ## 1.1.0 (2026-08-28)
 - Added internationalization for inspection settings
 - Added Chinese translations

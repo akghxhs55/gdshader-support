@@ -308,7 +308,7 @@ function_call_statement ::= function_call SEMICOLON
 expression_statement ::= expression SEMICOLON
 expression ::= assign_expr
 
-assign_expr ::= conditional_expr (assignment_operator assign_expr)?
+assign_expr ::= conditional_expr (assignment_operator conditional_expr)*
 conditional_expr ::= logic_or_expr (QUESTION expression COLON expression)?
 logic_or_expr ::= logic_and_expr (OP_OR logic_and_expr)*
 logic_and_expr ::= bitwise_or_expr (OP_AND bitwise_or_expr)*

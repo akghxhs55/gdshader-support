@@ -188,32 +188,51 @@ class GdsExpressionAnnotator : Annotator {
         element: GdsAssignExpr,
         holder: AnnotationHolder,
     ) {
-        val operator = element.assignmentOperator ?: return
+        val operands = element.conditionalExprList
+        val operators = element.assignmentOperatorList
+        var accumulatedType = operands.firstOrNull()?.let(GdsExpressionTypeInference::inferType) ?: return
 
-        val varRef = PsiTreeUtil.findChildOfType(element.conditionalExpr, GdsVariableNameRef::class.java)
-        if (varRef != null) {
-            val resolved = varRef.reference.resolve()
-            if (resolved is GdsVariableNameDecl) {
-                val spec = resolved.variableSpec
-                if (spec != null && !spec.isMutable) {
-                    val message =
-                        when (spec) {
-                            is ConstantSpec -> "Constants cannot be modified"
-                            is UniformSpec -> "Assignment to uniform"
-                            else -> "Cannot assign to read-only variable"
-                        }
-                    holder
-                        .newAnnotation(HighlightSeverity.ERROR, message)
-                        .range(element)
-                        .create()
-                    return
-                }
+        for (index in operators.indices) {
+            val target = operands.getOrNull(index) ?: continue
+            val rhs = operands.getOrNull(index + 1) ?: continue
+            val rhsType = GdsExpressionTypeInference.inferType(rhs) ?: continue
+            accumulatedType =
+                checkAssignment(
+                    element,
+                    target,
+                    accumulatedType,
+                    rhsType,
+                    operators[index],
+                    holder,
+                )
+        }
+    }
+
+    private fun checkAssignment(
+        element: GdsAssignExpr,
+        target: GdsConditionalExpr,
+        lhsType: DataType,
+        rhsType: DataType,
+        operator: GdsAssignmentOperator,
+        holder: AnnotationHolder,
+    ): DataType {
+        val varRef = PsiTreeUtil.findChildOfType(target, GdsVariableNameRef::class.java)
+        val resolved = varRef?.reference?.resolve()
+        if (resolved is GdsVariableNameDecl) {
+            val spec = resolved.variableSpec
+            if (spec != null && !spec.isMutable) {
+                val message =
+                    when (spec) {
+                        is ConstantSpec -> "Constants cannot be modified"
+                        is UniformSpec -> "Assignment to uniform"
+                        else -> "Cannot assign to read-only variable"
+                    }
+                holder
+                    .newAnnotation(HighlightSeverity.ERROR, message)
+                    .range(element)
+                    .create()
             }
         }
-
-        val lhsType = GdsExpressionTypeInference.inferType(element.conditionalExpr) ?: return
-        val rhsExpr = element.assignExpr ?: return
-        val rhsType = GdsExpressionTypeInference.inferType(rhsExpr) ?: return
 
         val opText = operator.text
 
@@ -226,19 +245,16 @@ class GdsExpressionAnnotator : Annotator {
                     ).range(element)
                     .create()
             }
+            return lhsType
         } else {
-            val isValid =
+            val resultType =
                 when (opText) {
-                    "+=", "-=", "*=", "/=", "%=" -> {
-                        val resultType = inferArithmeticResultType(lhsType, rhsType)
-                        resultType != null && isAssignable(lhsType, resultType)
-                    }
-                    "<<=", ">>=" ->
-                        isIntegerType(lhsType) && isIntegerType(rhsType)
-                    "&=", "^=", "|=" ->
-                        isIntegerType(lhsType) && isIntegerType(rhsType)
-                    else -> true
+                    "+=", "-=", "*=", "/=", "%=" -> inferArithmeticResultType(lhsType, rhsType)
+                    "<<=", ">>=", "&=", "^=", "|=" ->
+                        lhsType.takeIf { isIntegerType(lhsType) && isIntegerType(rhsType) }
+                    else -> lhsType
                 }
+            val isValid = resultType != null && isAssignable(lhsType, resultType)
             if (!isValid) {
                 holder
                     .newAnnotation(
@@ -247,6 +263,7 @@ class GdsExpressionAnnotator : Annotator {
                     ).range(element)
                     .create()
             }
+            return resultType ?: lhsType
         }
     }
 

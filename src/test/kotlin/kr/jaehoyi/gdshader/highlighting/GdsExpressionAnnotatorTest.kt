@@ -216,6 +216,20 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test invalid type in chained assignment`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 0.0;
+                float b = 1.0;
+                int c = 2;
+                <error descr="Cannot assign a value of type 'int' to type 'float'">a = b = c</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
     // === Compound assignment ===
 
     fun `test valid compound assignment vec3 plus float`() {
@@ -237,6 +251,20 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             void fragment() {
                 float x = 1.0;
                 <error descr="Invalid arguments to operator '+=': 'float, bool'">x += true</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test chained compound assignment uses accumulated type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 a = vec3(0.0);
+                float b = 1.0;
+                vec3 c = vec3(2.0);
+                a += b *= c;
             }
             """.trimIndent(),
         )

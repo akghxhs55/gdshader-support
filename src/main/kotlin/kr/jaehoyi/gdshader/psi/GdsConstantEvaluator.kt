@@ -487,8 +487,8 @@ object GdsConstantEvaluator {
         expr: GdsAssignExpr,
         visited: MutableSet<PsiElement>,
     ): Any? {
-        if (expr.assignmentOperator != null) return null
-        return evaluate(expr.conditionalExpr, visited)
+        if (expr.assignmentOperatorList.isNotEmpty()) return null
+        return expr.conditionalExprList.firstOrNull()?.let { evaluate(it, visited) }
     }
 
     private fun evaluateExpression(

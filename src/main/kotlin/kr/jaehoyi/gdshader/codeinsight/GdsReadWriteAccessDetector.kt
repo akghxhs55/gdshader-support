@@ -32,10 +32,11 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
 
     private fun getAssignmentAccess(ref: GdsVariableNameRef): Access? {
         val assignExpr = PsiTreeUtil.getParentOfType(ref, GdsAssignExpr::class.java) ?: return null
-        val assignmentOperator = assignExpr.assignmentOperator ?: return null
-        val logicOrExpr = assignExpr.conditionalExpr.logicOrExpr
-
-        if (!PsiTreeUtil.isAncestor(logicOrExpr, ref, false)) return null
+        val operandIndex =
+            assignExpr.conditionalExprList.indexOfFirst { conditionalExpr ->
+                PsiTreeUtil.isAncestor(conditionalExpr.logicOrExpr, ref, false)
+            }
+        val assignmentOperator = assignExpr.assignmentOperatorList.getOrNull(operandIndex) ?: return null
 
         return if (assignmentOperator.text == "=") Access.Write else Access.ReadWrite
     }
