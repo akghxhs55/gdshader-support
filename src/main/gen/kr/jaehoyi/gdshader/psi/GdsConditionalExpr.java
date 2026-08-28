@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GdsConditionalExpr extends PsiElement {
 
   @NotNull
-  GdsAssignExpr getAssignExpr();
+  List<GdsExpression> getExpressionList();
 
   @NotNull
-  List<GdsExpression> getExpressionList();
+  GdsLogicOrExpr getLogicOrExpr();
 
 }

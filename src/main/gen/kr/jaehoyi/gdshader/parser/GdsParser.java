@@ -145,12 +145,12 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // logic_or_expr (assignment_operator assign_expr)?
+  // conditional_expr (assignment_operator assign_expr)?
   public static boolean assign_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assign_expr")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ASSIGN_EXPR, "<assign expr>");
-    r = logic_or_expr(b, l + 1);
+    r = conditional_expr(b, l + 1);
     r = r && assign_expr_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -390,12 +390,12 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // assign_expr (QUESTION expression COLON expression)?
+  // logic_or_expr (QUESTION expression COLON expression)?
   public static boolean conditional_expr(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_expr")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, CONDITIONAL_EXPR, "<conditional expr>");
-    r = assign_expr(b, l + 1);
+    r = logic_or_expr(b, l + 1);
     r = r && conditional_expr_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -653,12 +653,12 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // conditional_expr
+  // assign_expr
   public static boolean expression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, EXPRESSION, "<expression>");
-    r = conditional_expr(b, l + 1);
+    r = assign_expr(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

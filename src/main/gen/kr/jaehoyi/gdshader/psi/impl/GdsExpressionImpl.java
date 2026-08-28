@@ -29,8 +29,8 @@ public class GdsExpressionImpl extends ASTWrapperPsiElement implements GdsExpres
 
   @Override
   @NotNull
-  public GdsConditionalExpr getConditionalExpr() {
-    return findNotNullChildByClass(GdsConditionalExpr.class);
+  public GdsAssignExpr getAssignExpr() {
+    return findNotNullChildByClass(GdsAssignExpr.class);
   }
 
 }

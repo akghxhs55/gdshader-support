@@ -408,13 +408,13 @@ object GdsExpressionTypeInference {
         return if (isIntegerType(leftType)) leftType else null
     }
 
-    private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? = inferType(assignExpr.logicOrExpr)
+    private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? = inferType(assignExpr.conditionalExpr)
 
     private fun inferConditionalExprType(conditionalExpr: GdsConditionalExpr): DataType? {
         val expressions = conditionalExpr.expressionList
 
         if (expressions.size < 2) {
-            return inferType(conditionalExpr.assignExpr)
+            return inferType(conditionalExpr.logicOrExpr)
         }
 
         val trueType = inferType(expressions[0])
@@ -423,7 +423,7 @@ object GdsExpressionTypeInference {
         return if (trueType == falseType) trueType else trueType
     }
 
-    private fun inferExpressionType(expression: GdsExpression): DataType? = inferConditionalExprType(expression.conditionalExpr)
+    private fun inferExpressionType(expression: GdsExpression): DataType? = inferType(expression.assignExpr)
 
     private fun isIntegerType(type: DataType): Boolean =
         when (type) {
