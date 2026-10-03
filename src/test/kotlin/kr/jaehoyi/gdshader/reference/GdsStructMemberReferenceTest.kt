@@ -62,4 +62,37 @@ class GdsStructMemberReferenceTest : BasePlatformTestCase() {
         assertTrue("Resolved element should be GdsStructMemberNameDecl", resolved is GdsStructMemberNameDecl)
         assertEquals("val", (resolved as GdsStructMemberNameDecl).name)
     }
+
+    fun `test renaming struct member updates declaration and references`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            struct Data {
+                float <caret>value;
+            };
+            void fragment() {
+                Data data;
+                data.value = 1.0;
+                ALBEDO = vec3(data.value);
+            }
+            """.trimIndent(),
+        )
+
+        myFixture.renameElementAtCaret("renamed")
+
+        myFixture.checkResult(
+            """
+            shader_type spatial;
+            struct Data {
+                float renamed;
+            };
+            void fragment() {
+                Data data;
+                data.renamed = 1.0;
+                ALBEDO = vec3(data.renamed);
+            }
+            """.trimIndent(),
+        )
+    }
 }

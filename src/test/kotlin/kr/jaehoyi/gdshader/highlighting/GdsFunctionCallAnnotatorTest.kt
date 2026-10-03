@@ -434,6 +434,19 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         myFixture.checkHighlighting(true, false, true)
     }
 
+    fun `test array length accepts no arguments`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float values[3];
+                int count = values.length();
+                ALBEDO = vec3(float(count));
+            }
+            """.trimIndent(),
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

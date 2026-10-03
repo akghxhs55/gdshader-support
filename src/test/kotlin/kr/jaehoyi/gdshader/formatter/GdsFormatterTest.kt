@@ -252,6 +252,22 @@ class GdsFormatterTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test range formatting preserves uniform documentation comment`() {
+        val code =
+            """
+            shader_type spatial;
+            /** Inspector tooltip. */
+            uniform float amount = 1.0;
+            """.trimIndent()
+        myFixture.configureByText("test.gdshader", code)
+
+        WriteCommandAction.runWriteCommandAction(project) {
+            CodeStyleManager.getInstance(project).reformatText(myFixture.file, 0, myFixture.file.textLength)
+        }
+
+        myFixture.checkResult(code)
+    }
+
     private fun doTest(
         code: String,
         expected: String,

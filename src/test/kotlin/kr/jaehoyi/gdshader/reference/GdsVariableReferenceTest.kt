@@ -92,6 +92,22 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test second global constant in multi declaration resolves`() {
+        doTest(
+            """
+            shader_type spatial;
+            const float FIRST = 1.0, SECOND = 2.0;
+            void fragment() {
+                ALBEDO = vec3(<caret>SECOND);
+            }
+            """.trimIndent(),
+        ) { spec ->
+            assertEquals("SECOND", spec.name)
+            assertInstanceOf(spec, ConstantSpec::class.java)
+            assertFalse(spec.isMutable)
+        }
+    }
+
     private fun doTest(
         code: String,
         checkSpec: (VariableSpec) -> Unit,

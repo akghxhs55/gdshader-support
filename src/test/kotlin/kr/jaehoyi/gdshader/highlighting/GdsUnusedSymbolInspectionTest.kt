@@ -256,6 +256,38 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test remove unused variable preserves initializer side effects`() {
+        doFixTest(
+            before =
+                """
+                shader_type spatial;
+                float mutate(inout float value) {
+                    value = 1.0;
+                    return value;
+                }
+                void fragment() {
+                    float value = 0.0;
+                    float unused = mutate(value);
+                    ALBEDO = vec3(value);
+                }
+                """.trimIndent(),
+            after =
+                """
+                shader_type spatial;
+                float mutate(inout float value) {
+                    value = 1.0;
+                    return value;
+                }
+                void fragment() {
+                    float value = 0.0;
+                    mutate(value);
+                    ALBEDO = vec3(value);
+                }
+                """.trimIndent(),
+            fixName = "Remove 'unused'",
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(true, false, true)
