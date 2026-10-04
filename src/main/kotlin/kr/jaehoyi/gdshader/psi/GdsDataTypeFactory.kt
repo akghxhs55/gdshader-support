@@ -7,18 +7,7 @@ object GdsDataTypeFactory {
         val typeNode = declaration.type ?: return null
         val baseType = getBaseType(declaration.precision?.text, typeNode) ?: return null
 
-        val arraySizeList = declaration.arraySizeList
-
-        return if (!arraySizeList.isEmpty()) {
-            val arraySize = parseArraySize(arraySizeList.first())
-            if (arraySize != null) {
-                ArrayType(baseType, arraySize)
-            } else {
-                baseType
-            }
-        } else {
-            baseType
-        }
+        return withArraySize(baseType, declaration.arraySizeList.firstOrNull())
     }
 
     fun createFromConstantDeclaration(declarator: GdsConstantDeclarator): DataType? {
@@ -27,39 +16,14 @@ object GdsDataTypeFactory {
         val typeNode = declaration.type ?: return null
         val baseType = getBaseType(declaration.precision?.text, typeNode) ?: return null
 
-        val typeArraySizeNode = declaration.arraySize
-        val varArraySizeNode = declarator.arraySize
-
-        val arraySize =
-            when {
-                varArraySizeNode != null -> parseArraySize(varArraySizeNode)
-                typeArraySizeNode != null -> parseArraySize(typeArraySizeNode)
-                else -> null
-            }
-
-        return if (arraySize != null) {
-            ArrayType(baseType, arraySize)
-        } else {
-            baseType
-        }
+        return withArraySize(baseType, declarator.arraySize ?: declaration.arraySize)
     }
 
     fun createFromVaryingDeclaration(declaration: GdsVaryingDeclaration): DataType? {
         val typeNode = declaration.type ?: return null
         val baseType = getBaseType(declaration.precision?.text, typeNode) ?: return null
 
-        val arraySizeList = declaration.arraySizeList
-
-        return if (!arraySizeList.isEmpty()) {
-            val arraySize = parseArraySize(arraySizeList.first())
-            if (arraySize != null) {
-                ArrayType(baseType, arraySize)
-            } else {
-                baseType
-            }
-        } else {
-            baseType
-        }
+        return withArraySize(baseType, declaration.arraySizeList.firstOrNull())
     }
 
     fun createFromLocalVariableDeclaration(declarator: GdsLocalVariableDeclarator): DataType? {
@@ -67,45 +31,21 @@ object GdsDataTypeFactory {
 
         val baseType = getBaseType(declaration.precision?.text, declaration.type) ?: return null
 
-        val typeArraySizeNode = declaration.arraySize
-        val varArraySizeNode = declarator.arraySize
-
-        val arraySize =
-            when {
-                varArraySizeNode != null -> parseArraySize(varArraySizeNode)
-                typeArraySizeNode != null -> parseArraySize(typeArraySizeNode)
-                else -> null
-            }
-
-        return if (arraySize != null) {
-            ArrayType(baseType, arraySize)
-        } else {
-            baseType
-        }
+        return withArraySize(baseType, declarator.arraySize ?: declaration.arraySize)
     }
 
     fun createFromForInit(declarator: GdsLocalVariableDeclarator): DataType? {
         val declaration = declarator.parent?.parent as? GdsForInit ?: return null
 
-        return getBaseType(declaration.precision?.text, declaration.type)
+        val baseType = getBaseType(declaration.precision?.text, declaration.type) ?: return null
+        return withArraySize(baseType, declarator.arraySize)
     }
 
     fun createFromParameter(parameter: GdsParameter): DataType? {
         val typeNode = parameter.type
         val baseType = getBaseType(parameter.precision?.text, typeNode) ?: return null
 
-        val arraySizeList = parameter.arraySizeList
-
-        return if (!arraySizeList.isEmpty()) {
-            val arraySize = parseArraySize(arraySizeList.first())
-            if (arraySize != null) {
-                ArrayType(baseType, arraySize)
-            } else {
-                baseType
-            }
-        } else {
-            baseType
-        }
+        return withArraySize(baseType, parameter.arraySizeList.firstOrNull())
     }
 
     fun createFromFunctionDeclaration(declaration: GdsFunctionDeclaration): DataType? {
@@ -145,23 +85,19 @@ object GdsDataTypeFactory {
             val memberTypeNode = member.type
             val memberBaseType = getBaseType(member.precision?.text, memberTypeNode) ?: return@forEach
 
-            val arraySizeList = member.arraySizeList
-            val finalType =
-                if (arraySizeList.isNotEmpty()) {
-                    val arraySize = parseArraySize(arraySizeList.first())
-                    if (arraySize != null) {
-                        ArrayType(memberBaseType, arraySize)
-                    } else {
-                        memberBaseType
-                    }
-                } else {
-                    memberBaseType
-                }
-            members[memberName] = finalType
+            members[memberName] = withArraySize(memberBaseType, member.arraySizeList.firstOrNull())
         }
 
         return StructType(structDecl.text, members)
     }
 
-    private fun parseArraySize(node: GdsArraySize): Int? = node.text.filter { it.isDigit() }.toIntOrNull()
+    private fun withArraySize(
+        baseType: DataType,
+        arraySize: GdsArraySize?,
+    ): DataType =
+        if (arraySize != null) {
+            ArrayType(baseType, GdsConstantEvaluator.evaluateArraySize(arraySize))
+        } else {
+            baseType
+        }
 }

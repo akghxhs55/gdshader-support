@@ -123,7 +123,7 @@ object GdsExpressionTypeInference {
 
         val arraySize = functionCall.arraySize
         if (arraySize != null) {
-            val size = parseArraySize(arraySize)
+            val size = GdsConstantEvaluator.evaluateArraySize(arraySize)
             return ArrayType(baseType, size)
         }
 
@@ -166,7 +166,7 @@ object GdsExpressionTypeInference {
 
         val arraySizeList = member.arraySizeList
         if (arraySizeList.isNotEmpty()) {
-            val size = parseArraySize(arraySizeList.first())
+            val size = GdsConstantEvaluator.evaluateArraySize(arraySizeList.first())
             return ArrayType(baseType, size)
         }
 
@@ -423,9 +423,4 @@ object GdsExpressionTypeInference {
             is VectorType -> type.elementType is IntType || type.elementType is UIntType
             else -> false
         }
-
-    private fun parseArraySize(arraySize: GdsArraySize): Int? {
-        val expression = arraySize.expression ?: return null
-        return GdsConstantEvaluator.evaluateAsInt(expression)
-    }
 }

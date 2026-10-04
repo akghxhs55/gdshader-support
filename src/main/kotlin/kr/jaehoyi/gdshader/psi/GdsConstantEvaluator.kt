@@ -6,6 +6,15 @@ import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 object GdsConstantEvaluator {
     fun evaluate(element: PsiElement): Any? = evaluate(element, mutableSetOf())
 
+    fun evaluateArraySize(arraySize: GdsArraySize): Int? {
+        val expression = arraySize.expression ?: return null
+        return when (val value = evaluate(expression)) {
+            is Int -> value.takeIf { it > 0 }
+            is Long -> value.takeIf { it in 1L..Int.MAX_VALUE.toLong() }?.toInt()
+            else -> null
+        }
+    }
+
     fun evaluateAsInt(element: PsiElement): Int? =
         when (val value = evaluate(element)) {
             is Int -> value
