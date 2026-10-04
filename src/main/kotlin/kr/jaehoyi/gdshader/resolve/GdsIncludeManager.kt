@@ -1,7 +1,6 @@
 package kr.jaehoyi.gdshader.resolve
 
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveState
 import com.intellij.psi.SyntaxTraverser
@@ -22,13 +21,12 @@ object GdsIncludeManager {
         currentFile: PsiFile,
         processor: PsiScopeProcessor,
         state: ResolveState,
-        lastParent: PsiElement?,
-        place: PsiElement,
     ): Boolean {
         val includedFiles = getIncludedFiles(currentFile)
 
         for (includedFile in includedFiles) {
-            if (!includedFile.processDeclarations(processor, state, lastParent, place)) {
+            val gdsFile = includedFile as? GdsFile ?: continue
+            if (!gdsFile.processOwnDeclarations(processor, state)) {
                 return false
             }
         }

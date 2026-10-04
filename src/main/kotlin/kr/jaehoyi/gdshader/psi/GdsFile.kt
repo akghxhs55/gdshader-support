@@ -24,6 +24,14 @@ class GdsFile(
         lastParent: PsiElement?,
         place: PsiElement,
     ): Boolean {
+        if (!processOwnDeclarations(processor, state)) return false
+        return GdsIncludeManager.processIncludedDeclarations(this, processor, state)
+    }
+
+    internal fun processOwnDeclarations(
+        processor: PsiScopeProcessor,
+        state: ResolveState,
+    ): Boolean {
         val children = PsiTreeUtil.getChildrenOfType(this, GdsItem::class.java)
         if (children != null) {
             for (child in children) {
@@ -33,6 +41,6 @@ class GdsFile(
             }
         }
 
-        return GdsIncludeManager.processIncludedDeclarations(this, processor, state, lastParent, place)
+        return true
     }
 }
