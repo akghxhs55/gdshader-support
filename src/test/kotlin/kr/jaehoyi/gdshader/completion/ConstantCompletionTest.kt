@@ -1,6 +1,22 @@
 package kr.jaehoyi.gdshader.completion
 
 class ConstantCompletionTest : GdsCompletionTestBase() {
+    fun `test all global and included constants are completion candidates`() {
+        myFixture.addFileToProject("constants.gdshaderinc", "const float INCLUDED_A = 1.0, INCLUDED_B = 2.0;")
+        myFixture.addFileToProject(
+            "main.gdshader",
+            """
+            shader_type spatial;
+            #include "constants.gdshaderinc"
+            const float LOCAL_A = 1.0, LOCAL_B = 2.0;
+            void fragment() { ALBEDO = vec3(<caret>); }
+            """.trimIndent(),
+        )
+        myFixture.configureFromTempProjectFile("main.gdshader")
+        val completions = completeAndGetStrings()
+        assertContainsElements(completions, "LOCAL_A", "LOCAL_B", "INCLUDED_A", "INCLUDED_B")
+    }
+
     fun `test constant keyword in toplevel`() {
         myFixture.configureByText(
             "test.gdshader",

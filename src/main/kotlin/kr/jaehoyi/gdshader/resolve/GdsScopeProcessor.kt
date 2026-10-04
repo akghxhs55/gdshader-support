@@ -17,36 +17,40 @@ class GdsScopeProcessor<T : PsiElement>(
         element: PsiElement,
         state: ResolveState,
     ): Boolean {
-        val targetElement =
+        val declarations =
             when (element) {
-                is GdsItem -> extractDeclaration(element)
-                else -> element
-            } ?: return true
+                is GdsItem -> extractDeclarations(element)
+                else -> listOf(element)
+            }
 
-        // "Declared before use" only applies within the file that owns the use site.
-        // Included files contribute their declarations regardless of their own position.
-        val isSameFile = targetElement.containingFile?.originalFile == originFile
-        if (isSameFile && targetElement.textOffset >= startOffset) return true
+        for (declaration in declarations) {
+            val isSameFile = declaration.containingFile?.originalFile == originFile
+            if (isSameFile && declaration.textOffset >= startOffset) continue
 
-        if (targetType.isInstance(targetElement)) {
-            return processor(targetType.cast(targetElement))
+            if (targetType.isInstance(declaration) && !processor(targetType.cast(declaration))) {
+                return false
+            }
         }
 
         return true
     }
 
-    private fun extractDeclaration(item: GdsItem): PsiElement? =
-        item.topLevelDeclaration.let { top ->
+    private fun extractDeclarations(item: GdsItem): List<PsiElement> {
+        val top = item.topLevelDeclaration
+        val constants = top.constantDeclaration
+        if (constants != null) {
+            return constants.constantDeclaratorList
+                ?.constantDeclaratorList
+                .orEmpty()
+                .map { it.variableNameDecl }
+        }
+        return listOfNotNull(
             top.uniformDeclaration?.variableNameDecl
-                ?: top.constantDeclaration
-                    ?.constantDeclaratorList
-                    ?.constantDeclaratorList
-                    ?.firstOrNull()
-                    ?.variableNameDecl
                 ?: top.varyingDeclaration?.variableNameDecl
                 ?: top.functionDeclaration?.functionNameDecl
-                ?: top.structDeclaration?.structNameDecl
-        }
+                ?: top.structDeclaration?.structNameDecl,
+        )
+    }
 
     override fun <T> getHint(hintKey: Key<T?>): T? = null
 
