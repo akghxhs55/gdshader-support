@@ -40,7 +40,9 @@ class GdsCommentFormatProcessor : PostFormatProcessor {
                     val next = PsiTreeUtil.nextLeaf(element)
                     if (next != null && next.node.elementType == GdsTypes.BLOCK_COMMENT_CONTENT) {
                         val text = next.text
-                        if (text.isNotEmpty() && !text[0].isWhitespace()) {
+                        // The adjacent '*' belongs to the documentation comment opener '/**'.
+                        val isDocumentationStart = next.textRange.startOffset == element.textRange.endOffset && text.startsWith("*")
+                        if (!isDocumentationStart && text.isNotEmpty() && !text[0].isWhitespace()) {
                             insertions.add(next.textRange.startOffset)
                         }
                     }
