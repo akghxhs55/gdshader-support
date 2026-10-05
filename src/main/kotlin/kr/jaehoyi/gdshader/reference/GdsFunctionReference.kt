@@ -2,12 +2,15 @@ package kr.jaehoyi.gdshader.reference
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
+import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -18,6 +21,11 @@ class GdsFunctionReference(
     private val key: String = element.text
 
     override fun resolve(): PsiElement? {
+        val call = findFunctionCall()
+        if (call != null && GdsArrayMethodResolver.isMemberCall(call)) {
+            val spec = GdsArrayMethodResolver.resolve(call) ?: return null
+            return GdsLightFunction(PsiManager.getInstance(element.project), spec)
+        }
         val candidates = mutableListOf<GdsFunction>()
 
         GdsResolver.processFunctionDeclaration(element) { func ->

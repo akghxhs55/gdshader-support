@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.psi
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 
 object GdsExpressionTypeInference {
@@ -100,6 +101,9 @@ object GdsExpressionTypeInference {
     }
 
     private fun inferFunctionCallType(functionCall: GdsFunctionCall): DataType? {
+        if (GdsArrayMethodResolver.isMemberCall(functionCall)) {
+            return GdsArrayMethodResolver.resolve(functionCall)?.returnType
+        }
         functionCall.type?.let { typeNode ->
             return inferConstructorType(functionCall, typeNode)
         }

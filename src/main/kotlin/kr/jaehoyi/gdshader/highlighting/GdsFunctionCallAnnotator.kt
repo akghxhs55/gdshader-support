@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -24,6 +25,14 @@ class GdsFunctionCallAnnotator : Annotator {
         if (element !is GdsFunctionCall) return
         if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.FUNCTION_CALL_VALIDATION)) return
         if (element.containingFile?.virtualFile?.extension == "gdshaderinc") return
+
+        if (GdsArrayMethodResolver.isMemberCall(element)) {
+            val spec = GdsArrayMethodResolver.resolve(element) ?: return
+            checkArguments(listOf(spec), getArgumentCount(element), spec.name, element, holder) { specs, types ->
+                GdsOverloadResolver.resolveFunctionOverload(specs, types)
+            }
+            return
+        }
 
         element.type?.let { typeNode ->
             checkConstructorCall(element, typeNode.text, holder)

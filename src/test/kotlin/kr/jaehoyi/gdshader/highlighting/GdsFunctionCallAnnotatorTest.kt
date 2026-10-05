@@ -447,6 +447,32 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test array length rejects arguments`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float values[3];
+                int count = values.length(<error descr="Too many arguments for 'length()' call. Expected at most 0 but received 1.">1</error>);
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test nested array length and global length coexist`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float values[3]; };
+            void fragment() {
+                Data data[2];
+                int count = data[0].values.length();
+                float distance = length(vec3(1.0));
+            }
+            """.trimIndent(),
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

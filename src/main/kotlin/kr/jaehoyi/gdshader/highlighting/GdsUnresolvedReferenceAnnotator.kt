@@ -8,12 +8,14 @@ import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
+import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GdsStructNameRef
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsUnresolvedReferenceAnnotator : Annotator {
@@ -55,7 +57,12 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
 
         if (element.reference.resolve() != null) return
 
-        if (resolveAsStruct(element)) return
+        val call = element.parent as? GdsFunctionCall
+        if (call != null && GdsArrayMethodResolver.isMemberCall(call)) {
+            if (GdsArrayMethodResolver.receiverType(call) == null) return
+        } else if (resolveAsStruct(element)) {
+            return
+        }
 
         holder
             .newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")

@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 
 class GdsInlayHintsProvider : InlayHintsProvider {
     override fun createCollector(
@@ -49,6 +50,9 @@ class GdsInlayHintsProvider : InlayHintsProvider {
             functionCall: GdsFunctionCall,
             argumentList: GdsArgumentList,
         ): List<String?>? {
+            if (GdsArrayMethodResolver.isMemberCall(functionCall)) {
+                return GdsArrayMethodResolver.resolve(functionCall)?.parameters?.map { it.name }
+            }
             val argCount = argumentList.initializerList.size
 
             functionCall.type?.let { typeNode ->

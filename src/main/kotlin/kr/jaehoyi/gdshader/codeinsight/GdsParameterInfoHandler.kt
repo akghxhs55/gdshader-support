@@ -6,6 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 
 class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSpec> {
     override fun findElementForParameterInfo(context: CreateParameterInfoContext): GdsArgumentList? {
@@ -137,6 +138,9 @@ class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSp
 
     private fun resolveCandidates(argumentList: GdsArgumentList): List<FunctionSpec> {
         val functionCall = argumentList.parent as? GdsFunctionCall ?: return emptyList()
+        if (GdsArrayMethodResolver.isMemberCall(functionCall)) {
+            return listOfNotNull(GdsArrayMethodResolver.resolve(functionCall))
+        }
 
         functionCall.type?.let { typeNode ->
             val typeText = typeNode.text
