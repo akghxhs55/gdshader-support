@@ -4,6 +4,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
@@ -28,6 +29,12 @@ class GdsStructMemberReference(
         }
 
         return null
+    }
+
+    override fun handleElementRename(newElementName: String): PsiElement? {
+        val identifier = GdsElementFactory.createIdentifier(element.project, newElementName) ?: return null
+        element.firstChild.replace(identifier)
+        return element
     }
 
     private fun resolveStructMember(
