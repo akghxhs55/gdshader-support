@@ -379,11 +379,49 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test invalid uniform default value`() {
+    fun `test uniform numeric constant conversions`() {
         doHighlightTest(
             """
             shader_type spatial;
-            uniform float speed = <error descr="Cannot assign a value of type 'int' to type 'float'">1</error>;
+            const int ANGLE = 180;
+            uniform float spread = 180;
+            uniform float unsigned_spread = 180u;
+            uniform float negative_spread = -180;
+            uniform float constant_spread = ANGLE;
+            uniform float computed_spread = (90 + 90);
+            uniform uint zero = 0;
+            uniform uint positive = 180;
+            uniform int signed_max = 2147483647u;
+            global uniform float global_spread = 180;
+            instance uniform float instance_spread = 180;
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid uniform constant conversions`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform uint negative = <error descr="Cannot assign a value of type 'int' to type 'uint'">-1</error>;
+            uniform int overflow = <error descr="Cannot assign a value of type 'uint' to type 'int'">2147483648u</error>;
+            uniform int count = <error descr="Cannot assign a value of type 'float' to type 'int'">1.0</error>;
+            uniform uint unsigned_count = <error descr="Cannot assign a value of type 'float' to type 'uint'">1.0</error>;
+            uniform float speed = <error descr="Cannot assign a value of type 'bool' to type 'float'">true</error>;
+            uniform bool enabled = <error descr="Cannot assign a value of type 'int' to type 'bool'">1</error>;
+            uniform vec3 direction = <error descr="Cannot assign a value of type 'int' to type 'vec3'">1</error>;
+            """.trimIndent(),
+        )
+    }
+
+    fun `test uniform unevaluated initializer is deferred`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform int source;
+            uniform float deferred_reference = source;
+            uniform float deferred_component = ivec2(1).x;
+            uniform vec2 deferred_vector = ivec2(1);
+            uniform vec3 valid_vector = vec3(1.0);
             """.trimIndent(),
         )
     }

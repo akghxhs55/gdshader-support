@@ -5017,7 +5017,7 @@ object Builtins {
             ),
             ParameterSpec(
                 name = "AMOUNT_RATIO",
-                type = UINT,
+                type = FLOAT,
                 description = "Value of the <a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles2d.html#class-gpuparticles2d-property-amount-ratio\">amount_ratio</a> (<a href=\"https://docs.godotengine.org/en/stable/classes/class_gpuparticles3d.html#class-gpuparticles3d-property-amount-ratio\">3D</a>) property of the Particles node.",
             ),
         )

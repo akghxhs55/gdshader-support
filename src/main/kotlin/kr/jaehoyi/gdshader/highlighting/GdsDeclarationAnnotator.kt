@@ -8,9 +8,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.model.FloatType
+import kr.jaehoyi.gdshader.model.IntType
+import kr.jaehoyi.gdshader.model.UIntType
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
+import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
@@ -295,7 +299,25 @@ class GdsDeclarationAnnotator : Annotator {
         val declaredType = GdsDataTypeFactory.createFromUniformDeclaration(element) ?: return
         val exprType = GdsExpressionTypeInference.inferType(expr) ?: return
 
-        if (declaredType.name != exprType.name) {
+        if (declaredType.name == exprType.name) return
+
+        // Evaluation failure can also mean an unsupported constant expression.
+        val value = GdsConstantEvaluator.evaluate(expr) ?: return
+        val convertible =
+            when {
+                declaredType is FloatType && (exprType is IntType || exprType is UIntType) -> true
+                declaredType is UIntType && exprType is IntType -> {
+                    val integer = value as? Int ?: return
+                    integer >= 0
+                }
+                declaredType is IntType && exprType is UIntType -> {
+                    val integer = value as? Long ?: return
+                    integer in 0L..Int.MAX_VALUE.toLong()
+                }
+                else -> false
+            }
+
+        if (!convertible) {
             holder
                 .newAnnotation(
                     HighlightSeverity.ERROR,
