@@ -18,5 +18,7 @@ object GdsArrayMethodResolver {
         return GdsExpressionTypeInference.inferTypeBefore(postfix, call)
     }
 
-    fun resolve(call: GdsFunctionCall): FunctionSpec? = if (call.functionNameRef?.text == "length" && receiverType(call) is ArrayType) LENGTH else null
+    fun methods(receiverType: DataType?): List<FunctionSpec> = if (receiverType is ArrayType) listOf(LENGTH) else emptyList()
+
+    fun resolve(call: GdsFunctionCall): FunctionSpec? = methods(receiverType(call)).firstOrNull { it.name == call.functionNameRef?.text }
 }

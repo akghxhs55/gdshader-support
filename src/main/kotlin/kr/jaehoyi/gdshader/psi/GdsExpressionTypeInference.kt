@@ -43,7 +43,8 @@ object GdsExpressionTypeInference {
 
         for (child in postfixExpr.children) {
             if (child == postfixExpr.primary) continue
-            if (child == targetChild) return currentType
+            // Leaf tokens such as the completion dot are not included in PSI children.
+            if (child.textOffset >= targetChild.textOffset) return currentType
 
             when (child) {
                 is GdsStructMemberNameRef -> {

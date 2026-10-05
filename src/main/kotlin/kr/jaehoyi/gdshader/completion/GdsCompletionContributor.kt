@@ -24,6 +24,7 @@ import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 import kotlin.collections.plusAssign
@@ -721,6 +722,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         }
 
                     result.addAllElements(completions)
+                    result.addAllElements(GdsArrayMethodResolver.methods(baseType).map(GdsLookupElements::createArrayMethod))
                 }
             },
         )

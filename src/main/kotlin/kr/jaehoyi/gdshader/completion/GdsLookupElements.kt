@@ -481,6 +481,15 @@ object GdsLookupElements {
             .withTypeText("#define ${define.value}", true)
             .withPriority(PRIORITY_NORMAL)
 
+    fun createArrayMethod(spec: FunctionSpec): LookupElement =
+        LookupElementBuilder
+            .create(spec, spec.name)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText("()", true)
+            .withTypeText(spec.returnType.presentationText, true)
+            .withInsertHandler(ParenthesesInsertHandler.NO_PARAMETERS)
+            .withPriority(PRIORITY_BUILTIN)
+
     fun createFromFunctionNameDecl(nameDecl: GdsFunctionNameDecl): LookupElement? {
         val functionSpec = nameDecl.functionSpec ?: return null
 
