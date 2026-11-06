@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.1.1"
+version = "1.1.2"
 
 val pluginVerifierIdeVersion = providers.gradleProperty("pluginVerifierIdeVersion").orElse("latest.release")
 
@@ -58,9 +58,8 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Fix to parse chained assignments left to right</li>
-              <li>Fix type inference for constant conversion and expression chains</li>
-              <li>Add Godot 4.6 and 4.7 builtins</li>
+              <li>Replace deprecated API usages</li>
+              <li>Fix various bugs and improve stability</li>
             </ul>
             """.trimIndent()
     }

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.1.2 (2026-10-05)
+- Replace deprecated API usages
+- Fix various bugs and improve stability
+
 ## 1.1.1 (2026-08-28)
 - Fix to parse chained assignments left to right
 - Fix type inference for constant conversion and expression chains
