@@ -5,7 +5,7 @@ import java.util.Locale
 
 object GdsColorUtil {
     fun extractColorFromText(text: String): Color? {
-        val regex = Regex("""vec([34])\s*\(\s*([-0-9.,\s]+)\s*\)""")
+        val regex = Regex("""vec([34])\s*\(\s*([-+0-9.,eEfF\s]+)\s*\)""")
         val match = regex.find(text) ?: return null
 
         val type = match.groupValues[1]

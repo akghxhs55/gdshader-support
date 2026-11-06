@@ -23,6 +23,74 @@ class GdsLocalVariableColorProviderTest : BasePlatformTestCase() {
         assertEquals(255, color.red)
     }
 
+    fun `test extract color from single float with suffix`() {
+        val code =
+            """
+            void main() {
+                vec4 <caret>color = vec4(1.0f);
+            }
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val offset = myFixture.editor.caretModel.offset
+        val element = requireNotNull(myFixture.file.findElementAt(offset))
+
+        val color = requireNotNull(provider.getColorFrom(element))
+
+        assertEquals(Color(255, 255, 255, 255), color)
+    }
+
+    fun `test extract color from mixed float suffixes`() {
+        val code =
+            """
+            void main() {
+                vec4 my<caret>Color = vec4(1.0f, 0.0, 0.0F, 1.0f);
+            }
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val offset = myFixture.editor.caretModel.offset
+        val element = requireNotNull(myFixture.file.findElementAt(offset))
+
+        val color = requireNotNull(provider.getColorFrom(element))
+
+        assertEquals(Color(255, 0, 0, 255), color)
+    }
+
+    fun `test extract color from exponent notation`() {
+        val code =
+            """
+            void main() {
+                vec3 my<caret>Color = vec3(1e0, 5.0e-1, 0.0E+0);
+            }
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val offset = myFixture.editor.caretModel.offset
+        val element = requireNotNull(myFixture.file.findElementAt(offset))
+
+        val color = requireNotNull(provider.getColorFrom(element))
+
+        assertEquals(Color(255, 127, 0, 255), color)
+    }
+
+    fun `test extract color from exponent notation with suffix`() {
+        val code =
+            """
+            void main() {
+                vec4 my<caret>Color = vec4(1e0f, 0.0, 1.0E-0F, 5e-1f);
+            }
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val offset = myFixture.editor.caretModel.offset
+        val element = requireNotNull(myFixture.file.findElementAt(offset))
+
+        val color = requireNotNull(provider.getColorFrom(element))
+
+        assertEquals(Color(255, 0, 255, 127), color)
+    }
+
     fun `test no color from uninitialized variable`() {
         val code =
             """
