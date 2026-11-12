@@ -19,7 +19,7 @@ class GdsLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider()
         indentOptions.INDENT_SIZE = 4
         indentOptions.TAB_SIZE = 4
         indentOptions.CONTINUATION_INDENT_SIZE = 8
-        indentOptions.USE_TAB_CHARACTER = false
+        indentOptions.USE_TAB_CHARACTER = true
         indentOptions.KEEP_INDENTS_ON_EMPTY_LINES = false
 
         commonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS = true
