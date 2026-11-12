@@ -35,39 +35,39 @@
             name="GDShader File"
             implementationClass="kr.jaehoyi.gdshader.GdsFileType"
             fieldName="INSTANCE"
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             extensions="gdshader" />
         <fileType
             name="GDShader Include File"
             implementationClass="kr.jaehoyi.gdshader.GdsIncludeFileType"
             fieldName="INSTANCE"
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             extensions="gdshaderinc" />
         
         <lang.parserDefinition
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.GdsParserDefinition" />
         
         <lang.documentationProvider
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.documentation.GdsDocumentationProvider" />
         
         <!-- Highlighting -->
         <lang.syntaxHighlighterFactory
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsSyntaxHighlighterFactory" />
         <colorSettingsPage
             implementation="kr.jaehoyi.gdshader.highlighting.GdsColorSettingsPage" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsHighlightingAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsDeclarationAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsStatementAnnotator" />
-        <annotator language="GDShader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsHighlightingAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsDeclarationAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsStatementAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionAnnotator" />
         
         <!-- Formatting -->
         <lang.formatter
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.formatter.GdsFormattingModelBuilder" />
         <postFormatProcessor implementation="kr.jaehoyi.gdshader.formatter.GdsCommentFormatProcessor" />
         <codeStyleSettingsProvider implementation="kr.jaehoyi.gdshader.formatter.GdsCodeStyleSettingsProvider" />
@@ -77,34 +77,34 @@
         <typedHandler implementation="kr.jaehoyi.gdshader.editor.GdsTypedHandler" />
         <enterHandlerDelegate implementation="kr.jaehoyi.gdshader.editor.GdsEnterHandler" />
         <lang.braceMatcher
-                language="GDShader"
+                language="kr.jaehoyi.gdshader"
                 implementationClass="kr.jaehoyi.gdshader.editor.GdsBraceMatcher" />
         <lang.quoteHandler
-                language="GDShader"
+                language="kr.jaehoyi.gdshader"
                 implementationClass="kr.jaehoyi.gdshader.editor.GdsQuoteHandler" />
-        <lang.findUsagesProvider language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFindUsagesProvider" />
+        <lang.findUsagesProvider language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFindUsagesProvider" />
         <readWriteAccessDetector implementation="kr.jaehoyi.gdshader.codeinsight.GdsReadWriteAccessDetector" />
         <usageTypeProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsUsageTypeProvider" />
-        <lang.foldingBuilder language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFoldingBuilder" />
-        <lang.psiStructureViewFactory language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsStructureViewFactory" />
+        <lang.foldingBuilder language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.editor.GdsFoldingBuilder" />
+        <lang.psiStructureViewFactory language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.editor.GdsStructureViewFactory" />
         <breadcrumbsInfoProvider implementation="kr.jaehoyi.gdshader.editor.GdsBreadcrumbsProvider" />
         <navbar implementation="kr.jaehoyi.gdshader.editor.GdsNavBarExtension" />
         <gotoSymbolContributor implementation="kr.jaehoyi.gdshader.editor.GdsChooseByNameContributor" />
-        <lang.commenter language="GDShader" implementationClass="kr.jaehoyi.gdshader.editor.GdsCommenter" />
+        <lang.commenter language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.editor.GdsCommenter" />
         <lang.surroundDescriptor
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.editor.GdsSurroundDescriptor" />
 
         <!-- Completions -->
         <completion.contributor
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.completion.GdsCompletionContributor" />
         <typedHandler implementation="kr.jaehoyi.gdshader.completion.GdsCompletionTypedHandler" />
         
         <!-- Code Insights -->
-        <codeInsight.parameterInfo language="GDShader" implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsParameterInfoHandler" />
+        <codeInsight.parameterInfo language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsParameterInfoHandler" />
         <codeInsight.declarativeInlayProvider
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsInlayHintsProvider"
             isEnabledByDefault="false"
             group="PARAMETERS_GROUP"
@@ -114,10 +114,10 @@
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsConstantColorProvider" />
         <colorProvider implementation="kr.jaehoyi.gdshader.codeinsight.GdsLocalVariableColorProvider" />
         <codeInsight.lineMarkerProvider
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.codeinsight.GdsProcessingFunctionLineMarkerProvider" />
         <localInspection
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             groupName="GDShader"
             shortName="GdsDeclarationValidation"
             key="inspection.declaration.validation.display.name"
@@ -126,7 +126,7 @@
             level="ERROR"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsDeclarationValidationInspection" />
         <localInspection
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             groupName="GDShader"
             shortName="GdsExpressionValidation"
             key="inspection.expression.validation.display.name"
@@ -135,7 +135,7 @@
             level="ERROR"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionValidationInspection" />
         <localInspection
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             groupName="GDShader"
             shortName="GdsFunctionCallValidation"
             key="inspection.function.call.validation.display.name"
@@ -144,7 +144,7 @@
             level="ERROR"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallValidationInspection" />
         <localInspection
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             groupName="GDShader"
             shortName="GdsStatementValidation"
             key="inspection.statement.validation.display.name"
@@ -153,7 +153,7 @@
             level="ERROR"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsStatementValidationInspection" />
         <localInspection
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             groupName="GDShader"
             shortName="GdsUnresolvedReference"
             key="inspection.unresolved.reference.display.name"
@@ -162,7 +162,7 @@
             level="WARNING"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceInspection" />
         <localInspection
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             groupName="GDShader"
             shortName="GdsUnusedSymbol"
             key="inspection.unused.symbol.display.name"
@@ -173,17 +173,17 @@
 
         <!-- Spell Checking -->
         <spellchecker.support
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.editor.GdsSpellcheckingStrategy" />
 
         <!-- Refactoring -->
         <lang.refactoringSupport
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.refactoring.GdsRefactoringSupportProvider" />
         
         <!-- Reference -->
         <psi.referenceContributor
-            language="GDShader"
+            language="kr.jaehoyi.gdshader"
             implementation="kr.jaehoyi.gdshader.reference.GdsReferenceContributor" />
         
         <!-- File Templates -->

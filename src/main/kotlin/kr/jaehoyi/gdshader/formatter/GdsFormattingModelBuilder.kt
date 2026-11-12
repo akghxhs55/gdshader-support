@@ -29,7 +29,7 @@ class GdsFormattingModelBuilder : FormattingModelBuilder {
     }
 
     private fun createSpacingBuilder(settings: CodeStyleSettings): SpacingBuilder {
-        val common = settings.getCommonSettings(GdsLanguage.id)
+        val common = settings.getCommonSettings(GdsLanguage)
         val gds = settings.getCustomSettings(GdsCodeStyleSettings::class.java)
 
         return SpacingBuilder(settings, GdsLanguage)
