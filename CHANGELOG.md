@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.1.3 (2026-11-13)
+- Fix color picker to handle various numeric literals
+- Fix language name conflict with JetBrains official plugin
+- Change default indentation to use tab character
+
 ## 1.1.2 (2026-10-05)
 - Replace deprecated API usages
 - Fix various bugs and improve stability

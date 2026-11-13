@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.1.2"
+version = "1.1.3"
 
 val pluginVerifierIdeVersion = providers.gradleProperty("pluginVerifierIdeVersion").orElse("latest.release")
 
@@ -68,8 +68,9 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Replace deprecated API usages</li>
-              <li>Fix various bugs and improve stability</li>
+              <li>Fix color picker to handle various numeric literals</li>
+              <li>Fix language name conflict with JetBrains official plugin.</li>
+              <li>Change default indentation to use tab character</li>
             </ul>
             """.trimIndent()
     }
