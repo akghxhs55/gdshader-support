@@ -5,33 +5,41 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## Unreleased
+
 - Improve syntax highlighting logic and fix default colors
+- Fix struct name completion
 
 ## 1.1.3 (2026-11-13)
+
 - Fix color picker to handle various numeric literals
 - Fix language name conflict with JetBrains official plugin
 - Change default indentation to use tab character
 
 ## 1.1.2 (2026-10-05)
+
 - Replace deprecated API usages
 - Fix various bugs and improve stability
 
 ## 1.1.1 (2026-08-28)
+
 - Fix to parse chained assignments left to right
 - Fix type inference for constant conversion and expression chains
 - Add Godot 4.6 and 4.7 builtins
 
 ## 1.1.0 (2026-08-28)
+
 - Added internationalization for inspection settings
 - Added Chinese translations
 - Fix resolution of symbols declared in included files regardless of position
 - Add self-healing nesting rules on startup
 
 ## 1.0.2 (2026-06-20)
+
 - Added configuration for indentation
 - Added configuration for inspections
 
 ## 1.0.1 (2026-05-26)
+
 - Added basic define macro support
 - Removed unsupported matrix constructors
 - Added sampler uniform hint completions
@@ -39,16 +47,19 @@ All notable changes to this project will be documented in this file.
 - Fixed to keep processing function template completions available for exact matches
 
 ## 1.0.0 (2026-04-07)
+
 - Added Korean, German translations
 - Fixed various bugs and improved stability
 
 ## 0.8.0-beta (2026-03-24)
+
 - Added syntax validations for various contexts
 - Added spell checking support
 - Added code inspection for unused variables and functions
 - Added quick fix for removing unused symbols
 
 ## 0.7.0-beta (2026-02-27)
+
 - Added commenter support
 - Added formatting and code style settings
 - Added uniform hint documentation support
@@ -56,6 +67,7 @@ All notable changes to this project will be documented in this file.
 - Added surround with support
 
 ## 0.6.0-beta (2026-02-07)
+
 - Added parameter info support
 - Added struct member reference and completion support
 - Added structure view feature
@@ -65,6 +77,7 @@ All notable changes to this project will be documented in this file.
 - Minor feature improvements
 
 ## 0.5.0-beta (2026-01-22)
+
 - Added completion prioritization
 - Added find usages feature
 - Added folding support
@@ -72,17 +85,20 @@ All notable changes to this project will be documented in this file.
 - Fixed bugs
 
 ## 0.4.0-beta (2026-01-18)
+
 - Added color picker for color values
 - Added code completion for custom variables, functions and structs
 - Added refactoring support (rename symbol)
 - Added line markers for processing functions
 
 ## 0.3.2-beta (2025-12-27)
+
 - Improved code completions
 - Improved grammar
 - Fix bugs
 
 ## 0.3.1-beta (2025-09-23)
+
 - Added support for Godot 4.5 (Stencil Mode)
 - Added file type support for GDShader include files (.gdshaderinc)
 - Improved grammar for various contexts
@@ -90,17 +106,21 @@ All notable changes to this project will be documented in this file.
 - Fix bugs
 
 ## 0.3.0-beta (2025-09-15)
+
 - Added basic code completion for keywords
 - Added code formatting support
 - Improved grammar
 
 ## 0.2.1-beta (2025-08-01)
+
 - Lowered minimum supported IDE version to 2023.1
 
 ## 0.2.0-beta (2025-08-01)
+
 - Added creation of new GDShader files from templates via context (right-click) menu
 - Improved syntax highlighting for GDShader files
 - Improved grammar support for GDShader files
 
 ## 0.1.0-beta (2025-07-19)
+
 - Initial release

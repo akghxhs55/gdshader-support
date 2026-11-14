@@ -418,6 +418,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.PRECISIONS)
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
+                        result.addAllElements(getStructTypeCompletions(position))
                         result.addAllElements(GdsLookupElements.PARAMETER_QUALIFIERS)
                         return
                     }
@@ -428,6 +429,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.PRECISIONS)
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
+                        result.addAllElements(getStructTypeCompletions(position))
                         return
                     }
 
@@ -436,6 +438,7 @@ class GdsCompletionContributor : CompletionContributor() {
                         result.addAllElements(GdsLookupElements.PRECISIONS)
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
+                        result.addAllElements(getStructTypeCompletions(position))
                         return
                     }
 
@@ -443,6 +446,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     if (GdsKeywords.PRECISIONS.contains(prevLeaf.text)) {
                         result.addAllElements(GdsLookupElements.DECLARABLE_BUILTIN_TYPES)
                         result.addAllElements(GdsLookupElements.OPAQUE_BUILTIN_TYPES)
+                        result.addAllElements(getStructTypeCompletions(position))
                         return
                     }
 
@@ -746,6 +750,17 @@ class GdsCompletionContributor : CompletionContributor() {
                 }
             },
         )
+
+    private fun getStructTypeCompletions(position: PsiElement): List<LookupElement> {
+        val completions = arrayListOf<LookupElement>()
+
+        GdsResolver.processStructDeclaration(position) { element ->
+            completions += GdsLookupElements.createTypeDeclarationFromStructNameDecl(element)
+            return@processStructDeclaration true
+        }
+
+        return completions
+    }
 
     private fun getVectorSwizzles(vectorType: VectorType): List<LookupElement> {
         val size = vectorType.containerSize
