@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## Unreleased
+## 1.2.0 (2026-11-14)
 
 - Improve syntax highlighting logic and fix default colors
 - Fix struct name completion
