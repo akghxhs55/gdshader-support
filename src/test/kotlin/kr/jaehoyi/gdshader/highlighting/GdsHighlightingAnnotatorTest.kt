@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsHighlightingAnnotatorTest : BasePlatformTestCase() {
-
     fun `test half-typed identifier before assignment is not a struct type`() {
         val colors =
             semanticColors(
