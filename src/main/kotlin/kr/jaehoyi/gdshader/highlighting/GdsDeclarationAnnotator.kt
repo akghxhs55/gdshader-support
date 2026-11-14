@@ -124,7 +124,8 @@ class GdsDeclarationAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val structBlock = element.structBlock ?: return
-        if (structBlock.structMemberList.structMemberList.isEmpty()) {
+        val members = structBlock.structMemberList?.structMemberList ?: return
+        if (members.isEmpty()) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Empty structs are not allowed")
                 .range(element)
@@ -304,16 +305,18 @@ class GdsDeclarationAnnotator : Annotator {
         // Evaluation failure can also mean an unsupported constant expression.
         val value = GdsConstantEvaluator.evaluate(expr) ?: return
         val convertible =
-            when {
-                declaredType is FloatType && (exprType is IntType || exprType is UIntType) -> true
-                declaredType is UIntType && exprType is IntType -> {
+            when (declaredType) {
+                is FloatType if (exprType is IntType || exprType is UIntType) -> true
+                is UIntType if exprType is IntType -> {
                     val integer = value as? Int ?: return
                     integer >= 0
                 }
-                declaredType is IntType && exprType is UIntType -> {
+
+                is IntType if exprType is UIntType -> {
                     val integer = value as? Long ?: return
                     integer in 0L..Int.MAX_VALUE.toLong()
                 }
+
                 else -> false
             }
 

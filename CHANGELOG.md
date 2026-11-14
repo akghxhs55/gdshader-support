@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## Unreleased
+- Improve syntax highlighting logic and fix default colors
+
 ## 1.1.3 (2026-11-13)
 - Fix color picker to handle various numeric literals
 - Fix language name conflict with JetBrains official plugin

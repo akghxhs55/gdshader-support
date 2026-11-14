@@ -6,7 +6,8 @@ GDShader File
   PsiWhiteSpace(' ')
   PsiElement(GDShaderTokenType.IDENTIFIER)('a')
   PsiWhiteSpace(' ')
-  PsiElement(GDShaderTokenType.OP_ADD)('+')
+  PsiErrorElement:GDShaderTokenType.IDENTIFIER expected, got '+'
+    PsiElement(GDShaderTokenType.OP_ADD)('+')
   PsiWhiteSpace(' ')
   PsiElement(GDShaderTokenType.INT_CONSTANT)('1')
   PsiElement(GDShaderTokenType.SEMICOLON)(';')

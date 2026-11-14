@@ -548,10 +548,6 @@ class GdsCompletionContributor : CompletionContributor() {
                     val position = parameters.position
                     val prevLeaf = getPrevCodeLeaf(position) ?: return
 
-                    if (position.parentOfType<GdsVariableNameRef>() != null) {
-                        completions += getExpressionCompletions(position)
-                    }
-
                     when (prevLeaf.elementType) {
                         GdsTypes.CURLY_BRACKET_OPEN,
                         GdsTypes.CF_ELSE,
@@ -621,6 +617,10 @@ class GdsCompletionContributor : CompletionContributor() {
                                 completions += getExpressionCompletions(position)
                             }
                         }
+                    }
+
+                    if (completions.isEmpty() && isExpressionPosition(position, prevLeaf)) {
+                        completions += getExpressionCompletions(position)
                     }
 
                     result.addAllElements(completions)
@@ -869,6 +869,18 @@ class GdsCompletionContributor : CompletionContributor() {
         completions += GdsLookupElements.BOOLEAN_LITERALS
 
         return completions
+    }
+
+    private fun isExpressionPosition(
+        position: PsiElement,
+        prevLeaf: PsiElement,
+    ): Boolean {
+        val nameRef = position.parentOfType<GdsVariableNameRef>() ?: return false
+        val statement = nameRef.parentOfType<GdsStatement>() ?: return true
+        if (statement.textRange.startOffset != nameRef.textRange.startOffset) return true
+
+        val gap = position.containingFile.text.subSequence(prevLeaf.textRange.endOffset, position.textRange.startOffset)
+        return gap.contains('\n')
     }
 
     private fun getPrevCodeLeaf(position: PsiElement): PsiElement? {

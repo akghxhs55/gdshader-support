@@ -4,7 +4,7 @@ package kr.jaehoyi.gdshader.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import static kr.jaehoyi.gdshader.psi.GdsTypes.*;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import static kr.jaehoyi.gdshader.parser.GdsParserUtil.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
@@ -308,23 +308,24 @@ public class GdsParser implements PsiParser, LightPsiParser {
   public static boolean block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block")) return false;
     if (!nextTokenIs(b, CURLY_BRACKET_OPEN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, BLOCK, null);
     r = consumeToken(b, CURLY_BRACKET_OPEN);
-    r = r && block_body(b, l + 1);
-    r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
-    exit_section_(b, m, BLOCK, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, block_body(b, l + 1));
+    r = p && consumeToken(b, CURLY_BRACKET_CLOSE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
-  // statement_body*
+  // statement_item*
   public static boolean block_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block_body")) return false;
     Marker m = enter_section_(b, l, _NONE_, BLOCK_BODY, "<block body>");
     while (true) {
       int c = current_position_(b);
-      if (!statement_body(b, l + 1)) break;
+      if (!statement_item(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "block_body", c)) break;
     }
     exit_section_(b, l, m, true, false, GdsParser::block_body_recover);
@@ -343,13 +344,13 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // statement_body*
+  // statement_item*
   public static boolean case_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "case_body")) return false;
     Marker m = enter_section_(b, l, _NONE_, CASE_BODY, "<case body>");
     while (true) {
       int c = current_position_(b);
-      if (!statement_body(b, l + 1)) break;
+      if (!statement_item(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "case_body", c)) break;
     }
     exit_section_(b, l, m, true, false, null);
@@ -671,12 +672,13 @@ public class GdsParser implements PsiParser, LightPsiParser {
   // expression SEMICOLON
   public static boolean expression_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_statement")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, EXPRESSION_STATEMENT, "<expression statement>");
     r = expression(b, l + 1);
+    p = r; // pin = 1
     r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -874,12 +876,12 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // item*
+  // item_with_recover*
   static boolean gdShaderFile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "gdShaderFile")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!item(b, l + 1)) break;
+      if (!item_with_recover(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "gdShaderFile", c)) break;
     }
     return true;
@@ -1140,6 +1142,61 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | GLOBAL | INSTANCE
+  // 						 | CONST | VARYING | STRUCT | precision | type)
+  static boolean item_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "item_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !item_recover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | GLOBAL | INSTANCE
+  // 						 | CONST | VARYING | STRUCT | precision | type
+  private static boolean item_recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "item_recover_0")) return false;
+    boolean r;
+    r = consumeToken(b, SHADER_TYPE);
+    if (!r) r = consumeToken(b, RENDER_MODE);
+    if (!r) r = consumeToken(b, STENCIL_MODE);
+    if (!r) r = consumeToken(b, UNIFORM_GROUP);
+    if (!r) r = consumeToken(b, UNIFORM);
+    if (!r) r = consumeToken(b, GLOBAL);
+    if (!r) r = consumeToken(b, INSTANCE);
+    if (!r) r = consumeToken(b, CONST);
+    if (!r) r = consumeToken(b, VARYING);
+    if (!r) r = consumeToken(b, STRUCT);
+    if (!r) r = precision(b, l + 1);
+    if (!r) r = type(b, l + 1);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // !<<eof>> item
+  static boolean item_with_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "item_with_recover")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = item_with_recover_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && item(b, l + 1);
+    exit_section_(b, l, m, r, p, GdsParser::item_recover);
+    return r || p;
+  }
+
+  // !<<eof>>
+  private static boolean item_with_recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "item_with_recover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !eof(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // TRUE
   // 		  | FALSE
   // 		  | FLOAT_CONSTANT
@@ -1159,16 +1216,17 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // precision? type array_size? local_variable_declarator_list SEMICOLON
+  // precision? <<structTypeNameOnSameLine>> type array_size? local_variable_declarator_list SEMICOLON
   public static boolean local_variable_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "local_variable_declaration")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, LOCAL_VARIABLE_DECLARATION, "<local variable declaration>");
     r = local_variable_declaration_0(b, l + 1);
+    r = r && structTypeNameOnSameLine(b, l + 1);
     r = r && type(b, l + 1);
-    r = r && local_variable_declaration_2(b, l + 1);
+    r = r && local_variable_declaration_3(b, l + 1);
     r = r && local_variable_declarator_list(b, l + 1);
-    p = r; // pin = 4
+    p = r; // pin = 5
     r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -1182,8 +1240,8 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   // array_size?
-  private static boolean local_variable_declaration_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "local_variable_declaration_2")) return false;
+  private static boolean local_variable_declaration_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "local_variable_declaration_3")) return false;
     array_size(b, l + 1);
     return true;
   }
@@ -1728,6 +1786,20 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // uniform_qualifier UNIFORM
+  static boolean qualified_uniform_header(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "qualified_uniform_header")) return false;
+    if (!nextTokenIs(b, "", GLOBAL, INSTANCE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = uniform_qualifier(b, l + 1);
+    p = r; // pin = 1
+    r = r && consumeToken(b, UNIFORM);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE
   public static boolean range_hint(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "range_hint")) return false;
@@ -1878,13 +1950,14 @@ public class GdsParser implements PsiParser, LightPsiParser {
   public static boolean return_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "return_statement")) return false;
     if (!nextTokenIs(b, CF_RETURN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, RETURN_STATEMENT, null);
     r = consumeToken(b, CF_RETURN);
-    r = r && return_statement_1(b, l + 1);
-    r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, m, RETURN_STATEMENT, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, return_statement_1(b, l + 1));
+    r = p && consumeToken(b, SEMICOLON) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // expression?
@@ -1976,17 +2049,25 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CF_BREAK SEMICOLON
-  // 					| CF_CONTINUE SEMICOLON
-  // 					| CF_DISCARD SEMICOLON
+  // (CF_BREAK | CF_CONTINUE | CF_DISCARD) SEMICOLON
   public static boolean simple_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simple_statement")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, SIMPLE_STATEMENT, "<simple statement>");
-    r = parseTokens(b, 0, CF_BREAK, SEMICOLON);
-    if (!r) r = parseTokens(b, 0, CF_CONTINUE, SEMICOLON);
-    if (!r) r = parseTokens(b, 0, CF_DISCARD, SEMICOLON);
-    exit_section_(b, l, m, r, false, null);
+    r = simple_statement_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && consumeToken(b, SEMICOLON);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // CF_BREAK | CF_CONTINUE | CF_DISCARD
+  private static boolean simple_statement_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simple_statement_0")) return false;
+    boolean r;
+    r = consumeToken(b, CF_BREAK);
+    if (!r) r = consumeToken(b, CF_CONTINUE);
+    if (!r) r = consumeToken(b, CF_DISCARD);
     return r;
   }
 
@@ -1996,8 +2077,8 @@ public class GdsParser implements PsiParser, LightPsiParser {
   // 			| simple_statement
   // 			| constant_declaration
   // 			| function_call_statement
-  // 			| expression_statement
   // 			| local_variable_declaration
+  // 			| expression_statement
   // 			| SEMICOLON
   public static boolean statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement")) return false;
@@ -2008,8 +2089,8 @@ public class GdsParser implements PsiParser, LightPsiParser {
     if (!r) r = simple_statement(b, l + 1);
     if (!r) r = constant_declaration(b, l + 1);
     if (!r) r = function_call_statement(b, l + 1);
-    if (!r) r = expression_statement(b, l + 1);
     if (!r) r = local_variable_declaration(b, l + 1);
+    if (!r) r = expression_statement(b, l + 1);
     if (!r) r = consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -2025,6 +2106,93 @@ public class GdsParser implements PsiParser, LightPsiParser {
     r = statement(b, l + 1);
     if (!r) r = block(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // !(CURLY_BRACKET_CLOSE | CF_CASE | CF_DEFAULT | <<eof>>) statement_body
+  static boolean statement_item(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "statement_item")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = statement_item_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && statement_body(b, l + 1);
+    exit_section_(b, l, m, r, p, GdsParser::statement_recover);
+    return r || p;
+  }
+
+  // !(CURLY_BRACKET_CLOSE | CF_CASE | CF_DEFAULT | <<eof>>)
+  private static boolean statement_item_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "statement_item_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !statement_item_0_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // CURLY_BRACKET_CLOSE | CF_CASE | CF_DEFAULT | <<eof>>
+  private static boolean statement_item_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "statement_item_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CURLY_BRACKET_CLOSE);
+    if (!r) r = consumeToken(b, CF_CASE);
+    if (!r) r = consumeToken(b, CF_DEFAULT);
+    if (!r) r = eof(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // !(SEMICOLON | CURLY_BRACKET_OPEN | CURLY_BRACKET_CLOSE
+  // 							  | CF_IF | CF_FOR | CF_WHILE | CF_DO | CF_SWITCH | CF_CASE | CF_DEFAULT
+  // 							  | CF_RETURN | CF_BREAK | CF_CONTINUE | CF_DISCARD
+  // 							  | CONST | precision | type | literal | PARENTHESIS_OPEN
+  // 							  | OP_INCREMENT | OP_DECREMENT | OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB)
+  static boolean statement_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "statement_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !statement_recover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // SEMICOLON | CURLY_BRACKET_OPEN | CURLY_BRACKET_CLOSE
+  // 							  | CF_IF | CF_FOR | CF_WHILE | CF_DO | CF_SWITCH | CF_CASE | CF_DEFAULT
+  // 							  | CF_RETURN | CF_BREAK | CF_CONTINUE | CF_DISCARD
+  // 							  | CONST | precision | type | literal | PARENTHESIS_OPEN
+  // 							  | OP_INCREMENT | OP_DECREMENT | OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB
+  private static boolean statement_recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "statement_recover_0")) return false;
+    boolean r;
+    r = consumeToken(b, SEMICOLON);
+    if (!r) r = consumeToken(b, CURLY_BRACKET_OPEN);
+    if (!r) r = consumeToken(b, CURLY_BRACKET_CLOSE);
+    if (!r) r = consumeToken(b, CF_IF);
+    if (!r) r = consumeToken(b, CF_FOR);
+    if (!r) r = consumeToken(b, CF_WHILE);
+    if (!r) r = consumeToken(b, CF_DO);
+    if (!r) r = consumeToken(b, CF_SWITCH);
+    if (!r) r = consumeToken(b, CF_CASE);
+    if (!r) r = consumeToken(b, CF_DEFAULT);
+    if (!r) r = consumeToken(b, CF_RETURN);
+    if (!r) r = consumeToken(b, CF_BREAK);
+    if (!r) r = consumeToken(b, CF_CONTINUE);
+    if (!r) r = consumeToken(b, CF_DISCARD);
+    if (!r) r = consumeToken(b, CONST);
+    if (!r) r = precision(b, l + 1);
+    if (!r) r = type(b, l + 1);
+    if (!r) r = literal(b, l + 1);
+    if (!r) r = consumeToken(b, PARENTHESIS_OPEN);
+    if (!r) r = consumeToken(b, OP_INCREMENT);
+    if (!r) r = consumeToken(b, OP_DECREMENT);
+    if (!r) r = consumeToken(b, OP_NOT);
+    if (!r) r = consumeToken(b, OP_BIT_INVERT);
+    if (!r) r = consumeToken(b, OP_ADD);
+    if (!r) r = consumeToken(b, OP_SUB);
     return r;
   }
 
@@ -2098,13 +2266,14 @@ public class GdsParser implements PsiParser, LightPsiParser {
   public static boolean struct_block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_block")) return false;
     if (!nextTokenIs(b, CURLY_BRACKET_OPEN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, STRUCT_BLOCK, null);
     r = consumeToken(b, CURLY_BRACKET_OPEN);
-    r = r && struct_member_list(b, l + 1);
-    r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
-    exit_section_(b, m, STRUCT_BLOCK, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, struct_member_list(b, l + 1));
+    r = p && consumeToken(b, CURLY_BRACKET_CLOSE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2162,13 +2331,47 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // struct_member*
+  // !(CURLY_BRACKET_CLOSE | <<eof>>) struct_member
+  static boolean struct_member_item(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_item")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = struct_member_item_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && struct_member(b, l + 1);
+    exit_section_(b, l, m, r, p, GdsParser::struct_member_recover);
+    return r || p;
+  }
+
+  // !(CURLY_BRACKET_CLOSE | <<eof>>)
+  private static boolean struct_member_item_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_item_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !struct_member_item_0_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // CURLY_BRACKET_CLOSE | <<eof>>
+  private static boolean struct_member_item_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_item_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CURLY_BRACKET_CLOSE);
+    if (!r) r = eof(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // struct_member_item*
   public static boolean struct_member_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_member_list")) return false;
     Marker m = enter_section_(b, l, _NONE_, STRUCT_MEMBER_LIST, "<struct member list>");
     while (true) {
       int c = current_position_(b);
-      if (!struct_member(b, l + 1)) break;
+      if (!struct_member_item(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "struct_member_list", c)) break;
     }
     exit_section_(b, l, m, true, false, GdsParser::struct_member_list_recover);
@@ -2211,6 +2414,27 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !(CURLY_BRACKET_CLOSE | precision | type)
+  static boolean struct_member_recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !struct_member_recover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // CURLY_BRACKET_CLOSE | precision | type
+  private static boolean struct_member_recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "struct_member_recover_0")) return false;
+    boolean r;
+    r = consumeToken(b, CURLY_BRACKET_CLOSE);
+    if (!r) r = precision(b, l + 1);
+    if (!r) r = type(b, l + 1);
+    return r;
+  }
+
+  /* ********************************************************** */
   // IDENTIFIER
   public static boolean struct_name_decl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "struct_name_decl")) return false;
@@ -2239,13 +2463,14 @@ public class GdsParser implements PsiParser, LightPsiParser {
   public static boolean switch_block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switch_block")) return false;
     if (!nextTokenIs(b, CURLY_BRACKET_OPEN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SWITCH_BLOCK, null);
     r = consumeToken(b, CURLY_BRACKET_OPEN);
-    r = r && switch_body(b, l + 1);
-    r = r && consumeToken(b, CURLY_BRACKET_CLOSE);
-    exit_section_(b, m, SWITCH_BLOCK, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, switch_body(b, l + 1));
+    r = p && consumeToken(b, CURLY_BRACKET_CLOSE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2538,25 +2763,14 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // uniform_qualifier UNIFORM | UNIFORM
+  // qualified_uniform_header | UNIFORM
   public static boolean uniform_header(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "uniform_header")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, UNIFORM_HEADER, "<uniform header>");
-    r = uniform_header_0(b, l + 1);
+    r = qualified_uniform_header(b, l + 1);
     if (!r) r = consumeToken(b, UNIFORM);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // uniform_qualifier UNIFORM
-  private static boolean uniform_header_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "uniform_header_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = uniform_qualifier(b, l + 1);
-    r = r && consumeToken(b, UNIFORM);
-    exit_section_(b, m, null, r);
     return r;
   }
 

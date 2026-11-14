@@ -28,9 +28,9 @@ public class GdsBlockImpl extends ASTWrapperPsiElement implements GdsBlock {
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GdsBlockBody getBlockBody() {
-    return findNotNullChildByClass(GdsBlockBody.class);
+    return findChildByClass(GdsBlockBody.class);
   }
 
 }

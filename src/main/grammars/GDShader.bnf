@@ -1,5 +1,6 @@
 {
   parserClass="kr.jaehoyi.gdshader.parser.GdsParser"
+  parserUtilClass="kr.jaehoyi.gdshader.parser.GdsParserUtil"
 
   extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
@@ -35,7 +36,16 @@
   ]
 }
 
-gdShaderFile ::= item*
+gdShaderFile ::= item_with_recover*
+
+// A broken top-level declaration only loses its own tokens.
+private item_with_recover ::= !<<eof>> item
+{
+	pin=1
+	recoverWhile=item_recover
+}
+private item_recover ::= !(SHADER_TYPE | RENDER_MODE | STENCIL_MODE | UNIFORM_GROUP | UNIFORM | GLOBAL | INSTANCE
+						 | CONST | VARYING | STRUCT | precision | type)
 
 item ::= top_level_declaration
 	   
@@ -86,7 +96,8 @@ uniform_declaration ::= uniform_header precision? type array_size? variable_name
 	pin=1
 }
 
-uniform_header ::= uniform_qualifier UNIFORM | UNIFORM
+uniform_header ::= qualified_uniform_header | UNIFORM
+private qualified_uniform_header ::= uniform_qualifier UNIFORM
 {
 	pin=1
 }
@@ -156,8 +167,8 @@ varying_declaration ::= VARYING interpolation_qualifier? precision? type array_s
 interpolation_qualifier ::= INTERPOLATION_FLAT | INTERPOLATION_SMOOTH
 
 // Local Variable Declaration
-local_variable_declaration ::= precision? type array_size? local_variable_declarator_list SEMICOLON {
-	pin=4
+local_variable_declaration ::= precision? <<structTypeNameOnSameLine>> type array_size? local_variable_declarator_list SEMICOLON {
+	pin=5
 }
 
 local_variable_declarator_list ::= local_variable_declarator (COMMA local_variable_declarator)* {
@@ -199,11 +210,27 @@ parameter ::= parameter_qualifier? precision? type array_size? variable_name_dec
 parameter_qualifier ::= CONST? ARG_IN | CONST | ARG_OUT | ARG_INOUT
 
 block ::= CURLY_BRACKET_OPEN block_body CURLY_BRACKET_CLOSE
-block_body ::= statement_body*
+{
+	pin=1
+}
+block_body ::= statement_item*
 {
 	recoverWhile=block_body_recover
 }
 private block_body_recover ::= !(CURLY_BRACKET_CLOSE) 
+
+// A broken statement only loses its own tokens.
+private statement_item ::= !(CURLY_BRACKET_CLOSE | CF_CASE | CF_DEFAULT | <<eof>>) statement_body
+{
+	pin=1
+	recoverWhile=statement_recover
+}
+// Must list every token a statement can start with.
+private statement_recover ::= !(SEMICOLON | CURLY_BRACKET_OPEN | CURLY_BRACKET_CLOSE
+							  | CF_IF | CF_FOR | CF_WHILE | CF_DO | CF_SWITCH | CF_CASE | CF_DEFAULT
+							  | CF_RETURN | CF_BREAK | CF_CONTINUE | CF_DISCARD
+							  | CONST | precision | type | literal | PARENTHESIS_OPEN
+							  | OP_INCREMENT | OP_DECREMENT | OP_NOT | OP_BIT_INVERT | OP_ADD | OP_SUB)
 
 // Struct Declarations
 struct_declaration ::= STRUCT struct_name_decl struct_block SEMICOLON
@@ -216,11 +243,20 @@ struct_name_decl ::= IDENTIFIER
 	methods=[getName setName getNameIdentifier]
 }
 struct_block ::= CURLY_BRACKET_OPEN struct_member_list CURLY_BRACKET_CLOSE
-struct_member_list ::= struct_member*
+{
+	pin=1
+}
+struct_member_list ::= struct_member_item*
 {
 	recoverWhile=struct_member_list_recover
 }
 private struct_member_list_recover ::= !(CURLY_BRACKET_CLOSE)
+private struct_member_item ::= !(CURLY_BRACKET_CLOSE | <<eof>>) struct_member
+{
+	pin=1
+	recoverWhile=struct_member_recover
+}
+private struct_member_recover ::= !(CURLY_BRACKET_CLOSE | precision | type)
 struct_member ::= precision? type array_size? struct_member_name_decl array_size? SEMICOLON
 {
 	pin=2
@@ -271,6 +307,9 @@ switch_statement ::= CF_SWITCH PARENTHESIS_OPEN expression PARENTHESIS_CLOSE swi
 	pin=1
 }
 switch_block ::= CURLY_BRACKET_OPEN switch_body CURLY_BRACKET_CLOSE
+{
+	pin=1
+}
 switch_body ::= case_clause*
 {
 	recoverWhile=switch_body_recover
@@ -280,14 +319,18 @@ case_clause ::= CF_CASE expression COLON case_body | CF_DEFAULT COLON case_body
 {
 	pin=1
 }
-case_body ::= statement_body*
+case_body ::= statement_item*
 
 return_statement ::= CF_RETURN expression? SEMICOLON
+{
+	pin=1
+}
 
-simple_statement ::= CF_BREAK SEMICOLON
-					| CF_CONTINUE SEMICOLON
-					| CF_DISCARD SEMICOLON
-					
+simple_statement ::= (CF_BREAK | CF_CONTINUE | CF_DISCARD) SEMICOLON
+{
+	pin=1
+}
+
 statement_body ::= statement
 				 | block
 				 
@@ -296,8 +339,8 @@ statement ::= control_statement
 			| simple_statement
 			| constant_declaration
 			| function_call_statement
-			| expression_statement
 			| local_variable_declaration
+			| expression_statement
 			| SEMICOLON
 
 // Expressions
@@ -306,6 +349,9 @@ function_call_statement ::= function_call SEMICOLON
 	pin=1
 }
 expression_statement ::= expression SEMICOLON
+{
+	pin=1
+}
 expression ::= assign_expr
 
 assign_expr ::= conditional_expr (assignment_operator conditional_expr)*

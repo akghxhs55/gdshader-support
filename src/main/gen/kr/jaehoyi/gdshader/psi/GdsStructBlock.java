@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GdsStructBlock extends PsiElement {
 
-  @NotNull
+  @Nullable
   GdsStructMemberList getStructMemberList();
 
 }

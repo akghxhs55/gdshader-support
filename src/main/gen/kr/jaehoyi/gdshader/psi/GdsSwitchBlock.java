@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GdsSwitchBlock extends PsiElement {
 
-  @NotNull
+  @Nullable
   GdsSwitchBody getSwitchBody();
 
 }

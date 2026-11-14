@@ -1,0 +1,15 @@
+GDShader File
+  GdsItemImpl(ITEM)
+    GdsTopLevelDeclarationImpl(TOP_LEVEL_DECLARATION)
+      GdsUniformDeclarationImpl(UNIFORM_DECLARATION)
+        GdsUniformHeaderImpl(UNIFORM_HEADER)
+          GdsUniformQualifierImpl(UNIFORM_QUALIFIER)
+            PsiElement(GDShaderTokenType.GLOBAL)('global')
+          PsiErrorElement:GDShaderTokenType.UNIFORM expected, got 'foo'
+            <empty list>
+        PsiWhiteSpace(' ')
+        GdsTypeImpl(TYPE)
+          GdsStructNameRefImpl(STRUCT_NAME_REF)
+            PsiElement(GDShaderTokenType.IDENTIFIER)('foo')
+        PsiErrorElement:GDShaderTokenType.BRACKET_OPEN or GDShaderTokenType.IDENTIFIER expected
+          <empty list>

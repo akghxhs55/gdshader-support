@@ -32,7 +32,7 @@ class GdsColorSettingsPage : ColorSettingsPage {
         varying vec2 <vvar>uv</vvar>;
         
         int <func>foo</func>(int <param>a</param>, float <param>b</param>) {
-            return <param>a</param> + int(<param>b</param>);
+            return <param>a</param> + int(<call>floor</call>(<param>b</param>));
         }
         
         struct <struct>MyStruct</struct> {
@@ -41,14 +41,14 @@ class GdsColorSettingsPage : ColorSettingsPage {
         };
 
         void <func>fragment</func>() {
-            vec4 <lvar>texColor</lvar> = texture(image, <bconst>UV</bconst>);
+            vec4 <lvar>texColor</lvar> = <call>texture</call>(<uvar>image</uvar>, <bconst>UV</bconst>);
             <bvar>COLOR</bvar> = <lvar>texColor</lvar> * <uvar>color</uvar>;
             int <lvar>values</lvar>[3] = { 1, 2, 3 };
             
             for (int <lvar>i</lvar> = 0; <lvar>i</lvar> < 10; <lvar>i</lvar>++) {
                 <bvar>COLOR</bvar>.<member>rgb</member> += vec3(float(<lvar>i</lvar>) / 10.0);
                 if (<lvar>i</lvar> % 2 == 0) {
-                    <lvar>values</lvar>[i % 3] += <func>foo</func>(i, 0.5);
+                    <lvar>values</lvar>[<lvar>i</lvar> % 3] += <call>foo</call>(<lvar>i</lvar>, 0.5);
                     continue;
                 }
             }
@@ -65,6 +65,7 @@ class GdsColorSettingsPage : ColorSettingsPage {
             "const" to GdsSyntaxHighlighter.CONSTANT,
             "vvar" to GdsSyntaxHighlighter.VARYING_VARIABLE,
             "func" to GdsSyntaxHighlighter.FUNCTION,
+            "call" to GdsSyntaxHighlighter.FUNCTION_CALL,
             "param" to GdsSyntaxHighlighter.PARAMETER,
             "struct" to GdsSyntaxHighlighter.STRUCT,
             "member" to GdsSyntaxHighlighter.STRUCT_MEMBER,
@@ -86,6 +87,7 @@ private val DESCRIPTORS =
         AttributesDescriptor(GdsBundle.message("color.settings.identifiers.constant"), GdsSyntaxHighlighter.CONSTANT),
         AttributesDescriptor(GdsBundle.message("color.settings.identifiers.varying.variable"), GdsSyntaxHighlighter.VARYING_VARIABLE),
         AttributesDescriptor(GdsBundle.message("color.settings.identifiers.function"), GdsSyntaxHighlighter.FUNCTION),
+        AttributesDescriptor(GdsBundle.message("color.settings.identifiers.function.call"), GdsSyntaxHighlighter.FUNCTION_CALL),
         AttributesDescriptor(GdsBundle.message("color.settings.identifiers.parameter"), GdsSyntaxHighlighter.PARAMETER),
         AttributesDescriptor(GdsBundle.message("color.settings.identifiers.struct"), GdsSyntaxHighlighter.STRUCT),
         AttributesDescriptor(GdsBundle.message("color.settings.identifiers.struct.member"), GdsSyntaxHighlighter.STRUCT_MEMBER),

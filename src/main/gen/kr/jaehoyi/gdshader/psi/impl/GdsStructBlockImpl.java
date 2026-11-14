@@ -28,9 +28,9 @@ public class GdsStructBlockImpl extends ASTWrapperPsiElement implements GdsStruc
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GdsStructMemberList getStructMemberList() {
-    return findNotNullChildByClass(GdsStructMemberList.class);
+    return findChildByClass(GdsStructMemberList.class);
   }
 
 }

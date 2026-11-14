@@ -128,7 +128,12 @@ class GdsSyntaxHighlighter : SyntaxHighlighterBase() {
         val FUNCTION =
             TextAttributesKey.createTextAttributesKey(
                 "GDSHADER_FUNCTION",
-                DefaultLanguageHighlighterColors.INSTANCE_METHOD,
+                DefaultLanguageHighlighterColors.FUNCTION_DECLARATION,
+            )
+        val FUNCTION_CALL =
+            TextAttributesKey.createTextAttributesKey(
+                "GDSHADER_FUNCTION_CALL",
+                DefaultLanguageHighlighterColors.FUNCTION_CALL,
             )
         val PARAMETER =
             TextAttributesKey.createTextAttributesKey(
@@ -196,7 +201,7 @@ class GdsSyntaxHighlighter : SyntaxHighlighterBase() {
                 GdsTypes.FLOAT_CONSTANT, GdsTypes.INT_CONSTANT, GdsTypes.UINT_CONSTANT,
                 -> NUMBER_KEYS
 
-                GdsTypes.STRING_CONSTANT,
+                GdsTypes.STRING_CONSTANT, GdsTypes.UNTERMINATED_STRING_CONSTANT,
                 -> STRING_KEYS
 
                 GdsTypes.CF_IF, GdsTypes.CF_ELSE, GdsTypes.CF_FOR, GdsTypes.CF_WHILE,

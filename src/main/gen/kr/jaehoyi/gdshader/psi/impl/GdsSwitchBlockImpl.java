@@ -28,9 +28,9 @@ public class GdsSwitchBlockImpl extends ASTWrapperPsiElement implements GdsSwitc
   }
 
   @Override
-  @NotNull
+  @Nullable
   public GdsSwitchBody getSwitchBody() {
-    return findNotNullChildByClass(GdsSwitchBody.class);
+    return findChildByClass(GdsSwitchBody.class);
   }
 
 }

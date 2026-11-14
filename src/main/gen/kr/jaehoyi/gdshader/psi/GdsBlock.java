@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface GdsBlock extends PsiElement {
 
-  @NotNull
+  @Nullable
   GdsBlockBody getBlockBody();
 
 }
