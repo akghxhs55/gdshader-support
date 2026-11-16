@@ -233,10 +233,10 @@ object GdsLookupElements {
 
     private fun createBuiltinVariable(variableSpec: VariableSpec): LookupElement {
         val icon =
-            if (variableSpec.isMutable) {
-                AllIcons.Nodes.Variable
-            } else {
+            if (variableSpec is ConstantSpec) {
                 AllIcons.Nodes.Constant
+            } else {
+                AllIcons.Nodes.Variable
             }
 
         return LookupElementBuilder

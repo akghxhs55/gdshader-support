@@ -172,6 +172,21 @@ class GdsHighlightingAnnotatorTest : BasePlatformTestCase() {
         assertEquals(listOf(GdsSyntaxHighlighter.FUNCTION), colors.of("fragment"))
     }
 
+    fun `test builtin constants and read-only builtins use separate colors`() {
+        val colors =
+            semanticColors(
+                """
+                shader_type canvas_item;
+                void fragment() {
+                    float a = PI + TIME;
+                }
+                """,
+            )
+
+        assertEquals(listOf(GdsSyntaxHighlighter.BUILTIN_CONSTANT), colors.of("PI"))
+        assertEquals(listOf(GdsSyntaxHighlighter.BUILTIN_VARIABLE), colors.of("TIME"))
+    }
+
     private class SemanticColors(
         private val entries: List<Pair<String, TextAttributesKey>>,
     ) {

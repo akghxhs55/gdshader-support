@@ -578,6 +578,51 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test assign to read-only builtin`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            void fragment() {
+                <error descr="Cannot assign to read-only built-in 'TIME'">TIME = 1.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to builtin constant`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            void fragment() {
+                <error descr="Constants cannot be modified">PI += 1.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to writable builtin`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            void fragment() {
+                COLOR = vec4(1.0);
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to in function parameter`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            float f(in float x) {
+                x = 2.0;
+                return x;
+            }
+            """.trimIndent(),
+        )
+    }
+
     fun `test assign to mutable variable`() {
         doHighlightTest(
             """

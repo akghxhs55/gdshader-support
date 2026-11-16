@@ -5,6 +5,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.ResolveState
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.model.isWritableBuiltin
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunction
@@ -146,7 +147,8 @@ object GdsResolver {
         val specs = Builtins.getVariables(shaderType, functionContext, element.text)
         if (specs.isNotEmpty()) {
             val isTypeAmbiguous = specs.distinctBy { it.type }.size > 1
-            return !processor(GdsLightVariable(manager, specs.first(), isTypeAmbiguous))
+            val isAssignable = specs.any { it.isWritableBuiltin }
+            return !processor(GdsLightVariable(manager, specs.first(), isTypeAmbiguous, isAssignable))
         }
         return true
     }

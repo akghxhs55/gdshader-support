@@ -8,6 +8,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
+import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 
 class GdsExpressionAnnotator : Annotator {
     override fun annotate(
@@ -232,6 +233,17 @@ class GdsExpressionAnnotator : Annotator {
                     .range(element)
                     .create()
             }
+        } else if (resolved is GdsLightVariable && !resolved.isAssignable) {
+            val message =
+                if (resolved.variableSpec is ConstantSpec) {
+                    "Constants cannot be modified"
+                } else {
+                    "Cannot assign to read-only built-in '${resolved.name}'"
+                }
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, message)
+                .range(element)
+                .create()
         }
 
         val opText = operator.text

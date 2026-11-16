@@ -4926,24 +4926,24 @@ object Builtins {
             ),
         )
 
-    private val globalVariables =
+    private val globalVariables: List<VariableSpec> =
         listOf(
             ParameterSpec(
                 name = "TIME",
                 type = FLOAT,
                 description = "Global time since the engine has started, in seconds. It repeats after every <code>3,600</code> seconds (which can be changed with the <a href=\"https://docs.godotengine.org/en/stable/classes/class_projectsettings.html#class-projectsettings-property-rendering-limits-time-time-rollover-secs\">rollover</a> setting). It's affected by <a href=\"https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-property-time-scale\">time_scale</a> but not by pausing. If you need a <code>TIME</code> variable that is not affected by time scale, add your own <a href=\"https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shading_language.html#doc-shading-language-global-uniforms\">global shader uniform</a> and update it each frame.",
             ),
-            ParameterSpec(
+            ConstantSpec(
                 name = "PI",
                 type = FLOAT,
                 description = "A <code>PI</code> constant (<code>3.141592</code>). The ratio of a circle's circumference to its diameter and the number of radians in a half turn.",
             ),
-            ParameterSpec(
+            ConstantSpec(
                 name = "TAU",
                 type = FLOAT,
                 description = "A <code>TAU</code> constant (<code>6.283185</code>). Equivalent to PI * 2 and the number of radians in a full turn.",
             ),
-            ParameterSpec(
+            ConstantSpec(
                 name = "E",
                 type = FLOAT,
                 description = "An <code>E</code> constant (<code>2.718281</code>). Euler's number, the base of the natural logarithm.",

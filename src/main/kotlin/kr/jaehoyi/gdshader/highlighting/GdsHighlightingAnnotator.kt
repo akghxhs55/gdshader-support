@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
+import kr.jaehoyi.gdshader.model.ConstantSpec
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
@@ -40,10 +41,12 @@ class GdsHighlightingAnnotator : Annotator {
                 is GdsVariableNameRef -> {
                     val target = element.reference.resolve() ?: return
                     if (target is GdsLightVariable) {
-                        if (target.variableSpec.isMutable) {
-                            GdsSyntaxHighlighter.BUILTIN_VARIABLE
-                        } else {
+                        // Colour by "compile-time constant" (PI, TAU, E), not by writability: read-only
+                        // inputs such as TIME are still variables.
+                        if (target.variableSpec is ConstantSpec) {
                             GdsSyntaxHighlighter.BUILTIN_CONSTANT
+                        } else {
+                            GdsSyntaxHighlighter.BUILTIN_VARIABLE
                         }
                     } else {
                         when (target.parent) {

@@ -71,6 +71,15 @@ data class ParameterSpec(
         get() = qualifier != ParameterQualifier.CONST && qualifier != ParameterQualifier.CONST_IN
 }
 
+/**
+ * Whether this spec, when it describes a built-in variable, can be assigned to.
+ *
+ * For built-ins, `in` marks a read-only input; only `out` and `inout` built-ins are writable. This differs from
+ * user function parameters, where `in` parameters are writable local copies (see [ParameterSpec.isMutable]).
+ */
+val VariableSpec.isWritableBuiltin: Boolean
+    get() = this is ParameterSpec && (qualifier == ParameterQualifier.OUT || qualifier == ParameterQualifier.INOUT)
+
 data class LocalVariableSpec(
     override val name: String,
     override val type: DataType,
