@@ -10,9 +10,13 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.2.0"
+version = "1.2.1"
 
-val pluginVerifierIdeVersion = providers.gradleProperty("pluginVerifierIdeVersion").orElse("latest.release")
+val pluginVerifierIdeVersions =
+    providers
+        .gradleProperty("pluginVerifierIdeVersion")
+        .map { listOf(it) }
+        .getOrElse(listOf("2024.2", "latest.release"))
 
 sourceSets {
     main {
@@ -30,21 +34,21 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdeaCommunity("2025.1.2")
-        plugin("PsiViewer", "2025.1")
+        rider("2024.2")
+        plugin("PsiViewer", "242.4697")
 
         testFramework(TestFrameworkType.Platform)
     }
 
-    intellijPlatformTesting {
-        runIde {
-            register("runRider") {
-                type = IntelliJPlatformType.Rider
-                version = "2026.2.4.1"
-                useInstaller = false
-            }
-        }
-    }
+//    intellijPlatformTesting {
+//        runIde {
+//            register("runIdeSpecific") {
+//                type = IntelliJPlatformType.Rider
+//                version = "2026.3"
+//                useInstaller = false
+//            }
+//        }
+//    }
 
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
@@ -54,8 +58,10 @@ dependencies {
 intellijPlatform {
     pluginVerification {
         ides {
-            create(IntelliJPlatformType.Rider, pluginVerifierIdeVersion) {
-                useInstaller = false
+            pluginVerifierIdeVersions.forEach { version ->
+                create(IntelliJPlatformType.Rider, version) {
+                    useInstaller = false
+                }
             }
         }
     }
@@ -68,8 +74,8 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Improve syntax highlighting logic and fix default colors</li>
-              <li>Fix struct name completion</li>
+              <li>Add file creation template for empty .gdshader file</li>
+              <li>Fix builtin resolving logic in .gdshaderinc files (#16)</li>
             </ul>
             """.trimIndent()
     }

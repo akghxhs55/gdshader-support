@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 1.2.1 (2026-11-17)
+
+- Add file creation template for empty .gdshader file
+- Fix built-in resolution for files with no `shader_type` (#16)
+- Fix built-in resolution in global context
+- Treat 'in' built-ins as read-only
+
 ## 1.2.0 (2026-11-14)
 
 - Improve syntax highlighting logic and fix default colors
