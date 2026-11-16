@@ -17,6 +17,8 @@ class GdsNewFileAction :
         builder: CreateFileFromTemplateDialog.Builder,
     ) {
         builder.setTitle("GDShader")
+        builder.addKind("Empty", GdsFileType.icon, "Empty")
+
         FileTemplateManager
             .getInstance(project)
             .allTemplates

@@ -187,6 +187,7 @@
             implementation="kr.jaehoyi.gdshader.reference.GdsReferenceContributor" />
         
         <!-- File Templates -->
+        <internalFileTemplate name="Empty" />
         <internalFileTemplate name="Spatial" />
         <internalFileTemplate name="Canvas Item" />
         <internalFileTemplate name="Particles" />
