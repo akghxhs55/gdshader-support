@@ -105,7 +105,7 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
         argIndex: Int,
     ): ParameterQualifier? {
         val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
-        val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return null
+        val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: FunctionContext.COMMON
 
         val candidates = Builtins.getFunctions(shaderType, functionContext, functionName) ?: return null
 

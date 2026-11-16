@@ -72,7 +72,7 @@ class GdsInlayHintsProvider : InlayHintsProvider {
                 }
 
                 val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
-                val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return null
+                val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: FunctionContext.COMMON
                 val candidates = Builtins.getFunctions(shaderType, functionContext, nameRef.text) ?: return null
                 val best = pickBestOverload(candidates, argCount) ?: return null
                 return best.parameters.map { it.name }

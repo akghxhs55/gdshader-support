@@ -319,6 +319,45 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === Global scope builtins ===
+
+    fun `test resolved builtin constant in global constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float HALF_PI = PI * 0.5;
+            const float FULL_TURN = TAU;
+        """,
+        )
+    }
+
+    fun `test resolved builtin function in global constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float S = sin(1.0);
+        """,
+        )
+    }
+
+    fun `test unresolved function in global constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float S = <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>(1.0);
+        """,
+        )
+    }
+
+    fun `test processing function builtin is unresolved in global constant`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            const vec4 C = <warning descr="Unresolved reference 'COLOR'">COLOR</warning>;
+        """,
+        )
+    }
+
     // === Include files ===
 
     fun `test gdshaderinc files are skipped`() {

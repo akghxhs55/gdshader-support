@@ -161,7 +161,7 @@ class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSp
             }
 
             val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
-            val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return emptyList()
+            val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: FunctionContext.COMMON
 
             return Builtins.getFunctions(shaderType, functionContext, functionName) ?: emptyList()
         }

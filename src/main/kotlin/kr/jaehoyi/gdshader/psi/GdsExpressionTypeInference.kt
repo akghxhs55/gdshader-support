@@ -200,7 +200,7 @@ object GdsExpressionTypeInference {
         functionName: String,
     ): DataType? {
         val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
-        val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return null
+        val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: FunctionContext.COMMON
 
         val candidates = Builtins.getFunctions(shaderType, functionContext, functionName) ?: return null
 

@@ -4,12 +4,9 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
-import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.MemberAccessible
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
-import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
@@ -52,9 +49,6 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         element: GdsFunctionNameRef,
         holder: AnnotationHolder,
     ) {
-        val enclosingFunction = element.parentOfType<GdsFunctionDeclaration>() ?: return
-        FunctionContext.fromText(enclosingFunction.functionNameDecl.text)
-
         if (element.reference.resolve() != null) return
 
         val call = element.parent as? GdsFunctionCall

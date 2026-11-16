@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.ResolveState
 import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunction
@@ -137,7 +138,7 @@ object GdsResolver {
         processor: (element: GdsVariable) -> Boolean,
     ): Boolean {
         val shaderType = GdsPsiImplUtil.getShaderType(element)
-        val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: return true
+        val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: FunctionContext.COMMON
 
         val project = element.project
         val manager = PsiManager.getInstance(project)
@@ -155,7 +156,7 @@ object GdsResolver {
         processor: (element: GdsFunction) -> Boolean,
     ): Boolean {
         val shaderType = GdsPsiImplUtil.getShaderType(element)
-        val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: return true
+        val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: FunctionContext.COMMON
 
         val project = element.project
         val manager = PsiManager.getInstance(project)
