@@ -10,6 +10,7 @@ import kr.jaehoyi.gdshader.psi.GdsVariable
 class GdsLightVariable(
     manager: PsiManager,
     override val variableSpec: VariableSpec,
+    val isTypeAmbiguous: Boolean = false,
 ) : LightElement(manager, GdsLanguage),
     GdsVariable {
     override fun getName(): String = variableSpec.name

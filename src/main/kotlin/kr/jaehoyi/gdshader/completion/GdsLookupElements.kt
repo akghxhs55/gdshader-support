@@ -218,93 +218,118 @@ object GdsLookupElements {
                 .withPriority(PRIORITY_TYPE)
         }
 
+    private fun createBuiltinFunction(functionSpec: FunctionSpec): LookupElement =
+        LookupElementBuilder
+            .create(functionSpec.name)
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Function)
+            .appendTailText(
+                "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.presentationTypeText} ${param.name}" } + ")",
+                true,
+            ).withTypeText(functionSpec.returnType.presentationText, true)
+            .withInsertHandler(
+                if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS,
+            ).withPriority(PRIORITY_BUILTIN)
+
+    private fun createBuiltinVariable(variableSpec: VariableSpec): LookupElement {
+        val icon =
+            if (variableSpec.isMutable) {
+                AllIcons.Nodes.Variable
+            } else {
+                AllIcons.Nodes.Constant
+            }
+
+        return LookupElementBuilder
+            .create(variableSpec.name)
+            .withBoldness(true)
+            .withIcon(icon)
+            .withTypeText(variableSpec.presentationTypeText, true)
+            .withPriority(PRIORITY_BUILTIN)
+    }
+
+    private fun createProcessingFunction(functionContext: FunctionContext): LookupElement =
+        LookupElementBuilder
+            .create("${functionContext.text} ")
+            .withLookupString("${functionContext.text}()")
+            .withPresentableText("${functionContext.text}()")
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.AbstractMethod)
+            .appendTailText("()", true)
+            .withTypeText("void", true)
+            .withInsertHandler { context, _ ->
+                val offset = deleteLookupTrailingSpace(context)
+                val textToInsert = "() {\n    \n}"
+
+                context.document.insertString(offset, textToInsert)
+                context.editor.caretModel.moveToOffset(offset + textToInsert.length - 2)
+            }.withPriority(PRIORITY_NORMAL)
+
     val BUILTIN_FUNCTIONS =
         Builtins.FUNCTIONS.mapValues {
-            it.value.map { functionSpec ->
-                LookupElementBuilder
-                    .create(functionSpec.name)
-                    .withBoldness(true)
-                    .withIcon(AllIcons.Nodes.Function)
-                    .appendTailText(
-                        "(" + functionSpec.parameters.joinToString(", ") { param -> "${param.presentationTypeText} ${param.name}" } + ")",
-                        true,
-                    ).withTypeText(functionSpec.returnType.presentationText, true)
-                    .withInsertHandler(
-                        if (functionSpec.parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS,
-                    ).withPriority(PRIORITY_BUILTIN)
-            }
+            it.value.map(::createBuiltinFunction)
         }
 
     val BUILTIN_VARIABLES =
         Builtins.VARIABLES.mapValues {
-            it.value.map { variableSpec ->
-                val icon =
-                    if (variableSpec.isMutable) {
-                        AllIcons.Nodes.Variable
-                    } else {
-                        AllIcons.Nodes.Constant
-                    }
-
-                LookupElementBuilder
-                    .create(variableSpec.name)
-                    .withBoldness(true)
-                    .withIcon(icon)
-                    .withTypeText(variableSpec.presentationTypeText, true)
-                    .withPriority(PRIORITY_BUILTIN)
-            }
+            it.value.map(::createBuiltinVariable)
         }
+
+    val ALL_SHADER_TYPE_BUILTIN_FUNCTIONS: Map<FunctionContext, List<LookupElement>> by lazy {
+        FunctionContext.entries.associateWith { context ->
+            Builtins.getAllShaderTypeFunctions(context).map(::createBuiltinFunction)
+        }
+    }
+
+    val ALL_SHADER_TYPE_BUILTIN_VARIABLES: Map<FunctionContext, List<LookupElement>> by lazy {
+        FunctionContext.entries.associateWith { context ->
+            Builtins.getAllShaderTypeVariables(context).map(::createBuiltinVariable)
+        }
+    }
+
+    val ALL_SHADER_TYPE_PROCESSING_FUNCTIONS: List<LookupElement> by lazy {
+        Builtins.getProcessingFunctions(null).map(::createProcessingFunction)
+    }
 
     val PROCESSING_FUNCTIONS =
         Builtins.PROCESSING_FUNCTIONS.mapValues {
-            it.value.map { functionContext ->
-                LookupElementBuilder
-                    .create("${functionContext.text} ")
-                    .withLookupString("${functionContext.text}()")
-                    .withPresentableText("${functionContext.text}()")
-                    .withBoldness(true)
-                    .withIcon(AllIcons.Nodes.AbstractMethod)
-                    .appendTailText("()", true)
-                    .withTypeText("void", true)
-                    .withInsertHandler { context, _ ->
-                        val offset = deleteLookupTrailingSpace(context)
-                        val textToInsert = "() {\n    \n}"
-
-                        context.document.insertString(offset, textToInsert)
-                        context.editor.caretModel.moveToOffset(offset + textToInsert.length - 2)
-                    }.withPriority(PRIORITY_NORMAL)
-            }
+            it.value.map(::createProcessingFunction)
         }
+
+    private fun createProcessingFunctionTemplate(functionContext: FunctionContext): LookupElement =
+        LookupElementBuilder
+            .create("${functionContext.text} ")
+            .withLookupString("${functionContext.text}()")
+            .withPresentableText("${functionContext.text}()")
+            .withBoldness(true)
+            .withIcon(AllIcons.Nodes.Template)
+            .withTypeText("template")
+            .withInsertHandler { context, element ->
+                val document = context.document
+                val editor = context.editor
+
+                val startOffset = context.startOffset
+                val tailOffset = deleteLookupTrailingSpace(context)
+
+                val suffix = "() {\n    \n}"
+                document.insertString(tailOffset, suffix)
+
+                val prefix = "void "
+                document.insertString(startOffset, prefix)
+
+                val nameLength = element.lookupString.trimEnd().length
+                val cursorOffset = startOffset + prefix.length + nameLength + suffix.length - 2
+
+                editor.caretModel.moveToOffset(cursorOffset)
+            }.withPriority(PRIORITY_NORMAL)
 
     val PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE =
         Builtins.PROCESSING_FUNCTIONS.mapValues {
-            it.value.map { functionContext ->
-                LookupElementBuilder
-                    .create("${functionContext.text} ")
-                    .withLookupString("${functionContext.text}()")
-                    .withPresentableText("${functionContext.text}()")
-                    .withBoldness(true)
-                    .withIcon(AllIcons.Nodes.Template)
-                    .withTypeText("template")
-                    .withInsertHandler { context, element ->
-                        val document = context.document
-                        val editor = context.editor
-
-                        val startOffset = context.startOffset
-                        val tailOffset = deleteLookupTrailingSpace(context)
-
-                        val suffix = "() {\n    \n}"
-                        document.insertString(tailOffset, suffix)
-
-                        val prefix = "void "
-                        document.insertString(startOffset, prefix)
-
-                        val nameLength = element.lookupString.trimEnd().length
-                        val cursorOffset = startOffset + prefix.length + nameLength + suffix.length - 2
-
-                        editor.caretModel.moveToOffset(cursorOffset)
-                    }.withPriority(PRIORITY_NORMAL)
-            }
+            it.value.map(::createProcessingFunctionTemplate)
         }
+
+    val ALL_SHADER_TYPE_PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE: List<LookupElement> by lazy {
+        Builtins.getProcessingFunctions(null).map(::createProcessingFunctionTemplate)
+    }
 
     val CONSTRUCTORS =
         Builtins.ALL_DATA_TYPE_LIST

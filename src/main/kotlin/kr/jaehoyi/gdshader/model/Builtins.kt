@@ -134,12 +134,48 @@ object Builtins {
     }
 
     fun getFunctions(
-        shaderType: ShaderType,
+        shaderType: ShaderType?,
         functionContext: FunctionContext,
         name: String,
-    ): List<FunctionSpec>? =
-        FUNCTION_LOOKUP_CACHE[shaderType to functionContext]?.get(name)
-            ?: FUNCTION_LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
+    ): List<FunctionSpec>? {
+        if (shaderType != null) {
+            return FUNCTION_LOOKUP_CACHE[shaderType to functionContext]?.get(name)
+                ?: FUNCTION_LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
+        }
+
+        return ShaderType.entries
+            .flatMap { getFunctions(it, functionContext, name).orEmpty() }
+            .distinctBy { it.signatureKey() }
+            .ifEmpty { null }
+    }
+
+    fun getVariables(
+        shaderType: ShaderType?,
+        functionContext: FunctionContext,
+        name: String,
+    ): List<VariableSpec> {
+        if (shaderType != null) {
+            return listOfNotNull(getVariable(shaderType, functionContext, name))
+        }
+
+        return ShaderType.entries
+            .mapNotNull { getVariable(it, functionContext, name) }
+            .distinct()
+    }
+
+    fun getAllShaderTypeFunctions(functionContext: FunctionContext): List<FunctionSpec> =
+        ShaderType.entries
+            .flatMap { shaderType ->
+                FUNCTIONS[shaderType to FunctionContext.COMMON].orEmpty() + FUNCTIONS[shaderType to functionContext].orEmpty()
+            }.distinctBy { it.signatureKey() }
+
+    fun getAllShaderTypeVariables(functionContext: FunctionContext): List<VariableSpec> =
+        ShaderType.entries
+            .flatMap { shaderType ->
+                VARIABLES[shaderType to FunctionContext.COMMON].orEmpty() + VARIABLES[shaderType to functionContext].orEmpty()
+            }.distinctBy { it.name to it.presentationTypeText }
+
+    private fun FunctionSpec.signatureKey() = Triple(name, returnType, parameters.map { Triple(it.name, it.type, it.qualifier) })
 
     // Variables
     val VARIABLES: Map<Pair<ShaderType, FunctionContext>, List<VariableSpec>> by lazy {
@@ -1335,6 +1371,13 @@ object Builtins {
     ): VariableSpec? =
         VARIABLE_LOOKUP_CACHE[shaderType to functionContext]?.get(name)
             ?: VARIABLE_LOOKUP_CACHE[shaderType to FunctionContext.COMMON]?.get(name)
+
+    fun getProcessingFunctions(shaderType: ShaderType?): List<FunctionContext> =
+        if (shaderType != null) {
+            PROCESSING_FUNCTIONS[shaderType].orEmpty()
+        } else {
+            PROCESSING_FUNCTIONS.values.flatten().distinct()
+        }
 
     // Processing functions
     val PROCESSING_FUNCTIONS: EnumMap<ShaderType, List<FunctionContext>> =

@@ -17,7 +17,6 @@ import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.MemberAccessible
-import kr.jaehoyi.gdshader.model.ShaderType
 import kr.jaehoyi.gdshader.model.StructType
 import kr.jaehoyi.gdshader.model.VectorType
 import kr.jaehoyi.gdshader.psi.*
@@ -403,8 +402,14 @@ class GdsCompletionContributor : CompletionContributor() {
                         prevLeaf.text == "void"
                     ) {
                         val file = position.containingFile as? GdsFile ?: return
-                        val shaderType = GdsPsiImplUtil.getShaderType(file) ?: ShaderType.SPATIAL
-                        result.addAllElements(GdsLookupElements.PROCESSING_FUNCTIONS[shaderType] ?: emptyList())
+                        val shaderType = GdsPsiImplUtil.getShaderType(file)
+                        result.addAllElements(
+                            if (shaderType != null) {
+                                GdsLookupElements.PROCESSING_FUNCTIONS[shaderType].orEmpty()
+                            } else {
+                                GdsLookupElements.ALL_SHADER_TYPE_PROCESSING_FUNCTIONS
+                            },
+                        )
                         return
                     }
 
@@ -471,9 +476,15 @@ class GdsCompletionContributor : CompletionContributor() {
                     val position = parameters.position
 
                     val file = position.containingFile as? GdsFile ?: return
-                    val shaderType = GdsPsiImplUtil.getShaderType(file) ?: return
+                    val shaderType = GdsPsiImplUtil.getShaderType(file)
 
-                    result.addAllElements(GdsLookupElements.PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE[shaderType] ?: emptyList())
+                    result.addAllElements(
+                        if (shaderType != null) {
+                            GdsLookupElements.PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE[shaderType].orEmpty()
+                        } else {
+                            GdsLookupElements.ALL_SHADER_TYPE_PROCESSING_FUNCTIONS_WITHOUT_RETURN_TYPE
+                        },
+                    )
                 }
             },
         )
@@ -691,7 +702,12 @@ class GdsCompletionContributor : CompletionContributor() {
 
                             GdsResolver.processVariableDeclaration(curr) { variable ->
                                 if (variable.name == name) {
-                                    currentType = variable.variableSpec?.type
+                                    currentType =
+                                        if (variable is GdsLightVariable && variable.isTypeAmbiguous) {
+                                            null
+                                        } else {
+                                            variable.variableSpec?.type
+                                        }
                                     return@processVariableDeclaration false
                                 }
                                 true
@@ -839,13 +855,17 @@ class GdsCompletionContributor : CompletionContributor() {
 
     private fun getExpressionCompletions(position: PsiElement): List<LookupElement> {
         val file = position.containingFile as? GdsFile ?: return emptyList()
-        val shaderType = GdsPsiImplUtil.getShaderType(file) ?: ShaderType.SPATIAL
+        val shaderType = GdsPsiImplUtil.getShaderType(file)
         val functionContext = GdsPsiImplUtil.getFunctionContext(position)
 
         val completions = arrayListOf<LookupElement>()
 
-        completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList()
-        completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
+        if (shaderType != null) {
+            completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to FunctionContext.COMMON] ?: emptyList()
+            completions += GdsLookupElements.BUILTIN_FUNCTIONS[shaderType to functionContext] ?: emptyList()
+        } else {
+            completions += GdsLookupElements.ALL_SHADER_TYPE_BUILTIN_FUNCTIONS[functionContext ?: FunctionContext.COMMON].orEmpty()
+        }
 
         GdsResolver.processVariableDeclaration(position) { element ->
             when (element) {
@@ -872,8 +892,12 @@ class GdsCompletionContributor : CompletionContributor() {
             return@processStructDeclaration true
         }
 
-        completions += GdsLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()
-        completions += GdsLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList()
+        if (shaderType != null) {
+            completions += GdsLookupElements.BUILTIN_VARIABLES[shaderType to FunctionContext.COMMON] ?: emptyList()
+            completions += GdsLookupElements.BUILTIN_VARIABLES[shaderType to functionContext] ?: emptyList()
+        } else {
+            completions += GdsLookupElements.ALL_SHADER_TYPE_BUILTIN_VARIABLES[functionContext ?: FunctionContext.COMMON].orEmpty()
+        }
 
         completions +=
             GdsPreprocessorDefinitions

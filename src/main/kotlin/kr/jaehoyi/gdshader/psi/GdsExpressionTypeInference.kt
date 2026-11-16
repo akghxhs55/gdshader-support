@@ -2,6 +2,7 @@ package kr.jaehoyi.gdshader.psi
 
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.*
+import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
@@ -86,6 +87,7 @@ object GdsExpressionTypeInference {
 
     private fun inferVariableRefType(varRef: GdsVariableNameRef): DataType? {
         val resolved = varRef.reference.resolve() as? GdsVariable ?: return null
+        if (resolved is GdsLightVariable && resolved.isTypeAmbiguous) return null
         return resolved.variableSpec?.type
     }
 
@@ -197,7 +199,7 @@ object GdsExpressionTypeInference {
         functionCall: GdsFunctionCall,
         functionName: String,
     ): DataType? {
-        val shaderType = GdsPsiImplUtil.getShaderType(functionCall) ?: return null
+        val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
         val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: return null
 
         val candidates = Builtins.getFunctions(shaderType, functionContext, functionName) ?: return null

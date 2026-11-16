@@ -136,15 +136,16 @@ object GdsResolver {
         element: PsiElement,
         processor: (element: GdsVariable) -> Boolean,
     ): Boolean {
-        val shaderType = GdsPsiImplUtil.getShaderType(element) ?: return true
+        val shaderType = GdsPsiImplUtil.getShaderType(element)
         val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: return true
 
         val project = element.project
         val manager = PsiManager.getInstance(project)
 
-        val spec = Builtins.getVariable(shaderType, functionContext, element.text)
-        if (spec != null) {
-            return !processor(GdsLightVariable(manager, spec))
+        val specs = Builtins.getVariables(shaderType, functionContext, element.text)
+        if (specs.isNotEmpty()) {
+            val isTypeAmbiguous = specs.distinctBy { it.type }.size > 1
+            return !processor(GdsLightVariable(manager, specs.first(), isTypeAmbiguous))
         }
         return true
     }
@@ -153,7 +154,7 @@ object GdsResolver {
         element: PsiElement,
         processor: (element: GdsFunction) -> Boolean,
     ): Boolean {
-        val shaderType = GdsPsiImplUtil.getShaderType(element) ?: return true
+        val shaderType = GdsPsiImplUtil.getShaderType(element)
         val functionContext = GdsPsiImplUtil.getFunctionContext(element) ?: return true
 
         val project = element.project
