@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        rider("2024.2")
+        intellijIdeaCommunity("2024.2")
         plugin("PsiViewer", "242.4697")
 
         testFramework(TestFrameworkType.Platform)
