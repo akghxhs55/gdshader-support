@@ -354,6 +354,94 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === Mixed swizzle sets ===
+
+    fun `test mixed position and color swizzle sets`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                vec2 a = v.<error descr="Cannot combine symbols from different sets in expression '.xg'">xg</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test mixed color and texture swizzle sets`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                vec3 a = v.<error descr="Cannot combine symbols from different sets in expression '.rgp'">rgp</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test mixed position and texture swizzle sets`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec4 v = ivec4(1);
+                ivec4 a = v.<error descr="Cannot combine symbols from different sets in expression '.xysq'">xysq</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test mixed swizzle sets reported before invalid component`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(1.0);
+                vec3 a = v.<error descr="Cannot combine symbols from different sets in expression '.xgz'">xgz</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test out of range component does not count as mixed set`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(1.0);
+                vec2 a = v.<error descr="Invalid member for 'vec2' expression: '.xb'">xb</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test member access on mixed swizzle result is not reported again`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                float a = v.<error descr="Cannot combine symbols from different sets in expression '.xg'">xg</error>.x;
+            }
+        """,
+        )
+    }
+
+    fun `test single swizzle set for each set`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                vec4 a = v.wzyx;
+                vec4 b = v.abgr;
+                vec4 c = v.qpts;
+            }
+        """,
+        )
+    }
+
     // === Member access on non-member types ===
 
     fun `test member access on float`() {

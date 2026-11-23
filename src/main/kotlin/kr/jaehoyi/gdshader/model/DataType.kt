@@ -165,6 +165,8 @@ class VectorType private constructor(
         val BVEC3 = VectorType(BoolType, 3)
         val BVEC4 = VectorType(BoolType, 4)
 
+        private val SWIZZLE_SETS = listOf("xyzw", "rgba", "stpq")
+
         fun of(
             elementType: Scalar,
             size: Int,
@@ -228,18 +230,9 @@ class VectorType private constructor(
             return null
         }
 
-        for (char in name) {
-            val valid =
-                when (char) {
-                    'x', 'r', 's' -> 0 < containerSize
-                    'y', 'g', 't' -> 1 < containerSize
-                    'z', 'b', 'p' -> 2 < containerSize
-                    'w', 'a', 'q' -> 3 < containerSize
-                    else -> false
-                }
-            if (!valid) {
-                return null
-            }
+        val sets = name.map { swizzleSetOf(it) ?: return null }
+        if (sets.distinct().size > 1) {
+            return null
         }
 
         return if (name.length == 1) {
@@ -247,6 +240,24 @@ class VectorType private constructor(
         } else {
             of(elementType, name.length)
         }
+    }
+
+    // Matches Godot: only components valid for this vector size count toward mixing.
+    fun hasMixedSwizzleSets(name: String): Boolean {
+        if (name.length !in 1..4) {
+            return false
+        }
+        return name.mapNotNull { swizzleSetOf(it) }.distinct().size > 1
+    }
+
+    private fun swizzleSetOf(char: Char): Int? {
+        for ((setIndex, set) in SWIZZLE_SETS.withIndex()) {
+            val componentIndex = set.indexOf(char)
+            if (componentIndex >= 0) {
+                return if (componentIndex < containerSize) setIndex else null
+            }
+        }
+        return null
     }
 }
 

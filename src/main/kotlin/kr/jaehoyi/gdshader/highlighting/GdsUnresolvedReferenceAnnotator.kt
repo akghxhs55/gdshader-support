@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.MemberAccessible
+import kr.jaehoyi.gdshader.model.VectorType
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
@@ -99,8 +100,15 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
 
         if (receiverType is MemberAccessible && receiverType.resolveMember(element.text) != null) return
 
+        val message =
+            if (receiverType is VectorType && receiverType.hasMixedSwizzleSets(element.text)) {
+                "Cannot combine symbols from different sets in expression '.${element.text}'"
+            } else {
+                "Invalid member for '${receiverType.name}' expression: '.${element.text}'"
+            }
+
         holder
-            .newAnnotation(HighlightSeverity.ERROR, "Invalid member for '${receiverType.name}' expression: '.${element.text}'")
+            .newAnnotation(HighlightSeverity.ERROR, message)
             .range(element)
             .create()
     }

@@ -234,6 +234,38 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertEquals(VectorType.VEC2, inferredType)
     }
 
+    fun `test vector swizzle with mixed sets`() {
+        val code = """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                vec2 xg = v.<caret>xg;
+            }
+        """
+        myFixture.configureByText("test.gdshader", code)
+
+        val postfixExpr = requireNotNull(findPostfixExprContainingCaret()) { "Should find postfix expression" }
+
+        val inferredType = GdsExpressionTypeInference.inferType(postfixExpr)
+        assertNull("Should not infer type for swizzle mixing component sets", inferredType)
+    }
+
+    fun `test vector swizzle stpq`() {
+        val code = """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                vec2 st = v.<caret>st;
+            }
+        """
+        myFixture.configureByText("test.gdshader", code)
+
+        val postfixExpr = requireNotNull(findPostfixExprContainingCaret()) { "Should find postfix expression" }
+
+        val inferredType = GdsExpressionTypeInference.inferType(postfixExpr)
+        assertEquals(VectorType.VEC2, inferredType)
+    }
+
     fun `test vector indexing`() {
         val code = """
             shader_type spatial;
