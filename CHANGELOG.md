@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - Align include path resolution with Godot (#17)
 - Fix struct resolution logic (#18, #19)
+- Add include reference handler
 
 ## 1.2.1 (2026-11-17)
 

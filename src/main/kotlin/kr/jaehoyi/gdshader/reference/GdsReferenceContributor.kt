@@ -8,7 +8,6 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GdsTypes
-import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 
 class GdsReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -20,14 +19,12 @@ class GdsReferenceContributor : PsiReferenceContributor() {
                 override fun getReferencesByElement(
                     element: PsiElement,
                     context: ProcessingContext,
-                ): Array<out PsiReference?> = getIncludeReference(element)
+                ): Array<out PsiReference?> = getIncludeReferences(element)
             },
         )
     }
 
-    private fun getIncludeReference(element: PsiElement): Array<out PsiReference> {
-        val includePath = GdsPathUtil.findIncludePath(element) ?: return PsiReference.EMPTY_ARRAY
-
-        return arrayOf(GdsFileReference(element, includePath.rangeInElement))
-    }
+    private fun getIncludeReferences(element: PsiElement): Array<out PsiReference> =
+        GdsIncludeReferenceSet.create(element)?.allReferences
+            ?: PsiReference.EMPTY_ARRAY
 }

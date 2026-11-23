@@ -65,7 +65,7 @@ class GdsIncludeReferenceTest : BasePlatformTestCase() {
 
         myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
 
-        myFixture.editor.caretModel.moveToOffset(mainFile.text.indexOf("includes/math.gdshaderinc") + 1)
+        myFixture.editor.caretModel.moveToOffset(mainFile.text.indexOf("math.gdshaderinc") + 1)
 
         val reference = requireNotNull(myFixture.getReferenceAtCaretPosition())
 
@@ -74,6 +74,25 @@ class GdsIncludeReferenceTest : BasePlatformTestCase() {
         assertInstanceOf(resolvedElement, GdsFile::class.java)
         assertEquals(targetFile, resolvedElement)
         assertEquals("math.gdshaderinc", (resolvedElement as PsiFile).name)
+    }
+
+    fun `test directory segment resolves to directory`() {
+        val targetFile = myFixture.addFileToProject("shaders/includes/math.gdshaderinc", "// math functions")
+
+        val mainFile =
+            myFixture.addFileToProject(
+                "main.gdshader",
+                """
+                #include "res://shaders/includes/math.gdshaderinc"
+                """.trimIndent(),
+            )
+
+        myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
+        myFixture.editor.caretModel.moveToOffset(mainFile.text.indexOf("includes/") + 1)
+
+        val resolvedElement = requireNotNull(myFixture.getReferenceAtCaretPosition()).resolve()
+
+        assertEquals(targetFile.containingDirectory, resolvedElement)
     }
 
     fun `test res path is resolved from godot project directory`() {
@@ -188,7 +207,8 @@ class GdsIncludeReferenceTest : BasePlatformTestCase() {
         val mainFile = myFixture.addFileToProject(filePath, "#include \"$includePath\"")
 
         myFixture.configureFromExistingVirtualFile(mainFile.virtualFile)
-        myFixture.editor.caretModel.moveToOffset(mainFile.text.indexOf(includePath) + 1)
+        // Put the caret on the file name segment, not on a directory segment.
+        myFixture.editor.caretModel.moveToOffset(mainFile.text.indexOf(includePath) + includePath.length - 1)
 
         return requireNotNull(myFixture.getReferenceAtCaretPosition()).resolve()
     }
