@@ -240,6 +240,107 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test duplicate function in include after declaration`() {
+        myFixture.addFileToProject("math.gdshaderinc", "float add(float a, float b) { return a + b; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float add(float x, float y) { return x + y; }
+            #include "<error descr="Redefinition of 'add' in included file">res://math.gdshaderinc</error>"
+        """,
+        )
+    }
+
+    fun `test function overload in include after declaration`() {
+        myFixture.addFileToProject("math.gdshaderinc", "float add(float a, float b) { return a + b; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            vec2 add(vec2 x, vec2 y) { return x + y; }
+            #include "res://math.gdshaderinc"
+        """,
+        )
+    }
+
+    fun `test duplicate function in nested include`() {
+        myFixture.addFileToProject("inner.gdshaderinc", "float add(float a, float b) { return a + b; }")
+        myFixture.addFileToProject("outer.gdshaderinc", "#include \"res://inner.gdshaderinc\"")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float add(float x, float y) { return x + y; }
+            #include "<error descr="Redefinition of 'add' in included file">res://outer.gdshaderinc</error>"
+        """,
+        )
+    }
+
+    fun `test duplicate function between includes`() {
+        myFixture.addFileToProject("a.gdshaderinc", "float add(float a, float b) { return a + b; }")
+        myFixture.addFileToProject("b.gdshaderinc", "float add(float x, float y) { return x + y; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #include "res://a.gdshaderinc"
+            #include "<error descr="Redefinition of 'add' in included file">res://b.gdshaderinc</error>"
+        """,
+        )
+    }
+
+    fun `test duplicate processing function in include after declaration`() {
+        myFixture.addFileToProject("stage.gdshaderinc", "void fragment() {}")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {}
+            #include "<error descr="Redefinition of 'fragment' in included file">res://stage.gdshaderinc</error>"
+        """,
+        )
+    }
+
+    fun `test duplicate struct in included file`() {
+        myFixture.addFileToProject("types.gdshaderinc", "struct Data { float x; };")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #include "res://types.gdshaderinc"
+            struct <error descr="Redefinition of 'Data'">Data</error> { float y; };
+        """,
+        )
+    }
+
+    fun `test duplicate struct in include after declaration`() {
+        myFixture.addFileToProject("types.gdshaderinc", "struct Data { float x; };")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float y; };
+            #include "<error descr="Redefinition of 'Data' in included file">res://types.gdshaderinc</error>"
+        """,
+        )
+    }
+
+    fun `test duplicate uniform in included file`() {
+        myFixture.addFileToProject("params.gdshaderinc", "uniform float speed;")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #include "res://params.gdshaderinc"
+            uniform float <error descr="Redefinition of 'speed'">speed</error>;
+        """,
+        )
+    }
+
+    fun `test duplicate constant in include after declaration`() {
+        myFixture.addFileToProject("params.gdshaderinc", "const float SPEED = 1.0;")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float SPEED;
+            #include "<error descr="Redefinition of 'SPEED' in included file">res://params.gdshaderinc</error>"
+        """,
+        )
+    }
+
     fun `test duplicate processing function with different parameters`() {
         doHighlightTest(
             """

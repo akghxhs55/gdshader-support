@@ -3,7 +3,10 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.ArrayType
@@ -19,6 +22,7 @@ import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
+import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsInitializer
@@ -29,14 +33,17 @@ import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
 import kr.jaehoyi.gdshader.psi.GdsStructMemberList
+import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsIncludeManager
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
+import kr.jaehoyi.gdshader.resolve.GdsScopeProcessor
 
 class GdsDeclarationAnnotator : Annotator {
     override fun annotate(
@@ -148,31 +155,41 @@ class GdsDeclarationAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val nameDecl = element.functionNameDecl
-        val name = nameDecl.name
-        val isProcessingFunction = isProcessingFunction(nameDecl)
-        val signature = getParameterSignature(element)
-        if (!isProcessingFunction && signature == null) return
-
-        var isDuplicate = false
-        GdsResolver.processFunctionDeclaration(nameDecl) { function ->
-            if (function !is GdsFunctionNameDecl || function.name != name) return@processFunctionDeclaration true
-            val other = function.parent as? GdsFunctionDeclaration ?: return@processFunctionDeclaration true
-            isDuplicate = isProcessingFunction || getParameterSignature(other) == signature
-            !isDuplicate
-        }
-
-        if (isDuplicate) {
+        if (hasConflictingFunction(nameDecl, nameDecl)) {
             holder
-                .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
+                .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '${nameDecl.name}'")
                 .range(nameDecl)
                 .create()
         }
     }
 
-    private fun isProcessingFunction(nameDecl: GdsFunctionNameDecl): Boolean {
-        val shaderType = GdsPsiImplUtil.getShaderType(nameDecl) ?: return false
+    private fun hasConflictingFunction(
+        nameDecl: GdsFunctionNameDecl,
+        position: PsiElement,
+    ): Boolean {
+        val declaration = nameDecl.parent as? GdsFunctionDeclaration ?: return false
+        val name = nameDecl.name
+        val isProcessingFunction = isProcessingFunction(name, position)
+        val signature = getParameterSignature(declaration)
+        if (!isProcessingFunction && signature == null) return false
+
+        var found = false
+        GdsResolver.processFunctionDeclaration(position) { function ->
+            if (function !is GdsFunctionNameDecl || function.name != name) return@processFunctionDeclaration true
+            val other = function.parent as? GdsFunctionDeclaration ?: return@processFunctionDeclaration true
+            found = isProcessingFunction || getParameterSignature(other) == signature
+            !found
+        }
+        return found
+    }
+
+    private fun isProcessingFunction(
+        name: String,
+        position: PsiElement,
+    ): Boolean {
+        val shaderType = GdsPsiImplUtil.getShaderType(position) ?: return false
         val processingFunctions = Builtins.PROCESSING_FUNCTIONS[shaderType] ?: return false
-        return FunctionContext.fromText(nameDecl.name) in processingFunctions
+        return FunctionContext.fromText(name) in processingFunctions
     }
 
     // Godot compares parameter types including array sizes, but ignores qualifiers and precision.
@@ -189,16 +206,25 @@ class GdsDeclarationAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val nameDecl = element.structNameDecl ?: return
-        val name = nameDecl.text
-        val file = element.containingFile ?: return
-        val allStructs = PsiTreeUtil.findChildrenOfType(file, GdsStructDeclaration::class.java)
-        val first = allStructs.firstOrNull { it.structNameDecl?.text == name } ?: return
-        if (first !== element) {
+        val name = nameDecl.name
+        if (hasConflictingStruct(name, nameDecl)) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
                 .range(nameDecl)
                 .create()
         }
+    }
+
+    private fun hasConflictingStruct(
+        name: String,
+        position: PsiElement,
+    ): Boolean {
+        var found = false
+        GdsResolver.processStructDeclaration(position) { struct ->
+            found = struct.name == name
+            !found
+        }
+        return found
     }
 
     private fun checkDuplicateStructMember(
@@ -223,13 +249,18 @@ class GdsDeclarationAnnotator : Annotator {
     ) {
         if (nameDecl == null) return
         val name = nameDecl.name
-        if (collectVisibleVariables(nameDecl).any { it.name == name }) {
+        if (hasConflictingVariable(name, nameDecl)) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
                 .range(nameDecl)
                 .create()
         }
     }
+
+    private fun hasConflictingVariable(
+        name: String,
+        position: PsiElement,
+    ): Boolean = collectVisibleVariables(position).any { it.name == name }
 
     private fun checkDuplicateLocalVariable(
         nameDecl: GdsVariableNameDecl?,
@@ -397,6 +428,52 @@ class GdsDeclarationAnnotator : Annotator {
                 .newAnnotation(HighlightSeverity.ERROR, "Cannot resolve file '$path'")
                 .range(pathRange)
                 .create()
+            return
+        }
+
+        checkIncludedRedefinition(element, pathRange, holder)
+    }
+
+    private fun checkIncludedRedefinition(
+        element: PsiElement,
+        pathRange: TextRange,
+        holder: AnnotationHolder,
+    ) {
+        val redefined =
+            GdsIncludeManager
+                .getFilesIncludedBy(element)
+                .asSequence()
+                .flatMap { collectTopLevelDeclarations(it) }
+                .firstOrNull { isRedefinedAt(it, element) } ?: return
+
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '${redefined.name}' in included file")
+            .range(pathRange)
+            .create()
+    }
+
+    private fun collectTopLevelDeclarations(file: GdsFile): List<PsiNamedElement> {
+        val result = mutableListOf<PsiNamedElement>()
+        file.processOwnDeclarations(
+            GdsScopeProcessor(PsiNamedElement::class.java, 0, null) {
+                result += it
+                true
+            },
+            ResolveState.initial(),
+        )
+        return result
+    }
+
+    private fun isRedefinedAt(
+        declaration: PsiNamedElement,
+        position: PsiElement,
+    ): Boolean {
+        val name = declaration.name ?: return false
+        return when (declaration) {
+            is GdsFunctionNameDecl -> hasConflictingFunction(declaration, position)
+            is GdsStructNameDecl -> hasConflictingStruct(name, position)
+            is GdsVariable -> hasConflictingVariable(name, position)
+            else -> false
         }
     }
 }

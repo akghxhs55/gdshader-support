@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.resolve
 
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveState
 import com.intellij.psi.SyntaxTraverser
@@ -13,72 +14,83 @@ import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 object GdsIncludeManager {
-    private val INCLUDED_FILES_KEY = Key.create<CachedValue<Set<PsiFile>>>("GDS_INCLUDED_FILES")
+    private val INCLUDE_ENTRIES_KEY = Key.create<CachedValue<List<IncludeEntry>>>("GDS_INCLUDE_ENTRIES")
+
+    // Files brought in by a single include line, including nested includes not already brought in by earlier lines.
+    private class IncludeEntry(
+        val offset: Int,
+        val files: List<GdsFile>,
+    )
 
     fun processIncludedDeclarations(
         currentFile: PsiFile,
+        placeOffset: Int,
         processor: PsiScopeProcessor,
         state: ResolveState,
     ): Boolean {
-        val includedFiles = getIncludedFiles(currentFile)
-
-        for (includedFile in includedFiles) {
-            val gdsFile = includedFile as? GdsFile ?: continue
-            if (!gdsFile.processOwnDeclarations(processor, state)) {
-                return false
+        for (entry in getIncludeEntries(currentFile)) {
+            if (entry.offset >= placeOffset) break
+            for (file in entry.files) {
+                if (!file.processOwnDeclarations(processor, state)) return false
             }
         }
 
         return true
     }
 
-    fun getIncludedFiles(file: PsiFile): Set<PsiFile> {
-        if (file !is GdsFile) return emptySet()
+    fun getFilesIncludedBy(includeLine: PsiElement): List<GdsFile> {
+        val offset = includeLine.textOffset
+        return getIncludeEntries(includeLine.containingFile)
+            .firstOrNull { it.offset == offset }
+            ?.files
+            .orEmpty()
+    }
 
-        return CachedValuesManager.getCachedValue(file, INCLUDED_FILES_KEY) {
-            val result = mutableSetOf<PsiFile>()
-            collectIncludesRecursive(file, result, 0)
+    private fun getIncludeEntries(file: PsiFile?): List<IncludeEntry> {
+        if (file !is GdsFile) return emptyList()
 
-            result.remove(file)
+        return CachedValuesManager.getCachedValue(file, INCLUDE_ENTRIES_KEY) {
+            val visited = mutableSetOf<PsiFile>(file)
+            val entries =
+                findIncludeLines(file).map { line ->
+                    val files = mutableListOf<GdsFile>()
+                    resolveIncludeLine(file, line)?.let { collectIncludesRecursive(it, visited, files, 1) }
+                    IncludeEntry(line.textOffset, files)
+                }
 
-            CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+            CachedValueProvider.Result.create(entries, PsiModificationTracker.MODIFICATION_COUNT)
         }
     }
 
     private fun collectIncludesRecursive(
         currentFile: PsiFile,
         visited: MutableSet<PsiFile>,
+        result: MutableList<GdsFile>,
         depth: Int,
     ) {
         if (depth > 25) return
-
+        if (currentFile.virtualFile?.extension != "gdshaderinc") return
         if (!visited.add(currentFile)) return
 
-        val includePaths = findIncludePathsInFile(currentFile)
+        if (currentFile is GdsFile) result += currentFile
 
-        for (path in includePaths) {
-            val includedFile = GdsPathUtil.resolvePath(currentFile, path) ?: continue
-
-            val ext = includedFile.virtualFile?.extension
-            if (ext != "gdshaderinc") continue
-
-            collectIncludesRecursive(includedFile, visited, depth + 1)
+        for (line in findIncludeLines(currentFile)) {
+            val includedFile = resolveIncludeLine(currentFile, line) ?: continue
+            collectIncludesRecursive(includedFile, visited, result, depth + 1)
         }
     }
 
-    private fun findIncludePathsInFile(file: PsiFile): List<String> {
-        val paths = mutableListOf<String>()
-
-        val elements =
-            SyntaxTraverser
-                .psiTraverser(file)
-                .filter { it.node.elementType == GdsTypes.PP_INCLUDE_LINE }
-
-        for (element in elements) {
-            val includePath = GdsPathUtil.findIncludePath(element) ?: continue
-            paths.add(includePath.path)
-        }
-
-        return paths
+    private fun resolveIncludeLine(
+        file: PsiFile,
+        line: PsiElement,
+    ): PsiFile? {
+        val includePath = GdsPathUtil.findIncludePath(line) ?: return null
+        return GdsPathUtil.resolvePath(file, includePath.path)
     }
+
+    private fun findIncludeLines(file: PsiFile): List<PsiElement> =
+        SyntaxTraverser
+            .psiTraverser(file)
+            .filter { it.node.elementType == GdsTypes.PP_INCLUDE_LINE }
+            .toList()
 }

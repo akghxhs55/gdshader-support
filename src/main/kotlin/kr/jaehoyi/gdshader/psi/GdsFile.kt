@@ -4,6 +4,7 @@ import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiTreeUtil
@@ -30,7 +31,8 @@ class GdsFile(
         place: PsiElement,
     ): Boolean {
         if (!processOwnDeclarations(processor, state)) return false
-        return GdsIncludeManager.processIncludedDeclarations(this, processor, state)
+        val placeOffset = if (place is PsiFile) Int.MAX_VALUE else place.textOffset
+        return GdsIncludeManager.processIncludedDeclarations(this, placeOffset, processor, state)
     }
 
     internal fun processOwnDeclarations(

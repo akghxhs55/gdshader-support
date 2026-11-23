@@ -188,6 +188,32 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test function from include before usage`() {
+        myFixture.addFileToProject("math.gdshaderinc", "float twice(float x) { return x * 2.0; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #include "res://math.gdshaderinc"
+            void fragment() {
+                float x = twice(1.0);
+            }
+        """,
+        )
+    }
+
+    fun `test function from include after usage`() {
+        myFixture.addFileToProject("math.gdshaderinc", "float twice(float x) { return x * 2.0; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float x = <warning descr="Unresolved reference 'twice'">twice</warning>(1.0);
+            }
+            #include "res://math.gdshaderinc"
+        """,
+        )
+    }
+
     fun `test resolved user function`() {
         doHighlightTest(
             """
