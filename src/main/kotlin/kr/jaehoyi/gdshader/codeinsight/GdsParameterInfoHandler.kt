@@ -2,6 +2,7 @@ package kr.jaehoyi.gdshader.codeinsight
 
 import com.intellij.lang.parameterInfo.*
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
@@ -10,36 +11,7 @@ import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 
 class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSpec> {
     override fun findElementForParameterInfo(context: CreateParameterInfoContext): GdsArgumentList? {
-        val element = context.file.findElementAt(context.offset) ?: return null
-
-        var argumentList = PsiTreeUtil.getParentOfType(element, GdsArgumentList::class.java)
-
-        if (argumentList == null) {
-            var functionCall = PsiTreeUtil.getParentOfType(element, GdsFunctionCall::class.java)
-
-            if (functionCall == null) {
-                var prev: PsiElement? = element
-                while (prev != null && prev !is GdsFile) {
-                    val elementType = prev.node.elementType
-                    if (elementType == GdsTypes.PARENTHESIS_OPEN) {
-                        functionCall = prev.parent as? GdsFunctionCall
-                        if (functionCall != null) break
-                    }
-                    if (elementType == GdsTypes.SEMICOLON ||
-                        elementType == GdsTypes.CURLY_BRACKET_OPEN ||
-                        elementType == GdsTypes.CURLY_BRACKET_CLOSE ||
-                        elementType == GdsTypes.PARENTHESIS_CLOSE
-                    ) {
-                        break
-                    }
-                    prev = PsiTreeUtil.prevLeaf(prev)
-                }
-            }
-
-            argumentList = functionCall?.argumentList
-        }
-
-        if (argumentList == null) return null
+        val argumentList = findArgumentList(context.file, context.offset) ?: return null
 
         val candidates = resolveCandidates(argumentList)
 
@@ -50,36 +22,47 @@ class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSp
         return null
     }
 
-    override fun findElementForUpdatingParameterInfo(context: UpdateParameterInfoContext): GdsArgumentList? {
-        val element = context.file.findElementAt(context.offset) ?: return null
-        var argumentList = PsiTreeUtil.getParentOfType(element, GdsArgumentList::class.java)
+    override fun findElementForUpdatingParameterInfo(context: UpdateParameterInfoContext): GdsArgumentList? = findArgumentList(context.file, context.offset)
 
-        if (argumentList == null) {
-            var functionCall = PsiTreeUtil.getParentOfType(element, GdsFunctionCall::class.java)
+    private fun findArgumentList(
+        file: PsiFile,
+        offset: Int,
+    ): GdsArgumentList? {
+        val element = file.findElementAt(offset) ?: return null
 
-            if (functionCall == null) {
-                var prev: PsiElement? = element
-                while (prev != null && prev !is GdsFile) {
-                    val elementType = prev.node.elementType
-                    if (elementType == GdsTypes.PARENTHESIS_OPEN) {
-                        functionCall = prev.parent as? GdsFunctionCall
-                        if (functionCall != null) break
-                    }
-                    if (elementType == GdsTypes.SEMICOLON ||
-                        elementType == GdsTypes.CURLY_BRACKET_OPEN ||
-                        elementType == GdsTypes.CURLY_BRACKET_CLOSE ||
-                        elementType == GdsTypes.PARENTHESIS_CLOSE
-                    ) {
-                        break
-                    }
-                    prev = PsiTreeUtil.prevLeaf(prev)
-                }
-            }
-
-            argumentList = functionCall?.argumentList
+        var functionCall = PsiTreeUtil.getParentOfType(element, GdsFunctionCall::class.java, false)
+        while (functionCall != null) {
+            if (isInsideParentheses(functionCall, offset)) return functionCall.argumentList
+            functionCall = PsiTreeUtil.getParentOfType(functionCall, GdsFunctionCall::class.java)
         }
 
-        return argumentList
+        var prev: PsiElement? = element
+        while (prev != null && prev !is GdsFile) {
+            val elementType = prev.node.elementType
+            if (elementType == GdsTypes.PARENTHESIS_OPEN) {
+                val call = prev.parent as? GdsFunctionCall
+                if (call != null) return call.argumentList
+            }
+            if (elementType == GdsTypes.SEMICOLON ||
+                elementType == GdsTypes.CURLY_BRACKET_OPEN ||
+                elementType == GdsTypes.CURLY_BRACKET_CLOSE ||
+                elementType == GdsTypes.PARENTHESIS_CLOSE
+            ) {
+                break
+            }
+            prev = PsiTreeUtil.prevLeaf(prev)
+        }
+        return null
+    }
+
+    private fun isInsideParentheses(
+        functionCall: GdsFunctionCall,
+        offset: Int,
+    ): Boolean {
+        val open = functionCall.node.findChildByType(GdsTypes.PARENTHESIS_OPEN) ?: return false
+        if (offset < open.textRange.endOffset) return false
+        val close = functionCall.node.findChildByType(GdsTypes.PARENTHESIS_CLOSE) ?: return true
+        return offset <= close.startOffset
     }
 
     override fun showParameterInfo(
