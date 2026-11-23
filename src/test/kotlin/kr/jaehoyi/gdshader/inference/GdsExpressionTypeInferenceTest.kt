@@ -423,6 +423,43 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertNull("Should not infer type for mismatched vector sizes in function call", inferredType)
     }
 
+    // ===== Struct Constructors =====
+
+    private val innerStruct = StructType("Inner", mapOf("a" to FloatType.DEFAULT, "b" to VectorType.VEC2))
+
+    fun `test struct constructor`() {
+        assertEquals(innerStruct, inferStructCall("Inner(1.0, vec2(0.0))"))
+    }
+
+    fun `test nested struct constructor`() {
+        val outer = StructType("Outer", mapOf("x" to FloatType.DEFAULT, "y" to innerStruct))
+        assertEquals(outer, inferStructCall("Outer(1.0, Inner(1.0, vec2(0.0)))"))
+    }
+
+    fun `test struct array constructor`() {
+        assertEquals(ArrayType(innerStruct, 2), inferStructCall("Inner[2](Inner(1.0, vec2(0.0)), Inner(2.0, vec2(1.0)))"))
+    }
+
+    fun `test struct constructor with mismatched arguments has no type`() {
+        assertNull(inferStructCall("Inner(1.0)"))
+    }
+
+    private fun inferStructCall(callText: String): DataType? {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            struct Inner { float a; vec2 b; };
+            struct Outer { float x; Inner y; };
+            void fragment() {
+                $callText;
+            }
+            """.trimIndent(),
+        )
+        val call = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java).single { it.text == callText }
+        return GdsExpressionTypeInference.inferType(call)
+    }
+
     // ===== Helper Methods =====
 
     private fun doLiteralTest(

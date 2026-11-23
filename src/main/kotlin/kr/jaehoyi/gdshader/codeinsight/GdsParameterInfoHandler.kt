@@ -159,6 +159,10 @@ class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSp
                 createFunctionSpec(functionDecl)?.let { return listOf(it) }
             }
 
+            if (functionCall.arraySize == null) {
+                GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.let { return it.getConstructors() }
+            }
+
             val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
             val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: FunctionContext.COMMON
 

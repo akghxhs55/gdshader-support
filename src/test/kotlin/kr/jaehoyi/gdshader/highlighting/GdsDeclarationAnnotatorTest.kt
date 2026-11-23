@@ -370,6 +370,18 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test invalid local variable initializer struct to vector`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; float y; };
+            void fragment() {
+                vec3 v = <error descr="Cannot assign a value of type 'MyData' to type 'vec3'">MyData(1.0, 2.0)</error>;
+            }
+        """,
+        )
+    }
+
     fun `test invalid constant initializer`() {
         doHighlightTest(
             """

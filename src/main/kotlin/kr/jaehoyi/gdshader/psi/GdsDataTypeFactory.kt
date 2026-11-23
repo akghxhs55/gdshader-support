@@ -1,6 +1,8 @@
 package kr.jaehoyi.gdshader.psi
 
+import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.*
+import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 object GdsDataTypeFactory {
     fun createFromUniformDeclaration(declaration: GdsUniformDeclaration): DataType? {
@@ -56,6 +58,19 @@ object GdsDataTypeFactory {
     fun createFromType(typeNode: GdsType): DataType? = getBaseType(null, typeNode)
 
     fun createFromStructDeclaration(declaration: GdsStructDeclaration): StructType? = createStructType(declaration, mutableSetOf())
+
+    fun createFromStructName(
+        context: PsiElement,
+        name: String,
+    ): StructType? {
+        var result: StructType? = null
+        GdsResolver.processStructDeclaration(context) { decl ->
+            if (decl.name != name) return@processStructDeclaration true
+            result = (decl.parent as? GdsStructDeclaration)?.let { createFromStructDeclaration(it) }
+            false
+        }
+        return result
+    }
 
     private fun getBaseType(
         precisionText: String?,

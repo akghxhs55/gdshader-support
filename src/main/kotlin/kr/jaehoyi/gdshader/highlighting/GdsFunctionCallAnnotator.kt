@@ -12,7 +12,6 @@ import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
-import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
@@ -99,31 +98,7 @@ class GdsFunctionCallAnnotator : Annotator {
 
         if (candidates.isNotEmpty()) return candidates
 
-        val structType = resolveStructType(functionCall, functionName)
-        if (structType is Instantiable) {
-            return structType.getConstructors()
-        }
-
-        return emptyList()
-    }
-
-    private fun resolveStructType(
-        element: PsiElement,
-        name: String,
-    ): DataType? {
-        var result: DataType? = null
-        GdsResolver.processStructDeclaration(element) { decl ->
-            if (decl.name == name) {
-                val structDeclaration = decl.parent as? GdsStructDeclaration
-                if (structDeclaration != null) {
-                    result = GdsDataTypeFactory.createFromStructDeclaration(structDeclaration)
-                }
-                false
-            } else {
-                true
-            }
-        }
-        return result
+        return GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.getConstructors() ?: emptyList()
     }
 
     private fun getArgumentCount(functionCall: GdsFunctionCall): Int {

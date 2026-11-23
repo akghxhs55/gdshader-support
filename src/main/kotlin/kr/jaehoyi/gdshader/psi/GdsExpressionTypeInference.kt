@@ -108,7 +108,8 @@ object GdsExpressionTypeInference {
             return GdsArrayMethodResolver.resolve(functionCall)?.returnType
         }
         functionCall.type?.let { typeNode ->
-            return inferConstructorType(functionCall, typeNode)
+            val baseType = GdsDataTypeFactory.createFromType(typeNode) ?: return null
+            return inferConstructorType(functionCall, baseType)
         }
 
         functionCall.functionNameRef?.let { nameRef ->
@@ -120,10 +121,8 @@ object GdsExpressionTypeInference {
 
     private fun inferConstructorType(
         functionCall: GdsFunctionCall,
-        typeNode: GdsType,
+        baseType: DataType,
     ): DataType? {
-        val baseType = GdsDataTypeFactory.createFromType(typeNode) ?: return null
-
         val arraySize = functionCall.arraySize
         if (arraySize != null) {
             val size = GdsConstantEvaluator.evaluateArraySize(arraySize)
@@ -156,6 +155,10 @@ object GdsExpressionTypeInference {
         if (resolved is GdsFunctionNameDecl) {
             val functionDecl = resolved.parent as? GdsFunctionDeclaration
             return functionDecl?.let { GdsDataTypeFactory.createFromFunctionDeclaration(it) }
+        }
+
+        GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.let { structType ->
+            return inferConstructorType(functionCall, structType)
         }
 
         return inferBuiltinFunctionReturnType(functionCall, functionName)

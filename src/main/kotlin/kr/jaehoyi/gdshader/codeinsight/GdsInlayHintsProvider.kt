@@ -71,6 +71,13 @@ class GdsInlayHintsProvider : InlayHintsProvider {
                     return decl?.parameterList?.parameterList?.map { it.variableNameDecl.text }
                 }
 
+                if (functionCall.arraySize == null) {
+                    GdsDataTypeFactory.createFromStructName(nameRef, nameRef.text)?.let { structType ->
+                        val best = pickBestOverload(structType.getConstructors(), argCount) ?: return null
+                        return best.parameters.map { it.name }
+                    }
+                }
+
                 val shaderType = GdsPsiImplUtil.getShaderType(functionCall)
                 val functionContext = GdsPsiImplUtil.getFunctionContext(functionCall) ?: FunctionContext.COMMON
                 val candidates = Builtins.getFunctions(shaderType, functionContext, nameRef.text) ?: return null

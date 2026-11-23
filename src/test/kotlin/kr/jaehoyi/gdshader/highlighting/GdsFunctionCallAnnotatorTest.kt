@@ -405,6 +405,33 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct constructor rejects wrong type for struct member`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            struct InnerStruct { float a; vec2 b; };
+            struct OtherStruct { float a; };
+            struct OuterStruct { float x; InnerStruct y; };
+            void fragment() {
+                OuterStruct o = OuterStruct(<error descr="No matching function for 'OuterStruct(float, InnerStruct)' call: argument 2 should be InnerStruct but is OtherStruct">1.0, OtherStruct(1.0)</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test function accepts struct constructor argument`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            struct InnerStruct { float a; vec2 b; };
+            float sum(InnerStruct s) { return s.a + s.b.x; }
+            void fragment() {
+                float total = sum(InnerStruct(1.0, vec2(0.0)));
+            }
+        """,
+        )
+    }
+
     fun `test struct constructor with array member correct`() {
         doHighlightTest(
             """
