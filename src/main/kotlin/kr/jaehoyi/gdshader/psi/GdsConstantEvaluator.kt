@@ -1,7 +1,8 @@
 package kr.jaehoyi.gdshader.psi
 
 import com.intellij.psi.PsiElement
-import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
+import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
+import kr.jaehoyi.gdshader.resolve.GdsMacroExpansion
 
 object GdsConstantEvaluator {
     fun evaluate(element: PsiElement): Any? = evaluate(element, mutableSetOf())
@@ -138,7 +139,8 @@ object GdsConstantEvaluator {
                     else -> null
                 }
             }
-            else -> GdsPreprocessorDefinitions.evaluateLiteralDefine(resolved)
+            is GdsMacroElement -> GdsMacroExpansion.evaluate(varRef)
+            else -> null
         }
     }
 
@@ -161,6 +163,9 @@ object GdsConstantEvaluator {
         functionCall: GdsFunctionCall,
         visited: MutableSet<PsiElement>,
     ): Any? {
+        if (functionCall.functionNameRef?.reference?.resolve() is GdsMacroElement) {
+            return GdsMacroExpansion.evaluate(functionCall)
+        }
         val typeNode = functionCall.type ?: return null
         val typeName = typeNode.text
 

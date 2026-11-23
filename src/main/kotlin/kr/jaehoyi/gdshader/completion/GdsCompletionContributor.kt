@@ -901,8 +901,8 @@ class GdsCompletionContributor : CompletionContributor() {
 
         completions +=
             GdsPreprocessorDefinitions
-                .getVisibleLiteralDefines(position)
-                .map { GdsLookupElements.createFromLiteralDefine(it) }
+                .getVisibleMacros(position)
+                .map { GdsLookupElements.createFromMacro(it) }
 
         completions += GdsLookupElements.CONSTRUCTORS
         completions += GdsLookupElements.BOOLEAN_LITERALS

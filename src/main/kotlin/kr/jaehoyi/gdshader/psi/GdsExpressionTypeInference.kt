@@ -3,8 +3,10 @@ package kr.jaehoyi.gdshader.psi
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
+import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
+import kr.jaehoyi.gdshader.resolve.GdsMacroExpansion
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 
 object GdsExpressionTypeInference {
@@ -86,7 +88,9 @@ object GdsExpressionTypeInference {
         }
 
     private fun inferVariableRefType(varRef: GdsVariableNameRef): DataType? {
-        val resolved = varRef.reference.resolve() as? GdsVariable ?: return null
+        val target = varRef.reference.resolve()
+        if (target is GdsMacroElement) return GdsMacroExpansion.inferType(varRef)
+        val resolved = target as? GdsVariable ?: return null
         if (resolved is GdsLightVariable && resolved.isTypeAmbiguous) return null
         return resolved.variableSpec?.type
     }
@@ -158,6 +162,7 @@ object GdsExpressionTypeInference {
             val functionDecl = resolved.parent as? GdsFunctionDeclaration
             return functionDecl?.let { GdsDataTypeFactory.createFromFunctionDeclaration(it) }
         }
+        if (resolved is GdsMacroElement) return GdsMacroExpansion.inferType(functionCall)
 
         GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.let { structType ->
             return inferConstructorType(functionCall, structType)

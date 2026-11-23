@@ -24,7 +24,7 @@ class GdsVariableReference(
             return@processVariableDeclaration true
         }
 
-        return result ?: GdsPreprocessorDefinitions.resolveLiteralDefine(element, key)
+        return result ?: GdsPreprocessorDefinitions.resolveObjectMacro(element, key)
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {

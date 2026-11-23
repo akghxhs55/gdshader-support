@@ -63,13 +63,14 @@ object GdsResolver {
 
         if (!keepGoing) return false
 
-        val file = startElement.containingFile
+        val site = GdsMacroExpansion.expansionSite(startElement)
+        val file = site.containingFile
         val originFile = file.originalFile
         if (!file.processDeclarations(
-                GdsScopeProcessor(GdsVariable::class.java, startElement.textOffset, originFile, processor),
+                GdsScopeProcessor(GdsVariable::class.java, site.textOffset, originFile, processor),
                 ResolveState.initial(),
                 null,
-                startElement,
+                site,
             )
         ) {
             return false
@@ -82,13 +83,14 @@ object GdsResolver {
         startElement: PsiElement,
         processor: (element: GdsFunction) -> Boolean,
     ): Boolean {
-        val file = startElement.containingFile
+        val site = GdsMacroExpansion.expansionSite(startElement)
+        val file = site.containingFile
         val originFile = file.originalFile
         if (!file.processDeclarations(
-                GdsScopeProcessor(GdsFunction::class.java, startElement.textOffset, originFile, processor),
+                GdsScopeProcessor(GdsFunction::class.java, site.textOffset, originFile, processor),
                 ResolveState.initial(),
                 null,
-                startElement,
+                site,
             )
         ) {
             return false
@@ -101,13 +103,14 @@ object GdsResolver {
         startElement: PsiElement,
         processor: (element: GdsStructNameDecl) -> Boolean,
     ): Boolean {
-        val file = startElement.containingFile
+        val site = GdsMacroExpansion.expansionSite(startElement)
+        val file = site.containingFile
         val originFile = file.originalFile
         return file.processDeclarations(
-            GdsScopeProcessor(GdsStructNameDecl::class.java, startElement.textOffset, originFile, processor),
+            GdsScopeProcessor(GdsStructNameDecl::class.java, site.textOffset, originFile, processor),
             ResolveState.initial(),
             null,
-            startElement,
+            site,
         )
     }
 

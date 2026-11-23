@@ -12,6 +12,7 @@ import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 
@@ -28,7 +29,8 @@ class GdsFindUsagesProvider : FindUsagesProvider {
         element is GdsVariableNameDecl ||
             element is GdsFunctionNameDecl ||
             element is GdsStructNameDecl ||
-            element is GdsStructMemberNameDecl
+            element is GdsStructMemberNameDecl ||
+            element is GdsMacroElement
 
     override fun getHelpId(element: PsiElement): @NonNls String? = null
 
@@ -38,6 +40,7 @@ class GdsFindUsagesProvider : FindUsagesProvider {
             is GdsFunctionNameDecl -> "Function"
             is GdsStructNameDecl -> "Struct"
             is GdsStructMemberNameDecl -> "Struct Member"
+            is GdsMacroElement -> "Macro"
             else -> ""
         }
 
@@ -47,6 +50,7 @@ class GdsFindUsagesProvider : FindUsagesProvider {
             is GdsFunctionNameDecl -> element.name
             is GdsStructNameDecl -> element.name
             is GdsStructMemberNameDecl -> element.name
+            is GdsMacroElement -> element.name
             else -> ""
         }
 

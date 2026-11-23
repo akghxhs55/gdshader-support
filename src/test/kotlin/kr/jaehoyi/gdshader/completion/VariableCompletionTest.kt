@@ -188,6 +188,25 @@ class VariableCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(lookupStrings, "EPSILON")
     }
 
+    fun `test completion shows non-literal and function-like macros`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            #define MACRO_TINT vec3(1.0)
+            #define MACRO_SQ(x) ((x) * (x))
+
+            void fragment() {
+                vec3 c = MACRO_<caret>;
+            }
+            """.trimIndent(),
+        )
+
+        val lookupStrings = completeAndGetStrings()
+
+        assertContainsElements(lookupStrings, "MACRO_TINT", "MACRO_SQ")
+    }
+
     fun `test completion shows literal define from included file`() {
         myFixture.addFileToProject("constants.gdshaderinc", "#define MAX_LIGHTS 8")
 

@@ -114,6 +114,67 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test resolved non-literal define`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define TINT vec3(1.0)
+            void fragment() {
+                vec3 c = TINT;
+            }
+        """,
+        )
+    }
+
+    fun `test resolved function-like macro`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define SQ(x) ((x) * (x))
+            void fragment() {
+                float y = SQ(2.0);
+            }
+        """,
+        )
+    }
+
+    fun `test function-like macro name without call is unresolved`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define SQ(x) ((x) * (x))
+            void fragment() {
+                float y = <warning descr="Unresolved reference 'SQ'">SQ</warning>;
+            }
+        """,
+        )
+    }
+
+    fun `test undefined macro is unresolved`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define TINT vec3(1.0)
+            #undef TINT
+            void fragment() {
+                vec3 c = <warning descr="Unresolved reference 'TINT'">TINT</warning>;
+            }
+        """,
+        )
+    }
+
+    fun `test macro used before definition is unresolved`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 c = <warning descr="Unresolved reference 'TINT'">TINT</warning>;
+            }
+            #define TINT vec3(1.0)
+        """,
+        )
+    }
+
     // === Function references ===
 
     fun `test unresolved function`() {

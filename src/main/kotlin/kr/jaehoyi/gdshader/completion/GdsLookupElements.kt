@@ -500,13 +500,26 @@ object GdsLookupElements {
         return builder
     }
 
-    fun createFromLiteralDefine(define: GdsPreprocessorDefinitions.LiteralDefine): LookupElement =
-        LookupElementBuilder
-            .create(define.name)
-            .withBoldness(true)
-            .withIcon(AllIcons.Nodes.Constant)
-            .withTypeText("#define ${define.value}", true)
-            .withPriority(PRIORITY_NORMAL)
+    fun createFromMacro(macro: GdsPreprocessorDefinitions.GdsMacro): LookupElement {
+        val parameters = macro.parameters
+        var builder =
+            LookupElementBuilder
+                .create(macro.name)
+                .withBoldness(true)
+                .withIcon(if (parameters == null) AllIcons.Nodes.Constant else AllIcons.Nodes.Function)
+                .withTypeText("#define ${macro.bodyText}".trimEnd(), true)
+
+        if (parameters != null) {
+            builder =
+                builder
+                    .appendTailText("(${parameters.joinToString(", ")})", true)
+                    .withInsertHandler(
+                        if (parameters.isEmpty()) ParenthesesInsertHandler.NO_PARAMETERS else ParenthesesInsertHandler.WITH_PARAMETERS,
+                    )
+        }
+
+        return builder.withPriority(PRIORITY_NORMAL)
+    }
 
     fun createArrayMethod(spec: FunctionSpec): LookupElement =
         LookupElementBuilder

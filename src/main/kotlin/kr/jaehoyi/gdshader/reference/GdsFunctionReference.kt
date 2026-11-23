@@ -12,6 +12,7 @@ import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsFunctionReference(
@@ -35,7 +36,7 @@ class GdsFunctionReference(
             true
         }
 
-        if (candidates.isEmpty()) return null
+        if (candidates.isEmpty()) return GdsPreprocessorDefinitions.resolveCallableMacro(element, key)
         if (candidates.size == 1) return candidates.first() as? PsiElement
 
         val functionCall = findFunctionCall() ?: return candidates.first() as? PsiElement

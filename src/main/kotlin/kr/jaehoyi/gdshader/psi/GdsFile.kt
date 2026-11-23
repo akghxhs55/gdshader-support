@@ -14,7 +14,12 @@ import kr.jaehoyi.gdshader.resolve.GdsIncludeManager
 class GdsFile(
     viewProvider: FileViewProvider,
 ) : PsiFileBase(viewProvider, GdsLanguage) {
+    // Set on a macro expansion file so that names in it resolve as if written at this element.
+    var expansionContext: PsiElement? = null
+
     override fun getFileType(): FileType = GdsFileType
+
+    override fun getContext(): PsiElement? = expansionContext ?: super.getContext()
 
     override fun toString(): String = "GDShader File"
 

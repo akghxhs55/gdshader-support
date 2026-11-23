@@ -42,6 +42,7 @@ import kr.jaehoyi.gdshader.reference.GdsFunctionReference
 import kr.jaehoyi.gdshader.reference.GdsStructMemberReference
 import kr.jaehoyi.gdshader.reference.GdsStructReference
 import kr.jaehoyi.gdshader.reference.GdsVariableReference
+import kr.jaehoyi.gdshader.resolve.GdsMacroExpansion
 
 object GdsPsiImplUtil {
     @JvmStatic
@@ -229,12 +230,12 @@ object GdsPsiImplUtil {
     }
 
     fun getShaderType(element: PsiElement): ShaderType? {
-        val gdsFile = element.containingFile as? GdsFile ?: return null
+        val gdsFile = GdsMacroExpansion.expansionSite(element).containingFile as? GdsFile ?: return null
         return getShaderType(gdsFile)
     }
 
     fun getFunctionContext(element: PsiElement): FunctionContext? {
-        val functionDeclaration = element.parentOfType<GdsFunctionDeclaration>() ?: return null
+        val functionDeclaration = GdsMacroExpansion.expansionSite(element).parentOfType<GdsFunctionDeclaration>() ?: return null
 
         return FunctionContext.fromText(functionDeclaration.functionNameDecl.text)
     }
