@@ -153,6 +153,13 @@ class GdsDataTypeFactoryTest : BasePlatformTestCase() {
         assertNull(GdsOverloadResolver.resolveFunctionOverload(listOf(function), listOf(variableType("unknown")!!)))
     }
 
+    fun `test function spec is null when a parameter type is unknown`() {
+        configure("float foo(Unknown a, float b) { return b; }")
+        val nameDecl = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsFunctionNameDecl::class.java).single { it.name == "foo" }
+
+        assertNull(nameDecl.functionSpec)
+    }
+
     fun `test self referencing struct member is skipped without recursing`() {
         configure(
             """

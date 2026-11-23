@@ -87,17 +87,22 @@ class GdsFunctionCallAnnotator : Annotator {
     ): List<FunctionSpec> {
         val nameRef = functionCall.functionNameRef ?: return emptyList()
         val candidates = mutableListOf<FunctionSpec>()
+        var hasUnresolvedDeclaration = false
 
         GdsResolver.processFunctionDeclaration(nameRef) { func ->
             if (func.name == functionName) {
                 val spec = func.functionSpec
                 if (spec != null) {
                     candidates.add(spec)
+                } else {
+                    hasUnresolvedDeclaration = true
                 }
             }
             true
         }
 
+        // A declaration whose types cannot be resolved may be the intended overload, so checking only the rest would report a false mismatch.
+        if (hasUnresolvedDeclaration) return emptyList()
         if (candidates.isNotEmpty()) return candidates
 
         return GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.getConstructors() ?: emptyList()

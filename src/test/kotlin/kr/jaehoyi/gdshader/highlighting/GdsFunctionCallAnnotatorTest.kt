@@ -53,6 +53,31 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test unknown parameter type does not report argument count`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float foo(<error descr="Unresolved reference 'Unknown'">Unknown</error> a, float b) { return b; }
+            void fragment() {
+                float x = foo(1.0, 2.0);
+            }
+        """,
+        )
+    }
+
+    fun `test overload with unknown parameter type does not report argument count`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float foo(float a) { return a; }
+            float foo(<error descr="Unresolved reference 'Unknown'">Unknown</error> a, float b) { return b; }
+            void fragment() {
+                float x = foo(1.0, 2.0);
+            }
+        """,
+        )
+    }
+
     // === User-defined function argument type ===
 
     fun `test correct argument types`() {

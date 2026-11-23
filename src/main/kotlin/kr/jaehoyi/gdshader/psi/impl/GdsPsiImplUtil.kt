@@ -165,8 +165,8 @@ object GdsPsiImplUtil {
         val returnType = GdsDataTypeFactory.createFromFunctionDeclaration(declaration) ?: return null
         val parameterList = declaration.parameterList?.parameterList ?: emptyList()
         val parameters =
-            parameterList.mapNotNull { param ->
-                param.variableNameDecl.variableSpec as? ParameterSpec
+            parameterList.map { param ->
+                param.variableNameDecl.variableSpec as? ParameterSpec ?: return null
             }
 
         return FunctionSpec(
