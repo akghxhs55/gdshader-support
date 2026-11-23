@@ -824,6 +824,1017 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test invalid bool plus bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = false;
+                bool c = <error descr="Invalid arguments to operator '+': 'bool, bool'">a + b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid bool literal plus bool literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool c = <error descr="Invalid arguments to operator '+': 'bool, bool'">true + false</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid bvec2 times bvec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bvec2 a = bvec2(true);
+                bvec2 b = bvec2(false);
+                bvec2 c = <error descr="Invalid arguments to operator '*': 'bvec2, bvec2'">a * b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid mat3 plus mat3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat3 a = mat3(1.0);
+                mat3 b = mat3(2.0);
+                mat3 c = a + b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid float times mat2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float s = 2.0;
+                mat2 m = mat2(1.0);
+                mat2 a = s * m;
+                mat2 b = m - s;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid vec4 times mat4`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                mat4 m = mat4(1.0);
+                vec4 r = v * m;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid mat4 plus vec4`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat4 m = mat4(1.0);
+                vec4 v = vec4(1.0);
+                vec4 r = <error descr="Invalid arguments to operator '+': 'mat4, vec4'">m + v</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid vec3 divided by mat3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                mat3 m = mat3(1.0);
+                vec3 r = <error descr="Invalid arguments to operator '/': 'vec3, mat3'">v / m</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid int modulo int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 5;
+                int b = 2;
+                int c = a % b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid uint modulo uint`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uint a = 5u;
+                uint b = 2u;
+                uint c = a % b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid ivec2 modulo int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(5);
+                int b = 2;
+                ivec2 c = a % b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid uvec3 modulo uvec3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec3 a = uvec3(5u);
+                uvec3 b = uvec3(2u);
+                uvec3 c = a % b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid float modulo float`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = 2.0;
+                float c = <error descr="Invalid arguments to operator '%': 'float, float'">a % b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid float literal modulo float literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float c = <error descr="Invalid arguments to operator '%': 'float, float'">1.0 % 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid vec2 modulo vec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec2 a = vec2(1.0);
+                vec2 b = vec2(2.0);
+                vec2 c = <error descr="Invalid arguments to operator '%': 'vec2, vec2'">a % b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid vec3 modulo float`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 a = vec3(1.0);
+                float b = 2.0;
+                vec3 c = <error descr="Invalid arguments to operator '%': 'vec3, float'">a % b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid int modulo ivec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 5;
+                ivec2 b = ivec2(2);
+                ivec2 c = <error descr="Invalid arguments to operator '%': 'int, ivec2'">a % b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid mat2 modulo mat2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat2 a = mat2(1.0);
+                mat2 b = mat2(2.0);
+                mat2 c = <error descr="Invalid arguments to operator '%': 'mat2, mat2'">a % b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid modulo in multiplicative chain`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = 2.0;
+                float c = <error descr="Invalid arguments to operator '%': 'float, float'">a * b % a</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid compound modulo assignment float`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                <error descr="Invalid arguments to operator '%=': 'float, float'">a %= 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid compound modulo assignment ivec2 int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(5);
+                a %= 2;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid compound add assignment bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                <error descr="Invalid arguments to operator '+=': 'bool, bool'">a += false</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid uint less than`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uint a = 1u;
+                uint b = 2u;
+                bool c = a < b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid bool less than bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = false;
+                bool c = <error descr="Invalid arguments to operator '<': 'bool, bool'">a < b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid bool literal less than bool literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool c = <error descr="Invalid arguments to operator '<': 'bool, bool'">true < false</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid bool greater equal bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = false;
+                bool c = <error descr="Invalid arguments to operator '>=': 'bool, bool'">a >= b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid bvec2 equality`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bvec2 a = bvec2(true);
+                bvec2 b = bvec2(false);
+                bool c = a == b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid mat2 not equal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat2 a = mat2(1.0);
+                mat2 b = mat2(2.0);
+                bool c = a != b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid negation uvec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec2 a = uvec2(1u);
+                uvec2 b = -a;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid negation on mat4`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat4 a = mat4(1.0);
+                mat4 b = <error descr="Invalid arguments to unary operator '-': mat4">-a</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid negation on mat2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat2 a = mat2(1.0);
+                mat2 b = <error descr="Invalid arguments to unary operator '-': mat2">-a</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid ivec2 shift int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(1);
+                int b = 2;
+                ivec2 c = a << b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid uvec3 shift uvec3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec3 a = uvec3(8u);
+                uvec3 b = uvec3(1u);
+                uvec3 c = a >> b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid int shift uint`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                uint b = 2u;
+                int c = <error descr="Invalid arguments to operator '<<': 'int, uint'">a << b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid int shift ivec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                ivec2 b = ivec2(2);
+                ivec2 c = <error descr="Invalid arguments to operator '<<': 'int, ivec2'">a << b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid ivec2 shift ivec3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(1);
+                ivec3 b = ivec3(2);
+                ivec2 c = <error descr="Invalid arguments to operator '>>': 'ivec2, ivec3'">a >> b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid uvec2 shift int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec2 a = uvec2(1u);
+                int b = 2;
+                uvec2 c = <error descr="Invalid arguments to operator '<<': 'uvec2, int'">a << b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid int bitwise and ivec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                ivec2 b = ivec2(3);
+                ivec2 c = a & b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid uvec2 bitwise or uint`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec2 a = uvec2(1u);
+                uint b = 2u;
+                uvec2 c = a | b;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid int bitwise and uint`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                uint b = 2u;
+                int c = <error descr="Invalid arguments to operator '&': 'int, uint'">a & b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid ivec2 bitwise xor ivec3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(1);
+                ivec3 b = ivec3(2);
+                ivec2 c = <error descr="Invalid arguments to operator '^': 'ivec2, ivec3'">a ^ b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid ivec2 bitwise or uvec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(1);
+                uvec2 b = uvec2(2u);
+                ivec2 c = <error descr="Invalid arguments to operator '|': 'ivec2, uvec2'">a | b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid uint bitwise and ivec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uint a = 1u;
+                ivec2 b = ivec2(2);
+                ivec2 c = <error descr="Invalid arguments to operator '&': 'uint, ivec2'">a & b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid compound bitwise and assignment ivec2 int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec2 a = ivec2(5);
+                a &= 3;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid compound bitwise and assignment int ivec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 5;
+                <error descr="Invalid arguments to operator '&=': 'int, ivec2'">a &= ivec2(3)</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid compound shift assignment int uint`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 5;
+                <error descr="Invalid arguments to operator '<<=': 'int, uint'">a <<= 1u</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid compound xor assignment ivec3 ivec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ivec3 a = ivec3(5);
+                <error descr="Invalid arguments to operator '^=': 'ivec3, ivec2'">a ^= ivec2(1)</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid postfix increment int`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int i = 0;
+                i++;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid prefix decrement float`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float f = 1.0;
+                --f;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid postfix decrement vec3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                v--;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid prefix increment uvec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec2 u = uvec2(1u);
+                ++u;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid increment in for loop`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                for (int i = 0; i < 10; ++i) {
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid postfix increment on bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool b = true;
+                <error descr="Invalid arguments to unary operator '++': bool">b++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid prefix decrement on bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool b = true;
+                <error descr="Invalid arguments to unary operator '--': bool">--b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid prefix increment on bvec2`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bvec2 b = bvec2(true);
+                <error descr="Invalid arguments to unary operator '++': bvec2">++b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid postfix increment on mat4`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat4 m = mat4(1.0);
+                <error descr="Invalid arguments to unary operator '++': mat4">m++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid prefix decrement on mat3`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                mat3 m = mat3(1.0);
+                <error descr="Invalid arguments to unary operator '--': mat3">--m</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid postfix decrement on bool in expression`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool b = true;
+                bool c = <error descr="Invalid arguments to unary operator '--': bool">b--</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on local const`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                const int c = 1;
+                <error descr="Constants cannot be modified">c++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test prefix decrement on global const`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float C = 1.0;
+            void fragment() {
+                <error descr="Constants cannot be modified">--C</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on const array element`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                const int a[2] = {1, 2};
+                <error descr="Constants cannot be modified">a[0]++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on uniform`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float speed;
+            void fragment() {
+                <error descr="Assignment to uniform">speed++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test prefix increment on uniform swizzle`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform vec2 offset;
+            void fragment() {
+                <error descr="Assignment to uniform">++offset.x</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test decrement on read-only builtin`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            void fragment() {
+                <error descr="Cannot assign to read-only built-in 'TIME'">TIME--</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test prefix increment on builtin constant`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            void fragment() {
+                <error descr="Constants cannot be modified">++PI</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = <error descr="Assignment to constant expression">1++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test prefix decrement on literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = <error descr="Assignment to constant expression">--1.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on function call`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            int f() {
+                return 1;
+            }
+            void fragment() {
+                int a = <error descr="Assignment to function">f()++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on swizzle with duplicates`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec2 v = vec2(1.0);
+                <error descr="Swizzling assignment contains duplicates">v.xx++</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on writable builtin component`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            void fragment() {
+                COLOR.r++;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on local array element`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a[2] = {1, 2};
+                a[0]++;
+                --a[1];
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on function parameter`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            float f(in float x, inout int y) {
+                x++;
+                --y;
+                return x;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test increment on vector component`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                v.x++;
+                --v.yz;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to function call`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f() {
+                return 1.0;
+            }
+            void fragment() {
+                <error descr="Assignment to function">f() = 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test compound assign to function call`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f() {
+                return 1.0;
+            }
+            void fragment() {
+                <error descr="Assignment to function">f() += 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test chained assign to function call with const argument`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float C = 1.0;
+            float f(float x) {
+                return x;
+            }
+            void fragment() {
+                float x;
+                <error descr="Assignment to function">x = f(C) = 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to swizzle with duplicates`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 v = vec3(1.0);
+                <error descr="Swizzling assignment contains duplicates">v.xx = vec2(2.0)</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test compound assign to swizzle with duplicates`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                <error descr="Swizzling assignment contains duplicates">v.xyx *= 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to swizzle without duplicates`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec4 v = vec4(1.0);
+                v.xz = vec2(2.0);
+                v.wzyx += vec4(1.0);
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test assign to literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                <error descr="Assignment to constant expression">1 = 2</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test compound assign to literal`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                <error descr="Assignment to constant expression">1.0 -= 2.0</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

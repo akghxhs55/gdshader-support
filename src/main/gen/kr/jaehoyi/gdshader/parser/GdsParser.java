@@ -800,13 +800,12 @@ public class GdsParser implements PsiParser, LightPsiParser {
   // function_call SEMICOLON
   public static boolean function_call_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_call_statement")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_CALL_STATEMENT, "<function call statement>");
     r = function_call(b, l + 1);
-    p = r; // pin = 1
     r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */

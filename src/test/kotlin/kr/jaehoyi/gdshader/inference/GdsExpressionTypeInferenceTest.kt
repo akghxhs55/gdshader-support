@@ -308,6 +308,78 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test bool plus bool has no type`() {
+        doBinaryExprTest(
+            expressionText = "a + b",
+            expectedType = null,
+            declarations = "bool a = true;\nbool b = false;",
+        )
+    }
+
+    fun `test bvec2 times bvec2 has no type`() {
+        doBinaryExprTest(
+            expressionText = "a * b",
+            expectedType = null,
+            declarations = "bvec2 a = bvec2(true);\nbvec2 b = bvec2(false);",
+        )
+    }
+
+    fun `test mat4 plus vec4 has no type`() {
+        doBinaryExprTest(
+            expressionText = "m + v",
+            expectedType = null,
+            declarations = "mat4 m;\nvec4 v = vec4(1.0);",
+        )
+    }
+
+    fun `test float times mat2`() {
+        doBinaryExprTest(
+            expressionText = "s * m",
+            expectedType = MatrixType.MAT2,
+            declarations = "float s = 2.0;\nmat2 m;",
+        )
+    }
+
+    fun `test int modulo int`() {
+        doBinaryExprTest(
+            expressionText = "a % b",
+            expectedType = IntType,
+            declarations = "int a = 5;\nint b = 2;",
+        )
+    }
+
+    fun `test ivec2 modulo int`() {
+        doBinaryExprTest(
+            expressionText = "a % b",
+            expectedType = VectorType.IVEC2,
+            declarations = "ivec2 a = ivec2(5);\nint b = 2;",
+        )
+    }
+
+    fun `test float modulo float has no type`() {
+        doBinaryExprTest(
+            expressionText = "a % b",
+            expectedType = null,
+            declarations = "float a = 1.0;\nfloat b = 2.0;",
+        )
+    }
+
+    fun `test vec2 modulo vec2 has no type`() {
+        doBinaryExprTest(
+            expressionText = "a % b",
+            expectedType = null,
+            declarations = "vec2 a = vec2(1.0);\nvec2 b = vec2(2.0);",
+        )
+    }
+
+    fun `test int modulo ivec2 has no type`() {
+        doBinaryExprTest(
+            expressionText = "a % b",
+            expectedType = null,
+            declarations = "int a = 5;\nivec2 b = ivec2(2);",
+        )
+    }
+
     fun `test less than`() {
         doComparisonTest("1.0 < 2.0", BoolType)
     }
@@ -358,6 +430,42 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
 
     fun `test bitwise or`() {
         doBitwiseExprTest("5 | 3", IntType)
+    }
+
+    fun `test ivec2 shift int`() {
+        doShiftExprTest("ivec2(1) << 2", VectorType.IVEC2)
+    }
+
+    fun `test int shift uint has no type`() {
+        doShiftExprTest("1 << 2u", null)
+    }
+
+    fun `test int shift ivec2 has no type`() {
+        doShiftExprTest("1 << ivec2(2)", null)
+    }
+
+    fun `test ivec2 shift ivec3 has no type`() {
+        doShiftExprTest("ivec2(1) >> ivec3(2)", null)
+    }
+
+    fun `test int bitwise and ivec2`() {
+        doBitwiseExprTest("1 & ivec2(3)", VectorType.IVEC2)
+    }
+
+    fun `test uvec2 bitwise or uint`() {
+        doBitwiseExprTest("uvec2(1u) | 2u", VectorType.UVEC2)
+    }
+
+    fun `test int bitwise and uint has no type`() {
+        doBitwiseExprTest("1 & 2u", null)
+    }
+
+    fun `test ivec2 bitwise xor ivec3 has no type`() {
+        doBitwiseExprTest("ivec2(1) ^ ivec3(2)", null)
+    }
+
+    fun `test ivec2 bitwise or uvec2 has no type`() {
+        doBitwiseExprTest("ivec2(1) | uvec2(2u)", null)
     }
 
     fun `test ternary operator`() {
@@ -545,7 +653,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
 
     private fun doBinaryExprTest(
         expressionText: String,
-        expectedType: DataType,
+        expectedType: DataType?,
         declarations: String = "",
     ) {
         val code = """
@@ -572,7 +680,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
 
     private fun doShiftExprTest(
         expressionText: String,
-        expectedType: DataType,
+        expectedType: DataType?,
     ) {
         val code = """
             shader_type spatial;
@@ -593,7 +701,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
 
     private fun doBitwiseExprTest(
         expressionText: String,
-        expectedType: DataType,
+        expectedType: DataType?,
     ) {
         val code = """
             shader_type spatial;

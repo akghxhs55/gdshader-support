@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.psi
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
@@ -18,14 +19,19 @@ object GdsExpressionTypeInference {
             is GdsFunctionCall -> inferFunctionCallType(element)
             is GdsPostfixExpr -> inferPostfixExprType(element)
             is GdsUnaryExpr -> inferUnaryExprType(element)
-            is GdsMultiplicativeExpr -> inferBinaryExprType(element)
-            is GdsAdditiveExpr -> inferBinaryExprType(element)
-            is GdsShiftExpr -> inferShiftExprType(element)
+            is GdsMultiplicativeExpr ->
+                inferBinaryChainType(element, element.unaryExprList, GdsTokenSets.MULTIPLICATIVE_OPERATORS)
+            is GdsAdditiveExpr ->
+                inferBinaryChainType(element, element.multiplicativeExprList, GdsTokenSets.ADDITIVE_OPERATORS)
+            is GdsShiftExpr -> inferBinaryChainType(element, element.additiveExprList, GdsTokenSets.SHIFT_OPERATORS)
             is GdsRelationalExpr -> inferRelationalExprType(element)
             is GdsEqualityExpr -> inferEqualityExprType(element)
-            is GdsBitwiseAndExpr -> inferBitwiseExprType(element)
-            is GdsBitwiseXorExpr -> inferBitwiseExprType(element)
-            is GdsBitwiseOrExpr -> inferBitwiseExprType(element)
+            is GdsBitwiseAndExpr ->
+                inferBinaryChainType(element, element.equalityExprList, GdsTokenSets.BITWISE_OPERATORS)
+            is GdsBitwiseXorExpr ->
+                inferBinaryChainType(element, element.bitwiseAndExprList, GdsTokenSets.BITWISE_OPERATORS)
+            is GdsBitwiseOrExpr ->
+                inferBinaryChainType(element, element.bitwiseXorExprList, GdsTokenSets.BITWISE_OPERATORS)
             is GdsLogicAndExpr -> inferLogicAndExprType(element)
             is GdsLogicOrExpr -> inferLogicOrExprType(element)
             is GdsAssignExpr -> inferAssignExprType(element)
@@ -274,76 +280,27 @@ object GdsExpressionTypeInference {
                 ?: return null
 
         if (hasBitInvert) {
-            return if (isIntegerType(operandType)) operandType else null
+            return if (GdsOperatorTypeRules.isInteger(operandType)) operandType else null
         }
 
         return operandType
     }
 
-    private fun inferBinaryExprType(binaryExpr: PsiElement): DataType? =
-        when (binaryExpr) {
-            is GdsMultiplicativeExpr -> inferArithmeticChainType(binaryExpr.unaryExprList)
-            is GdsAdditiveExpr -> inferArithmeticChainType(binaryExpr.multiplicativeExprList)
-            else -> null
-        }
-
-    private fun <T : PsiElement> inferArithmeticChainType(operands: List<T>): DataType? {
+    private fun inferBinaryChainType(
+        chain: PsiElement,
+        operands: List<PsiElement>,
+        operators: TokenSet,
+    ): DataType? {
         var resultType = operands.firstOrNull()?.let { inferType(it) } ?: return null
+        val operatorTokens = chain.node.getChildren(operators)
 
-        for (operand in operands.drop(1)) {
-            val operandType = inferType(operand) ?: return null
-            resultType = inferArithmeticResultType(resultType, operandType) ?: return null
+        for (index in 1 until operands.size) {
+            val operator = operatorTokens.getOrNull(index - 1)?.elementType ?: return null
+            val operandType = inferType(operands[index]) ?: return null
+            resultType = GdsOperatorTypeRules.binaryResultType(operator, resultType, operandType) ?: return null
         }
 
         return resultType
-    }
-
-    fun inferArithmeticResultType(
-        left: DataType,
-        right: DataType,
-    ): DataType? {
-        if (left == right) return left
-
-        if (left is VectorType && right is Scalar) {
-            if (areCompatibleScalarAndVector(right, left)) return left
-        }
-        if (right is VectorType && left is Scalar) {
-            if (areCompatibleScalarAndVector(left, right)) return right
-        }
-
-        if (left is MatrixType && right is VectorType) {
-            if (left.containerSize == right.containerSize) return right
-        }
-
-        if (left is VectorType && right is MatrixType) {
-            if (left.containerSize == right.containerSize) return left
-        }
-
-        if (left is MatrixType && right is MatrixType) {
-            if (left.containerSize == right.containerSize) return left
-        }
-
-        if (left is MatrixType && right is FloatType) return left
-        if (right is MatrixType && left is FloatType) return right
-
-        return null
-    }
-
-    private fun areCompatibleScalarAndVector(
-        scalar: Scalar,
-        vector: VectorType,
-    ): Boolean =
-        when (scalar) {
-            is FloatType -> vector.elementType is FloatType
-            is IntType -> vector.elementType is IntType
-            is UIntType -> vector.elementType is UIntType
-            is BoolType -> vector.elementType is BoolType
-        }
-
-    private fun inferShiftExprType(shiftExpr: GdsShiftExpr): DataType? {
-        val operands = shiftExpr.additiveExprList
-        if (operands.isEmpty()) return null
-        return inferType(operands[0])
     }
 
     private fun inferRelationalExprType(relationalExpr: GdsRelationalExpr): DataType? {
@@ -366,24 +323,6 @@ object GdsExpressionTypeInference {
         return if (operands.size >= 2) BoolType else operands.firstOrNull()?.let { inferType(it) }
     }
 
-    private fun inferBitwiseExprType(bitwiseExpr: PsiElement): DataType? {
-        val operands =
-            when (bitwiseExpr) {
-                is GdsBitwiseAndExpr -> bitwiseExpr.equalityExprList
-                is GdsBitwiseXorExpr -> bitwiseExpr.bitwiseAndExprList
-                is GdsBitwiseOrExpr -> bitwiseExpr.bitwiseXorExprList
-                else -> return null
-            }
-
-        if (operands.isEmpty()) return null
-
-        val leftType = inferType(operands[0]) ?: return null
-
-        if (operands.size < 2) return leftType
-
-        return if (isIntegerType(leftType)) leftType else null
-    }
-
     private fun inferAssignExprType(assignExpr: GdsAssignExpr): DataType? = assignExpr.conditionalExprList.firstOrNull()?.let { inferType(it) }
 
     private fun inferConditionalExprType(conditionalExpr: GdsConditionalExpr): DataType? {
@@ -400,11 +339,4 @@ object GdsExpressionTypeInference {
     }
 
     private fun inferExpressionType(expression: GdsExpression): DataType? = inferType(expression.assignExpr)
-
-    private fun isIntegerType(type: DataType): Boolean =
-        when (type) {
-            is IntType, is UIntType -> true
-            is VectorType -> type.elementType is IntType || type.elementType is UIntType
-            else -> false
-        }
 }

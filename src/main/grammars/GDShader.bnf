@@ -345,9 +345,6 @@ statement ::= control_statement
 
 // Expressions
 function_call_statement ::= function_call SEMICOLON
-{
-	pin=1
-}
 expression_statement ::= expression SEMICOLON
 {
 	pin=1

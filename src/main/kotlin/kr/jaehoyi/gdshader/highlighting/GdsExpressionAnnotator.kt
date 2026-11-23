@@ -5,7 +5,6 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
@@ -20,16 +19,16 @@ class GdsExpressionAnnotator : Annotator {
         when (element) {
             is GdsPostfixExpr -> checkPostfixExpr(element, holder)
             is GdsUnaryExpr -> checkUnaryExpr(element, holder)
-            is GdsMultiplicativeExpr -> checkBinaryChain(element, element.unaryExprList, holder, ::arithmeticResult)
-            is GdsAdditiveExpr -> checkBinaryChain(element, element.multiplicativeExprList, holder, ::arithmeticResult)
-            is GdsShiftExpr -> checkBinaryChain(element, element.additiveExprList, holder, ::integerResult)
-            is GdsBitwiseAndExpr -> checkBinaryChain(element, element.equalityExprList, holder, ::integerResult)
-            is GdsBitwiseXorExpr -> checkBinaryChain(element, element.bitwiseAndExprList, holder, ::integerResult)
-            is GdsBitwiseOrExpr -> checkBinaryChain(element, element.bitwiseXorExprList, holder, ::integerResult)
-            is GdsRelationalExpr -> checkBinaryChain(element, element.shiftExprList, holder, ::relationalResult)
-            is GdsEqualityExpr -> checkBinaryChain(element, element.relationalExprList, holder, ::equalityResult)
-            is GdsLogicAndExpr -> checkBinaryChain(element, element.bitwiseOrExprList, holder, ::logicResult)
-            is GdsLogicOrExpr -> checkBinaryChain(element, element.logicAndExprList, holder, ::logicResult)
+            is GdsMultiplicativeExpr -> checkBinaryChain(element, element.unaryExprList, holder)
+            is GdsAdditiveExpr -> checkBinaryChain(element, element.multiplicativeExprList, holder)
+            is GdsShiftExpr -> checkBinaryChain(element, element.additiveExprList, holder)
+            is GdsBitwiseAndExpr -> checkBinaryChain(element, element.equalityExprList, holder)
+            is GdsBitwiseXorExpr -> checkBinaryChain(element, element.bitwiseAndExprList, holder)
+            is GdsBitwiseOrExpr -> checkBinaryChain(element, element.bitwiseXorExprList, holder)
+            is GdsRelationalExpr -> checkBinaryChain(element, element.shiftExprList, holder)
+            is GdsEqualityExpr -> checkBinaryChain(element, element.relationalExprList, holder)
+            is GdsLogicAndExpr -> checkBinaryChain(element, element.bitwiseOrExprList, holder)
+            is GdsLogicOrExpr -> checkBinaryChain(element, element.logicAndExprList, holder)
             is GdsAssignExpr -> checkAssignExpr(element, holder)
             is GdsConditionalExpr -> checkConditionalExpr(element, holder)
         }
@@ -40,27 +39,25 @@ class GdsExpressionAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val operand = element.unaryExpr ?: element.postfixExpr ?: return
-        val operandType = GdsExpressionTypeInference.inferType(operand) ?: return
+        val operator = element.node.findChildByType(UNARY_OPERATOR_TOKENS) ?: return
+        val operandType = GdsExpressionTypeInference.inferType(operand)
 
-        val hasNot = element.node.findChildByType(GdsTypes.OP_NOT) != null
-        val hasBitInvert = element.node.findChildByType(GdsTypes.OP_BIT_INVERT) != null
-        val hasMinus = element.node.findChildByType(GdsTypes.OP_SUB) != null
-        val hasPlus = element.node.findChildByType(GdsTypes.OP_ADD) != null
-
-        val op =
-            when {
-                hasNot && operandType !is BoolType -> "!"
-                hasBitInvert && !isIntegerType(operandType) -> "~"
-                hasMinus && !isNumericType(operandType) -> "-"
-                hasPlus && !isNumericType(operandType) -> "+"
-                else -> return
+        if (operandType != null) {
+            val isValid =
+                when (operator.elementType) {
+                    GdsTypes.OP_NOT -> operandType is BoolType
+                    GdsTypes.OP_BIT_INVERT -> GdsOperatorTypeRules.isInteger(operandType)
+                    else -> GdsOperatorTypeRules.isNegatable(operandType)
+                }
+            if (!isValid) {
+                annotateInvalidUnaryOperator(element, operator.text, operandType, holder)
+                return
             }
-        holder
-            .newAnnotation(
-                HighlightSeverity.ERROR,
-                "Invalid arguments to unary operator '$op': ${operandType.name}",
-            ).range(element)
-            .create()
+        }
+
+        if (operator.elementType in INCREMENT_DECREMENT_TOKENS) {
+            checkModifiable(element, operand, holder)
+        }
     }
 
     private fun checkConditionalExpr(
@@ -90,7 +87,7 @@ class GdsExpressionAnnotator : Annotator {
     ) {
         for (indexExpr in element.expressionList) {
             val indexType = GdsExpressionTypeInference.inferType(indexExpr) ?: continue
-            if (!isIntegerType(indexType)) {
+            if (!GdsOperatorTypeRules.isInteger(indexType)) {
                 holder
                     .newAnnotation(
                         HighlightSeverity.ERROR,
@@ -99,54 +96,41 @@ class GdsExpressionAnnotator : Annotator {
                     .create()
             }
         }
+
+        val operator = element.node.findChildByType(INCREMENT_DECREMENT_TOKENS) ?: return
+        val operandType = GdsExpressionTypeInference.inferType(element)
+        if (operandType != null && !GdsOperatorTypeRules.isNegatable(operandType)) {
+            annotateInvalidUnaryOperator(element, operator.text, operandType, holder)
+            return
+        }
+
+        val message = accessTargetError(element) ?: return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
     }
 
     private fun checkBinaryChain(
         element: PsiElement,
         operands: List<PsiElement>,
         holder: AnnotationHolder,
-        resultType: (DataType, DataType) -> DataType?,
     ) {
         if (operands.size < 2) return
-        val operators = element.node.getChildren(OPERATOR_TOKENS)
+        val operators = element.node.getChildren(BINARY_OPERATOR_TOKENS)
         var leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
 
         for (index in 1 until operands.size) {
+            val operator = operators.getOrNull(index - 1) ?: return
             val rightType = GdsExpressionTypeInference.inferType(operands[index]) ?: return
-            val result = resultType(leftType, rightType)
+            val result = GdsOperatorTypeRules.binaryResultType(operator.elementType, leftType, rightType)
             if (result == null) {
-                val op = operators.getOrNull(index - 1)?.text ?: "?"
-                annotateInvalidOperator(element, op, leftType, rightType, holder)
+                annotateInvalidOperator(element, operator.text, leftType, rightType, holder)
                 return
             }
             leftType = result
         }
     }
-
-    private fun arithmeticResult(
-        left: DataType,
-        right: DataType,
-    ): DataType? = GdsExpressionTypeInference.inferArithmeticResultType(left, right)
-
-    private fun integerResult(
-        left: DataType,
-        right: DataType,
-    ): DataType? = left.takeIf { isIntegerType(left) && isIntegerType(right) }
-
-    private fun relationalResult(
-        left: DataType,
-        right: DataType,
-    ): DataType? = BoolType.takeIf { left is Scalar && right is Scalar && left == right }
-
-    private fun equalityResult(
-        left: DataType,
-        right: DataType,
-    ): DataType? = BoolType.takeIf { left == right }
-
-    private fun logicResult(
-        left: DataType,
-        right: DataType,
-    ): DataType? = BoolType.takeIf { left is BoolType && right is BoolType }
 
     private fun checkAssignExpr(
         element: GdsAssignExpr,
@@ -180,39 +164,11 @@ class GdsExpressionAnnotator : Annotator {
         operator: GdsAssignmentOperator,
         holder: AnnotationHolder,
     ): DataType {
-        val varRef = PsiTreeUtil.findChildOfType(target, GdsVariableNameRef::class.java)
-        val resolved = varRef?.reference?.resolve()
-        if (resolved is GdsVariableNameDecl) {
-            val spec = resolved.variableSpec
-            if (spec != null && !spec.isMutable) {
-                val message =
-                    when (spec) {
-                        is ConstantSpec -> "Constants cannot be modified"
-                        is UniformSpec -> "Assignment to uniform"
-                        else -> "Cannot assign to read-only variable"
-                    }
-                holder
-                    .newAnnotation(HighlightSeverity.ERROR, message)
-                    .range(element)
-                    .create()
-            }
-        } else if (resolved is GdsLightVariable && !resolved.isAssignable) {
-            val message =
-                if (resolved.variableSpec is ConstantSpec) {
-                    "Constants cannot be modified"
-                } else {
-                    "Cannot assign to read-only built-in '${resolved.name}'"
-                }
-            holder
-                .newAnnotation(HighlightSeverity.ERROR, message)
-                .range(element)
-                .create()
-        }
+        checkModifiable(element, target, holder)
 
-        val opText = operator.text
-
-        if (opText == "=") {
-            if (!isAssignable(lhsType, rhsType)) {
+        val operatorType = operator.node.firstChildNode.elementType
+        if (operatorType == GdsTypes.OP_ASSIGN) {
+            if (lhsType != rhsType) {
                 holder
                     .newAnnotation(
                         HighlightSeverity.ERROR,
@@ -221,34 +177,135 @@ class GdsExpressionAnnotator : Annotator {
                     .create()
             }
             return lhsType
-        } else {
-            val resultType =
-                when (opText) {
-                    "+=", "-=", "*=", "/=", "%=" -> GdsExpressionTypeInference.inferArithmeticResultType(lhsType, rhsType)
-                    "<<=", ">>=", "&=", "^=", "|=" ->
-                        lhsType.takeIf { isIntegerType(lhsType) && isIntegerType(rhsType) }
-                    else -> lhsType
+        }
+
+        val resultType = GdsOperatorTypeRules.compoundAssignmentResultType(operatorType, lhsType, rhsType)
+        if (resultType == null) {
+            holder
+                .newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Invalid arguments to operator '${operator.text}': '${lhsType.name}, ${rhsType.name}'",
+                ).range(element)
+                .create()
+        }
+        return resultType ?: lhsType
+    }
+
+    private fun checkModifiable(
+        element: PsiElement,
+        target: PsiElement,
+        holder: AnnotationHolder,
+    ) {
+        val message = assignmentTargetError(target) ?: return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
+    }
+
+    // Returns null when the target is assignable or cannot be analyzed, e.g. macros.
+    private fun assignmentTargetError(target: PsiElement?): String? =
+        when (target) {
+            is GdsExpression ->
+                target.assignExpr.conditionalExprList
+                    .singleOrNull()
+                    ?.let(::assignmentTargetError)
+            is GdsConditionalExpr ->
+                if (target.expressionList.isNotEmpty()) CONSTANT_EXPRESSION else assignmentTargetError(target.logicOrExpr)
+            is GdsLogicOrExpr -> singleOperandError(target.logicAndExprList)
+            is GdsLogicAndExpr -> singleOperandError(target.bitwiseOrExprList)
+            is GdsBitwiseOrExpr -> singleOperandError(target.bitwiseXorExprList)
+            is GdsBitwiseXorExpr -> singleOperandError(target.bitwiseAndExprList)
+            is GdsBitwiseAndExpr -> singleOperandError(target.equalityExprList)
+            is GdsEqualityExpr -> singleOperandError(target.relationalExprList)
+            is GdsRelationalExpr -> singleOperandError(target.shiftExprList)
+            is GdsShiftExpr -> singleOperandError(target.additiveExprList)
+            is GdsAdditiveExpr -> singleOperandError(target.multiplicativeExprList)
+            is GdsMultiplicativeExpr -> singleOperandError(target.unaryExprList)
+            is GdsUnaryExpr ->
+                if (target.node.findChildByType(UNARY_OPERATOR_TOKENS) != null) {
+                    CONSTANT_EXPRESSION
+                } else {
+                    assignmentTargetError(target.postfixExpr)
                 }
-            val isValid = resultType != null && isAssignable(lhsType, resultType)
-            if (!isValid) {
-                holder
-                    .newAnnotation(
-                        HighlightSeverity.ERROR,
-                        "Invalid arguments to operator '$opText': '${lhsType.name}, ${rhsType.name}'",
-                    ).range(element)
-                    .create()
+            is GdsPostfixExpr ->
+                if (target.node.findChildByType(INCREMENT_DECREMENT_TOKENS) != null) {
+                    CONSTANT_EXPRESSION
+                } else {
+                    accessTargetError(target)
+                }
+            else -> null
+        }
+
+    private fun singleOperandError(operands: List<PsiElement>): String? =
+        when (operands.size) {
+            0 -> null
+            1 -> assignmentTargetError(operands[0])
+            else -> CONSTANT_EXPRESSION
+        }
+
+    private fun accessTargetError(postfixExpr: GdsPostfixExpr): String? {
+        val accessors = postfixExpr.children.filter { it != postfixExpr.primary }
+        for (accessor in accessors.asReversed()) {
+            when (accessor) {
+                is GdsFunctionCall -> return "Assignment to function"
+                is GdsStructMemberNameRef ->
+                    if (hasSwizzleDuplicates(postfixExpr, accessor)) {
+                        return "Swizzling assignment contains duplicates"
+                    }
             }
-            return resultType ?: lhsType
+        }
+        return primaryTargetError(postfixExpr.primary)
+    }
+
+    private fun hasSwizzleDuplicates(
+        postfixExpr: GdsPostfixExpr,
+        member: GdsStructMemberNameRef,
+    ): Boolean {
+        val baseType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, member)
+        val name = member.text
+        return baseType is VectorType && name.toSet().size != name.length
+    }
+
+    private fun primaryTargetError(primary: GdsPrimary): String? {
+        primary.literal?.let { return CONSTANT_EXPRESSION }
+        primary.functionCall?.let {
+            return if (it.functionNameRef != null) "Assignment to function" else CONSTANT_EXPRESSION
+        }
+        primary.expression?.let { return assignmentTargetError(it) }
+
+        return when (val resolved = primary.variableNameRef?.reference?.resolve()) {
+            is GdsVariableNameDecl -> {
+                val spec = resolved.variableSpec
+                when {
+                    spec == null || spec.isMutable -> null
+                    spec is ConstantSpec -> "Constants cannot be modified"
+                    spec is UniformSpec -> "Assignment to uniform"
+                    else -> "Cannot assign to read-only variable"
+                }
+            }
+            is GdsLightVariable ->
+                when {
+                    resolved.isAssignable -> null
+                    resolved.variableSpec is ConstantSpec -> "Constants cannot be modified"
+                    else -> "Cannot assign to read-only built-in '${resolved.name}'"
+                }
+            else -> null
         }
     }
 
-    private fun isAssignable(
-        target: DataType,
-        source: DataType,
-    ): Boolean {
-        if (target == source) return true
-        if (target.name == source.name) return true
-        return false
+    private fun annotateInvalidUnaryOperator(
+        element: PsiElement,
+        op: String,
+        operandType: DataType,
+        holder: AnnotationHolder,
+    ) {
+        holder
+            .newAnnotation(
+                HighlightSeverity.ERROR,
+                "Invalid arguments to unary operator '$op': ${operandType.name}",
+            ).range(element)
+            .create()
     }
 
     private fun annotateInvalidOperator(
@@ -266,23 +323,22 @@ class GdsExpressionAnnotator : Annotator {
             .create()
     }
 
-    private fun isNumericType(type: DataType): Boolean =
-        when (type) {
-            is FloatType, is IntType, is UIntType -> true
-            is VectorType -> type.elementType !is BoolType
-            is MatrixType -> true
-            else -> false
-        }
-
-    private fun isIntegerType(type: DataType): Boolean =
-        when (type) {
-            is IntType, is UIntType -> true
-            is VectorType -> type.elementType is IntType || type.elementType is UIntType
-            else -> false
-        }
-
     companion object {
-        private val OPERATOR_TOKENS =
+        private const val CONSTANT_EXPRESSION = "Assignment to constant expression"
+
+        private val INCREMENT_DECREMENT_TOKENS = TokenSet.create(GdsTypes.OP_INCREMENT, GdsTypes.OP_DECREMENT)
+
+        private val UNARY_OPERATOR_TOKENS =
+            TokenSet.create(
+                GdsTypes.OP_NOT,
+                GdsTypes.OP_BIT_INVERT,
+                GdsTypes.OP_ADD,
+                GdsTypes.OP_SUB,
+                GdsTypes.OP_INCREMENT,
+                GdsTypes.OP_DECREMENT,
+            )
+
+        private val BINARY_OPERATOR_TOKENS =
             TokenSet.create(
                 GdsTypes.OP_MUL,
                 GdsTypes.OP_DIV,

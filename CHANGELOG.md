@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Fixed chained expression evaluation
 - Fixed leading-zero integer literals evaluation
 - Aligned uint and shift evaluation with Godot
+- Aligned operator and assignment validation with Godot
 
 ## 1.2.1 (2026-11-17)
 
