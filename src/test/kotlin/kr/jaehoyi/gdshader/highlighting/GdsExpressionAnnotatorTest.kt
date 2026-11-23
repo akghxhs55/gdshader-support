@@ -3,8 +3,6 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
-    // === Arithmetic operators ===
-
     fun `test valid vec3 plus vec3`() {
         doHighlightTest(
             """
@@ -70,6 +68,59 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test valid arithmetic chain with macro operand`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define TINT vec3(1.0)
+            void fragment() {
+                vec3 base = vec3(1.0);
+                ALBEDO = base * 0.5 * TINT;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test arithmetic chain with unknown operand type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define UNKNOWN undefined_name
+            void fragment() {
+                vec3 a = vec3(1.0);
+                vec3 c = a * 0.5 * UNKNOWN;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid third operand in arithmetic chain`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 a = vec3(1.0);
+                vec2 b = vec2(1.0);
+                vec3 c = <error descr="Invalid arguments to operator '*': 'vec3, vec2'">a * 0.5 * b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid operator reported at failing position`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                vec3 a = vec3(1.0);
+                vec2 b = vec2(1.0);
+                vec3 c = <error descr="Invalid arguments to operator '-': 'vec3, vec2'">a + a - b</error>;
+                vec3 d = <error descr="Invalid arguments to operator '/': 'vec3, vec2'">a * 2.0 / b</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
     fun `test invalid int times float`() {
         doHighlightTest(
             """
@@ -82,8 +133,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Shift operators ===
 
     fun `test valid int shift`() {
         doHighlightTest(
@@ -108,8 +157,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Bitwise operators ===
 
     fun `test valid int bitwise and`() {
         doHighlightTest(
@@ -136,8 +183,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Logical operators ===
 
     fun `test valid bool logic and`() {
         doHighlightTest(
@@ -177,8 +222,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Simple assignment ===
 
     fun `test valid assignment`() {
         doHighlightTest(
@@ -230,8 +273,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    // === Compound assignment ===
-
     fun `test valid compound assignment vec3 plus float`() {
         doHighlightTest(
             """
@@ -269,8 +310,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Relational operators ===
 
     fun `test valid float less than`() {
         doHighlightTest(
@@ -324,8 +363,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    // === Equality operators ===
-
     fun `test valid vec3 equality`() {
         doHighlightTest(
             """
@@ -378,7 +415,102 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    // === Unary operators ===
+    fun `test invalid third operand in shift chain`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                float f = 1.0;
+                int b = <error descr="Invalid arguments to operator '>>': 'int, float'">a << 1 >> f</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid third operand in bitwise chain`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int a = 1;
+                int b = 2;
+                float f = 1.0;
+                int c = <error descr="Invalid arguments to operator '&': 'int, float'">a & b & f</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid third operand in logic chain`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                bool a = true;
+                bool b = false;
+                int i = 1;
+                bool c = <error descr="Invalid arguments to operator '&&': 'bool, int'">a && b && i</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test logic chain with unknown operand type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define UNKNOWN undefined_name
+            void fragment() {
+                bool a = true;
+                bool b = false;
+                bool c = a && b && UNKNOWN;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid chained relational`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = 2.0;
+                float c = 3.0;
+                bool r = <error descr="Invalid arguments to operator '<': 'bool, float'">a < b < c</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test valid chained equality with bool`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = 2.0;
+                bool c = true;
+                bool r = a == b == c;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test invalid chained equality`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = 1.0;
+                float b = 2.0;
+                float c = 3.0;
+                bool r = <error descr="Invalid arguments to operator '!=': 'bool, float'">a == b != c</error>;
+            }
+            """.trimIndent(),
+        )
+    }
 
     fun `test valid negation float`() {
         doHighlightTest(
@@ -464,8 +596,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    // === Ternary operator ===
-
     fun `test valid ternary`() {
         doHighlightTest(
             """
@@ -539,8 +669,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Const/Uniform assignment ===
 
     fun `test assign to const variable`() {
         doHighlightTest(
@@ -634,8 +762,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Array index type ===
 
     fun `test valid int array index`() {
         doHighlightTest(

@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Fix struct resolution logic (#18, #19)
 - Add include reference handler
 - Improve `#define` macro evaluation
+- Fix chained expression evaluation
 
 ## 1.2.1 (2026-11-17)
 

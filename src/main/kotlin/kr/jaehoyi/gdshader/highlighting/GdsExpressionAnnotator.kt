@@ -20,16 +20,16 @@ class GdsExpressionAnnotator : Annotator {
         when (element) {
             is GdsPostfixExpr -> checkPostfixExpr(element, holder)
             is GdsUnaryExpr -> checkUnaryExpr(element, holder)
-            is GdsMultiplicativeExpr -> checkArithmeticExpr(element, element.unaryExprList, holder)
-            is GdsAdditiveExpr -> checkArithmeticExpr(element, element.multiplicativeExprList, holder)
-            is GdsShiftExpr -> checkShiftExpr(element, holder)
-            is GdsBitwiseAndExpr -> checkBitwiseExpr(element, element.equalityExprList, holder)
-            is GdsBitwiseXorExpr -> checkBitwiseExpr(element, element.bitwiseAndExprList, holder)
-            is GdsBitwiseOrExpr -> checkBitwiseExpr(element, element.bitwiseXorExprList, holder)
-            is GdsRelationalExpr -> checkRelationalExpr(element, holder)
-            is GdsEqualityExpr -> checkEqualityExpr(element, holder)
-            is GdsLogicAndExpr -> checkLogicExpr(element, element.bitwiseOrExprList, holder)
-            is GdsLogicOrExpr -> checkLogicExpr(element, element.logicAndExprList, holder)
+            is GdsMultiplicativeExpr -> checkBinaryChain(element, element.unaryExprList, holder, ::arithmeticResult)
+            is GdsAdditiveExpr -> checkBinaryChain(element, element.multiplicativeExprList, holder, ::arithmeticResult)
+            is GdsShiftExpr -> checkBinaryChain(element, element.additiveExprList, holder, ::integerResult)
+            is GdsBitwiseAndExpr -> checkBinaryChain(element, element.equalityExprList, holder, ::integerResult)
+            is GdsBitwiseXorExpr -> checkBinaryChain(element, element.bitwiseAndExprList, holder, ::integerResult)
+            is GdsBitwiseOrExpr -> checkBinaryChain(element, element.bitwiseXorExprList, holder, ::integerResult)
+            is GdsRelationalExpr -> checkBinaryChain(element, element.shiftExprList, holder, ::relationalResult)
+            is GdsEqualityExpr -> checkBinaryChain(element, element.relationalExprList, holder, ::equalityResult)
+            is GdsLogicAndExpr -> checkBinaryChain(element, element.bitwiseOrExprList, holder, ::logicResult)
+            is GdsLogicOrExpr -> checkBinaryChain(element, element.logicAndExprList, holder, ::logicResult)
             is GdsAssignExpr -> checkAssignExpr(element, holder)
             is GdsConditionalExpr -> checkConditionalExpr(element, holder)
         }
@@ -101,89 +101,52 @@ class GdsExpressionAnnotator : Annotator {
         }
     }
 
-    private fun checkArithmeticExpr(
+    private fun checkBinaryChain(
         element: PsiElement,
         operands: List<PsiElement>,
         holder: AnnotationHolder,
+        resultType: (DataType, DataType) -> DataType?,
     ) {
         if (operands.size < 2) return
-        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
-        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
+        val operators = element.node.getChildren(OPERATOR_TOKENS)
+        var leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
 
-        if (GdsExpressionTypeInference.inferType(element) == null) {
-            annotateInvalidOperator(element, leftType, rightType, holder)
+        for (index in 1 until operands.size) {
+            val rightType = GdsExpressionTypeInference.inferType(operands[index]) ?: return
+            val result = resultType(leftType, rightType)
+            if (result == null) {
+                val op = operators.getOrNull(index - 1)?.text ?: "?"
+                annotateInvalidOperator(element, op, leftType, rightType, holder)
+                return
+            }
+            leftType = result
         }
     }
 
-    private fun checkShiftExpr(
-        element: GdsShiftExpr,
-        holder: AnnotationHolder,
-    ) {
-        val operands = element.additiveExprList
-        if (operands.size < 2) return
-        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
-        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
+    private fun arithmeticResult(
+        left: DataType,
+        right: DataType,
+    ): DataType? = GdsExpressionTypeInference.inferArithmeticResultType(left, right)
 
-        if (!isIntegerType(leftType) || !isIntegerType(rightType)) {
-            annotateInvalidOperator(element, leftType, rightType, holder)
-        }
-    }
+    private fun integerResult(
+        left: DataType,
+        right: DataType,
+    ): DataType? = left.takeIf { isIntegerType(left) && isIntegerType(right) }
 
-    private fun checkBitwiseExpr(
-        element: PsiElement,
-        operands: List<PsiElement>,
-        holder: AnnotationHolder,
-    ) {
-        if (operands.size < 2) return
-        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
-        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
+    private fun relationalResult(
+        left: DataType,
+        right: DataType,
+    ): DataType? = BoolType.takeIf { left is Scalar && right is Scalar && left == right }
 
-        if (!isIntegerType(leftType) || !isIntegerType(rightType)) {
-            annotateInvalidOperator(element, leftType, rightType, holder)
-        }
-    }
+    private fun equalityResult(
+        left: DataType,
+        right: DataType,
+    ): DataType? = BoolType.takeIf { left == right }
 
-    private fun checkRelationalExpr(
-        element: GdsRelationalExpr,
-        holder: AnnotationHolder,
-    ) {
-        val operands = element.shiftExprList
-        if (operands.size < 2) return
-        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
-        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
-
-        if (leftType !is Scalar || rightType !is Scalar || leftType.name != rightType.name) {
-            annotateInvalidOperator(element, leftType, rightType, holder)
-        }
-    }
-
-    private fun checkEqualityExpr(
-        element: GdsEqualityExpr,
-        holder: AnnotationHolder,
-    ) {
-        val operands = element.relationalExprList
-        if (operands.size < 2) return
-        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
-        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
-
-        if (leftType.name != rightType.name) {
-            annotateInvalidOperator(element, leftType, rightType, holder)
-        }
-    }
-
-    private fun checkLogicExpr(
-        element: PsiElement,
-        operands: List<PsiElement>,
-        holder: AnnotationHolder,
-    ) {
-        if (operands.size < 2) return
-        val leftType = GdsExpressionTypeInference.inferType(operands[0]) ?: return
-        val rightType = GdsExpressionTypeInference.inferType(operands[1]) ?: return
-
-        if (leftType !is BoolType || rightType !is BoolType) {
-            annotateInvalidOperator(element, leftType, rightType, holder)
-        }
-    }
+    private fun logicResult(
+        left: DataType,
+        right: DataType,
+    ): DataType? = BoolType.takeIf { left is BoolType && right is BoolType }
 
     private fun checkAssignExpr(
         element: GdsAssignExpr,
@@ -261,7 +224,7 @@ class GdsExpressionAnnotator : Annotator {
         } else {
             val resultType =
                 when (opText) {
-                    "+=", "-=", "*=", "/=", "%=" -> inferArithmeticResultType(lhsType, rhsType)
+                    "+=", "-=", "*=", "/=", "%=" -> GdsExpressionTypeInference.inferArithmeticResultType(lhsType, rhsType)
                     "<<=", ">>=", "&=", "^=", "|=" ->
                         lhsType.takeIf { isIntegerType(lhsType) && isIntegerType(rhsType) }
                     else -> lhsType
@@ -290,11 +253,11 @@ class GdsExpressionAnnotator : Annotator {
 
     private fun annotateInvalidOperator(
         element: PsiElement,
+        op: String,
         leftType: DataType,
         rightType: DataType,
         holder: AnnotationHolder,
     ) {
-        val op = findOperatorText(element)
         holder
             .newAnnotation(
                 HighlightSeverity.ERROR,
@@ -303,8 +266,23 @@ class GdsExpressionAnnotator : Annotator {
             .create()
     }
 
-    private fun findOperatorText(element: PsiElement): String {
-        val operatorTokens =
+    private fun isNumericType(type: DataType): Boolean =
+        when (type) {
+            is FloatType, is IntType, is UIntType -> true
+            is VectorType -> type.elementType !is BoolType
+            is MatrixType -> true
+            else -> false
+        }
+
+    private fun isIntegerType(type: DataType): Boolean =
+        when (type) {
+            is IntType, is UIntType -> true
+            is VectorType -> type.elementType is IntType || type.elementType is UIntType
+            else -> false
+        }
+
+    companion object {
+        private val OPERATOR_TOKENS =
             TokenSet.create(
                 GdsTypes.OP_MUL,
                 GdsTypes.OP_DIV,
@@ -325,50 +303,5 @@ class GdsExpressionAnnotator : Annotator {
                 GdsTypes.OP_AND,
                 GdsTypes.OP_OR,
             )
-        return element.node
-            .getChildren(operatorTokens)
-            .firstOrNull()
-            ?.text ?: "?"
     }
-
-    private fun inferArithmeticResultType(
-        left: DataType,
-        right: DataType,
-    ): DataType? {
-        if (left.name == right.name) return left
-        if (left is VectorType && right is Scalar && areCompatibleScalarAndVector(right, left)) return left
-        if (right is VectorType && left is Scalar && areCompatibleScalarAndVector(left, right)) return right
-        if (left is MatrixType && right is VectorType && left.containerSize == right.containerSize) return right
-        if (left is VectorType && right is MatrixType && left.containerSize == right.containerSize) return left
-        if (left is MatrixType && right is MatrixType && left.containerSize == right.containerSize) return left
-        if (left is MatrixType && right is FloatType) return left
-        if (right is MatrixType && left is FloatType) return right
-        return null
-    }
-
-    private fun areCompatibleScalarAndVector(
-        scalar: Scalar,
-        vector: VectorType,
-    ): Boolean =
-        when (scalar) {
-            is FloatType -> vector.elementType is FloatType
-            is IntType -> vector.elementType is IntType
-            is UIntType -> vector.elementType is UIntType
-            is BoolType -> vector.elementType is BoolType
-        }
-
-    private fun isNumericType(type: DataType): Boolean =
-        when (type) {
-            is FloatType, is IntType, is UIntType -> true
-            is VectorType -> type.elementType !is BoolType
-            is MatrixType -> true
-            else -> false
-        }
-
-    private fun isIntegerType(type: DataType): Boolean =
-        when (type) {
-            is IntType, is UIntType -> true
-            is VectorType -> type.elementType is IntType || type.elementType is UIntType
-            else -> false
-        }
 }

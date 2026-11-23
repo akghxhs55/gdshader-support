@@ -297,7 +297,7 @@ object GdsExpressionTypeInference {
         return resultType
     }
 
-    private fun inferArithmeticResultType(
+    fun inferArithmeticResultType(
         left: DataType,
         right: DataType,
     ): DataType? {
