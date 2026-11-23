@@ -6,47 +6,48 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- Align include path resolution with Godot (#17)
-- Fix struct resolution logic (#18, #19)
-- Add include reference handler
-- Improve `#define` macro evaluation
-- Fix chained expression evaluation
+- Aligned include path resolution with Godot (#17)
+- Fixed struct resolution logic (#18, #19)
+- Added include reference handler
+- Improved `#define` macro evaluation
+- Fixed chained expression evaluation
+- Fixed leading-zero integer literals evaluation
 
 ## 1.2.1 (2026-11-17)
 
-- Add file creation template for empty .gdshader file
-- Fix built-in resolution for files with no `shader_type` (#16)
-- Fix built-in resolution in global context
-- Treat 'in' built-ins as read-only
+- Added file creation template for empty .gdshader file
+- Fixed built-in resolution for files with no `shader_type` (#16)
+- Fixed built-in resolution in global context
+- Treated 'in' built-ins as read-only
 
 ## 1.2.0 (2026-11-14)
 
-- Improve syntax highlighting logic and fix default colors
-- Fix struct name completion
+- Improved syntax highlighting logic and fix default colors
+- Fixed struct name completion
 
 ## 1.1.3 (2026-11-13)
 
-- Fix color picker to handle various numeric literals
-- Fix language name conflict with JetBrains official plugin
-- Change default indentation to use tab character
+- Fixed color picker to handle various numeric literals
+- Fixed language name conflict with JetBrains official plugin
+- Changed default indentation to use tab character
 
 ## 1.1.2 (2026-10-05)
 
-- Replace deprecated API usages
-- Fix various bugs and improve stability
+- Replaced deprecated API usages
+- Fixed various bugs and improve stability
 
 ## 1.1.1 (2026-08-28)
 
-- Fix to parse chained assignments left to right
-- Fix type inference for constant conversion and expression chains
-- Add Godot 4.6 and 4.7 builtins
+- Fixed to parse chained assignments left to right
+- Fixed type inference for constant conversion and expression chains
+- Added Godot 4.6 and 4.7 builtins
 
 ## 1.1.0 (2026-08-28)
 
 - Added internationalization for inspection settings
 - Added Chinese translations
-- Fix resolution of symbols declared in included files regardless of position
-- Add self-healing nesting rules on startup
+- Fixed resolution of symbols declared in included files regardless of position
+- Added self-healing nesting rules on startup
 
 ## 1.0.2 (2026-06-20)
 

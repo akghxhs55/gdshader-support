@@ -68,6 +68,20 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         assertEquals(42L, evaluateExpression("42u"))
     }
 
+    fun `test int literal with leading zero is decimal`() {
+        assertEquals(10, evaluateExpression("010"))
+    }
+
+    fun `test int literal with leading zero and non-octal digits`() {
+        assertEquals(8, evaluateExpression("08"))
+        assertEquals(9, evaluateExpression("09"))
+    }
+
+    fun `test uint literal with leading zero is decimal`() {
+        assertEquals(10L, evaluateExpression("010u"))
+        assertEquals(9L, evaluateExpression("09u"))
+    }
+
     fun `test float literal`() {
         assertEquals(3.14f, evaluateExpression("3.14"))
     }

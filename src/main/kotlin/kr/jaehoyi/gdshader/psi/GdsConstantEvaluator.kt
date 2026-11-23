@@ -81,8 +81,6 @@ object GdsConstantEvaluator {
         }
     }
 
-    // ===== Literal Evaluation =====
-
     private fun evaluateLiteral(literal: GdsLiteral): Any? {
         val text = literal.text
 
@@ -105,8 +103,6 @@ object GdsConstantEvaluator {
         when {
             text.startsWith("0x") || text.startsWith("0X") ->
                 text.substring(2).toIntOrNull(16)
-            text.startsWith("0") && text.length > 1 && text.all { it.isDigit() } ->
-                text.toIntOrNull(8)
             else -> text.toIntOrNull()
         }
 
@@ -115,13 +111,9 @@ object GdsConstantEvaluator {
         return when {
             cleaned.startsWith("0x") || cleaned.startsWith("0X") ->
                 cleaned.substring(2).toLongOrNull(16)
-            cleaned.startsWith("0") && cleaned.length > 1 && cleaned.all { it.isDigit() } ->
-                cleaned.toLongOrNull(8)
             else -> cleaned.toLongOrNull()
         }
     }
-
-    // ===== Variable Reference Evaluation =====
 
     private fun evaluateVariableRef(
         varRef: GdsVariableNameRef,
@@ -144,8 +136,6 @@ object GdsConstantEvaluator {
         }
     }
 
-    // ===== Primary Expression Evaluation =====
-
     private fun evaluatePrimary(
         primary: GdsPrimary,
         visited: MutableSet<PsiElement>,
@@ -156,8 +146,6 @@ object GdsConstantEvaluator {
         primary.expression?.let { return evaluate(it, visited) }
         return null
     }
-
-    // ===== Function Call Evaluation (Scalar Constructors) =====
 
     private fun evaluateFunctionCall(
         functionCall: GdsFunctionCall,
@@ -183,8 +171,6 @@ object GdsConstantEvaluator {
         }
     }
 
-    // ===== Postfix Expression Evaluation =====
-
     private fun evaluatePostfixExpr(
         postfixExpr: GdsPostfixExpr,
         visited: MutableSet<PsiElement>,
@@ -197,8 +183,6 @@ object GdsConstantEvaluator {
         }
         return evaluatePrimary(postfixExpr.primary, visited)
     }
-
-    // ===== Unary Expression Evaluation =====
 
     private fun evaluateUnaryExpr(
         unaryExpr: GdsUnaryExpr,
@@ -235,8 +219,6 @@ object GdsConstantEvaluator {
 
         return unaryExpr.postfixExpr?.let { evaluatePostfixExpr(it, visited) }
     }
-
-    // ===== Binary Expression Evaluation =====
 
     private fun evaluateMultiplicativeExpr(
         expr: GdsMultiplicativeExpr,
@@ -477,8 +459,6 @@ object GdsConstantEvaluator {
         return false
     }
 
-    // ===== Conditional Expression Evaluation =====
-
     private fun evaluateConditionalExpr(
         expr: GdsConditionalExpr,
         visited: MutableSet<PsiElement>,
@@ -517,8 +497,6 @@ object GdsConstantEvaluator {
         initializer.expression?.let {
             evaluate(it, visited)
         }
-
-    // ===== Type Conversion Helpers =====
 
     private fun toInt(value: Any?): Int? =
         when (value) {
@@ -559,8 +537,6 @@ object GdsConstantEvaluator {
             is Double -> value != 0.0
             else -> null
         }
-
-    // ===== Arithmetic Operation Helpers =====
 
     private fun add(
         left: Any,
