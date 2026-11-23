@@ -6,8 +6,11 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
+import kr.jaehoyi.gdshader.model.ArrayType
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FloatType
+import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.IntType
 import kr.jaehoyi.gdshader.model.UIntType
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
@@ -17,6 +20,7 @@ import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
+import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsInitializer
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaration
@@ -30,6 +34,7 @@ import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
+import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -142,23 +147,42 @@ class GdsDeclarationAnnotator : Annotator {
         element: GdsFunctionDeclaration,
         holder: AnnotationHolder,
     ) {
-        val name = element.functionNameDecl.text
-        val file = element.containingFile ?: return
-        val allFunctions = PsiTreeUtil.findChildrenOfType(file, GdsFunctionDeclaration::class.java)
+        val nameDecl = element.functionNameDecl
+        val name = nameDecl.name
+        val isProcessingFunction = isProcessingFunction(nameDecl)
         val signature = getParameterSignature(element)
-        val first =
-            allFunctions.firstOrNull {
-                it.functionNameDecl.text == name && getParameterSignature(it) == signature
-            } ?: return
-        if (first !== element) {
+        if (!isProcessingFunction && signature == null) return
+
+        var isDuplicate = false
+        GdsResolver.processFunctionDeclaration(nameDecl) { function ->
+            if (function !is GdsFunctionNameDecl || function.name != name) return@processFunctionDeclaration true
+            val other = function.parent as? GdsFunctionDeclaration ?: return@processFunctionDeclaration true
+            isDuplicate = isProcessingFunction || getParameterSignature(other) == signature
+            !isDuplicate
+        }
+
+        if (isDuplicate) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
-                .range(element.functionNameDecl)
+                .range(nameDecl)
                 .create()
         }
     }
 
-    private fun getParameterSignature(function: GdsFunctionDeclaration): List<String> = function.parameterList?.parameterList?.map { it.type.text } ?: emptyList()
+    private fun isProcessingFunction(nameDecl: GdsFunctionNameDecl): Boolean {
+        val shaderType = GdsPsiImplUtil.getShaderType(nameDecl) ?: return false
+        val processingFunctions = Builtins.PROCESSING_FUNCTIONS[shaderType] ?: return false
+        return FunctionContext.fromText(nameDecl.name) in processingFunctions
+    }
+
+    // Godot compares parameter types including array sizes, but ignores qualifiers and precision.
+    // Returns null when a parameter type cannot be determined, since the comparison would be unreliable.
+    private fun getParameterSignature(function: GdsFunctionDeclaration): List<String>? =
+        function.parameterList?.parameterList.orEmpty().map { parameter ->
+            val type = GdsDataTypeFactory.createFromParameter(parameter) ?: return null
+            if (type is ArrayType && type.containerSize == null) return null
+            type.name
+        }
 
     private fun checkDuplicateStruct(
         element: GdsStructDeclaration,

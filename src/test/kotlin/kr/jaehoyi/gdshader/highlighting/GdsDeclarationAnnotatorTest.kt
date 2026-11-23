@@ -143,6 +143,123 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test function overload with different parameters`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float add(float a, float b) { return a + b; }
+            vec2 add(vec2 a, vec2 b) { return a + b; }
+            float add(float a, float b, float c) { return a + b + c; }
+        """,
+        )
+    }
+
+    fun `test function overload differing only in return type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float get(float a) { return a; }
+            int <error descr="Redefinition of 'get'">get</error>(float a) { return 1; }
+        """,
+        )
+    }
+
+    fun `test function overload differing only in precision`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float get(highp float a) { return a; }
+            float <error descr="Redefinition of 'get'">get</error>(lowp float a) { return a; }
+        """,
+        )
+    }
+
+    fun `test function overload differing only in qualifier`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void set(in float a) {}
+            void <error descr="Redefinition of 'set'">set</error>(inout float a) {}
+        """,
+        )
+    }
+
+    fun `test function overload with different array sizes`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float sum(float a[2]) { return a[0]; }
+            float sum(float a[3]) { return a[0]; }
+            float sum(float a) { return a; }
+        """,
+        )
+    }
+
+    fun `test function overload with array size on type and name`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float sum(float[2] a) { return a[0]; }
+            float <error descr="Redefinition of 'sum'">sum</error>(float a[2]) { return a[0]; }
+        """,
+        )
+    }
+
+    fun `test function overload with different struct parameters`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct A { float x; };
+            struct B { float x; };
+            float get(A a) { return a.x; }
+            float get(B b) { return b.x; }
+            float <error descr="Redefinition of 'get'">get</error>(A other) { return other.x; }
+        """,
+        )
+    }
+
+    fun `test duplicate function in included file`() {
+        myFixture.addFileToProject("math.gdshaderinc", "float add(float a, float b) { return a + b; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #include "res://math.gdshaderinc"
+            float <error descr="Redefinition of 'add'">add</error>(float x, float y) { return x + y; }
+        """,
+        )
+    }
+
+    fun `test function overload of included function`() {
+        myFixture.addFileToProject("math.gdshaderinc", "float add(float a, float b) { return a + b; }")
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #include "res://math.gdshaderinc"
+            vec2 add(vec2 a, vec2 b) { return a + b; }
+        """,
+        )
+    }
+
+    fun `test duplicate processing function with different parameters`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {}
+            void <error descr="Redefinition of 'fragment'">fragment</error>(float x) {}
+        """,
+        )
+    }
+
+    fun `test processing function name of other shader type can be overloaded`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            float sky() { return 0.0; }
+            float sky(float a) { return a; }
+        """,
+        )
+    }
+
     fun `test duplicate struct`() {
         doHighlightTest(
             """
