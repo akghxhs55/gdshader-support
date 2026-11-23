@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Improved `#define` macro evaluation
 - Fixed chained expression evaluation
 - Fixed leading-zero integer literals evaluation
+- Aligned uint and shift evaluation with Godot
 
 ## 1.2.1 (2026-11-17)
 

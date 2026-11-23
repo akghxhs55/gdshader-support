@@ -201,14 +201,14 @@ object GdsConstantEvaluator {
                 hasBitInvert ->
                     when (value) {
                         is Int -> value.inv()
-                        is Long -> value.inv()
+                        is Long -> value.inv() and 0xFFFFFFFFL
                         else -> null
                     }
                 hasPlus -> value
                 hasMinus ->
                     when (value) {
                         is Int -> -value
-                        is Long -> -value
+                        is Long -> -value and 0xFFFFFFFFL
                         is Float -> -value
                         is Double -> -value
                         else -> null
@@ -301,19 +301,26 @@ object GdsConstantEvaluator {
                 val rightValue = evaluate(operands[operandIndex], visited) ?: return null
                 operandIndex++
 
-                val shift = toInt(rightValue) ?: return null
+                val left = result
+                val shift =
+                    when {
+                        left is Int && rightValue is Int -> rightValue
+                        left is Long && rightValue is Long -> rightValue.takeIf { it <= 31L }?.toInt()
+                        else -> null
+                    } ?: return null
+                if (shift !in 0..31) return null
                 result =
                     when (elementType) {
                         GdsTypes.OP_SHIFT_LEFT ->
-                            when (result) {
-                                is Int -> result shl shift
-                                is Long -> result shl shift
+                            when (left) {
+                                is Int -> left shl shift
+                                is Long -> (left shl shift) and 0xFFFFFFFFL
                                 else -> return null
                             }
                         GdsTypes.OP_SHIFT_RIGHT ->
-                            when (result) {
-                                is Int -> result shr shift
-                                is Long -> result shr shift
+                            when (left) {
+                                is Int -> left shr shift
+                                is Long -> left shr shift
                                 else -> return null
                             }
                         else -> return null
@@ -548,10 +555,11 @@ object GdsConstantEvaluator {
                 val r = toFloat(right) ?: return null
                 l + r
             }
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
-                l + r
+                (l + r) and 0xFFFFFFFFL
             }
             else -> {
                 val l = toInt(left) ?: return null
@@ -571,10 +579,11 @@ object GdsConstantEvaluator {
                 val r = toFloat(right) ?: return null
                 l - r
             }
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
-                l - r
+                (l - r) and 0xFFFFFFFFL
             }
             else -> {
                 val l = toInt(left) ?: return null
@@ -594,10 +603,11 @@ object GdsConstantEvaluator {
                 val r = toFloat(right) ?: return null
                 l * r
             }
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
-                l * r
+                (l * r) and 0xFFFFFFFFL
             }
             else -> {
                 val l = toInt(left) ?: return null
@@ -618,7 +628,8 @@ object GdsConstantEvaluator {
                 if (r == 0f) return null
                 l / r
             }
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
                 if (r == 0L) return null
@@ -638,7 +649,8 @@ object GdsConstantEvaluator {
         right: Any,
     ): Any? {
         return when {
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
                 if (r == 0L) return null
@@ -663,7 +675,8 @@ object GdsConstantEvaluator {
                 val r = toFloat(right) ?: return null
                 l.compareTo(r)
             }
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
                 l.compareTo(r)
@@ -687,6 +700,12 @@ object GdsConstantEvaluator {
                 val r = toFloat(right) ?: return null
                 l == r
             }
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
+                val l = toUInt(left) ?: return null
+                val r = toUInt(right) ?: return null
+                l == r
+            }
             else -> {
                 val l = toInt(left) ?: return null
                 val r = toInt(right) ?: return null
@@ -700,7 +719,8 @@ object GdsConstantEvaluator {
         right: Any,
     ): Any? {
         return when {
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
                 l and r
@@ -718,7 +738,8 @@ object GdsConstantEvaluator {
         right: Any,
     ): Any? {
         return when {
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
                 l xor r
@@ -736,7 +757,8 @@ object GdsConstantEvaluator {
         right: Any,
     ): Any? {
         return when {
-            left is Long || right is Long -> {
+            (left is Long) != (right is Long) -> null
+            left is Long && right is Long -> {
                 val l = toUInt(left) ?: return null
                 val r = toUInt(right) ?: return null
                 l or r

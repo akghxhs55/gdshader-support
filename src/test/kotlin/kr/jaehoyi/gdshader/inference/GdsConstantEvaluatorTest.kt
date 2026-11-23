@@ -158,6 +158,104 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         assertEquals(2, evaluateExpression("8 >> 2"))
     }
 
+    // ===== uint Wrap-Around Tests =====
+
+    fun `test uint addition wraps around`() {
+        assertEquals(0L, evaluateExpression("0xFFFFFFFFu + 1u"))
+    }
+
+    fun `test uint subtraction wraps around`() {
+        assertEquals(4294967295L, evaluateExpression("0u - 1u"))
+    }
+
+    fun `test uint multiplication wraps around`() {
+        assertEquals(4294967294L, evaluateExpression("0xFFFFFFFFu * 2u"))
+        assertEquals(1L, evaluateExpression("0xFFFFFFFFu * 0xFFFFFFFFu"))
+    }
+
+    fun `test uint bitwise not wraps around`() {
+        assertEquals(4294967295L, evaluateExpression("~0u"))
+    }
+
+    fun `test uint negation wraps around`() {
+        assertEquals(4294967295L, evaluateExpression("-1u"))
+    }
+
+    fun `test uint left shift wraps around`() {
+        assertEquals(4294967280L, evaluateExpression("0xFFFFFFFFu << 4u"))
+    }
+
+    fun `test uint right shift`() {
+        assertEquals(268435455L, evaluateExpression("0xFFFFFFFFu >> 4u"))
+    }
+
+    fun `test wrapped uint as array size`() {
+        assertEquals(1, evaluateAsIntExpression("0xFFFFFFFFu + 2u"))
+    }
+
+    // ===== Shift Range Tests =====
+
+    fun `test shift by 31 is allowed`() {
+        assertEquals(Int.MIN_VALUE, evaluateExpression("1 << 31"))
+        assertEquals(2147483648L, evaluateExpression("1u << 31u"))
+    }
+
+    fun `test shift by 32 or more returns null`() {
+        assertNull(evaluateExpression("1 << 32"))
+        assertNull(evaluateExpression("1u << 32u"))
+        assertNull(evaluateExpression("8 >> 32"))
+        assertNull(evaluateExpression("8u >> 40u"))
+    }
+
+    fun `test shift by negative amount returns null`() {
+        assertNull(evaluateExpression("1 << -1"))
+    }
+
+    fun `test shift with mixed int and uint returns null`() {
+        assertNull(evaluateExpression("1u << 4"))
+        assertNull(evaluateExpression("1 << 4u"))
+        assertNull(evaluateExpression("0xFFu >> 4"))
+        assertNull(evaluateExpression("255 >> 4u"))
+    }
+
+    fun `test shift with non-integer operand returns null`() {
+        assertNull(evaluateExpression("1.0 << 2"))
+        assertNull(evaluateExpression("1 << 2.0"))
+        assertNull(evaluateExpression("true << 1"))
+    }
+
+    // ===== Mixed int/uint Tests =====
+
+    fun `test arithmetic with mixed int and uint returns null`() {
+        assertNull(evaluateExpression("1u + 1"))
+        assertNull(evaluateExpression("1 - 1u"))
+        assertNull(evaluateExpression("2u * 3"))
+        assertNull(evaluateExpression("6 / 2u"))
+        assertNull(evaluateExpression("7u % 2"))
+    }
+
+    fun `test bitwise with mixed int and uint returns null`() {
+        assertNull(evaluateExpression("6u & 5"))
+        assertNull(evaluateExpression("6 | 5u"))
+        assertNull(evaluateExpression("6u ^ 5"))
+    }
+
+    fun `test comparison with mixed int and uint returns null`() {
+        assertNull(evaluateExpression("1u < 2"))
+        assertNull(evaluateExpression("2 >= 1u"))
+        assertNull(evaluateExpression("1u == 1"))
+        assertNull(evaluateExpression("1 != 2u"))
+    }
+
+    fun `test uint operations without mixing`() {
+        assertEquals(5L, evaluateExpression("2u + 3u"))
+        assertEquals(1L, evaluateExpression("7u % 2u"))
+        assertEquals(4L, evaluateExpression("6u & 5u"))
+        assertEquals(true, evaluateExpression("1u < 2u"))
+        assertEquals(true, evaluateExpression("0xFFFFFFFFu == 4294967295u"))
+        assertEquals(false, evaluateExpression("1u != 1u"))
+    }
+
     // ===== Comparison Tests =====
 
     fun `test less than`() {
