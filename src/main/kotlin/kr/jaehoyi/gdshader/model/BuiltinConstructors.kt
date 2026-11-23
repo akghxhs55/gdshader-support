@@ -286,6 +286,9 @@ object BuiltinConstructors {
         }
 
     private fun getStructConstructors(structType: StructType): List<FunctionSpec> {
+        // A signature missing members would report wrong argument counts and types.
+        if (structType.hasUnresolvedMembers) return emptyList()
+
         val parameters =
             structType.members.map { (name, type) ->
                 ParameterSpec(name, type)

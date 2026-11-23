@@ -432,6 +432,55 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct array constructor`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            void fragment() {
+                MyData items[2] = MyData[2](MyData(1.0), MyData(2.0));
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor with unresolved member type is not checked`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float x; <error descr="Unresolved reference 'Missing'">Missing</error> y; };
+            void fragment() {
+                Data d = Data(1.0, 2.0);
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor with duplicate member is not checked`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float x; float <error descr="Redefinition of 'x'">x</error>; };
+            void fragment() {
+                Data d = Data(1.0, 2.0);
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor with self referencing member is not checked`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Node { Node next; float value; };
+            void fragment() {
+                Node first;
+                Node n = Node(first, 1.0);
+            }
+        """,
+        )
+    }
+
     fun `test struct constructor with array member correct`() {
         doHighlightTest(
             """

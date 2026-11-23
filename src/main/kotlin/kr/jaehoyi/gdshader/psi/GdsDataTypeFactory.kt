@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.psi
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
@@ -113,17 +114,26 @@ object GdsDataTypeFactory {
         if (!visiting.add(structDeclaration)) return null
 
         try {
+            val structBlock = structDeclaration.structBlock
             val members = mutableMapOf<String, DataType>()
-            structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-                val memberName = member.structMemberNameDecl?.text ?: return@forEach
+            var hasUnresolvedMembers = structBlock == null || PsiTreeUtil.hasErrorElements(structBlock)
 
-                val memberTypeNode = member.type
-                val memberBaseType = getBaseType(member.precision?.text, memberTypeNode, visiting) ?: return@forEach
+            structBlock?.structMemberList?.structMemberList?.forEach { member ->
+                val memberName = member.structMemberNameDecl?.text
+                val memberBaseType = getBaseType(member.precision?.text, member.type, visiting)
+                if (memberName == null || memberBaseType == null || memberName in members) {
+                    hasUnresolvedMembers = true
+                    return@forEach
+                }
 
-                members[memberName] = withArraySize(memberBaseType, member.arraySizeList.firstOrNull())
+                val memberType = withArraySize(memberBaseType, member.arraySizeList.firstOrNull())
+                if (memberType is ArrayType && memberType.containerSize == null) {
+                    hasUnresolvedMembers = true
+                }
+                members[memberName] = memberType
             }
 
-            return StructType(structName, members)
+            return StructType(structName, members, hasUnresolvedMembers)
         } finally {
             visiting.remove(structDeclaration)
         }

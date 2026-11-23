@@ -175,6 +175,26 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test duplicate struct member`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float x; vec2 <error descr="Redefinition of 'x'">x</error>; float <error descr="Redefinition of 'x'">x</error>[2]; };
+        """,
+        )
+    }
+
+    fun `test same member name in different structs and globals`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float x;
+            struct Data { float x; };
+            struct Info { float x; };
+        """,
+        )
+    }
+
     fun `test duplicate uniform`() {
         doHighlightTest(
             """

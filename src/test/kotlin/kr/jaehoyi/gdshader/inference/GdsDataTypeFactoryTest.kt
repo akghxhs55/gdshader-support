@@ -165,6 +165,7 @@ class GdsDataTypeFactoryTest : BasePlatformTestCase() {
         assertEquals("Node", struct.name)
         assertNull("Self-referencing member must not be resolved", struct.resolveMember("next"))
         assertEquals(FloatType.DEFAULT, struct.resolveMember("value"))
+        assertTrue(struct.hasUnresolvedMembers)
         assertEquals(struct, variableType("node"))
 
         myFixture.doHighlighting()
@@ -183,6 +184,22 @@ class GdsDataTypeFactoryTest : BasePlatformTestCase() {
         assertEquals(inner, outer.resolveMember("first"))
         assertEquals("A struct reused as a sibling member must resolve again", inner, outer.resolveMember("second"))
         assertEquals(ArrayType(inner, 2), outer.resolveMember("items"))
+    }
+
+    fun `test members that cannot be resolved mark the struct incomplete`() {
+        val cases =
+            mapOf(
+                "float x; Missing y;" to true,
+                "float x; float x;" to true,
+                "float x; float values[MISSING];" to true,
+                "float x; float values[2];" to false,
+            )
+        for ((members, expected) in cases) {
+            configure("struct Data { $members };")
+            val struct = structType("Data")
+            assertEquals(members, expected, struct.hasUnresolvedMembers)
+            assertEquals(members, expected, struct.getConstructors().isEmpty())
+        }
     }
 
     private fun structType(name: String): StructType {

@@ -38,6 +38,8 @@ class GdsFunctionCallAnnotator : Annotator {
             return
         }
 
+        if (element.arraySize != null) return
+
         element.functionNameRef?.let { nameRef ->
             checkFunctionCall(element, nameRef.text, holder)
         }

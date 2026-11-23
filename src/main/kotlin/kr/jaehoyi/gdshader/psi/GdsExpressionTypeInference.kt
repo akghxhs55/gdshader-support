@@ -129,6 +129,8 @@ object GdsExpressionTypeInference {
             return ArrayType(baseType, size)
         }
 
+        if (baseType is StructType && baseType.hasUnresolvedMembers) return baseType
+
         if (baseType is Instantiable) {
             val argTypes = collectArgumentTypes(functionCall)
             val constructors = baseType.getConstructors()

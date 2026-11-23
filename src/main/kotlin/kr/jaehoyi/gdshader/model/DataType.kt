@@ -253,6 +253,7 @@ class VectorType private constructor(
 data class StructType(
     private val structName: String,
     val members: Map<String, DataType>,
+    val hasUnresolvedMembers: Boolean = false,
 ) : DataType(structName),
     MemberAccessible,
     Instantiable {

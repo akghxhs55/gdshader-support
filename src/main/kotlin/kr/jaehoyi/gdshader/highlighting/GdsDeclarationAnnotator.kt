@@ -24,6 +24,7 @@ import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
+import kr.jaehoyi.gdshader.psi.GdsStructMemberList
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariable
@@ -59,7 +60,10 @@ class GdsDeclarationAnnotator : Annotator {
                 checkDoubleArraySize(element.arraySizeList, holder)
                 checkDuplicateVariable(element.variableNameDecl, holder)
             }
-            element is GdsStructMember -> checkDoubleArraySize(element.arraySizeList, holder)
+            element is GdsStructMember -> {
+                checkDoubleArraySize(element.arraySizeList, holder)
+                checkDuplicateStructMember(element, holder)
+            }
             element is GdsLocalVariableDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
                 checkDuplicateLocalVariable(element.variableNameDecl, holder)
@@ -165,6 +169,22 @@ class GdsDeclarationAnnotator : Annotator {
         val file = element.containingFile ?: return
         val allStructs = PsiTreeUtil.findChildrenOfType(file, GdsStructDeclaration::class.java)
         val first = allStructs.firstOrNull { it.structNameDecl?.text == name } ?: return
+        if (first !== element) {
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
+                .range(nameDecl)
+                .create()
+        }
+    }
+
+    private fun checkDuplicateStructMember(
+        element: GdsStructMember,
+        holder: AnnotationHolder,
+    ) {
+        val nameDecl = element.structMemberNameDecl ?: return
+        val name = nameDecl.text
+        val memberList = element.parent as? GdsStructMemberList ?: return
+        val first = memberList.structMemberList.firstOrNull { it.structMemberNameDecl?.text == name } ?: return
         if (first !== element) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")

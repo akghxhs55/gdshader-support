@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 - Align include path resolution with Godot (#17)
+- Fix struct resolution logic (#18, #19)
 
 ## 1.2.1 (2026-11-17)
 

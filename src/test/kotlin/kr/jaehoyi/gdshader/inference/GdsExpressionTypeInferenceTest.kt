@@ -444,6 +444,24 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         assertNull(inferStructCall("Inner(1.0)"))
     }
 
+    fun `test constructor of struct with unresolved member keeps struct type`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            struct Data { float x; Missing y; };
+            void fragment() {
+                Data(1.0);
+            }
+            """.trimIndent(),
+        )
+        val call = findChildrenOfType(myFixture.file, GdsFunctionCall::class.java).single()
+        val type = GdsExpressionTypeInference.inferType(call)
+
+        assertEquals("Data", type?.name)
+        assertTrue((type as StructType).hasUnresolvedMembers)
+    }
+
     private fun inferStructCall(callText: String): DataType? {
         myFixture.configureByText(
             "test.gdshader",
