@@ -3,8 +3,6 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
-    // === shader_type must come first ===
-
     fun `test shader_type first`() {
         doHighlightTest(
             """
@@ -21,8 +19,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """,
         )
     }
-
-    // === Empty struct ===
 
     fun `test empty struct`() {
         doHighlightTest(
@@ -41,8 +37,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """,
         )
     }
-
-    // === Include file extension ===
 
     fun `test include gdshaderinc file`() {
         myFixture.addFileToProject("utils.gdshaderinc", "float add(float a, float b) { return a + b; }")
@@ -63,8 +57,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    // === Include file existence ===
-
     fun `test include nonexistent file`() {
         doHighlightTest(
             """
@@ -83,8 +75,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """,
         )
     }
-
-    // === Double array size ===
 
     fun `test uniform single array size`() {
         doHighlightTest(
@@ -132,8 +122,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         """,
         )
     }
-
-    // === Duplicate declarations ===
 
     fun `test duplicate function`() {
         doHighlightTest(
@@ -324,8 +312,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    // === Local variable shadowing (allowed) ===
-
     fun `test local variable shadows another local variable`() {
         doHighlightTest(
             """
@@ -353,8 +339,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Initializer type mismatch ===
 
     fun `test valid local variable initializer`() {
         doHighlightTest(
@@ -399,6 +383,19 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
                 vec3 v = <error descr="Cannot assign a value of type 'MyData' to type 'vec3'">MyData(1.0, 2.0)</error>;
             }
         """,
+        )
+    }
+
+    fun `test overloaded call with unknown argument type does not report mismatch`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f(float a) { return a; }
+            vec2 f(int x, float a) { return vec2(a); }
+            void fragment() {
+                vec2 r = f(unknown, 1.0);
+            }
+            """.trimIndent(),
         )
     }
 
@@ -457,8 +454,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
             """.trimIndent(),
         )
     }
-
-    // === Unknown preprocessor directive ===
 
     fun `test unknown preprocessor directive`() {
         doHighlightTest(

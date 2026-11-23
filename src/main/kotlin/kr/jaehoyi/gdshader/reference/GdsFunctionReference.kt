@@ -51,8 +51,12 @@ class GdsFunctionReference(
 
         val specs = specsWithElements.map { it.first }
         val resolved =
-            GdsOverloadResolver.resolveFunctionOverload(specs, argTypes)
-                ?: return candidates.first() as? PsiElement
+            if (argTypes != null) {
+                GdsOverloadResolver.resolveFunctionOverload(specs, argTypes)
+            } else {
+                val argCount = functionCall.argumentList?.initializerList?.size ?: 0
+                GdsOverloadResolver.filterByArgumentCount(specs, argCount).singleOrNull()
+            } ?: return candidates.first() as? PsiElement
 
         return specsWithElements.firstOrNull { it.first === resolved }?.second as? PsiElement
             ?: candidates.first() as? PsiElement
@@ -67,10 +71,10 @@ class GdsFunctionReference(
         return null
     }
 
-    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType> {
+    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType>? {
         val argList = functionCall.argumentList ?: return emptyList()
-        return argList.initializerList.mapNotNull { initializer ->
-            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) }
+        return argList.initializerList.map { initializer ->
+            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) } ?: return null
         }
     }
 

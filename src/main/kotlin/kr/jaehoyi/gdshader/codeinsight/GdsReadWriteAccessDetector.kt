@@ -109,16 +109,16 @@ class GdsReadWriteAccessDetector : ReadWriteAccessDetector() {
 
         val candidates = Builtins.getFunctions(shaderType, functionContext, functionName) ?: return null
 
-        val argTypes = collectArgumentTypes(functionCall)
+        val argTypes = collectArgumentTypes(functionCall) ?: return null
         val resolvedSpec = GdsOverloadResolver.resolveFunctionOverload(candidates, argTypes) ?: return null
 
         return resolvedSpec.parameters.getOrNull(argIndex)?.qualifier
     }
 
-    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType> {
+    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType>? {
         val argList = functionCall.argumentList ?: return emptyList()
-        return argList.initializerList.mapNotNull { initializer ->
-            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) }
+        return argList.initializerList.map { initializer ->
+            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) } ?: return null
         }
     }
 }

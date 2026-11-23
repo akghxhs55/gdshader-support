@@ -34,13 +34,7 @@ object GdsOverloadResolver {
         argumentTypes: List<DataType>,
         typeCompatible: (DataType, DataType, Int, MutableMap<AliasType, DataType>) -> Boolean,
     ): FunctionSpec? {
-        val countMatches =
-            candidates.filter { spec ->
-                val requiredCount = spec.parameters.count { !it.isOptional }
-                val totalCount = spec.parameters.size
-                argumentTypes.size in requiredCount..totalCount
-            }
-
+        val countMatches = filterByArgumentCount(candidates, argumentTypes.size)
         if (countMatches.isEmpty()) return null
 
         val exactMatches =
@@ -56,6 +50,15 @@ object GdsOverloadResolver {
 
         return compatibleMatches.firstOrNull()
     }
+
+    fun filterByArgumentCount(
+        candidates: List<FunctionSpec>,
+        argumentCount: Int,
+    ): List<FunctionSpec> =
+        candidates.filter { spec ->
+            val requiredCount = spec.parameters.count { !it.isOptional }
+            argumentCount in requiredCount..spec.parameters.size
+        }
 
     fun resolveAliasType(
         aliasType: AliasType,

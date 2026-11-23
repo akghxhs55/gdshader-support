@@ -108,10 +108,10 @@ class GdsFunctionCallAnnotator : Annotator {
         return argList.initializerList.size
     }
 
-    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType> {
+    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType>? {
         val argList = functionCall.argumentList ?: return emptyList()
-        return argList.initializerList.mapNotNull { initializer ->
-            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) }
+        return argList.initializerList.map { initializer ->
+            initializer.expression?.let { GdsExpressionTypeInference.inferType(it) } ?: return null
         }
     }
 
@@ -142,8 +142,7 @@ class GdsFunctionCallAnnotator : Annotator {
             return
         }
 
-        val argTypes = collectArgumentTypes(functionCall)
-        if (argTypes.size != argCount) return
+        val argTypes = collectArgumentTypes(functionCall) ?: return
 
         val resolved = resolveOverload(countMatches, argTypes)
         if (resolved != null) return

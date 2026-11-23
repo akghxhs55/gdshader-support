@@ -24,6 +24,22 @@ class GdsFunctionReferenceTest : BasePlatformTestCase() {
         }
     }
 
+    fun `test overload resolve keeps argument positions when an argument type is unknown`() {
+        val code = """
+            shader_type spatial;
+
+            float f(float a) { return a; }
+            vec2 f(int x, float a) { return vec2(a); }
+
+            void fragment() {
+                vec2 r = <caret>f(unknown, 1.0);
+            }
+        """
+        doTest(code) { spec ->
+            assertEquals(2, spec.parameters.size)
+        }
+    }
+
     fun `test builtin function resolve`() {
         val code = """
             shader_type canvas_item;

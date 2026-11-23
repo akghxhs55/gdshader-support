@@ -136,7 +136,7 @@ object GdsExpressionTypeInference {
         if (baseType is StructType && baseType.hasUnresolvedMembers) return baseType
 
         if (baseType is Instantiable) {
-            val argTypes = collectArgumentTypes(functionCall)
+            val argTypes = collectArgumentTypes(functionCall) ?: return null
             val constructors = baseType.getConstructors()
 
             if (constructors.isNotEmpty()) {
@@ -180,7 +180,7 @@ object GdsExpressionTypeInference {
 
         val candidates = Builtins.getFunctions(shaderType, functionContext, functionName) ?: return null
 
-        val argTypes = collectArgumentTypes(functionCall)
+        val argTypes = collectArgumentTypes(functionCall) ?: return null
 
         val resolvedSpec = GdsOverloadResolver.resolveFunctionOverload(candidates, argTypes) ?: return null
 
@@ -193,11 +193,12 @@ object GdsExpressionTypeInference {
         return returnType
     }
 
-    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType> {
+    private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType>? {
         val argList = functionCall.argumentList ?: return emptyList()
-        return argList.initializerList.mapNotNull { initializer ->
+        return argList.initializerList.map { initializer ->
             initializer.expression?.let { inferType(it) }
                 ?: initializer.initializerList?.let { inferInitializerListType(it) }
+                ?: return null
         }
     }
 
