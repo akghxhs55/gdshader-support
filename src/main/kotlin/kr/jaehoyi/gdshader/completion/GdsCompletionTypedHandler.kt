@@ -32,7 +32,7 @@ class GdsCompletionTypedHandler : TypedHandlerDelegate() {
                 }
             }
 
-            '"' -> {
+            '"', '/' -> {
                 val document = editor.document
                 val offset = editor.caretModel.offset
                 if (offset <= document.textLength) {

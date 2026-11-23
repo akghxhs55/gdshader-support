@@ -1,5 +1,12 @@
 package kr.jaehoyi.gdshader.completion
 
+import com.intellij.codeInsight.lookup.Lookup
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.VfsTestUtil
+
 class IncludeCompletionTest : GdsCompletionTestBase() {
     fun `test include shows file list inside quotes`() {
         myFixture.addFileToProject("utils.gdshaderinc", "void util() {}")
@@ -95,10 +102,141 @@ class IncludeCompletionTest : GdsCompletionTestBase() {
         assertDoesntContain(suggestedStrings, "res://lib/self.gdshaderinc")
     }
 
-    private fun completeIncludeIn(filePath: String): List<String> {
-        myFixture.addFileToProject(filePath, "#include \"<caret>\"")
+    fun `test res prefix is suggested`() {
+        assertContainsElements(completeIncludeLine("a.gdshader", "#include \"<caret>\""), "res://")
+        assertContainsElements(completeIncludeLine("b.gdshader", "#include \"r<caret>\""), "res://")
+        assertContainsElements(completeIncludeLine("c.gdshader", "#include \"res:/<caret>\""), "res://")
+    }
+
+    fun `test res prefix is not suggested after it is typed`() {
+        myFixture.addFileToProject("utils.gdshaderinc", "")
+        myFixture.addFileToProject("other.gdshaderinc", "")
+
+        val suggestedStrings = completeIncludeLine("main.gdshader", "#include \"res://<caret>\"")
+
+        assertDoesntContain(suggestedStrings, "res://")
+    }
+
+    fun `test selecting res prefix inserts it`() {
+        myFixture.addFileToProject("utils.gdshaderinc", "")
+        completeIncludeLine("main.gdshader", "#include \"<caret>\"")
+
+        selectLookupItem("res://", Lookup.NORMAL_SELECT_CHAR)
+
+        myFixture.checkResult("#include \"res://<caret>\"")
+    }
+
+    fun `test include completion works without closing quote`() {
+        myFixture.addFileToProject("lib/math.gdshaderinc", "")
+        myFixture.addFileToProject("utils.gdshaderinc", "")
+
+        val suggestedStrings = completeIncludeLine("main.gdshader", "#include \"res://l<caret>\nvoid f() {}")
+
+        assertContainsElements(suggestedStrings, "res://lib/math.gdshaderinc")
+        assertDoesntContain(suggestedStrings, "include", "res://utils.gdshaderinc")
+    }
+
+    fun `test include completion matches file name`() {
+        myFixture.addFileToProject("lib/math.gdshaderinc", "")
+        myFixture.addFileToProject("utils.gdshaderinc", "")
+
+        val suggestedStrings = completeIncludeLine("main.gdshader", "#include \"ma<caret>\"")
+
+        assertContainsElements(suggestedStrings, "res://lib/math.gdshaderinc")
+        assertDoesntContain(suggestedStrings, "res://utils.gdshaderinc")
+    }
+
+    fun `test include completion suggests parent relative paths`() {
+        myFixture.addFileToProject("lib/math.gdshaderinc", "")
+        myFixture.addFileToProject("utils.gdshaderinc", "")
+
+        val suggestedStrings = completeIncludeLine("shaders/main.gdshader", "#include \"../<caret>\"")
+
+        assertContainsElements(suggestedStrings, "../lib/math.gdshaderinc", "../utils.gdshaderinc")
+    }
+
+    fun `test include completion suggests current directory relative paths`() {
+        myFixture.addFileToProject("lib/math.gdshaderinc", "")
+        myFixture.addFileToProject("lib/vector.gdshaderinc", "")
+
+        assertContainsElements(
+            completeIncludeLine("main.gdshader", "#include \"lib/<caret>\""),
+            "lib/math.gdshaderinc",
+            "lib/vector.gdshaderinc",
+        )
+        assertContainsElements(
+            completeIncludeLine("other.gdshader", "#include \"./<caret>\""),
+            "./lib/math.gdshaderinc",
+            "./lib/vector.gdshaderinc",
+        )
+    }
+
+    fun `test include completion replaces whole path on tab`() {
+        myFixture.addFileToProject("utils.gdshaderinc", "")
+        myFixture.addFileToProject("other.gdshaderinc", "")
+        completeIncludeLine("main.gdshader", "#include \"res://<caret>old/path.gdshaderinc\"")
+
+        selectLookupItem("res://utils.gdshaderinc", Lookup.REPLACE_SELECT_CHAR)
+
+        myFixture.checkResult("#include \"res://utils.gdshaderinc<caret>\"")
+    }
+
+    fun `test include completion works outside project content`() {
+        val outsideRoot = createOutsideContentDir("outside_content")
+        try {
+            createFile(outsideRoot, "project.godot", "")
+            createFile(outsideRoot, "lib/math.gdshaderinc", "")
+            createFile(outsideRoot, "utils.gdshaderinc", "")
+            createFile(outsideRoot, "ignored/.gdignore", "")
+            createFile(outsideRoot, "ignored/hidden.gdshaderinc", "")
+            createFile(outsideRoot, "sub/project.godot", "")
+            createFile(outsideRoot, "sub/nested.gdshaderinc", "")
+            val mainFile = createFile(outsideRoot, "main.gdshader", "#include \"\"")
+            assertFalse(ProjectFileIndex.getInstance(project).isInContent(mainFile))
+
+            myFixture.configureFromExistingVirtualFile(mainFile)
+            myFixture.editor.caretModel.moveToOffset("#include \"".length)
+
+            val suggestedStrings = completeAndGetStrings()
+
+            assertContainsElements(suggestedStrings, "res://lib/math.gdshaderinc", "res://utils.gdshaderinc")
+            assertDoesntContain(suggestedStrings, "res://ignored/hidden.gdshaderinc", "res://sub/nested.gdshaderinc")
+        } finally {
+            WriteAction.runAndWait<Throwable> { outsideRoot.delete(this) }
+        }
+    }
+
+    private fun createOutsideContentDir(name: String): VirtualFile {
+        val contentRoot = ProjectRootManager.getInstance(project).contentRoots.first()
+        return WriteAction.computeAndWait<VirtualFile, Throwable> {
+            contentRoot.parent.createChildDirectory(this, name)
+        }
+    }
+
+    private fun createFile(
+        root: VirtualFile,
+        relativePath: String,
+        text: String,
+    ): VirtualFile = VfsTestUtil.createFile(root, relativePath, text)
+
+    private fun completeIncludeIn(filePath: String): List<String> = completeIncludeLine(filePath, "#include \"<caret>\"")
+
+    private fun completeIncludeLine(
+        filePath: String,
+        text: String,
+    ): List<String> {
+        myFixture.addFileToProject(filePath, text)
         myFixture.configureFromTempProjectFile(filePath)
 
         return completeAndGetStrings()
+    }
+
+    private fun selectLookupItem(
+        lookupString: String,
+        completionChar: Char,
+    ) {
+        val item = myFixture.lookupElements!!.first { it.lookupString == lookupString }
+        myFixture.lookup.currentItem = item
+        myFixture.finishLookup(completionChar)
     }
 }

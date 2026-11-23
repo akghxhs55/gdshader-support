@@ -1,5 +1,6 @@
 package kr.jaehoyi.gdshader.resolve
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootManager
@@ -10,12 +11,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FilenameIndex
+import com.intellij.psi.search.GlobalSearchScope
 
 object GdsPathUtil {
     const val RES_PREFIX = "res://"
     private const val GODOT_PROJECT_FILE = "project.godot"
     private const val GDIGNORE_FILE = ".gdignore"
     private const val PROJECT_DATA_DIR = ".godot"
+    private const val INCLUDE_FILE_EXTENSION = "gdshaderinc"
 
     private val INCLUDE_PATH_REGEX = Regex("\"([^\"]*)\"")
 
@@ -80,6 +84,38 @@ object GdsPathUtil {
         }
 
         return true
+    }
+
+    fun findIncludableFiles(
+        resRoot: VirtualFile,
+        project: Project,
+        contextFile: VirtualFile?,
+    ): List<VirtualFile> {
+        if (ProjectFileIndex.getInstance(project).isInContent(resRoot)) {
+            return FilenameIndex
+                .getAllFilesByExt(project, INCLUDE_FILE_EXTENSION, GlobalSearchScope.projectScope(project))
+                .filter { isIncludable(it, resRoot, contextFile) }
+        }
+
+        // Files outside the project content are not indexed, so scan the file system like Godot does.
+        val result = mutableListOf<VirtualFile>()
+        VfsUtilCore.iterateChildrenRecursively(
+            resRoot,
+            { file ->
+                !file.isDirectory ||
+                    file == resRoot ||
+                    !isIgnoredDirectory(file, resRoot) ||
+                    (contextFile != null && VfsUtilCore.isAncestor(file, contextFile, true))
+            },
+            { file ->
+                ProgressManager.checkCanceled()
+                if (!file.isDirectory && file.extension == INCLUDE_FILE_EXTENSION) {
+                    result.add(file)
+                }
+                true
+            },
+        )
+        return result
     }
 
     // Mirrors EditorFileSystem::_should_skip_directory in Godot.

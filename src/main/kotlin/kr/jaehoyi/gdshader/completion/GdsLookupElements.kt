@@ -1,5 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
+import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.AddSpaceInsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
@@ -12,6 +13,7 @@ import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 
 object GdsLookupElements {
@@ -563,14 +565,23 @@ object GdsLookupElements {
         return builder
     }
 
+    val RES_PATH_PREFIX: LookupElement =
+        LookupElementBuilder
+            .create(GdsPathUtil.RES_PREFIX)
+            .bold()
+            .withInsertHandler { context, _ ->
+                AutoPopupController.getInstance(context.project).scheduleAutoPopup(context.editor)
+            }.withPriority(PRIORITY_HIGHEST)
+
     fun createFromIncludeFilePath(includeFilePath: String): LookupElement {
         val fileName = includeFilePath.substringAfterLast('/')
 
         val builder =
             LookupElementBuilder
                 .create(includeFilePath)
+                .withLookupString(fileName)
                 .withPresentableText(fileName)
-                .withTypeText(includeFilePath.substringAfterLast("res://"), true)
+                .withTypeText(includeFilePath.removePrefix(GdsPathUtil.RES_PREFIX), true)
                 .withIcon(GdsIcons.GDSHADERINC)
                 .withCaseSensitivity(false)
 

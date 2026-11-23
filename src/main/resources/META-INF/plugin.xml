@@ -98,6 +98,10 @@
         <!-- Completions -->
         <completion.contributor
             language="kr.jaehoyi.gdshader"
+            order="first"
+            implementationClass="kr.jaehoyi.gdshader.completion.GdsIncludeCompletionContributor" />
+        <completion.contributor
+            language="kr.jaehoyi.gdshader"
             implementationClass="kr.jaehoyi.gdshader.completion.GdsCompletionContributor" />
         <typedHandler implementation="kr.jaehoyi.gdshader.completion.GdsCompletionTypedHandler" />
         
