@@ -368,6 +368,67 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct constructor with struct member too few args`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+
+            struct InnerStruct {
+                float a;
+                vec2 b;
+            };
+
+            struct OuterStruct {
+                float x;
+                InnerStruct y;
+            };
+
+            void fragment() {
+                OuterStruct o = OuterStruct(
+                    <error descr="Too few arguments for 'OuterStruct(float, InnerStruct)' call. Expected at least 2 but received 1.">1.0</error>
+                );
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor with struct member correct`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            struct InnerStruct { float a; vec2 b; };
+            struct OuterStruct { float x; InnerStruct y; };
+            void fragment() {
+                OuterStruct o = OuterStruct(1.0, InnerStruct(1.0, vec2(0.0)));
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor with array member correct`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float values[3]; };
+            void fragment() {
+                Data d = Data(float[3](1.0, 2.0, 3.0));
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor with array member rejects scalar`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float values[3]; };
+            void fragment() {
+                Data d = Data(<error descr="No matching function for 'Data(float[3])' call: argument 1 should be float[3] but is float">1.0</error>);
+            }
+        """,
+        )
+    }
+
     // === Optional parameters ===
 
     fun `test texture with bias omitted`() {

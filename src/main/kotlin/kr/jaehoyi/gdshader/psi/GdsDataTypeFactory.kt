@@ -53,15 +53,20 @@ object GdsDataTypeFactory {
         return getBaseType(declaration.precision?.text, typeNode)
     }
 
+    fun createFromType(typeNode: GdsType): DataType? = getBaseType(null, typeNode)
+
+    fun createFromStructDeclaration(declaration: GdsStructDeclaration): StructType? = createStructType(declaration, mutableSetOf())
+
     private fun getBaseType(
         precisionText: String?,
         typeNode: GdsType,
+        visiting: MutableSet<GdsStructDeclaration> = mutableSetOf(),
     ): DataType? {
         val typeText = typeNode.text
         var baseType = Builtins.getType(typeText)
 
         if (baseType == null) {
-            baseType = resolveStructType(typeNode)
+            baseType = resolveStructType(typeNode, visiting)
         }
 
         if (baseType == null) return null
@@ -73,22 +78,40 @@ object GdsDataTypeFactory {
         return baseType
     }
 
-    private fun resolveStructType(typeNode: GdsType): DataType? {
+    private fun resolveStructType(
+        typeNode: GdsType,
+        visiting: MutableSet<GdsStructDeclaration>,
+    ): StructType? {
         val structRef = typeNode.structNameRef ?: return null
         val structDecl = structRef.reference.resolve() as? GdsStructNameDecl ?: return null
         val structDeclaration = structDecl.parent as? GdsStructDeclaration ?: return null
 
-        val members = mutableMapOf<String, DataType>()
-        structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-            val memberName = member.structMemberNameDecl?.text ?: return@forEach
+        return createStructType(structDeclaration, visiting)
+    }
 
-            val memberTypeNode = member.type
-            val memberBaseType = getBaseType(member.precision?.text, memberTypeNode) ?: return@forEach
+    private fun createStructType(
+        structDeclaration: GdsStructDeclaration,
+        visiting: MutableSet<GdsStructDeclaration>,
+    ): StructType? {
+        val structName = structDeclaration.structNameDecl?.text ?: return null
+        // A self-referencing member (`struct A { A a; };`) resolves to its own declaration.
+        if (!visiting.add(structDeclaration)) return null
 
-            members[memberName] = withArraySize(memberBaseType, member.arraySizeList.firstOrNull())
+        try {
+            val members = mutableMapOf<String, DataType>()
+            structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
+                val memberName = member.structMemberNameDecl?.text ?: return@forEach
+
+                val memberTypeNode = member.type
+                val memberBaseType = getBaseType(member.precision?.text, memberTypeNode, visiting) ?: return@forEach
+
+                members[memberName] = withArraySize(memberBaseType, member.arraySizeList.firstOrNull())
+            }
+
+            return StructType(structName, members)
+        } finally {
+            visiting.remove(structDeclaration)
         }
-
-        return StructType(structDecl.text, members)
     }
 
     private fun withArraySize(

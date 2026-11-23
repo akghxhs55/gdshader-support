@@ -8,8 +8,8 @@ import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionSpec
 import kr.jaehoyi.gdshader.model.Instantiable
-import kr.jaehoyi.gdshader.model.StructType
 import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
+import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
@@ -116,13 +116,7 @@ class GdsFunctionCallAnnotator : Annotator {
             if (decl.name == name) {
                 val structDeclaration = decl.parent as? GdsStructDeclaration
                 if (structDeclaration != null) {
-                    val members = mutableMapOf<String, DataType>()
-                    structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-                        val memberName = member.structMemberNameDecl?.text ?: return@forEach
-                        val memberType = Builtins.getType(member.type.text) ?: return@forEach
-                        members[memberName] = memberType
-                    }
-                    result = StructType(name, members)
+                    result = GdsDataTypeFactory.createFromStructDeclaration(structDeclaration)
                 }
                 false
             } else {

@@ -143,8 +143,7 @@ class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSp
         }
 
         functionCall.type?.let { typeNode ->
-            val typeText = typeNode.text
-            val baseType = Builtins.getType(typeText) ?: resolveStructType(typeNode) ?: return emptyList()
+            val baseType = GdsDataTypeFactory.createFromType(typeNode) ?: return emptyList()
 
             if (baseType is Instantiable) {
                 return baseType.getConstructors()
@@ -167,22 +166,6 @@ class GdsParameterInfoHandler : ParameterInfoHandler<GdsArgumentList, FunctionSp
         }
 
         return emptyList()
-    }
-
-    private fun resolveStructType(typeNode: GdsType): DataType? {
-        val structRef = typeNode.structNameRef ?: return null
-        val structDecl = structRef.reference.resolve() as? GdsStructNameDecl ?: return null
-        val structDeclaration = structDecl.parent as? GdsStructDeclaration ?: return null
-
-        val members = mutableMapOf<String, DataType>()
-        structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-            val memberName = member.structMemberNameDecl?.text ?: return@forEach
-            val memberTypeText = member.type.text
-            val memberType = Builtins.getType(memberTypeText) ?: return@forEach
-            members[memberName] = memberType
-        }
-
-        return StructType(structDecl.text, members)
     }
 
     private fun createFunctionSpec(declaration: GdsFunctionDeclaration?): FunctionSpec? {

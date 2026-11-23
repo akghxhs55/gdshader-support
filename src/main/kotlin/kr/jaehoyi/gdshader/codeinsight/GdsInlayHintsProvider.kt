@@ -56,7 +56,7 @@ class GdsInlayHintsProvider : InlayHintsProvider {
             val argCount = argumentList.initializerList.size
 
             functionCall.type?.let { typeNode ->
-                val baseType = Builtins.getType(typeNode.text) ?: resolveStructType(typeNode) ?: return null
+                val baseType = GdsDataTypeFactory.createFromType(typeNode) ?: return null
                 if (baseType is Instantiable) {
                     val best = pickBestOverload(baseType.getConstructors(), argCount) ?: return null
                     return best.parameters.map { it.name }
@@ -79,21 +79,6 @@ class GdsInlayHintsProvider : InlayHintsProvider {
             }
 
             return null
-        }
-
-        private fun resolveStructType(typeNode: GdsType): DataType? {
-            val structRef = typeNode.structNameRef ?: return null
-            val structDecl = structRef.reference.resolve() as? GdsStructNameDecl ?: return null
-            val structDeclaration = structDecl.parent as? GdsStructDeclaration ?: return null
-
-            val members = mutableMapOf<String, DataType>()
-            structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-                val memberName = member.structMemberNameDecl?.text ?: return@forEach
-                val memberType = Builtins.getType(member.type.text) ?: return@forEach
-                members[memberName] = memberType
-            }
-
-            return StructType(structDecl.text, members)
         }
 
         private fun pickBestOverload(

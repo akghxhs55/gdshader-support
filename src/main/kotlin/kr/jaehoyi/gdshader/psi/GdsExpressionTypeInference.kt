@@ -122,11 +122,7 @@ object GdsExpressionTypeInference {
         functionCall: GdsFunctionCall,
         typeNode: GdsType,
     ): DataType? {
-        val typeText = typeNode.text
-        val baseType =
-            Builtins.getType(typeText)
-                ?: resolveStructType(typeNode)
-                ?: return null
+        val baseType = GdsDataTypeFactory.createFromType(typeNode) ?: return null
 
         val arraySize = functionCall.arraySize
         if (arraySize != null) {
@@ -148,36 +144,6 @@ object GdsExpressionTypeInference {
         }
 
         return null
-    }
-
-    private fun resolveStructType(typeNode: GdsType): DataType? {
-        val structRef = typeNode.structNameRef ?: return null
-        val structDecl = structRef.reference.resolve() as? GdsStructNameDecl ?: return null
-        val structDeclaration = structDecl.parent as? GdsStructDeclaration ?: return null
-
-        val members = mutableMapOf<String, DataType>()
-        structDeclaration.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-            val memberName = member.structMemberNameDecl?.text ?: return@forEach
-            val memberType = resolveMemberType(member)
-            if (memberType != null) {
-                members[memberName] = memberType
-            }
-        }
-
-        return StructType(structDecl.text, members)
-    }
-
-    private fun resolveMemberType(member: GdsStructMember): DataType? {
-        val typeText = member.type.text
-        val baseType = Builtins.getType(typeText) ?: return null
-
-        val arraySizeList = member.arraySizeList
-        if (arraySizeList.isNotEmpty()) {
-            val size = GdsConstantEvaluator.evaluateArraySize(arraySizeList.first())
-            return ArrayType(baseType, size)
-        }
-
-        return baseType
     }
 
     private fun inferFunctionReturnType(

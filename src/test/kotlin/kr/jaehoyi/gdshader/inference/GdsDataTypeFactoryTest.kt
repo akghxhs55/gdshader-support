@@ -153,6 +153,46 @@ class GdsDataTypeFactoryTest : BasePlatformTestCase() {
         assertNull(GdsOverloadResolver.resolveFunctionOverload(listOf(function), listOf(variableType("unknown")!!)))
     }
 
+    fun `test self referencing struct member is skipped without recursing`() {
+        configure(
+            """
+            struct Node { Node next; float value; };
+            void fragment() { Node node; }
+            """.trimIndent(),
+        )
+
+        val struct = structType("Node")
+        assertEquals("Node", struct.name)
+        assertNull("Self-referencing member must not be resolved", struct.resolveMember("next"))
+        assertEquals(FloatType.DEFAULT, struct.resolveMember("value"))
+        assertEquals(struct, variableType("node"))
+
+        myFixture.doHighlighting()
+    }
+
+    fun `test struct member type resolves nested and repeated structs`() {
+        configure(
+            """
+            struct Inner { float a; };
+            struct Outer { Inner first; Inner second; Inner items[2]; };
+            """.trimIndent(),
+        )
+
+        val inner = structType("Inner")
+        val outer = structType("Outer")
+        assertEquals(inner, outer.resolveMember("first"))
+        assertEquals("A struct reused as a sibling member must resolve again", inner, outer.resolveMember("second"))
+        assertEquals(ArrayType(inner, 2), outer.resolveMember("items"))
+    }
+
+    private fun structType(name: String): StructType {
+        val declaration =
+            PsiTreeUtil
+                .findChildrenOfType(myFixture.file, GdsStructDeclaration::class.java)
+                .single { it.structNameDecl?.text == name }
+        return requireNotNull(GdsDataTypeFactory.createFromStructDeclaration(declaration))
+    }
+
     private fun configure(code: String) {
         myFixture.configureByText("test.gdshader", "shader_type spatial;\n$code")
     }
