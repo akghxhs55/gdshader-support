@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## Unreleased
+
+- Align include path resolution with Godot (#17)
+
 ## 1.2.1 (2026-11-17)
 
 - Add file creation template for empty .gdshader file

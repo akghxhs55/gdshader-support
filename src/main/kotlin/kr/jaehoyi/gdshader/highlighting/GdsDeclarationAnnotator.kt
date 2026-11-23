@@ -3,7 +3,6 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
@@ -336,30 +335,23 @@ class GdsDeclarationAnnotator : Annotator {
         element: PsiElement,
         holder: AnnotationHolder,
     ) {
-        val text = element.text
-        val regex = Regex("[\"']([^\"']*)[\"']")
-        val matchResult = regex.find(text) ?: return
-        val pathGroup = matchResult.groups[1] ?: return
-        val path = pathGroup.value
+        val includePath = GdsPathUtil.findIncludePath(element) ?: return
+        val path = includePath.path
+        val pathRange = includePath.rangeInElement.shiftRight(element.textRange.startOffset)
 
         if (!path.endsWith(".gdshaderinc")) {
-            val startOffset = element.textRange.startOffset + pathGroup.range.first
-            val endOffset = element.textRange.startOffset + pathGroup.range.last + 1
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Only '.gdshaderinc' files can be included")
-                .range(TextRange(startOffset, endOffset))
+                .range(pathRange)
                 .create()
             return
         }
 
         val resolved = GdsPathUtil.resolvePath(element.containingFile, path)
         if (resolved == null) {
-            val pathRange = pathGroup.range
-            val startOffset = element.textRange.startOffset + pathRange.first
-            val endOffset = element.textRange.startOffset + pathRange.last + 1
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Cannot resolve file '$path'")
-                .range(TextRange(startOffset, endOffset))
+                .range(pathRange)
                 .create()
         }
     }

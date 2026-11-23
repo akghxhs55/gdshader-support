@@ -15,8 +15,6 @@ import kr.jaehoyi.gdshader.psi.GdsTypes
 object GdsIncludeManager {
     private val INCLUDED_FILES_KEY = Key.create<CachedValue<Set<PsiFile>>>("GDS_INCLUDED_FILES")
 
-    private val INCLUDE_PATH_REGEX = Regex("\"([^\"]+)\"")
-
     fun processIncludedDeclarations(
         currentFile: PsiFile,
         processor: PsiScopeProcessor,
@@ -77,12 +75,8 @@ object GdsIncludeManager {
                 .filter { it.node.elementType == GdsTypes.PP_INCLUDE_LINE }
 
         for (element in elements) {
-            val text = element.text
-
-            val matchResult = INCLUDE_PATH_REGEX.find(text)
-            if (matchResult != null) {
-                paths.add(matchResult.groupValues[1])
-            }
+            val includePath = GdsPathUtil.findIncludePath(element) ?: continue
+            paths.add(includePath.path)
         }
 
         return paths

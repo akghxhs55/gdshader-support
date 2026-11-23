@@ -148,6 +148,28 @@ class VariableCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(lookupStrings, "MAX_LIGHTS")
     }
 
+    fun `test completion shows variables from file included from nested godot project`() {
+        myFixture.addFileToProject("game/project.godot", "")
+        myFixture.addFileToProject("game/lib/constants.gdshaderinc", "const int MAX_LIGHTS = 10;")
+
+        val filePath = "game/shaders/main.gdshader"
+        myFixture.addFileToProject(
+            filePath,
+            """
+            #include "res://lib/constants.gdshaderinc"
+
+            void light() {
+                int count = MAX_<caret>;
+            }
+            """.trimIndent(),
+        )
+        myFixture.configureFromTempProjectFile(filePath)
+
+        val lookupStrings = completeAndGetStrings()
+
+        assertContainsElements(lookupStrings, "MAX_LIGHTS")
+    }
+
     fun `test completion shows literal define`() {
         myFixture.configureByText(
             "test.gdshader",

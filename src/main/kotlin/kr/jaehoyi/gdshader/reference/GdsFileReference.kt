@@ -1,7 +1,6 @@
 package kr.jaehoyi.gdshader.reference
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
@@ -23,18 +22,19 @@ class GdsFileReference(
 
     override fun getVariants(): Array<out Any> {
         val project = element.project
-
-        val contentRoots = ProjectRootManager.getInstance(project).contentRoots
-        if (contentRoots.isEmpty()) return emptyArray()
-
-        val projectBaseDir = contentRoots[0]
+        val contextFile = element.containingFile
+        val resRoot = GdsPathUtil.findResRoot(contextFile) ?: return emptyArray()
+        val currentVirtualFile = contextFile.originalFile.virtualFile
 
         val result = mutableListOf<LookupElement>()
 
         val virtualFiles = FilenameIndex.getAllFilesByExt(project, "gdshaderinc", GlobalSearchScope.projectScope(project))
         for (file in virtualFiles) {
-            val relativeFilePath = VfsUtilCore.getRelativePath(file, projectBaseDir) ?: continue
-            val resPath = "res://$relativeFilePath"
+            if (file == currentVirtualFile) continue
+            if (!GdsPathUtil.isIncludable(file, resRoot, currentVirtualFile)) continue
+
+            val relativeFilePath = VfsUtilCore.getRelativePath(file, resRoot) ?: continue
+            val resPath = GdsPathUtil.RES_PREFIX + relativeFilePath
 
             result.add(GdsLookupElements.createFromIncludeFilePath(resPath))
         }

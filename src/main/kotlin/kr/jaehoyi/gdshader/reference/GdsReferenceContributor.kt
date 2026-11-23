@@ -1,6 +1,5 @@
 package kr.jaehoyi.gdshader.reference
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -9,6 +8,7 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.util.ProcessingContext
 import kr.jaehoyi.gdshader.psi.GdsTypes
+import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 
 class GdsReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -26,15 +26,8 @@ class GdsReferenceContributor : PsiReferenceContributor() {
     }
 
     private fun getIncludeReference(element: PsiElement): Array<out PsiReference> {
-        val text = element.text
+        val includePath = GdsPathUtil.findIncludePath(element) ?: return PsiReference.EMPTY_ARRAY
 
-        val regex = Regex("[\"']([^\"']*)[\"']")
-        val matchResult = regex.find(text) ?: return PsiReference.EMPTY_ARRAY
-
-        val pathPart = matchResult.groups[1] ?: return PsiReference.EMPTY_ARRAY
-
-        val range = TextRange(pathPart.range.first, pathPart.range.last + 1)
-
-        return arrayOf(GdsFileReference(element, range))
+        return arrayOf(GdsFileReference(element, includePath.rangeInElement))
     }
 }
