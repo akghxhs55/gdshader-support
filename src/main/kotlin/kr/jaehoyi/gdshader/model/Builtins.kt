@@ -1281,6 +1281,11 @@ object Builtins {
                         description = "Sphere UV. Used to map a panorama texture to the sky.",
                     ),
                     ParameterSpec(
+                        name = "FRAGCOORD",
+                        type = VEC4,
+                        description = "Coordinate of pixel center. In screen space. <code>xy</code> specifies position in window. Origin is lower-left.",
+                    ),
+                    ParameterSpec(
                         name = "HALF_RES_COLOR",
                         type = VEC4,
                         description = "Color value of the corresponding pixel from the half resolution pass. Uses linear filter.",
