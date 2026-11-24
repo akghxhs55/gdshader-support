@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
-import com.intellij.psi.search.GlobalSearchScope
 
 object GdsPathUtil {
     const val RES_PREFIX = "res://"
@@ -93,7 +92,7 @@ object GdsPathUtil {
     ): List<VirtualFile> {
         if (ProjectFileIndex.getInstance(project).isInContent(resRoot)) {
             return FilenameIndex
-                .getAllFilesByExt(project, INCLUDE_FILE_EXTENSION, GlobalSearchScope.projectScope(project))
+                .getAllFilesByExt(project, INCLUDE_FILE_EXTENSION, GdsSearchScopes.godotFiles(project))
                 .filter { isIncludable(it, resRoot, contextFile) }
         }
 
@@ -147,7 +146,7 @@ object GdsPathUtil {
             ?: ProjectFileIndex.getInstance(project).getContentRootForFile(file)
             ?: findProjectBaseDir(project)
 
-    private fun findGodotProjectDir(file: VirtualFile): VirtualFile? {
+    fun findGodotProjectDir(file: VirtualFile): VirtualFile? {
         var dir = if (file.isDirectory) file else file.parent
         while (dir != null) {
             if (dir.findChild(GODOT_PROJECT_FILE) != null) {

@@ -40,15 +40,15 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
     }
 
-//    intellijPlatformTesting {
-//        runIde {
-//            register("runIdeSpecific") {
-//                type = IntelliJPlatformType.Rider
-//                version = "2026.3"
-//                useInstaller = false
-//            }
-//        }
-//    }
+    intellijPlatformTesting {
+        runIde {
+            register("runIdeSpecific") {
+                type = IntelliJPlatformType.Rider
+                version = "2026.3"
+                useInstaller = false
+            }
+        }
+    }
 
     testImplementation("junit:junit:4.13.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")

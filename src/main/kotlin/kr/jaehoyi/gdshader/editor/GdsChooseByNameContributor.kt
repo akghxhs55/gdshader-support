@@ -5,11 +5,11 @@ import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.GdsFileType
 import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsItem
+import kr.jaehoyi.gdshader.resolve.GdsSearchScopes
 
 class GdsChooseByNameContributor : ChooseByNameContributor {
     override fun getNames(
@@ -18,7 +18,7 @@ class GdsChooseByNameContributor : ChooseByNameContributor {
     ): Array<out String> {
         val names = mutableListOf<String>()
 
-        val virtualFiles = FileTypeIndex.getFiles(GdsFileType, GlobalSearchScope.projectScope(project))
+        val virtualFiles = FileTypeIndex.getFiles(GdsFileType, GdsSearchScopes.godotFiles(project))
 
         for (virtualFile in virtualFiles) {
             val file = PsiManager.getInstance(project).findFile(virtualFile) as? GdsFile ?: continue
@@ -63,7 +63,7 @@ class GdsChooseByNameContributor : ChooseByNameContributor {
     ): Array<out NavigationItem> {
         val result = mutableListOf<NavigationItem>()
 
-        val virtualFiles = FileTypeIndex.getFiles(GdsFileType, GlobalSearchScope.projectScope(project))
+        val virtualFiles = FileTypeIndex.getFiles(GdsFileType, GdsSearchScopes.godotFiles(project))
 
         for (virtualFile in virtualFiles) {
             val file = PsiManager.getInstance(project).findFile(virtualFile) as? GdsFile ?: continue

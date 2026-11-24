@@ -3,7 +3,6 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import kr.jaehoyi.gdshader.GdsBundle
 import kr.jaehoyi.gdshader.model.Builtins
@@ -17,6 +16,7 @@ import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVisitor
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsSearchScopes
 
 class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symbol.description") {
     override fun buildVisitor(
@@ -33,7 +33,7 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
                     return
                 }
 
-                val scope = GlobalSearchScope.projectScope(element.project)
+                val scope = GdsSearchScopes.godotFiles(element.project)
                 val hasReferences = ReferencesSearch.search(element, scope, false).findFirst() != null
 
                 if (!hasReferences) {
@@ -57,7 +57,7 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
 
                 if (isProcessingFunction(element)) return
 
-                val scope = GlobalSearchScope.projectScope(element.project)
+                val scope = GdsSearchScopes.godotFiles(element.project)
                 val hasReferences = ReferencesSearch.search(element, scope, false).findFirst() != null
 
                 if (!hasReferences) {

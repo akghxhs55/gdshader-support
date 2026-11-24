@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.highlighting
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import kr.jaehoyi.gdshader.withDirectoryOutsideProjectScope
 
 class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
     override fun setUp() {
@@ -118,6 +119,25 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
             }
             """.trimIndent(),
         )
+    }
+
+    fun `test used local variable outside project scope`() {
+        val file =
+            myFixture.addFileToProject(
+                "external/test_shader.gdshader",
+                """
+                shader_type spatial;
+                void fragment() {
+                    float x = 1.0;
+                    ALBEDO = vec3(x);
+                }
+                """.trimIndent(),
+            )
+
+        withDirectoryOutsideProjectScope(module, file.virtualFile.parent) {
+            myFixture.configureFromExistingVirtualFile(file.virtualFile)
+            myFixture.checkHighlighting(true, false, true)
+        }
     }
 
     private fun doHighlightTest(code: String) {

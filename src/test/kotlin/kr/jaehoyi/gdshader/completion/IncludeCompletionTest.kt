@@ -6,6 +6,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.VfsTestUtil
+import kr.jaehoyi.gdshader.withDirectoryOutsideProjectScope
 
 class IncludeCompletionTest : GdsCompletionTestBase() {
     fun `test include shows file list inside quotes`() {
@@ -203,6 +204,17 @@ class IncludeCompletionTest : GdsCompletionTestBase() {
             assertDoesntContain(suggestedStrings, "res://ignored/hidden.gdshaderinc", "res://sub/nested.gdshaderinc")
         } finally {
             WriteAction.runAndWait<Throwable> { outsideRoot.delete(this) }
+        }
+    }
+
+    fun `test include completion lists files outside project scope`() {
+        myFixture.addFileToProject("project.godot", "")
+        val includeFile = myFixture.addFileToProject("addons/shared.gdshaderinc", "").virtualFile
+
+        withDirectoryOutsideProjectScope(module, includeFile.parent) {
+            val suggestedStrings = completeIncludeIn("main.gdshader")
+
+            assertContainsElements(suggestedStrings, "res://addons/shared.gdshaderinc")
         }
     }
 
