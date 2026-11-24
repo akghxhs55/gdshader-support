@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.2.1"
+version = "1.2.2"
 
 val pluginVerifierIdeVersions =
     providers
@@ -74,8 +74,15 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Add file creation template for empty .gdshader file</li>
-              <li>Fix builtin resolving logic in .gdshaderinc files (#16)</li>
+              <li>Aligned include path resolution with Godot (#17)</li>
+              <li>Fixed struct resolution logic (#18, #19)</li>
+              <li>Added include reference handler</li>
+              <li>Improved #define macro evaluation</li>
+              <li>Fixed chained expression evaluation</li>
+              <li>Fixed leading-zero integer literals evaluation</li>
+              <li>Aligned uint and shift evaluation with Godot</li>
+              <li>Aligned operator and assignment validation with Godot</li>
+              <li>Fixed more minor bugs</li>
             </ul>
             """.trimIndent()
     }

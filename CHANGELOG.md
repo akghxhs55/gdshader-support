@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## Unreleased
+## 1.2.2 (2026-11-24)
 
 - Aligned include path resolution with Godot (#17)
 - Fixed struct resolution logic (#18, #19)
@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Fixed leading-zero integer literals evaluation
 - Aligned uint and shift evaluation with Godot
 - Aligned operator and assignment validation with Godot
+- Fixed more minor bugs
 
 ## 1.2.1 (2026-11-17)
 
