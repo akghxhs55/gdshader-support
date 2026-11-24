@@ -129,6 +129,8 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
             checkSpec(spec)
             return
         }
+
+        fail("Resolved element is of unexpected type: ${resolvedElement::class.java}")
     }
 
     fun `test resolve variable from included file`() {
@@ -159,6 +161,33 @@ class GdsVariableReferenceTest : BasePlatformTestCase() {
             includedFile.virtualFile.path,
             element.containingFile.virtualFile.path,
         )
+    }
+
+    fun `test resolve variable through nested includes`() {
+        myFixture.addFileToProject("level_a.gdshaderinc", "uniform vec3 deep_color;")
+
+        myFixture.addFileToProject(
+            "level_b.gdshaderinc",
+            """
+            #include "res://level_a.gdshaderinc"
+            """.trimIndent(),
+        )
+
+        myFixture.configureByText(
+            "main.gdshader",
+            """
+            #include "res://level_b.gdshaderinc"
+
+            void fragment() {
+                vec3 c = deep_<caret>color;
+            }
+            """.trimIndent(),
+        )
+
+        val element = myFixture.elementAtCaret
+
+        assertEquals("deep_color", element.text)
+        assertEquals("level_a.gdshaderinc", element.containingFile.name)
     }
 
     fun `test cyclic include does not crash`() {

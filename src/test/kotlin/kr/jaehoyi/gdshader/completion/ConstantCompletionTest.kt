@@ -17,19 +17,6 @@ class ConstantCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(completions, "LOCAL_A", "LOCAL_B", "INCLUDED_A", "INCLUDED_B")
     }
 
-    fun `test constant keyword in toplevel`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "const")
-    }
-
     fun `test after const in toplevel`() {
         myFixture.configureByText(
             "test.gdshader",

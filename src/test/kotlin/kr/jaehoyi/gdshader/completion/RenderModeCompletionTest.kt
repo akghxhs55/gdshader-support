@@ -1,19 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
 class RenderModeCompletionTest : GdsCompletionTestBase() {
-    fun `test render mode keyword`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "render_mode")
-    }
-
     fun `test render mode values`() {
         myFixture.configureByText(
             "test.gdshader",

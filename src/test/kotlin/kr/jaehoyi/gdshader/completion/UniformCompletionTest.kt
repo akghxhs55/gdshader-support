@@ -3,19 +3,6 @@ package kr.jaehoyi.gdshader.completion
 import kr.jaehoyi.gdshader.model.Builtins
 
 class UniformCompletionTest : GdsCompletionTestBase() {
-    fun `test uniform keywords`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "uniform", "global", "instance")
-    }
-
     fun `test after modifier`() {
         myFixture.configureByText(
             "test.gdshader",
@@ -255,116 +242,26 @@ class UniformCompletionTest : GdsCompletionTestBase() {
         )
     }
 
-    fun `test hint for sampler3D`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform sampler3D myVar : <caret>
-            """.trimIndent(),
-        )
+    fun `test hint for 3D array and cube samplers`() {
+        val samplers =
+            mapOf(
+                "sampler3D" to Builtins.SAMPLER3D,
+                "isampler3D" to Builtins.ISAMPLER3D,
+                "sampler2DArray" to Builtins.SAMPLER2DARRAY,
+                "usampler2DArray" to Builtins.USAMPLER2DARRAY,
+                "samplerCube" to Builtins.SAMPLERCUBE,
+                "samplerCubeArray" to Builtins.SAMPLERCUBEARRAY,
+                "samplerExternalOES" to Builtins.SAMPLEREXTERNALOES,
+            )
+        for ((typeName, type) in samplers) {
+            myFixture.configureByText("test.gdshader", "uniform $typeName myVar : <caret>")
 
-        val completions = completeAndGetStrings()
+            val completions = completeAndGetStrings()
 
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLER3D])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
-    }
-
-    fun `test hint for sampler2DArray`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform sampler2DArray myVar : <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLER2DARRAY])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
-    }
-
-    fun `test hint for integer sampler2DArray`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform usampler2DArray myVar : <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.USAMPLER2DARRAY])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
-    }
-
-    fun `test hint for samplerCube`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform samplerCube myVar : <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLERCUBE])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
-    }
-
-    fun `test hint for samplerCubeArray`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform samplerCubeArray myVar : <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLERCUBEARRAY])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
-    }
-
-    fun `test hint for samplerExternalOES`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform samplerExternalOES myVar : <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLEREXTERNALOES])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
-    }
-
-    fun `test hint for integer sampler3D`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            uniform isampler3D myVar : <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.ISAMPLER3D])
-        assertContainsElements(completions, expectedHints.toList())
-        assertContainsElements(completions, "repeat_enable", "repeat_disable", "filter_linear")
-        assertDoesntContain(completions, "hint_enum", "hint_range")
+            val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[type])
+            assertContainsElements(completions, expectedHints.toList())
+            assertDoesntContain(completions, "hint_enum", "hint_range")
+        }
     }
 
     fun `test chained hint`() {

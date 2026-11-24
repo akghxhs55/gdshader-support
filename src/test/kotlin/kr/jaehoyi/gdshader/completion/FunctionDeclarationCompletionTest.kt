@@ -1,19 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
 class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
-    fun `test toplevel`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "void", "int", "float", "highp", "mediump")
-    }
-
     fun `test return type after precision`() {
         myFixture.configureByText(
             "test.gdshader",
@@ -214,20 +201,5 @@ class FunctionDeclarationCompletionTest : GdsCompletionTestBase() {
 
         assertContainsElements(completions, "int", "float", "in", "out", "inout", "highp", "mediump", "lowp", "const")
         assertDoesntContain(completions, "shader_type", "uniform", "void")
-    }
-
-    fun `test no toplevel completion in function body`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            void f() {
-                <caret>
-            }
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertDoesntContain(completions, "shader_type", "uniform", "varying", "struct")
     }
 }

@@ -1,19 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
 class StructCompletionTest : GdsCompletionTestBase() {
-    fun `test struct keyword`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "struct")
-    }
-
     fun `test after struct`() {
         myFixture.configureByText(
             "test.gdshader",
@@ -102,5 +89,24 @@ class StructCompletionTest : GdsCompletionTestBase() {
 
         assertContainsElements(completions, "int", "float", "vec2", "vec3", "highp", "mediump", "lowp")
         assertDoesntContain(completions, "struct", "shader_type", "uniform", "if")
+    }
+
+    fun `test struct name completion`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+
+            struct PlayerInfo { float score; };
+
+            void fragment() {
+                Pla<caret>
+            }
+            """.trimIndent(),
+        )
+
+        val completions = completeAndGetStrings()
+
+        assertContainsElements(completions, "PlayerInfo")
     }
 }

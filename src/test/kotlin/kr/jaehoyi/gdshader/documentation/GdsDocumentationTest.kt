@@ -112,4 +112,19 @@ class GdsDocumentationTest : BasePlatformTestCase() {
         assertTrue(plainDoc.contains("struct MyData"))
         assertTrue(plainDoc.contains("My custom data structure"))
     }
+
+    fun `test builtin function documentation without shader type`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            void f() {
+                float a = <caret>sin(1.0);
+            }
+            """.trimIndent(),
+        )
+
+        val element = myFixture.elementAtCaret
+        val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
+        assertNotNull(provider.generateDoc(element, null))
+    }
 }

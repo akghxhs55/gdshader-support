@@ -24,8 +24,6 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
 
         val resolvedElement = myFixture.elementAtCaret
 
-        assertNotNull("Reference should resolve to something", resolvedElement)
-        // 3. 타입 검증: 구조체 이름 선언부(GdsStructNameDecl)여야 함
         assertInstanceOf(resolvedElement, GdsStructNameDecl::class.java)
         assertEquals("MyCustomData", (resolvedElement as GdsStructNameDecl).name)
     }
@@ -43,29 +41,7 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
         myFixture.configureByText("test.gdshader", code)
         val resolvedElement = myFixture.elementAtCaret
 
-        assertNotNull(resolvedElement)
         assertEquals("Inner", (resolvedElement as GdsStructNameDecl).name)
-    }
-
-    fun `test struct completion`() {
-        val code =
-            """
-            shader_type canvas_item;
-            
-            struct PlayerInfo {};
-
-            void fragment() {
-                Pla<caret>
-            }
-            """.trimIndent()
-
-        myFixture.configureByText("test.gdshader", code)
-        myFixture.completeBasic()
-
-        val lookupStrings = requireNotNull(myFixture.lookupElementStrings)
-        assertNotNull(lookupStrings)
-
-        assertTrue("Should contain 'PlayerInfo'", lookupStrings.contains("PlayerInfo"))
     }
 
     fun `test struct declared at end of included file resolves`() {

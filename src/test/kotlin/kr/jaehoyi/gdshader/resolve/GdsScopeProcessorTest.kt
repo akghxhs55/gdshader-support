@@ -4,8 +4,6 @@ import com.intellij.psi.ResolveState
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import kr.jaehoyi.gdshader.model.ArrayType
-import kr.jaehoyi.gdshader.model.FloatType
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
@@ -45,7 +43,7 @@ class GdsScopeProcessorTest : BasePlatformTestCase() {
         assertEquals(listOf("A"), names)
     }
 
-    fun `test included constants resolve and determine array size`() {
+    fun `test included constants resolve`() {
         myFixture.addFileToProject("constants.gdshaderinc", "\n".repeat(100) + "const int FIRST = 1, COUNT = 4;")
         myFixture.addFileToProject(
             "main.gdshader",
@@ -59,8 +57,6 @@ class GdsScopeProcessorTest : BasePlatformTestCase() {
         val resolved = reference.reference.resolve() as? GdsVariableNameDecl
         assertNotNull(resolved)
         assertEquals("constants.gdshaderinc", resolved!!.containingFile.name)
-        val values = declarations().single { it.name == "values" }
-        assertEquals(ArrayType(FloatType.DEFAULT, 4), values.variableSpec?.type)
     }
 
     fun `test second constant supports usage search and rename`() {

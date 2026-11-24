@@ -80,18 +80,6 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
 
     // === User-defined function argument type ===
 
-    fun `test correct argument types`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            float add(float a, float b) { return a + b; }
-            void fragment() {
-                float x = add(1.0, 2.0);
-            }
-        """,
-        )
-    }
-
     fun `test wrong argument type`() {
         doHighlightTest(
             """
@@ -113,6 +101,19 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
                 float x = f(<error descr="No matching function for 'f(float, int)' call: argument 2 should be int but is float">1.0, 2.0</error>);
             }
         """,
+        )
+    }
+
+    fun `test overloaded call with unknown argument type does not report mismatch`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f(float a) { return a; }
+            vec2 f(int x, float a) { return vec2(a); }
+            void fragment() {
+                vec2 r = f(unknown, 1.0);
+            }
+            """.trimIndent(),
         )
     }
 

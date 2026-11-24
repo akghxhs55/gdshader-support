@@ -25,7 +25,7 @@ class IncludeCompletionTest : GdsCompletionTestBase() {
         val suggestedStrings = completeAndGetStrings()
 
         assertContainsElements(suggestedStrings, "res://utils.gdshaderinc", "res://lib/math.gdshaderinc")
-        assertDoesntContain(suggestedStrings, "ignored.gdshader")
+        assertDoesntContain(suggestedStrings, "res://ignored.gdshader")
     }
 
     fun `test include completion handles subdirectories`() {

@@ -1,19 +1,6 @@
 package kr.jaehoyi.gdshader.completion
 
 class VaryingCompletionTest : GdsCompletionTestBase() {
-    fun `test varying keyword`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "varying")
-    }
-
     fun `test after varying`() {
         myFixture.configureByText(
             "test.gdshader",

@@ -5,8 +5,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.psi.*
 
 class GdsConstantEvaluatorTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String = "src/test/testData"
-
     private fun evaluateExpression(expression: String): Any? {
         val code =
             """
@@ -23,8 +21,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         // Find the initializer expression
         val declarators = PsiTreeUtil.findChildrenOfType(file, GdsLocalVariableDeclarator::class.java)
         val declarator = declarators.find { it.variableNameDecl.text == "x" }
-        val initializer = declarator?.initializer ?: return null
-        val expr = initializer.expression ?: return null
+        val expr = requireNotNull(declarator?.initializer?.expression) { "Initializer not found: $expression" }
 
         return GdsConstantEvaluator.evaluate(expr)
     }
@@ -44,8 +41,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
 
         val declarators = PsiTreeUtil.findChildrenOfType(file, GdsLocalVariableDeclarator::class.java)
         val declarator = declarators.find { it.variableNameDecl.text == "x" }
-        val initializer = declarator?.initializer ?: return null
-        val expr = initializer.expression ?: return null
+        val expr = requireNotNull(declarator?.initializer?.expression) { "Initializer not found: $expression" }
 
         return GdsConstantEvaluator.evaluateAsInt(expr)
     }
@@ -346,7 +342,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         val initializer = declarator?.initializer
         val expr = initializer?.expression
 
-        assertEquals(10, expr?.let { GdsConstantEvaluator.evaluate(it) })
+        assertEquals(10, GdsConstantEvaluator.evaluate(requireNotNull(expr)))
     }
 
     fun `test const variable in expression`() {
@@ -369,7 +365,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         val initializer = declarator?.initializer
         val expr = initializer?.expression
 
-        assertEquals(15, expr?.let { GdsConstantEvaluator.evaluate(it) })
+        assertEquals(15, GdsConstantEvaluator.evaluate(requireNotNull(expr)))
     }
 
     fun `test chained const references`() {
@@ -393,7 +389,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         val initializer = declarator?.initializer
         val expr = initializer?.expression
 
-        assertEquals(8, expr?.let { GdsConstantEvaluator.evaluate(it) })
+        assertEquals(8, GdsConstantEvaluator.evaluate(requireNotNull(expr)))
     }
 
     fun `test literal define reference`() {
@@ -416,7 +412,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         val initializer = declarator?.initializer
         val expr = initializer?.expression
 
-        assertEquals(0.01f, expr?.let { GdsConstantEvaluator.evaluate(it) })
+        assertEquals(0.01f, GdsConstantEvaluator.evaluate(requireNotNull(expr)))
     }
 
     fun `test literal define in expression`() {
@@ -439,7 +435,7 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         val initializer = declarator?.initializer
         val expr = initializer?.expression
 
-        assertEquals(8, expr?.let { GdsConstantEvaluator.evaluate(it) })
+        assertEquals(8, GdsConstantEvaluator.evaluate(requireNotNull(expr)))
     }
 
     // ===== evaluateAsInt Tests =====
@@ -491,6 +487,6 @@ class GdsConstantEvaluatorTest : BasePlatformTestCase() {
         val initializer = declarator?.initializer
         val expr = initializer?.expression
 
-        assertNull(expr?.let { GdsConstantEvaluator.evaluate(it) })
+        assertNull(GdsConstantEvaluator.evaluate(requireNotNull(expr)))
     }
 }

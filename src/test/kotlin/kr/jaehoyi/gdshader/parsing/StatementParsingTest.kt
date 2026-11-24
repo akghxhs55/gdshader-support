@@ -42,4 +42,8 @@ class StatementParsingTest :
     fun testSimpleStatement() {
         doTest(true)
     }
+
+    fun testStructTypedLocalVariable() {
+        doTest(true)
+    }
 }

@@ -74,7 +74,7 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
             shader_type spatial;
             void fragment() {
                 int arr[3] = int[3](1, 2, 3);
-                int a = <caret>arr[0];
+                int a = arr[0];
             }
         """
         myFixture.configureByText("test.gdshader", code)

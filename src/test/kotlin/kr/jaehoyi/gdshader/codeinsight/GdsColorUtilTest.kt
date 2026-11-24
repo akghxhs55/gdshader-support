@@ -2,7 +2,6 @@ package kr.jaehoyi.gdshader.codeinsight
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
@@ -14,7 +13,6 @@ class GdsColorUtilTest {
         val text = "vec3(1.0, 0.0, 0.0)"
         val color = requireNotNull(GdsColorUtil.extractColorFromText(text))
 
-        assertNotNull(color)
         assertEquals(255, color.red)
         assertEquals(0, color.green)
         assertEquals(0, color.blue)
@@ -26,7 +24,6 @@ class GdsColorUtilTest {
         val text = "vec4(0.0, 1.0, 0.0, 0.5)"
         val color = requireNotNull(GdsColorUtil.extractColorFromText(text))
 
-        assertNotNull(color)
         assertEquals(0, color.red)
         assertEquals(255, color.green)
         assertEquals(0, color.blue)
@@ -58,7 +55,6 @@ class GdsColorUtilTest {
         val text = "vec3(2.0, -1.0, 0.5)"
         val color = requireNotNull(GdsColorUtil.extractColorFromText(text))
 
-        assertNotNull(color)
         assertEquals(255, color.red)
         assertEquals(0, color.green)
         assertTrue(color.blue in 127..128)

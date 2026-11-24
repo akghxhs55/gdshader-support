@@ -55,10 +55,6 @@ class ErrorParsingTest :
         doTest(true)
     }
 
-    fun testStructTypedLocalVariable() {
-        doTest(true)
-    }
-
     fun testGlobalWithoutUniform() {
         doTest(true)
     }

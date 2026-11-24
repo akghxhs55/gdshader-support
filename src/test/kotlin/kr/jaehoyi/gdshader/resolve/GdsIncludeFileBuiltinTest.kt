@@ -51,21 +51,6 @@ class GdsIncludeFileBuiltinTest : BasePlatformTestCase() {
         assertTrue(plainDoc.contains("vec_type sin(vec_type angle)"))
     }
 
-    fun `test builtin function documentation without shader type in gdshader file`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            void f() {
-                float a = <caret>sin(1.0);
-            }
-            """.trimIndent(),
-        )
-
-        val element = myFixture.elementAtCaret
-        val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
-        assertNotNull(provider.generateDoc(element, null))
-    }
-
     fun `test parameter info in include file has no duplicate overloads`() {
         configureInclude(
             """

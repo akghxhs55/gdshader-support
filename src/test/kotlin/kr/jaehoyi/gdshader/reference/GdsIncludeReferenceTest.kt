@@ -12,7 +12,6 @@ class GdsIncludeReferenceTest : BasePlatformTestCase() {
         myFixture.configureByText(
             "main.gdshader",
             """
-            )
             #include "res://<caret>utils.gdshaderinc"
             """.trimIndent(),
         )
@@ -33,7 +32,6 @@ class GdsIncludeReferenceTest : BasePlatformTestCase() {
             myFixture.addFileToProject(
                 "shaders/main.gdshader",
                 """
-                )
                 #include "common.gdshaderinc"
                 """.trimIndent(),
             )
@@ -51,14 +49,13 @@ class GdsIncludeReferenceTest : BasePlatformTestCase() {
         assertEquals("common.gdshaderinc", (resolvedElement as PsiFile).name)
     }
 
-    fun `test parent directory relative path reference`() {
+    fun `test subdirectory relative path reference`() {
         val targetFile = myFixture.addFileToProject("shaders/includes/math.gdshaderinc", "// math functions")
 
         val mainFile =
             myFixture.addFileToProject(
                 "shaders/main.gdshader",
                 """
-                )
                 #include "includes/math.gdshaderinc"
                 """.trimIndent(),
             )

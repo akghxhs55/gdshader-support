@@ -101,7 +101,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            float my_func() {
+            void my_func() {
                 int x = 1;
                 switch (x) {
                 }
@@ -114,7 +114,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            float my_func() {
+            void my_func() {
                 uint x = 1u;
                 switch (x) {
                 }
@@ -127,7 +127,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            float my_func() {
+            void my_func() {
                 float x = 1.0;
                 switch (<error descr="Expected an integer or unsigned integer expression">x</error>) {
                 }
@@ -142,7 +142,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            bool my_func() {
+            void my_func() {
                 if (true) {
                 }
             }
@@ -154,7 +154,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            bool my_func() {
+            void my_func() {
                 for (;true;) {
                 }
             }
@@ -166,7 +166,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            bool my_func() {
+            void my_func() {
                 while (true) {
                 }
             }
@@ -178,7 +178,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            bool my_func() {
+            void my_func() {
                 do {
                 } while (true);
             }
@@ -210,22 +210,11 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test return correct type`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            float my_func() {
-                return 1.0;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test float type in if statement condition`() {
         doHighlightTest(
             """
             shader_type spatial;
-            bool my_func() {
+            void my_func() {
                 if (<error descr="Expected a boolean expression">1.0</error>) {
                 }
             }

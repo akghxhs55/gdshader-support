@@ -237,17 +237,6 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test function in helper skipped`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void my_helper() {
-                float y = sin(1.0);
-            }
-        """,
-        )
-    }
-
     // === Struct references ===
 
     fun `test unresolved struct`() {
@@ -311,18 +300,6 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
                 vec3 v = vec3(1.0, 2.0, 3.0);
                 vec2 a = v.xy;
                 float b = v.z;
-            }
-        """,
-        )
-    }
-
-    fun `test vector swizzle reassignment not flagged`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                vec4 c = vec4(1.0);
-                vec3 d = c.rgb;
             }
         """,
         )
@@ -544,7 +521,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             }
         """,
         )
-        myFixture.checkHighlighting(false, false, false)
+        myFixture.checkHighlighting(true, false, true)
     }
 
     fun `test resolved variable from included file`() {

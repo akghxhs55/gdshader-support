@@ -225,31 +225,4 @@ class VariableCompletionTest : GdsCompletionTestBase() {
 
         assertContainsElements(lookupStrings, "MAX_LIGHTS")
     }
-
-    fun `test transitive include resolution`() {
-        myFixture.addFileToProject("level_a.gdshaderinc", "uniform vec3 deep_color;")
-
-        myFixture.addFileToProject(
-            "level_b.gdshaderinc",
-            """
-            #include "res://level_a.gdshaderinc"
-            """.trimIndent(),
-        )
-
-        myFixture.configureByText(
-            "main.gdshader",
-            """
-            #include "res://level_b.gdshaderinc"
-
-            void fragment() {
-                vec3 c = deep_<caret>color;
-            }
-            """.trimIndent(),
-        )
-
-        val element = myFixture.elementAtCaret
-
-        assertEquals("deep_color", element.text)
-        assertEquals("level_a.gdshaderinc", element.containingFile.name)
-    }
 }

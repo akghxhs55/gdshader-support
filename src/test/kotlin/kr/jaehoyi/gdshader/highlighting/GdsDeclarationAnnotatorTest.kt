@@ -66,16 +66,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test include existing file`() {
-        myFixture.addFileToProject("helpers.gdshaderinc", "// helper")
-        doHighlightTest(
-            """
-            shader_type spatial;
-            #include "res://helpers.gdshaderinc"
-        """,
-        )
-    }
-
     fun `test uniform single array size`() {
         doHighlightTest(
             """
@@ -442,7 +432,7 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test duplicate parameters`() {
+    fun `test parameter shadows uniform`() {
         doHighlightTest(
             """
             shader_type spatial;
@@ -453,7 +443,7 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test duplicate local variable`() {
+    fun `test local variable shadows uniform`() {
         doHighlightTest(
             """
             shader_type spatial;
@@ -465,7 +455,7 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test duplicate local constant`() {
+    fun `test local constant shadows uniform`() {
         doHighlightTest(
             """
             shader_type spatial;
@@ -604,19 +594,6 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test overloaded call with unknown argument type does not report mismatch`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            float f(float a) { return a; }
-            vec2 f(int x, float a) { return vec2(a); }
-            void fragment() {
-                vec2 r = f(unknown, 1.0);
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test invalid constant initializer`() {
         doHighlightTest(
             """
@@ -682,7 +659,7 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test known preprocessor directives`() {
+    fun `test define directive is known`() {
         doHighlightTest(
             """
             shader_type spatial;

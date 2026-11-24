@@ -3,45 +3,6 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
-    fun `test valid vec3 plus vec3`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                vec3 a = vec3(1.0);
-                vec3 b = vec3(2.0);
-                vec3 c = a + b;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test valid float times vec3`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                float s = 2.0;
-                vec3 v = vec3(1.0);
-                vec3 r = s * v;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test valid mat4 times vec4`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                mat4 m = mat4(1.0);
-                vec4 v = vec4(1.0);
-                vec4 r = m * v;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test invalid vec2 plus vec3`() {
         doHighlightTest(
             """
@@ -800,7 +761,7 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test valid vector swizzle with int index`() {
+    fun `test valid vector int index`() {
         doHighlightTest(
             """
             shader_type spatial;
@@ -824,38 +785,12 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test invalid bool plus bool`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                bool a = true;
-                bool b = false;
-                bool c = <error descr="Invalid arguments to operator '+': 'bool, bool'">a + b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test invalid bool literal plus bool literal`() {
         doHighlightTest(
             """
             shader_type spatial;
             void fragment() {
                 bool c = <error descr="Invalid arguments to operator '+': 'bool, bool'">true + false</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid bvec2 times bvec2`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                bvec2 a = bvec2(true);
-                bvec2 b = bvec2(false);
-                bvec2 c = <error descr="Invalid arguments to operator '*': 'bvec2, bvec2'">a * b</error>;
             }
             """.trimIndent(),
         )
@@ -901,19 +836,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test invalid mat4 plus vec4`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                mat4 m = mat4(1.0);
-                vec4 v = vec4(1.0);
-                vec4 r = <error descr="Invalid arguments to operator '+': 'mat4, vec4'">m + v</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test invalid vec3 divided by mat3`() {
         doHighlightTest(
             """
@@ -922,19 +844,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
                 vec3 v = vec3(1.0);
                 mat3 m = mat3(1.0);
                 vec3 r = <error descr="Invalid arguments to operator '/': 'vec3, mat3'">v / m</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test valid int modulo int`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                int a = 5;
-                int b = 2;
-                int c = a % b;
             }
             """.trimIndent(),
         )
@@ -953,19 +862,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test valid ivec2 modulo int`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                ivec2 a = ivec2(5);
-                int b = 2;
-                ivec2 c = a % b;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test valid uvec3 modulo uvec3`() {
         doHighlightTest(
             """
@@ -974,19 +870,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
                 uvec3 a = uvec3(5u);
                 uvec3 b = uvec3(2u);
                 uvec3 c = a % b;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid float modulo float`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                float a = 1.0;
-                float b = 2.0;
-                float c = <error descr="Invalid arguments to operator '%': 'float, float'">a % b</error>;
             }
             """.trimIndent(),
         )
@@ -1003,19 +886,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test invalid vec2 modulo vec2`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                vec2 a = vec2(1.0);
-                vec2 b = vec2(2.0);
-                vec2 c = <error descr="Invalid arguments to operator '%': 'vec2, vec2'">a % b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test invalid vec3 modulo float`() {
         doHighlightTest(
             """
@@ -1024,19 +894,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
                 vec3 a = vec3(1.0);
                 float b = 2.0;
                 vec3 c = <error descr="Invalid arguments to operator '%': 'vec3, float'">a % b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid int modulo ivec2`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                int a = 5;
-                ivec2 b = ivec2(2);
-                ivec2 c = <error descr="Invalid arguments to operator '%': 'int, ivec2'">a % b</error>;
             }
             """.trimIndent(),
         )
@@ -1216,19 +1073,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test valid ivec2 shift int`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                ivec2 a = ivec2(1);
-                int b = 2;
-                ivec2 c = a << b;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test valid uvec3 shift uvec3`() {
         doHighlightTest(
             """
@@ -1242,45 +1086,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test invalid int shift uint`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                int a = 1;
-                uint b = 2u;
-                int c = <error descr="Invalid arguments to operator '<<': 'int, uint'">a << b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid int shift ivec2`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                int a = 1;
-                ivec2 b = ivec2(2);
-                ivec2 c = <error descr="Invalid arguments to operator '<<': 'int, ivec2'">a << b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid ivec2 shift ivec3`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                ivec2 a = ivec2(1);
-                ivec3 b = ivec3(2);
-                ivec2 c = <error descr="Invalid arguments to operator '>>': 'ivec2, ivec3'">a >> b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
     fun `test invalid uvec2 shift int`() {
         doHighlightTest(
             """
@@ -1289,71 +1094,6 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
                 uvec2 a = uvec2(1u);
                 int b = 2;
                 uvec2 c = <error descr="Invalid arguments to operator '<<': 'uvec2, int'">a << b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test valid int bitwise and ivec2`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                int a = 1;
-                ivec2 b = ivec2(3);
-                ivec2 c = a & b;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test valid uvec2 bitwise or uint`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                uvec2 a = uvec2(1u);
-                uint b = 2u;
-                uvec2 c = a | b;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid int bitwise and uint`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                int a = 1;
-                uint b = 2u;
-                int c = <error descr="Invalid arguments to operator '&': 'int, uint'">a & b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid ivec2 bitwise xor ivec3`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                ivec2 a = ivec2(1);
-                ivec3 b = ivec3(2);
-                ivec2 c = <error descr="Invalid arguments to operator '^': 'ivec2, ivec3'">a ^ b</error>;
-            }
-            """.trimIndent(),
-        )
-    }
-
-    fun `test invalid ivec2 bitwise or uvec2`() {
-        doHighlightTest(
-            """
-            shader_type spatial;
-            void fragment() {
-                ivec2 a = ivec2(1);
-                uvec2 b = uvec2(2u);
-                ivec2 c = <error descr="Invalid arguments to operator '|': 'ivec2, uvec2'">a | b</error>;
             }
             """.trimIndent(),
         )

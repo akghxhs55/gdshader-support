@@ -123,23 +123,6 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(completions, "radians")
     }
 
-    fun `test if statement body`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            shader_type spatial;
-
-            void f() {
-                if (test) <caret>
-            }
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "radians")
-    }
-
     fun `test in for statement condition`() {
         myFixture.configureByText(
             "test.gdshader",
@@ -313,21 +296,6 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
         assertDoesntContain(completions, "radians")
     }
 
-    fun `test uniform declaration initializer`() {
-        myFixture.configureByText(
-            "test.gdshader",
-            """
-            shader_type spatial;
-
-            uniform int test = <caret>
-            """.trimIndent(),
-        )
-
-        val completions = completeAndGetStrings()
-
-        assertContainsElements(completions, "radians")
-    }
-
     fun `test constant declaration initializer`() {
         myFixture.configureByText(
             "test.gdshader",
@@ -375,7 +343,7 @@ class ExpressionCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(completions, "radians")
     }
 
-    fun `test in array size`() {
+    fun `test in array index`() {
         myFixture.configureByText(
             "test.gdshader",
             """

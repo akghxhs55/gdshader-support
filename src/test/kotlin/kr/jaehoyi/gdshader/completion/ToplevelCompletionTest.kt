@@ -74,7 +74,16 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
 
         val completions = completeAndGetStrings()
 
-        assertDoesntContain(completions, "shader_type", "render_mode", "stencil_mode", "group_uniforms")
+        assertDoesntContain(
+            completions,
+            "shader_type",
+            "render_mode",
+            "stencil_mode",
+            "group_uniforms",
+            "uniform",
+            "varying",
+            "struct",
+        )
     }
 
     private fun assertTopLevelKeywords(completions: List<String>) {
@@ -85,6 +94,8 @@ class ToplevelCompletionTest : GdsCompletionTestBase() {
             "stencil_mode",
             "group_uniforms",
             "uniform",
+            "global",
+            "instance",
             "const",
             "varying",
             "struct",
