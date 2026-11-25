@@ -571,19 +571,6 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
 
     // === Edge cases ===
 
-    fun `test gdshaderinc files are skipped`() {
-        myFixture.configureByText(
-            "test.gdshaderinc",
-            """
-            float add(float a, float b) { return a + b; }
-            void my_func() {
-                float x = add(1.0, 2.0, 3.0);
-            }
-        """,
-        )
-        myFixture.checkHighlighting(false, false, false)
-    }
-
     fun `test unresolved function is not checked`() {
         myFixture.configureByText(
             "test_shader.gdshader",
@@ -636,8 +623,69 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === Include files ===
+
+    fun `test struct constructor argument count in include file`() {
+        doIncludeHighlightTest(
+            """
+            struct FooStruct {
+                float screen_pixel_size;
+                float bounds;
+            };
+            const FooStruct FOO = FooStruct(<error descr="Too few arguments for 'FooStruct(float, float)' call. Expected at least 2 but received 1.">1.0</error>);
+        """,
+        )
+    }
+
+    fun `test struct constructor argument type in include file`() {
+        doIncludeHighlightTest(
+            """
+            struct FooStruct {
+                float screen_pixel_size;
+                float bounds;
+            };
+            const FooStruct FOO = FooStruct(<error descr="No matching function for 'FooStruct(float, float)' call: argument 2 should be float but is vec2">1.0, vec2(1.0)</error>);
+        """,
+        )
+    }
+
+    fun `test builtin constructor in include file`() {
+        doIncludeHighlightTest(
+            """
+            vec3 make() {
+                return vec3(<error descr="Too many arguments for 'vec3(float, float, float)' call. Expected at most 3 but received 4.">1.0, 2.0, 3.0, 4.0</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test call to function declared outside include file`() {
+        doIncludeHighlightTest(
+            """
+            float use() {
+                return external_function(1.0, 2.0, 3.0);
+            }
+        """,
+        )
+    }
+
+    fun `test call with argument declared outside include file`() {
+        doIncludeHighlightTest(
+            """
+            float use() {
+                return sin(external_value);
+            }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
+        myFixture.checkHighlighting(false, false, true)
+    }
+
+    private fun doIncludeHighlightTest(code: String) {
+        myFixture.configureByText("test_include.gdshaderinc", code)
         myFixture.checkHighlighting(false, false, true)
     }
 }

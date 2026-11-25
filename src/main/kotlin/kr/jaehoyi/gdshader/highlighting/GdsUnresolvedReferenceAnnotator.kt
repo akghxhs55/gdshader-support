@@ -22,12 +22,11 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.UNRESOLVED_REFERENCE)) return
-        if (isIncludeFile(element)) return
 
         when (element) {
-            is GdsVariableNameRef -> checkVariableRef(element, holder)
+            is GdsVariableNameRef -> if (!isIncludeFile(element)) checkVariableRef(element, holder)
             is GdsFunctionNameRef -> checkFunctionRef(element, holder)
-            is GdsStructNameRef -> checkStructRef(element, holder)
+            is GdsStructNameRef -> if (!isIncludeFile(element)) checkStructRef(element, holder)
             is GdsStructMemberNameRef -> checkStructMemberRef(element, holder)
         }
     }
@@ -55,7 +54,7 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         val call = element.parent as? GdsFunctionCall
         if (call != null && GdsArrayMethodResolver.isMemberCall(call)) {
             if (GdsArrayMethodResolver.receiverType(call) == null) return
-        } else if (resolveAsStruct(element)) {
+        } else if (isIncludeFile(element) || resolveAsStruct(element)) {
             return
         }
 

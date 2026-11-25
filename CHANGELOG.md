@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## Unreleased
+
+- Validate function calls in include files (#20)
+
 ## 1.2.2 (2026-11-24)
 
 - Aligned include path resolution with Godot (#17)

@@ -537,8 +537,56 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === Include files ===
+
+    fun `test symbols declared outside include file`() {
+        doIncludeHighlightTest(
+            """
+            float use(ExternalStruct s) {
+                return external_function(external_value);
+            }
+        """,
+        )
+    }
+
+    fun `test invalid swizzle in include file`() {
+        doIncludeHighlightTest(
+            """
+            float use(vec2 v) {
+                return v.<error descr="Invalid member for 'vec2' expression: '.z'">z</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test invalid struct member in include file`() {
+        doIncludeHighlightTest(
+            """
+            struct Data { float value; };
+            float use(Data d) {
+                return d.<error descr="Invalid member for 'Data' expression: '.missing'">missing</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test member of type declared outside include file`() {
+        doIncludeHighlightTest(
+            """
+            float use(ExternalStruct s) {
+                return s.anything;
+            }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
+        myFixture.checkHighlighting(true, false, true)
+    }
+
+    private fun doIncludeHighlightTest(code: String) {
+        myFixture.configureByText("test_include.gdshaderinc", code)
         myFixture.checkHighlighting(true, false, true)
     }
 }
