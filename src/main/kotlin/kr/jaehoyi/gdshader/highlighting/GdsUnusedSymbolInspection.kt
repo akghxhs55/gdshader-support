@@ -3,6 +3,10 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import kr.jaehoyi.gdshader.GdsBundle
 import kr.jaehoyi.gdshader.model.Builtins
@@ -33,10 +37,7 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
                     return
                 }
 
-                val scope = GdsSearchScopes.godotFiles(element.project)
-                val hasReferences = ReferencesSearch.search(element, scope, false).findFirst() != null
-
-                if (!hasReferences) {
+                if (isUnused(element)) {
                     val kind =
                         when (parent) {
                             is GdsParameter -> GdsBundle.message("inspection.unused.symbol.message.parameter")
@@ -57,10 +58,7 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
 
                 if (isProcessingFunction(element)) return
 
-                val scope = GdsSearchScopes.godotFiles(element.project)
-                val hasReferences = ReferencesSearch.search(element, scope, false).findFirst() != null
-
-                if (!hasReferences) {
+                if (isUnused(element)) {
                     val kind = GdsBundle.message("inspection.unused.symbol.message.function")
                     holder.registerProblem(
                         element,
@@ -70,6 +68,28 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
                 }
             }
         }
+    }
+
+    private fun isUnused(element: PsiNamedElement): Boolean {
+        val useScope = element.useScope
+        val scope =
+            if (useScope is LocalSearchScope) {
+                useScope
+            } else {
+                if (!isIndexed(element)) return false
+                GdsSearchScopes.godotFiles(element.project)
+            }
+        return ReferencesSearch.search(element, scope, false).findFirst() == null
+    }
+
+    // Searches outside a LocalSearchScope go through the word index, which knows nothing about unindexed files
+    // such as ones in folders excluded from indexing.
+    private fun isIndexed(element: PsiNamedElement): Boolean {
+        val file = element.containingFile ?: return false
+        val name = element.name ?: return false
+        return !PsiSearchHelper
+            .getInstance(element.project)
+            .processAllFilesWithWord(name, GlobalSearchScope.fileScope(file), { false }, true)
     }
 
     private fun isProcessingFunction(element: GdsFunctionNameDecl): Boolean {

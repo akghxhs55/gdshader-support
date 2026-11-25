@@ -11,6 +11,7 @@ import static kr.jaehoyi.gdshader.psi.GdsTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 import kr.jaehoyi.gdshader.model.VariableSpec;
+import com.intellij.psi.search.SearchScope;
 
 public class GdsVariableNameDeclImpl extends ASTWrapperPsiElement implements GdsVariableNameDecl {
 
@@ -46,6 +47,11 @@ public class GdsVariableNameDeclImpl extends ASTWrapperPsiElement implements Gds
   @Override
   public @Nullable VariableSpec getVariableSpec() {
     return GdsPsiImplUtil.getVariableSpec(this);
+  }
+
+  @Override
+  public @NotNull SearchScope getUseScope() {
+    return GdsPsiImplUtil.getUseScope(this);
   }
 
 }

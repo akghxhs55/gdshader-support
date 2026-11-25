@@ -1,5 +1,6 @@
 package kr.jaehoyi.gdshader.highlighting
 
+import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kr.jaehoyi.gdshader.withDirectoryOutsideProjectScope
 
@@ -137,6 +138,36 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
         withDirectoryOutsideProjectScope(module, file.virtualFile.parent) {
             myFixture.configureFromExistingVirtualFile(file.virtualFile)
             myFixture.checkHighlighting(true, false, true)
+        }
+    }
+
+    fun `test symbols in unindexed file`() {
+        val file =
+            myFixture.addFileToProject(
+                "excluded/test_shader.gdshader",
+                """
+                shader_type spatial;
+                float my_func(float x, float <warning descr="Parameter 'y' is never used">y</warning>) {
+                    const float K = 2.0;
+                    float z = x * K;
+                    return z;
+                }
+                float unused_func() {
+                    return 1.0;
+                }
+                void fragment() {
+                    ALBEDO = vec3(my_func(1.0, 2.0));
+                }
+                """.trimIndent(),
+            )
+
+        val directory = file.virtualFile.parent
+        PsiTestUtil.addExcludedRoot(module, directory)
+        try {
+            myFixture.configureFromExistingVirtualFile(file.virtualFile)
+            myFixture.checkHighlighting(true, false, true)
+        } finally {
+            PsiTestUtil.removeExcludedRoot(module, directory)
         }
     }
 

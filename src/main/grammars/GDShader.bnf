@@ -179,7 +179,7 @@ local_variable_declarator ::= variable_name_decl array_size? (OP_ASSIGN initiali
 variable_name_decl ::= IDENTIFIER
 {
 	implements=["com.intellij.psi.PsiNameIdentifierOwner" "kr.jaehoyi.gdshader.psi.GdsVariable"]
-	methods=[getName setName getNameIdentifier getVariableSpec]
+	methods=[getName setName getNameIdentifier getVariableSpec getUseScope]
 }
 
 // A list followed by a postfix or an operator, such as `{ 1.0, 2.0 }[0]`, is parsed as an expression.
