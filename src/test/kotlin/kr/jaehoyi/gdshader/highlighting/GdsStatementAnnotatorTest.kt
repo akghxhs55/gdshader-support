@@ -104,6 +104,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
             void my_func() {
                 int x = 1;
                 switch (x) {
+                    case 0: break;
                 }
             }
             """.trimIndent(),
@@ -117,6 +118,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
             void my_func() {
                 uint x = 1u;
                 switch (x) {
+                    case 0u: break;
                 }
             }
             """.trimIndent(),
@@ -130,7 +132,35 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
             void my_func() {
                 float x = 1.0;
                 switch (<error descr="Expected an integer or unsigned integer expression">x</error>) {
+                    case 0: break;
                 }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test switch with only default`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void my_func() {
+                int x = 1;
+                switch (x) {
+                    default: break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test empty switch`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void my_func() {
+                int x = 1;
+                switch (x) {
+                <error descr="Expected a 'case' or 'default'">}</error>
             }
             """.trimIndent(),
         )

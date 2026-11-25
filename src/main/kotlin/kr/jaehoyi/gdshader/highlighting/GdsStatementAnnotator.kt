@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.BoolType
@@ -131,6 +132,14 @@ class GdsStatementAnnotator : Annotator {
         element: GdsSwitchStatement,
         holder: AnnotationHolder,
     ) {
+        checkSwitchExpression(element, holder)
+        checkEmptySwitchBody(element, holder)
+    }
+
+    private fun checkSwitchExpression(
+        element: GdsSwitchStatement,
+        holder: AnnotationHolder,
+    ) {
         val expression = element.expression ?: return
         val type = GdsExpressionTypeInference.inferType(expression) ?: return
 
@@ -140,6 +149,27 @@ class GdsStatementAnnotator : Annotator {
                 .range(expression)
                 .create()
         }
+    }
+
+    // Godot 4.7.2 (ShaderLanguage::_parse_block, TK_CF_SWITCH) requires the first token after '{'
+    // to be 'case' or 'default'. A body with other tokens already gets a parser error, so only
+    // the empty body is reported here, on the closing brace like Godot.
+    private fun checkEmptySwitchBody(
+        element: GdsSwitchStatement,
+        holder: AnnotationHolder,
+    ) {
+        val switchBlock = element.switchBlock ?: return
+        val closingBrace = switchBlock.node.findChildByType(GdsTypes.CURLY_BRACKET_CLOSE)?.psi ?: return
+        val switchBody = switchBlock.switchBody
+        if (switchBody != null) {
+            if (switchBody.caseClauseList.isNotEmpty()) return
+            if (PsiTreeUtil.hasErrorElements(switchBody)) return
+        }
+
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Expected a 'case' or 'default'")
+            .range(closingBrace)
+            .create()
     }
 
     private fun checkIfStatement(
