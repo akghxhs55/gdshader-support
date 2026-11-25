@@ -273,6 +273,45 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct used as its own member type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Node { <error descr="Unresolved reference 'Node'">Node</error> next; float value; };
+        """,
+        )
+    }
+
+    fun `test struct used as member type before declaration`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct A { <error descr="Unresolved reference 'B'">B</error> b; };
+            struct B { float x; };
+        """,
+        )
+    }
+
+    fun `test struct used as parameter type before declaration`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void f(<error descr="Unresolved reference 'B'">B</error> b) {}
+            struct B { float x; };
+        """,
+        )
+    }
+
+    fun `test struct used as member type after declaration`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct B { float x; };
+            struct A { B b; };
+        """,
+        )
+    }
+
     // === Struct member references ===
 
     fun `test unresolved struct member`() {

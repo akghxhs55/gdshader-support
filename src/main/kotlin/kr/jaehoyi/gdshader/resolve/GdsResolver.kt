@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.resolve
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.ResolveState
+import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.isWritableBuiltin
@@ -12,6 +13,7 @@ import kr.jaehoyi.gdshader.psi.GdsFunction
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsStatementBody
+import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
@@ -106,8 +108,10 @@ object GdsResolver {
         val site = GdsMacroExpansion.expansionSite(startElement)
         val file = site.containingFile
         val originFile = file.originalFile
+        // Godot registers a struct only after its closing ';', so its own body cannot refer to it.
+        val startOffset = site.parentOfType<GdsStructDeclaration>()?.textRange?.startOffset ?: site.textOffset
         return file.processDeclarations(
-            GdsScopeProcessor(GdsStructNameDecl::class.java, site.textOffset, originFile, processor),
+            GdsScopeProcessor(GdsStructNameDecl::class.java, startOffset, originFile, processor),
             ResolveState.initial(),
             null,
             site,

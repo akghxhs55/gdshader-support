@@ -768,7 +768,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            struct Node { Node next; float value; };
+            struct Node { <error descr="Unresolved reference 'Node'">Node</error> next; float value; };
             void fragment() {
                 Node first;
                 Node n = Node(first, 1.0);

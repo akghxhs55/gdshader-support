@@ -110,7 +110,7 @@ object GdsDataTypeFactory {
         visiting: MutableSet<GdsStructDeclaration>,
     ): StructType? {
         val structName = structDeclaration.structNameDecl?.text ?: return null
-        // A self-referencing member (`struct A { A a; };`) resolves to its own declaration.
+        // Mutually including files can still make struct members refer to each other.
         if (!visiting.add(structDeclaration)) return null
 
         try {
