@@ -611,12 +611,11 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
             uniform float spread = 180;
             uniform float unsigned_spread = 180u;
             uniform float negative_spread = -180;
-            uniform float constant_spread = ANGLE;
-            uniform float computed_spread = (90 + 90);
+            uniform float constant_spread = <error descr="Expected constant expression after '='.">ANGLE</error>;
+            uniform float computed_spread = <error descr="Expected constant expression after '='.">(90 + 90)</error>;
             uniform uint zero = 0;
             uniform uint positive = 180;
             uniform int signed_max = 2147483647u;
-            global uniform float global_spread = 180;
             instance uniform float instance_spread = 180;
             """.trimIndent(),
         )
@@ -626,26 +625,56 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            uniform uint negative = <error descr="Cannot assign a value of type 'int' to type 'uint'">-1</error>;
-            uniform int overflow = <error descr="Cannot assign a value of type 'uint' to type 'int'">2147483648u</error>;
-            uniform int count = <error descr="Cannot assign a value of type 'float' to type 'int'">1.0</error>;
-            uniform uint unsigned_count = <error descr="Cannot assign a value of type 'float' to type 'uint'">1.0</error>;
-            uniform float speed = <error descr="Cannot assign a value of type 'bool' to type 'float'">true</error>;
-            uniform bool enabled = <error descr="Cannot assign a value of type 'int' to type 'bool'">1</error>;
-            uniform vec3 direction = <error descr="Cannot assign a value of type 'int' to type 'vec3'">1</error>;
+            uniform uint negative = <error descr="Can't convert constant to 'uint'.">-1</error>;
+            uniform int overflow = <error descr="Can't convert constant to 'int'.">2147483648u</error>;
+            uniform int count = <error descr="Can't convert constant to 'int'.">1.0</error>;
+            uniform uint unsigned_count = <error descr="Can't convert constant to 'uint'.">1.0</error>;
+            uniform float speed = <error descr="Can't convert constant to 'float'.">true</error>;
+            uniform bool enabled = <error descr="Can't convert constant to 'bool'.">1</error>;
+            uniform vec3 direction = <error descr="Can't convert constant to 'vec3'.">1</error>;
+            uniform vec4 color = <error descr="Can't convert constant to 'vec4'.">vec3(1.0)</error>;
             """.trimIndent(),
         )
     }
 
-    fun `test uniform unevaluated initializer is deferred`() {
+    fun `test uniform non-constant initializer`() {
         doHighlightTest(
             """
             shader_type spatial;
             uniform int source;
-            uniform float deferred_reference = source;
-            uniform float deferred_component = ivec2(1).x;
-            uniform vec2 deferred_vector = ivec2(1);
+            uniform float reference = <error descr="Expected constant expression after '='.">source</error>;
+            uniform float component = <error descr="Expected constant expression after '='.">ivec2(1).x</error>;
+            uniform vec2 vector = <error descr="Can't convert constant to 'vec2'.">ivec2(1)</error>;
             uniform vec3 valid_vector = vec3(1.0);
+            """.trimIndent(),
+        )
+    }
+
+    fun `test uniform constructor and unary reduction`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float parenthesized = (180);
+            uniform float plus = +180;
+            uniform float double_negative = -(-180);
+            uniform highp float precise = 180;
+            uniform vec3 negative_vector = -vec3(1.0);
+            uniform vec2 converted_arguments = vec2(1, 2u);
+            uniform vec4 nested = vec4(vec2(1.0), 0.0, 1.0);
+            uniform mat2 diagonal = mat2(1.0);
+            uniform mat2 columns = mat2(vec2(1.0, 0.0), vec2(0.0, 1.0));
+            uniform bvec2 flags = bvec2(true);
+            uniform uint wrapped = -1u;
+            uniform float scalar_constructor = float(180);
+            uniform vec2 mixed_vector = <error descr="Expected constant expression after '='.">vec2(ivec2(1))</error>;
+            uniform uint negative_constructor = <error descr="Expected constant expression after '='.">uint(-1)</error>;
+            uniform int truncated = <error descr="Expected constant expression after '='.">int(1.5)</error>;
+            uniform float from_bool = <error descr="Expected constant expression after '='.">float(true)</error>;
+            uniform mat3 from_matrix = <error descr="Expected constant expression after '='.">mat3(mat2(1.0))</error>;
+            uniform bool inverted = <error descr="Expected constant expression after '='.">!true</error>;
+            uniform int inverted_bits = <error descr="Expected constant expression after '='.">~0</error>;
+            uniform float selected = <error descr="Expected constant expression after '='.">true ? 1.0 : 0.0</error>;
+            uniform float called = <error descr="Expected constant expression after '='.">sin(1.0)</error>;
             """.trimIndent(),
         )
     }

@@ -12,14 +12,11 @@ import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
-import kr.jaehoyi.gdshader.model.FloatType
 import kr.jaehoyi.gdshader.model.FunctionContext
-import kr.jaehoyi.gdshader.model.IntType
-import kr.jaehoyi.gdshader.model.UIntType
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
-import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
+import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFile
@@ -372,36 +369,25 @@ class GdsDeclarationAnnotator : Annotator {
     ) {
         val expr = element.expression ?: return
         val declaredType = GdsDataTypeFactory.createFromUniformDeclaration(element) ?: return
-        val exprType = GdsExpressionTypeInference.inferType(expr) ?: return
+        // Godot rejects defaults on uniform arrays before looking at the value.
+        if (declaredType is ArrayType) return
+        // An expression without a known type is invalid for another reason.
+        GdsExpressionTypeInference.inferType(expr) ?: return
 
-        if (declaredType.name == exprType.name) return
-
-        // Evaluation failure can also mean an unsupported constant expression.
-        val value = GdsConstantEvaluator.evaluate(expr) ?: return
-        val convertible =
-            when (declaredType) {
-                is FloatType if (exprType is IntType || exprType is UIntType) -> true
-                is UIntType if exprType is IntType -> {
-                    val integer = value as? Int ?: return
-                    integer >= 0
+        val message =
+            when (val reduced = GdsConstantReducer.reduce(expr)) {
+                GdsConstantReducer.Unknown -> return
+                GdsConstantReducer.NotConstant -> "Expected constant expression after '='."
+                is GdsConstantReducer.Constant -> {
+                    if (GdsConstantReducer.convertConstant(reduced, declaredType)) return
+                    "Can't convert constant to '${declaredType.name}'."
                 }
-
-                is IntType if exprType is UIntType -> {
-                    val integer = value as? Long ?: return
-                    integer in 0L..Int.MAX_VALUE.toLong()
-                }
-
-                else -> false
             }
 
-        if (!convertible) {
-            holder
-                .newAnnotation(
-                    HighlightSeverity.ERROR,
-                    "Cannot assign a value of type '${exprType.name}' to type '${declaredType.name}'",
-                ).range(expr)
-                .create()
-        }
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(expr)
+            .create()
     }
 
     // === Include line checks ===
