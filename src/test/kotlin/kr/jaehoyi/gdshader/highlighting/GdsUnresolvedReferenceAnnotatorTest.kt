@@ -61,8 +61,19 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             }
             void fragment() {
                 BENT_NORMAL_MAP = vec3(0.0, 0.0, 1.0);
-                CLEARCOAT_GLOSS = 1.0;
                 CLEARCOAT_ROUGHNESS = 0.5;
+            }
+        """,
+        )
+    }
+
+    // CLEARCOAT_GLOSS existed only in Godot 3.x; Godot 4.0+ rejects it as an unknown identifier.
+    fun `test Godot 3 CLEARCOAT_GLOSS is unresolved`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                <warning descr="Unresolved reference 'CLEARCOAT_GLOSS'">CLEARCOAT_GLOSS</warning> = 1.0;
             }
         """,
         )

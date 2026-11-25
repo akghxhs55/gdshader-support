@@ -665,16 +665,10 @@ object Builtins {
                         description = "Small specular blob added on top of the existing one. If used, Godot calculates clearcoat.",
                     ),
                     ParameterSpec(
-                        name = "CLEARCOAT_GLOSS",
-                        type = FLOAT,
-                        qualifier = ParameterQualifier.OUT,
-                        description = "Gloss of clearcoat in Godot 4.6 and earlier. If used, Godot calculates clearcoat.",
-                    ),
-                    ParameterSpec(
                         name = "CLEARCOAT_ROUGHNESS",
                         type = FLOAT,
                         qualifier = ParameterQualifier.OUT,
-                        description = "Roughness of clearcoat in Godot 4.7 and later. If used, Godot calculates clearcoat.",
+                        description = "Roughness of clearcoat. If used, Godot calculates clearcoat.",
                     ),
                     ParameterSpec(
                         name = "ANISOTROPY",
