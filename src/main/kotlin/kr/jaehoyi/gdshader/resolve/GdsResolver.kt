@@ -101,6 +101,19 @@ object GdsResolver {
         return processBuiltinFunctions(startElement, processor)
     }
 
+    fun findStructDeclaration(
+        startElement: PsiElement,
+        name: String,
+    ): GdsStructNameDecl? {
+        var result: GdsStructNameDecl? = null
+        processStructDeclaration(startElement) { decl ->
+            if (decl.name != name) return@processStructDeclaration true
+            result = decl
+            false
+        }
+        return result
+    }
+
     fun processStructDeclaration(
         startElement: PsiElement,
         processor: (element: GdsStructNameDecl) -> Boolean,

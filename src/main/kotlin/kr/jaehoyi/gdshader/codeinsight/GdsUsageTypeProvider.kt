@@ -9,7 +9,7 @@ import kr.jaehoyi.gdshader.psi.*
 class GdsUsageTypeProvider : UsageTypeProvider {
     override fun getUsageType(element: PsiElement): UsageType? =
         when (element) {
-            is GdsFunctionNameRef -> FUNCTION_CALL
+            is GdsFunctionNameRef -> if (element.reference.resolve() is GdsStructNameDecl) CONSTRUCTOR_CALL else FUNCTION_CALL
             is GdsStructNameRef -> getStructUsageType(element)
             is GdsStructMemberNameRef -> STRUCT_MEMBER_ACCESS
             else -> null

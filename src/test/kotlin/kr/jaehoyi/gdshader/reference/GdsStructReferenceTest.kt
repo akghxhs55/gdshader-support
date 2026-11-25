@@ -73,6 +73,63 @@ class GdsStructReferenceTest : BasePlatformTestCase() {
         assertEquals("LateData", (resolved as GdsStructNameDecl).name)
     }
 
+    fun `test struct constructor call resolves to struct`() {
+        val code =
+            """
+            struct FooStruct { float a; };
+
+            const FooStruct FOO = <caret>FooStruct(1.0);
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val resolvedElement = myFixture.elementAtCaret
+
+        assertInstanceOf(resolvedElement, GdsStructNameDecl::class.java)
+        assertEquals("FooStruct", (resolvedElement as GdsStructNameDecl).name)
+    }
+
+    fun `test struct array constructor call resolves to struct`() {
+        val code =
+            """
+            struct FooStruct { float a; };
+
+            const FooStruct FOO[1] = <caret>FooStruct[1](FooStruct(1.0));
+            """.trimIndent()
+
+        myFixture.configureByText("test.gdshader", code)
+        val resolvedElement = myFixture.elementAtCaret
+
+        assertInstanceOf(resolvedElement, GdsStructNameDecl::class.java)
+    }
+
+    fun `test rename struct updates constructor calls`() {
+        val code =
+            """
+            struct <caret>FooStruct {
+                float a;
+                float b;
+            };
+
+            const FooStruct FOO = FooStruct(1.0, 2.0);
+            const FooStruct BAR[1] = FooStruct[1](FooStruct(1.0, 2.0));
+            """.trimIndent()
+
+        myFixture.configureByText("foo.gdshaderinc", code)
+        myFixture.renameElementAtCaret("BarStruct")
+
+        myFixture.checkResult(
+            """
+            struct BarStruct {
+                float a;
+                float b;
+            };
+
+            const BarStruct FOO = BarStruct(1.0, 2.0);
+            const BarStruct BAR[1] = BarStruct[1](BarStruct(1.0, 2.0));
+            """.trimIndent(),
+        )
+    }
+
     private fun resolveStructAtCaret(): PsiElement? {
         val elementAtCaret = requireNotNull(myFixture.file.findElementAt(myFixture.caretOffset))
 

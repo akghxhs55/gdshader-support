@@ -12,19 +12,7 @@ class GdsStructReference(
 ) : PsiReferenceBase<PsiElement>(element, textRange) {
     private val key: String = element.text
 
-    override fun resolve(): PsiElement? {
-        var result: PsiElement? = null
-
-        GdsResolver.processStructDeclaration(element) { element ->
-            if (element.name == key) {
-                result = element
-                return@processStructDeclaration false
-            }
-            return@processStructDeclaration true
-        }
-
-        return result
-    }
+    override fun resolve(): PsiElement? = GdsResolver.findStructDeclaration(element, key)
 
     override fun handleElementRename(newElementName: String): PsiElement? {
         val identifier = GdsElementFactory.createIdentifier(element.project, newElementName) ?: return null

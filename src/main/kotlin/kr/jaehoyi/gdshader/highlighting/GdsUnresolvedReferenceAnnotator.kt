@@ -14,7 +14,6 @@ import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GdsStructNameRef
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
-import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsUnresolvedReferenceAnnotator : Annotator {
     override fun annotate(
@@ -54,7 +53,7 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
         val call = element.parent as? GdsFunctionCall
         if (call != null && GdsArrayMethodResolver.isMemberCall(call)) {
             if (GdsArrayMethodResolver.receiverType(call) == null) return
-        } else if (isIncludeFile(element) || resolveAsStruct(element)) {
+        } else if (isIncludeFile(element)) {
             return
         }
 
@@ -62,20 +61,6 @@ class GdsUnresolvedReferenceAnnotator : Annotator {
             .newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
             .range(element)
             .create()
-    }
-
-    private fun resolveAsStruct(element: PsiElement): Boolean {
-        val name = element.text
-        var found = false
-        GdsResolver.processStructDeclaration(element) { decl ->
-            if (decl.name == name) {
-                found = true
-                false
-            } else {
-                true
-            }
-        }
-        return found
     }
 
     private fun checkStructRef(

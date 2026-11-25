@@ -36,7 +36,10 @@ class GdsFunctionReference(
             true
         }
 
-        if (candidates.isEmpty()) return GdsPreprocessorDefinitions.resolveCallableMacro(element, key)
+        if (candidates.isEmpty()) {
+            return GdsPreprocessorDefinitions.resolveCallableMacro(element, key)
+                ?: GdsResolver.findStructDeclaration(element, key)
+        }
         if (candidates.size == 1) return candidates.first() as? PsiElement
 
         val functionCall = findFunctionCall() ?: return candidates.first() as? PsiElement

@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Aligned uniform initialization logic with Godot
 - Aligned array initializers and argument checks with Godot
 - Fixed struct member resolution
+- Fixed constructor call symbol resolution (#21)
 
 ## 1.2.2 (2026-11-24)
 

@@ -19,7 +19,6 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
-import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsHighlightingAnnotator : Annotator {
     override fun annotate(
@@ -63,8 +62,7 @@ class GdsHighlightingAnnotator : Annotator {
                 }
                 is GdsFunctionNameDecl -> GdsSyntaxHighlighter.FUNCTION
                 is GdsFunctionNameRef -> {
-                    // "MyStruct(...)" is parsed as a call, but it names a type.
-                    if (element.reference.resolve() == null && isStructName(element)) {
+                    if (element.reference.resolve() is GdsStructNameDecl) {
                         GdsSyntaxHighlighter.STRUCT
                     } else {
                         GdsSyntaxHighlighter.FUNCTION_CALL
@@ -91,9 +89,4 @@ class GdsHighlightingAnnotator : Annotator {
     }
 
     private fun isIncludeFile(element: PsiElement): Boolean = element.containingFile?.virtualFile?.extension == "gdshaderinc"
-
-    private fun isStructName(element: PsiElement): Boolean {
-        val name = element.text
-        return !GdsResolver.processStructDeclaration(element) { it.name != name }
-    }
 }
