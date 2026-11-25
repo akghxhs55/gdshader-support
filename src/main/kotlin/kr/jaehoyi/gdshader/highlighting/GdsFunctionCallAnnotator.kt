@@ -71,20 +71,28 @@ class GdsFunctionCallAnnotator : Annotator {
         functionName: String,
         holder: AnnotationHolder,
     ) {
-        val candidates = collectCandidates(functionCall, functionName)
-        if (candidates.isEmpty()) return
-
+        val nameRef = functionCall.functionNameRef ?: return
+        val functions = collectFunctionCandidates(functionCall, functionName) ?: return
         val argCount = getArgumentCount(functionCall)
-        checkArguments(candidates, argCount, functionName, functionCall, holder) { specs, argTypes ->
-            GdsOverloadResolver.resolveFunctionOverload(specs, argTypes, collectConstantArguments(functionCall))
+
+        if (functions.isNotEmpty()) {
+            checkArguments(functions, argCount, functionName, functionCall, holder) { specs, argTypes ->
+                GdsOverloadResolver.resolveFunctionOverload(specs, argTypes, collectConstantArguments(functionCall))
+            }
+            return
         }
+
+        val structConstructors = GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.getConstructors().orEmpty()
+        if (structConstructors.isEmpty()) return
+
+        checkArguments(structConstructors, argCount, functionName, functionCall, holder, GdsOverloadResolver::resolveStructConstructorOverload)
     }
 
-    private fun collectCandidates(
+    private fun collectFunctionCandidates(
         functionCall: GdsFunctionCall,
         functionName: String,
-    ): List<FunctionSpec> {
-        val nameRef = functionCall.functionNameRef ?: return emptyList()
+    ): List<FunctionSpec>? {
+        val nameRef = functionCall.functionNameRef ?: return null
         val candidates = mutableListOf<FunctionSpec>()
         var hasUnresolvedDeclaration = false
 
@@ -101,10 +109,8 @@ class GdsFunctionCallAnnotator : Annotator {
         }
 
         // A declaration whose types cannot be resolved may be the intended overload, so checking only the rest would report a false mismatch.
-        if (hasUnresolvedDeclaration) return emptyList()
-        if (candidates.isNotEmpty()) return candidates
-
-        return GdsDataTypeFactory.createFromStructName(nameRef, functionName)?.getConstructors() ?: emptyList()
+        if (hasUnresolvedDeclaration) return null
+        return candidates
     }
 
     private fun getArgumentCount(functionCall: GdsFunctionCall): Int {

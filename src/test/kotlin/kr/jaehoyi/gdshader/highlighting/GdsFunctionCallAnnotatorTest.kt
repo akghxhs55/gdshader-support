@@ -445,6 +445,66 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct constructor rejects int constant for float member`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; float y; };
+            void fragment() {
+                MyData d = MyData(<error descr="No matching function for 'MyData(float, float)' call: argument 1 should be float but is int">1, 2.0</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor rejects uint constant for int member`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { int x; };
+            void fragment() {
+                MyData d = MyData(<error descr="No matching function for 'MyData(int)' call: argument 1 should be int but is uint">1u</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test user function accepts int constant for float parameter`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float half_of(float x) { return x * 0.5; }
+            void fragment() {
+                float h = half_of(1);
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor accepts array member of same size`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float values[2]; };
+            void fragment() {
+                MyData d = MyData(float[2](1.0, 2.0));
+            }
+        """,
+        )
+    }
+
+    fun `test struct constructor rejects array member of different size`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float values[3]; };
+            void fragment() {
+                MyData d = MyData(<error descr="No matching function for 'MyData(float[3])' call: argument 1 should be float[3] but is float[2]">float[2](1.0, 2.0)</error>);
+            }
+        """,
+        )
+    }
+
     fun `test function accepts struct constructor argument`() {
         doHighlightTest(
             """

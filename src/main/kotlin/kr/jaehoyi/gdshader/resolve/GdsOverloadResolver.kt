@@ -29,6 +29,14 @@ object GdsOverloadResolver {
             isConstructorTypeCompatible(paramType, argType, aliasBindings)
         }
 
+    fun resolveStructConstructorOverload(
+        candidates: List<FunctionSpec>,
+        argumentTypes: List<DataType>,
+    ): FunctionSpec? =
+        resolveOverload(candidates, argumentTypes) { paramType, argType, _, _ ->
+            paramType == argType
+        }
+
     private fun resolveOverload(
         candidates: List<FunctionSpec>,
         argumentTypes: List<DataType>,
