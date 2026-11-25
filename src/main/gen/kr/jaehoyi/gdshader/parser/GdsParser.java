@@ -669,16 +669,27 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expression SEMICOLON
+  // !CURLY_BRACKET_OPEN expression SEMICOLON
   public static boolean expression_statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_statement")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, EXPRESSION_STATEMENT, "<expression statement>");
-    r = expression(b, l + 1);
-    p = r; // pin = 1
+    r = expression_statement_0(b, l + 1);
+    r = r && expression(b, l + 1);
+    p = r; // pin = 2
     r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // !CURLY_BRACKET_OPEN
+  private static boolean expression_statement_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "expression_statement_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, CURLY_BRACKET_OPEN);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -809,7 +820,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+  // (precision? type array_size?) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
   public static boolean function_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration")) return false;
     boolean r, p;
@@ -825,13 +836,14 @@ public class GdsParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // precision? type
+  // precision? type array_size?
   private static boolean function_declaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = function_declaration_0_0(b, l + 1);
     r = r && type(b, l + 1);
+    r = r && function_declaration_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -840,6 +852,13 @@ public class GdsParser implements PsiParser, LightPsiParser {
   private static boolean function_declaration_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_declaration_0_0")) return false;
     precision(b, l + 1);
+    return true;
+  }
+
+  // array_size?
+  private static boolean function_declaration_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_declaration_0_2")) return false;
+    array_size(b, l + 1);
     return true;
   }
 
@@ -1054,14 +1073,45 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expression | initializer_list
+  // initializer_list &(COMMA | SEMICOLON | PARENTHESIS_CLOSE) | expression
   public static boolean initializer(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "initializer")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, INITIALIZER, "<initializer>");
-    r = expression(b, l + 1);
-    if (!r) r = initializer_list(b, l + 1);
+    r = initializer_0(b, l + 1);
+    if (!r) r = expression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // initializer_list &(COMMA | SEMICOLON | PARENTHESIS_CLOSE)
+  private static boolean initializer_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "initializer_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = initializer_list(b, l + 1);
+    r = r && initializer_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // &(COMMA | SEMICOLON | PARENTHESIS_CLOSE)
+  private static boolean initializer_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "initializer_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = initializer_0_1_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // COMMA | SEMICOLON | PARENTHESIS_CLOSE
+  private static boolean initializer_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "initializer_0_1_0")) return false;
+    boolean r;
+    r = consumeToken(b, COMMA);
+    if (!r) r = consumeToken(b, SEMICOLON);
+    if (!r) r = consumeToken(b, PARENTHESIS_CLOSE);
     return r;
   }
 
@@ -1711,6 +1761,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
   // 		  | function_call
   // 		  | variable_name_ref
   // 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
+  // 		  | initializer_list
   public static boolean primary(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary")) return false;
     boolean r;
@@ -1719,6 +1770,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
     if (!r) r = function_call(b, l + 1);
     if (!r) r = variable_name_ref(b, l + 1);
     if (!r) r = primary_3(b, l + 1);
+    if (!r) r = initializer_list(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface GdsFunctionDeclaration extends PsiElement {
 
   @Nullable
+  GdsArraySize getArraySize();
+
+  @Nullable
   GdsBlock getBlock();
 
   @NotNull

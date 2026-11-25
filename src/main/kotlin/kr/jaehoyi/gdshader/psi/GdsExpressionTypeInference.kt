@@ -37,6 +37,7 @@ object GdsExpressionTypeInference {
             is GdsAssignExpr -> inferAssignExprType(element)
             is GdsConditionalExpr -> inferConditionalExprType(element)
             is GdsExpression -> inferExpressionType(element)
+            is GdsInitializerList -> inferInitializerListType(element)
             else -> null
         }
 
@@ -109,6 +110,8 @@ object GdsExpressionTypeInference {
         primary.functionCall?.let { return inferFunctionCallType(it) }
 
         primary.expression?.let { return inferType(it) }
+
+        primary.initializerList?.let { return inferInitializerListType(it) }
 
         return null
     }

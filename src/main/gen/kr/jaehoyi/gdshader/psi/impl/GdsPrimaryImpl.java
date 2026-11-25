@@ -41,6 +41,12 @@ public class GdsPrimaryImpl extends ASTWrapperPsiElement implements GdsPrimary {
 
   @Override
   @Nullable
+  public GdsInitializerList getInitializerList() {
+    return findChildByClass(GdsInitializerList.class);
+  }
+
+  @Override
+  @Nullable
   public GdsLiteral getLiteral() {
     return findChildByClass(GdsLiteral.class);
   }

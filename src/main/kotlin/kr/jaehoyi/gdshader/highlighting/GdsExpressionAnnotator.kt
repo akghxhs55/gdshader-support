@@ -31,6 +31,25 @@ class GdsExpressionAnnotator : Annotator {
             is GdsLogicOrExpr -> checkBinaryChain(element, element.logicAndExprList, holder)
             is GdsAssignExpr -> checkAssignExpr(element, holder)
             is GdsConditionalExpr -> checkConditionalExpr(element, holder)
+            is GdsInitializerList -> if (element.parent is GdsPrimary) checkInitializerListElements(element, holder)
+        }
+    }
+
+    // Inside an expression, Godot takes the element type from the first element.
+    private fun checkInitializerListElements(
+        element: GdsInitializerList,
+        holder: AnnotationHolder,
+    ) {
+        val expressions = element.expressionList
+        val elementType = expressions.firstOrNull()?.let(GdsExpressionTypeInference::inferType) ?: return
+        for (expression in expressions.drop(1)) {
+            val type = GdsExpressionTypeInference.inferType(expression) ?: continue
+            if (type.name == elementType.name) continue
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Invalid assignment of '${type.name}' to '${elementType.name}'.")
+                .range(expression)
+                .create()
+            return
         }
     }
 

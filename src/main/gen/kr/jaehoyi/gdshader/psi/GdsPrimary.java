@@ -14,6 +14,9 @@ public interface GdsPrimary extends PsiElement {
   GdsFunctionCall getFunctionCall();
 
   @Nullable
+  GdsInitializerList getInitializerList();
+
+  @Nullable
   GdsLiteral getLiteral();
 
   @Nullable

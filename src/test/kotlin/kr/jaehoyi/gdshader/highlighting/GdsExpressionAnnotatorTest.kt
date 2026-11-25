@@ -1575,6 +1575,57 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === initializer list in expressions ===
+
+    fun `test initializer list in expressions`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            struct Wrap { MyData arr[2]; };
+            void f(float a[2]) {}
+            void fragment() {
+                float a[2];
+                a = { 1.0, 2.0 };
+                a = ({ 1.0, 2.0 });
+                a = true ? { 1.0, 2.0 } : { 3.0, 4.0 };
+                MyData items[2];
+                items = { MyData(1.0), MyData(2.0) };
+                Wrap w;
+                w.arr = { MyData(1.0), MyData(2.0) };
+                float x = { 1.0, 2.0 }[0];
+                int n = { 1.0, 2.0 }.length();
+                f({ 1.0, 2.0 });
+                a = float[2]({ 1.0, 2.0 }[0], 2.0);
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test initializer list with mixed element types`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float x = { 1.0, <error descr="Invalid assignment of 'int' to 'float'.">2</error> }[0];
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test initializer list assigned with wrong type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a[2];
+                <error descr="Cannot assign a value of type 'float[3]' to type 'float[2]'">a = { 1.0, 2.0, 3.0 }</error>;
+                <error descr="Cannot assign a value of type 'int[2]' to type 'float[2]'">a = { 1, 2 }</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

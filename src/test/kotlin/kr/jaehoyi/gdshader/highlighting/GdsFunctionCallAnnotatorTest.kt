@@ -524,8 +524,218 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             struct MyData { float x; };
             void fragment() {
-                MyData items[2] = MyData[2](MyData(1.0), MyData(2.0));
+                MyData items[2] = <error descr="Struct array constructor is not allowed here">MyData</error>[2](MyData(1.0), MyData(2.0));
+                MyData others[] = <error descr="Struct array constructor is not allowed here">MyData</error>[](MyData(1.0), MyData(2.0));
             }
+        """,
+        )
+    }
+
+    fun `test struct array constructor in local constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            void fragment() {
+                const MyData items[2] = <error descr="Struct array constructor is not allowed here">MyData</error>[2](MyData(1.0), MyData(2.0));
+            }
+        """,
+        )
+    }
+
+    fun `test struct array constructor as function argument`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            void f(MyData a[2]) {}
+            void fragment() {
+                f(<error descr="Struct array constructor is not allowed here">MyData</error>[2](MyData(1.0), MyData(2.0)));
+            }
+        """,
+        )
+    }
+
+    fun `test struct array initializer list`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            void fragment() {
+                MyData items[2] = { MyData(1.0), MyData(2.0) };
+            }
+        """,
+        )
+    }
+
+    fun `test struct array constructor assigned to array`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            void fragment() {
+                MyData items[2];
+                items = MyData[2](MyData(1.0), MyData(2.0));
+            }
+        """,
+        )
+    }
+
+    fun `test struct array constructor assigned to array member`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            struct Wrap { MyData arr[2]; };
+            void fragment() {
+                Wrap w;
+                w.arr = MyData[2](MyData(1.0), MyData(2.0));
+            }
+        """,
+        )
+    }
+
+    fun `test struct array constructor as array member of struct constructor`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            struct Wrap { MyData arr[2]; };
+            void fragment() {
+                Wrap w = Wrap(MyData[2](MyData(1.0), MyData(2.0)));
+            }
+        """,
+        )
+    }
+
+    fun `test constant values passed to inout parameter`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; float arr[2]; vec2 v; };
+            uniform float u_val;
+            uniform float u_arr[2];
+            const float G = 1.0;
+            float g() { return 1.0; }
+            void f(inout float p) {}
+            void fa(inout float p[2]) {}
+            void fv(inout vec2 p) {}
+            void h(const float p) { f(<error descr="A constant value cannot be passed for the 'inout' parameter.">p</error>); }
+            void fragment() {
+                float x;
+                vec2 v;
+                mat2 m;
+                MyData d;
+                const float c = 1.0;
+                const vec2 cv[2] = { vec2(0.0), vec2(1.0) };
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">1.0</error>);
+                fa(<error descr="A constant value cannot be passed for the 'inout' parameter.">{ 1.0, 2.0 }</error>);
+                fa(<error descr="A constant value cannot be passed for the 'inout' parameter.">float[2](1.0, 2.0)</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">x + 1.0</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">-x</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">x++</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">++x</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">x = 1.0</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">true ? x : x</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">g()</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">float(1.0)</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">c</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">G</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">u_val</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">u_arr[0]</error>);
+                fa(<error descr="A constant value cannot be passed for the 'inout' parameter.">u_arr</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">TIME</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">UV.x</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">v[0]</error>);
+                fv(<error descr="A constant value cannot be passed for the 'inout' parameter.">m[0]</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">d.v[0]</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">cv[0].x</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test parenthesized arguments passed to inout parameter`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform vec2 u_v;
+            float[2] h() { float a[2]; return a; }
+            void f(inout float p) {}
+            void fv(inout vec2 p) {}
+            void fragment() {
+                float a[2];
+                const float ca[2] = { 1.0, 2.0 };
+                const float c = 1.0;
+                const vec2 cv = vec2(0.0);
+                vec2 v;
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">h()[0]</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">(a)[0]</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">(ca)[0]</error>);
+                f(<error descr="A constant value cannot be passed for the 'inout' parameter.">(c)</error>);
+                fv(<error descr="A constant value cannot be passed for the 'inout' parameter.">(u_v)</error>);
+                f((cv).x);
+                f((u_v).x);
+                f((v).x);
+            }
+        """,
+        )
+    }
+
+    fun `test variables passed to inout parameter`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; float arr[2]; vec2 v; };
+            uniform vec2 u_v;
+            MyData g() { return MyData(1.0, float[2](1.0, 2.0), vec2(0.0)); }
+            void f(inout float p) {}
+            void fa(inout float p[2]) {}
+            void fv(inout vec2 p) {}
+            void h(in float p) { f(p); }
+            void fragment() {
+                float x;
+                float a[2];
+                vec2 v;
+                vec4 v4;
+                vec2 va[2];
+                MyData d;
+                f(x);
+                f((x));
+                fa(a);
+                f(a[0]);
+                f(v.x);
+                fv(v4.xx);
+                f(d.x);
+                f(d.arr[0]);
+                f(va[0].x);
+                f(u_v.x);
+                f(g().x);
+                f(ROUGHNESS);
+            }
+        """,
+        )
+    }
+
+    fun `test constant value passed to out parameter`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void f(out float p) {}
+            void fragment() {
+                f(<error descr="A constant value cannot be passed for the 'out' parameter.">1.0</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test struct array constructor in global constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            const MyData ITEMS[2] = MyData[2](MyData(1.0), MyData(2.0));
+            void fragment() {}
         """,
         )
     }

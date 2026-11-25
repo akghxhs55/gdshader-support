@@ -55,7 +55,10 @@ class GdsDeclarationAnnotator : Annotator {
                 checkEmptyStruct(element, holder)
                 checkDuplicateStruct(element, holder)
             }
-            element is GdsFunctionDeclaration -> checkDuplicateFunction(element, holder)
+            element is GdsFunctionDeclaration -> {
+                checkDuplicateFunction(element, holder)
+                checkReturnArraySize(element, holder)
+            }
             element is GdsUniformDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
                 checkDuplicateVariable(element.variableNameDecl, holder)
@@ -146,6 +149,18 @@ class GdsDeclarationAnnotator : Annotator {
     }
 
     // === Duplicate declaration checks ===
+
+    private fun checkReturnArraySize(
+        element: GdsFunctionDeclaration,
+        holder: AnnotationHolder,
+    ) {
+        val arraySize = element.arraySize ?: return
+        if (arraySize.expression != null) return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Unknown array size is forbidden in that context.")
+            .range(arraySize)
+            .create()
+    }
 
     private fun checkDuplicateFunction(
         element: GdsFunctionDeclaration,
@@ -368,9 +383,15 @@ class GdsDeclarationAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val expr = element.expression ?: return
-        val declaredType = GdsDataTypeFactory.createFromUniformDeclaration(element) ?: return
         // Godot rejects defaults on uniform arrays before looking at the value.
-        if (declaredType is ArrayType) return
+        if (element.arraySizeList.isNotEmpty()) {
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Setting default values to uniform arrays is not supported.")
+                .range(expr)
+                .create()
+            return
+        }
+        val declaredType = GdsDataTypeFactory.createFromUniformDeclaration(element) ?: return
         // An expression without a known type is invalid for another reason.
         GdsExpressionTypeInference.inferType(expr) ?: return
 

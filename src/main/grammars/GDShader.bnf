@@ -182,13 +182,14 @@ variable_name_decl ::= IDENTIFIER
 	methods=[getName setName getNameIdentifier getVariableSpec]
 }
 
-initializer ::= expression | initializer_list
+// A list followed by a postfix or an operator, such as `{ 1.0, 2.0 }[0]`, is parsed as an expression.
+initializer ::= initializer_list &(COMMA | SEMICOLON | PARENTHESIS_CLOSE) | expression
 initializer_list ::= CURLY_BRACKET_OPEN expression (COMMA expression)* CURLY_BRACKET_CLOSE { pin(".*")=1 }
 
 array_size ::= BRACKET_OPEN expression? BRACKET_CLOSE
        
 // Function Declaration
-function_declaration ::= (precision? type) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
+function_declaration ::= (precision? type array_size?) function_name_decl PARENTHESIS_OPEN parameter_list? PARENTHESIS_CLOSE block
 {
 	pin=3
 }
@@ -345,9 +346,10 @@ statement ::= control_statement
 
 // Expressions
 function_call_statement ::= function_call SEMICOLON
-expression_statement ::= expression SEMICOLON
+// A statement starting with '{' is a block, as in Godot.
+expression_statement ::= !CURLY_BRACKET_OPEN expression SEMICOLON
 {
-	pin=1
+	pin=2
 }
 expression ::= assign_expr
 
@@ -370,6 +372,7 @@ primary ::= literal
 		  | function_call
 		  | variable_name_ref
 		  | PARENTHESIS_OPEN expression PARENTHESIS_CLOSE
+		  | initializer_list
 
 function_call ::= (function_name_ref | type) array_size? PARENTHESIS_OPEN argument_list PARENTHESIS_CLOSE
 {

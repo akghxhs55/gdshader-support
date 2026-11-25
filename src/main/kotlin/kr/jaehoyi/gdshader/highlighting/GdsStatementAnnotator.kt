@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
+import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.BoolType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.IntType
@@ -100,6 +101,7 @@ class GdsStatementAnnotator : Annotator {
     ) {
         val functionDecl = element.parentOfType<GdsFunctionDeclaration>() ?: return
         val returnType = GdsDataTypeFactory.createFromFunctionDeclaration(functionDecl)
+        if (returnType is ArrayType && returnType.containerSize == null) return
         val hasExpression = element.expression != null
 
         if (returnType is VoidType && hasExpression) {

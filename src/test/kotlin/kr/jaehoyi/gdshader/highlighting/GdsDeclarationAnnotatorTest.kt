@@ -688,6 +688,36 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test uniform array default value`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float a[2] = <error descr="Setting default values to uniform arrays is not supported.">{ 1.0, 2.0 }</error>;
+            uniform float[2] b = <error descr="Setting default values to uniform arrays is not supported.">{ 1.0, 2.0 }</error>;
+            uniform float c[2] = <error descr="Setting default values to uniform arrays is not supported.">1.0</error>;
+        """,
+        )
+    }
+
+    fun `test array return type with unknown size`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float<error descr="Unknown array size is forbidden in that context.">[]</error> g() { float a[2]; return a; }
+        """,
+        )
+    }
+
+    fun `test array return type with constant size`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int N = 2;
+            float[N] g() { float a[N]; return a; }
+        """,
+        )
+    }
+
     fun `test define directive is known`() {
         doHighlightTest(
             """

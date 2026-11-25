@@ -14,7 +14,7 @@ GDShader File
         PsiElement(GDShaderTokenType.SEMICOLON)(';')
   PsiWhiteSpace('\n')
   PsiElement(GDShaderTokenType.IDENTIFIER)('foo')
-  PsiErrorElement:GDShaderTokenType.IDENTIFIER expected, got 'void'
+  PsiErrorElement:GDShaderTokenType.BRACKET_OPEN or GDShaderTokenType.IDENTIFIER expected, got 'void'
     <empty list>
   PsiWhiteSpace('\n')
   GdsItemImpl(ITEM)

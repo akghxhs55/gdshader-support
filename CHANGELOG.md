@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Validate function calls in include files (#20)
 - Aligned struct constructor call with Godot
 - Aligned uniform initialization logic with Godot
+- Aligned array initializers and argument checks with Godot
 
 ## 1.2.2 (2026-11-24)
 

@@ -29,6 +29,12 @@ public class GdsFunctionDeclarationImpl extends ASTWrapperPsiElement implements 
 
   @Override
   @Nullable
+  public GdsArraySize getArraySize() {
+    return findChildByClass(GdsArraySize.class);
+  }
+
+  @Override
+  @Nullable
   public GdsBlock getBlock() {
     return findChildByClass(GdsBlock.class);
   }

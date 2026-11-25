@@ -52,8 +52,8 @@ object GdsDataTypeFactory {
     }
 
     fun createFromFunctionDeclaration(declaration: GdsFunctionDeclaration): DataType? {
-        val typeNode = declaration.type
-        return getBaseType(declaration.precision?.text, typeNode)
+        val baseType = getBaseType(declaration.precision?.text, declaration.type) ?: return null
+        return withArraySize(baseType, declaration.arraySize)
     }
 
     fun createFromType(typeNode: GdsType): DataType? = getBaseType(null, typeNode)

@@ -315,6 +315,42 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === array return type ===
+
+    fun `test array return type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct MyData { float x; };
+            float[2] g() { float a[2]; return a; }
+            highp float[2] h() { return { 1.0, 2.0 }; }
+            MyData[2] s() { MyData a[2]; return a; }
+            void fragment() {
+                float b[2] = g();
+                b = h();
+                float x = g()[0];
+                int n = g().length();
+                MyData c[2] = s();
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test array return type size mismatch`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float[3] g() {
+                float a[2];
+                <error descr="Expected return with an expression of type 'float[3]'">return a;</error>
+            }
+            float[2] h() {
+                <error descr="Expected return with an expression of type 'float[2]'">return { 1.0, 2.0, 3.0 };</error>
+            }
+            """.trimIndent(),
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
