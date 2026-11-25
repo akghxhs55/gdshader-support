@@ -23,9 +23,9 @@ import kr.jaehoyi.gdshader.psi.GdsConditionalExpr
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
+import kr.jaehoyi.gdshader.psi.GdsExpression
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
-import kr.jaehoyi.gdshader.psi.GdsExpression
 import kr.jaehoyi.gdshader.psi.GdsInitializer
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsTypes

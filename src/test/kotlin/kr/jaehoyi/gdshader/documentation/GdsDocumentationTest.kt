@@ -127,4 +127,22 @@ class GdsDocumentationTest : BasePlatformTestCase() {
         val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
         assertNotNull(provider.generateDoc(element, null))
     }
+
+    fun `test macro documentation does not throw`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            #define TINT vec3(1.0)
+            void fragment() {
+                vec3 c = <caret>TINT;
+            }
+            """.trimIndent(),
+        )
+
+        val element = myFixture.elementAtCaret
+        assertNull(element.node)
+        val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
+        assertNull(provider.generateDoc(element, null))
+    }
 }

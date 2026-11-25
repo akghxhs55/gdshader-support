@@ -54,13 +54,7 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
             is GdsFunction -> generateFunctionDoc(element)
             is GdsVariable -> generateVariableDoc(element)
             is GdsStructNameDecl -> generateStructDoc(element)
-            else -> {
-                if (GdsHintDocumentation.HINT_DOCS.containsKey(element.node.elementType)) {
-                    generateHintDoc(element)
-                } else {
-                    null
-                }
-            }
+            else -> generateHintDoc(element)
         }
     }
 
@@ -70,7 +64,7 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         contextElement: PsiElement?,
         targetOffset: Int,
     ): PsiElement? {
-        if (contextElement != null && GdsHintDocumentation.HINT_DOCS.containsKey(contextElement.node.elementType)) {
+        if (contextElement != null && findHintDoc(contextElement) != null) {
             return contextElement
         }
         return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset)
@@ -95,8 +89,13 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         }
     }
 
-    private fun generateHintDoc(element: PsiElement): String {
-        val doc = GdsHintDocumentation.HINT_DOCS[element.node.elementType] ?: return ""
+    private fun findHintDoc(element: PsiElement): String? {
+        val elementType = element.node?.elementType ?: return null
+        return GdsHintDocumentation.HINT_DOCS[elementType]
+    }
+
+    private fun generateHintDoc(element: PsiElement): String? {
+        val doc = findHintDoc(element) ?: return null
         val sb = StringBuilder()
         sb.append(DocumentationMarkup.DEFINITION_START)
         sb.append(colorize("hint", GdsSyntaxHighlighter.KEYWORD))

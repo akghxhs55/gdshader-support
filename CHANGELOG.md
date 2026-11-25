@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Aligned array initializers and argument checks with Godot
 - Fixed struct member resolution
 - Fixed constructor call symbol resolution (#21)
+- Fixed null pointer exception when open macro documentation (#23)
 
 ## 1.2.2 (2026-11-24)
 
