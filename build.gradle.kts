@@ -74,7 +74,7 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>- Validate function calls in include files (#20)</li>
+              <li>Validate function calls in include files (#20)</li>
               <li>Aligned struct constructor call with Godot</li>
               <li>Aligned uniform initialization logic with Godot</li>
               <li>Aligned array initializers and argument checks with Godot</li>
