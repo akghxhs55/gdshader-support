@@ -53,8 +53,8 @@ class GdsArrayMethodResolverTest : BasePlatformTestCase() {
             struct length { float value; };
             void fragment() {
                 float scalar;
-                scalar.<warning descr="Unresolved reference 'length'">length</warning>();
-                <warning descr="Unresolved reference 'missing'">missing</warning>.length();
+                scalar.<error descr="Unresolved reference 'length'">length</error>();
+                <error descr="Unresolved reference 'missing'">missing</error>.length();
                 float values[];
                 int count = values.length();
             }

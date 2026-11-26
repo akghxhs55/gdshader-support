@@ -3,8 +3,8 @@ package kr.jaehoyi.gdshader.psi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import kr.jaehoyi.gdshader.model.*
-import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsBuiltinDefine
+import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver

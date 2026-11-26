@@ -90,8 +90,8 @@ class GdsFunctionContextAnnotator :
         if (name !in FRAGMENT_ONLY_FUNCTIONS) return
         if (nameRef.reference.resolve() is GdsFunctionNameDecl) return
 
-        val shaderType = GdsPsiImplUtil.getShaderType(call) ?: return
-        if (shaderType !in FRAGMENT_ONLY_SHADER_TYPES) {
+        if (isUnsupportedFragmentOnlyFunction(nameRef)) {
+            val shaderType = GdsPsiImplUtil.getShaderType(call) ?: return
             error(holder, nameRef, "Built-in function '$name' is not supported for the '${shaderType.text}' shader type.")
             return
         }
@@ -226,9 +226,15 @@ class GdsFunctionContextAnnotator :
             .create()
     }
 
-    private companion object {
-        val CALLED_FROM_VERTEX_KEY = Key.create<CachedValue<Set<String>>>("GDS_CALLED_FROM_VERTEX")
-        val FRAGMENT_ONLY_FUNCTIONS: Set<String> by lazy { GeneratedBuiltins.fragmentOnlyFunctions.map { it.name }.toSet() }
-        val FRAGMENT_ONLY_SHADER_TYPES = setOf(ShaderType.SPATIAL, ShaderType.CANVAS_ITEM, ShaderType.SKY)
+    companion object {
+        private val CALLED_FROM_VERTEX_KEY = Key.create<CachedValue<Set<String>>>("GDS_CALLED_FROM_VERTEX")
+        private val FRAGMENT_ONLY_FUNCTIONS: Set<String> by lazy { GeneratedBuiltins.fragmentOnlyFunctions.map { it.name }.toSet() }
+        private val FRAGMENT_ONLY_SHADER_TYPES = setOf(ShaderType.SPATIAL, ShaderType.CANVAS_ITEM, ShaderType.SKY)
+
+        fun isUnsupportedFragmentOnlyFunction(nameRef: PsiElement): Boolean {
+            if (nameRef.text !in FRAGMENT_ONLY_FUNCTIONS) return false
+            val shaderType = GdsPsiImplUtil.getShaderType(nameRef) ?: return false
+            return shaderType !in FRAGMENT_ONLY_SHADER_TYPES
+        }
     }
 }

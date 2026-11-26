@@ -43,7 +43,7 @@ class GdsUnresolvedReferenceAnnotator :
         if (element.reference.resolve() != null) return
 
         holder
-            .newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
+            .newAnnotation(GdsInspectionUtil.severity(element, GdsInspectionUtil.UNRESOLVED_REFERENCE), "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
@@ -57,12 +57,12 @@ class GdsUnresolvedReferenceAnnotator :
         val call = element.parent as? GdsFunctionCall
         if (call != null && GdsArrayMethodResolver.isMemberCall(call)) {
             if (GdsArrayMethodResolver.receiverType(call) == null) return
-        } else if (isIncludeFile(element)) {
+        } else if (isIncludeFile(element) || GdsFunctionContextAnnotator.isUnsupportedFragmentOnlyFunction(element)) {
             return
         }
 
         holder
-            .newAnnotation(HighlightSeverity.WARNING, "Unresolved reference '${element.text}'")
+            .newAnnotation(GdsInspectionUtil.severity(element, GdsInspectionUtil.UNRESOLVED_REFERENCE), "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }
@@ -74,7 +74,7 @@ class GdsUnresolvedReferenceAnnotator :
         if (element.reference.resolve() != null) return
 
         holder
-            .newAnnotation(HighlightSeverity.ERROR, "Unresolved reference '${element.text}'")
+            .newAnnotation(GdsInspectionUtil.severity(element, GdsInspectionUtil.UNRESOLVED_REFERENCE), "Unresolved reference '${element.text}'")
             .range(element)
             .create()
     }

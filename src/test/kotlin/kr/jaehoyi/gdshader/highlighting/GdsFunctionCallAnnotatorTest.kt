@@ -111,7 +111,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             float f(float a) { return a; }
             vec2 f(int x, float a) { return vec2(a); }
             void fragment() {
-                vec2 r = f(unknown, 1.0);
+                vec2 r = f(<error descr="Unresolved reference 'unknown'">unknown</error>, 1.0);
             }
             """.trimIndent(),
         )
@@ -847,7 +847,7 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void fragment() {
-                float x = <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>(1.0, 2.0, 3.0);
+                float x = <error descr="Unresolved reference 'unknown_func'">unknown_func</error>(1.0, 2.0, 3.0);
             }
         """,
         )

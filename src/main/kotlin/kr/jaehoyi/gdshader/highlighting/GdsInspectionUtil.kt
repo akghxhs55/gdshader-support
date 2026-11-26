@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.highlighting
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiElement
 
@@ -18,5 +19,14 @@ object GdsInspectionUtil {
         val key = HighlightDisplayKey.find(shortName) ?: return true
         val profile = InspectionProjectProfileManager.getInstance(element.project).currentProfile
         return profile.isToolEnabled(key, element)
+    }
+
+    fun severity(
+        element: PsiElement,
+        shortName: String,
+    ): HighlightSeverity {
+        val key = HighlightDisplayKey.find(shortName) ?: return HighlightSeverity.ERROR
+        val profile = InspectionProjectProfileManager.getInstance(element.project).currentProfile
+        return profile.getErrorLevel(key, element).severity
     }
 }

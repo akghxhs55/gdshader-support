@@ -1,5 +1,8 @@
 package kr.jaehoyi.gdshader.highlighting
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
+import com.intellij.codeInsight.daemon.HighlightDisplayKey
+import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
@@ -10,7 +13,30 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void fragment() {
+                float x = <error descr="Unresolved reference 'unknown_var'">unknown_var</error>;
+            }
+        """,
+        )
+    }
+
+    fun `test severity follows inspection profile`() {
+        myFixture.enableInspections(GdsUnresolvedReferenceInspection())
+        val key = HighlightDisplayKey.find(GdsInspectionUtil.UNRESOLVED_REFERENCE)!!
+        InspectionProjectProfileManager
+            .getInstance(project)
+            .currentProfile
+            .setErrorLevel(key, HighlightDisplayLevel.WARNING, project)
+
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float x; };
+            void fragment() {
                 float x = <warning descr="Unresolved reference 'unknown_var'">unknown_var</warning>;
+                <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>();
+                <warning descr="Unresolved reference 'Unknown'">Unknown</warning> d;
+                Data data;
+                float y = data.<error descr="Invalid member for 'Data' expression: '.missing'">missing</error>;
             }
         """,
         )
@@ -73,7 +99,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void fragment() {
-                <warning descr="Unresolved reference 'CLEARCOAT_GLOSS'">CLEARCOAT_GLOSS</warning> = 1.0;
+                <error descr="Unresolved reference 'CLEARCOAT_GLOSS'">CLEARCOAT_GLOSS</error> = 1.0;
             }
         """,
         )
@@ -168,7 +194,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             #define SQ(x) ((x) * (x))
             void fragment() {
-                float y = <warning descr="Unresolved reference 'SQ'">SQ</warning>;
+                float y = <error descr="Unresolved reference 'SQ'">SQ</error>;
             }
         """,
         )
@@ -181,7 +207,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             #define TINT vec3(1.0)
             #undef TINT
             void fragment() {
-                vec3 c = <warning descr="Unresolved reference 'TINT'">TINT</warning>;
+                vec3 c = <error descr="Unresolved reference 'TINT'">TINT</error>;
             }
         """,
         )
@@ -192,7 +218,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void fragment() {
-                vec3 c = <warning descr="Unresolved reference 'TINT'">TINT</warning>;
+                vec3 c = <error descr="Unresolved reference 'TINT'">TINT</error>;
             }
             #define TINT vec3(1.0)
         """,
@@ -206,7 +232,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void fragment() {
-                float x = <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>(1.0);
+                float x = <error descr="Unresolved reference 'unknown_func'">unknown_func</error>(1.0);
             }
         """,
         )
@@ -231,7 +257,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void fragment() {
-                float x = <warning descr="Unresolved reference 'twice'">twice</warning>(1.0);
+                float x = <error descr="Unresolved reference 'twice'">twice</error>(1.0);
             }
             #include "res://math.gdshaderinc"
         """,
@@ -559,7 +585,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type spatial;
-            const float S = <warning descr="Unresolved reference 'unknown_func'">unknown_func</warning>(1.0);
+            const float S = <error descr="Unresolved reference 'unknown_func'">unknown_func</error>(1.0);
         """,
         )
     }
@@ -568,7 +594,7 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         doHighlightTest(
             """
             shader_type canvas_item;
-            const vec4 C = <warning descr="Unresolved reference 'COLOR'">COLOR</warning>;
+            const vec4 C = <error descr="Unresolved reference 'COLOR'">COLOR</error>;
         """,
         )
     }

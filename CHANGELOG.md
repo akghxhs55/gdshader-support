@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Added Godot validations for declarations, shader stages, varyings, constants and literals
 - Support highlighting and inspections in unindexed files (#22)
 - Support built-in preprocessor defines
+- Report unresolved references as errors
 
 ## 1.2.2 (2026-11-24)
 

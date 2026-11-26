@@ -23,7 +23,7 @@ class GdsTextureBlitShaderTest : BasePlatformTestCase() {
             """
             shader_type texture_blit;
             vec4 helper() {
-                return <warning descr="Unresolved reference 'COLOR0'">COLOR0</warning>;
+                return <error descr="Unresolved reference 'COLOR0'">COLOR0</error>;
             }
             void blit() {}
             """,

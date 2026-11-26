@@ -170,7 +170,7 @@
             key="inspection.unresolved.reference.display.name"
             bundle="messages.GDShaderBundle"
             enabledByDefault="true"
-            level="WARNING"
+            level="ERROR"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceInspection" />
         <localInspection
             language="kr.jaehoyi.gdshader"
