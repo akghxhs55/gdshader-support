@@ -2,7 +2,6 @@ package kr.jaehoyi.gdshader.reference
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.model.StructType
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
@@ -14,7 +13,7 @@ import kr.jaehoyi.gdshader.resolve.GdsResolver
 class GdsStructMemberReference(
     element: GdsStructMemberNameRef,
     textRange: TextRange,
-) : PsiReferenceBase<GdsStructMemberNameRef>(element, textRange) {
+) : GdsReference<GdsStructMemberNameRef>(element, textRange) {
     override fun resolve(): PsiElement? {
         val postfixExpr = element.parent as? GdsPostfixExpr
         if (postfixExpr == null) {

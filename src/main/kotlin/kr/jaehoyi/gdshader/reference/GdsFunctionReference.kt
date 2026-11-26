@@ -3,7 +3,6 @@ package kr.jaehoyi.gdshader.reference
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
@@ -19,7 +18,7 @@ import kr.jaehoyi.gdshader.resolve.GdsResolver
 class GdsFunctionReference(
     element: PsiElement,
     textRange: TextRange,
-) : PsiReferenceBase<PsiElement>(element, textRange) {
+) : GdsReference<PsiElement>(element, textRange) {
     private val key: String = element.text
 
     override fun resolve(): PsiElement? {
