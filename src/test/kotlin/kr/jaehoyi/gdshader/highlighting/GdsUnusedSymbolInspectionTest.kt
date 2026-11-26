@@ -152,7 +152,7 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
                     float z = x * K;
                     return z;
                 }
-                float unused_func() {
+                float <warning descr="Function 'unused_func' is never used">unused_func</warning>() {
                     return 1.0;
                 }
                 void fragment() {

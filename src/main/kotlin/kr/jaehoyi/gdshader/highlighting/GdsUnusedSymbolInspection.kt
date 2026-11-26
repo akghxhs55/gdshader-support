@@ -88,7 +88,7 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
         if (ReferencesSearch.search(element, LocalSearchScope(file), false).findFirst() != null) return false
 
         // Only include files can be included, so symbols in a shader file are never used by other files.
-        if (file.fileType == GdsFileType) return true
+        if (file.viewProvider.virtualFile.fileType == GdsFileType) return true
 
         val project = element.project
         if (DumbService.isDumb(project)) return false
