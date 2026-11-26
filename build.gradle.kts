@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "kr.jaehoyi"
-version = "1.2.2"
+version = "1.3.0"
 
 val pluginVerifierIdeVersions =
     providers
@@ -74,15 +74,26 @@ intellijPlatform {
         changeNotes =
             """
             <ul>
-              <li>Aligned include path resolution with Godot (#17)</li>
-              <li>Fixed struct resolution logic (#18, #19)</li>
-              <li>Added include reference handler</li>
-              <li>Improved #define macro evaluation</li>
-              <li>Fixed chained expression evaluation</li>
-              <li>Fixed leading-zero integer literals evaluation</li>
-              <li>Aligned uint and shift evaluation with Godot</li>
-              <li>Aligned operator and assignment validation with Godot</li>
-              <li>Fixed more minor bugs</li>
+              <li>- Validate function calls in include files (#20)</li>
+              <li>Aligned struct constructor call with Godot</li>
+              <li>Aligned uniform initialization logic with Godot</li>
+              <li>Aligned array initializers and argument checks with Godot</li>
+              <li>Fixed struct member resolution</li>
+              <li>Fixed constructor call symbol resolution (#21)</li>
+              <li>Fixed null pointer exception when open macro documentation (#23)</li>
+              <li>Generated built-in functions and variables from the Godot 4.7.2 engine source</li>
+              <li>Added `texture_blit` shader type</li>
+              <li>Added conditional preprocessor directive evaluation</li>
+              <li>Aligned built-in function overload resolution with Godot</li>
+              <li>Aligned grammar with Godot (multiple struct members, `hint_range` expressions, comma lists in `for`, line continuation)</li>
+              <li>Aligned render modes, stencil modes, uniform hints and file templates with Godot</li>
+              <li>Added Godot validations for declarations, shader stages, varyings, constants and literals</li>
+              <li>Support highlighting and inspections in unindexed files (#22)</li>
+              <li>Support built-in preprocessor defines</li>
+              <li>Report unresolved references as errors</li>
+              <li>Added option to report unused top-level symbols in include files</li>
+              <li>Report unused uniforms, varyings and structs</li>
+              <li>Added unused symbol check suppression</li>
             </ul>
             """.trimIndent()
     }
