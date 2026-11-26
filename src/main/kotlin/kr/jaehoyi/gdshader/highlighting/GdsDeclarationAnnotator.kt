@@ -19,11 +19,14 @@ import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
+import kr.jaehoyi.gdshader.psi.GdsExpression
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFile
+import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsInitializer
+import kr.jaehoyi.gdshader.psi.GdsInitializerList
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
@@ -419,8 +422,15 @@ class GdsDeclarationAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         if (initializer == null || declaredType == null) return
+        initializer.initializerList?.let {
+            checkInitializerListElements(it, declaredType, holder)
+            return
+        }
         val expr = initializer.expression ?: return
         val exprType = GdsExpressionTypeInference.inferType(expr) ?: return
+
+        val constructorSize = unsizedArrayConstructorSize(expr)
+        if (constructorSize != null && checkArraySizeMatch(declaredType, constructorSize, initializer, holder)) return
 
         if (!declaredType.acceptsValueOf(exprType)) {
             holder
@@ -430,6 +440,44 @@ class GdsDeclarationAnnotator : Annotator {
                 ).range(initializer)
                 .create()
         }
+    }
+
+    private fun checkInitializerListElements(
+        list: GdsInitializerList,
+        declaredType: DataType,
+        holder: AnnotationHolder,
+    ) {
+        val elementType = (declaredType as? ArrayType)?.elementType ?: return
+        if (checkArraySizeMatch(declaredType, list.expressionList.size, list, holder)) return
+        for (expression in list.expressionList) {
+            val type = GdsExpressionTypeInference.inferType(expression) ?: continue
+            if (elementType.acceptsValueOf(type)) continue
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Cannot assign a value of type '${type.name}' to type '${elementType.name}'")
+                .range(expression)
+                .create()
+        }
+    }
+
+    private fun checkArraySizeMatch(
+        declaredType: DataType,
+        size: Int,
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ): Boolean {
+        val expected = (declaredType as? ArrayType)?.containerSize ?: return false
+        if (expected == size) return false
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Array size mismatch. Expected $expected elements (found $size).")
+            .range(element)
+            .create()
+        return true
+    }
+
+    private fun unsizedArrayConstructorSize(expression: GdsExpression): Int? {
+        val call = PsiTreeUtil.findChildOfType(expression, GdsFunctionCall::class.java) ?: return null
+        if (call.textRange != expression.textRange || call.arraySize?.expression != null || call.arraySize == null) return null
+        return call.argumentList?.initializerList?.size ?: 0
     }
 
     private fun checkUniformInitializerType(
