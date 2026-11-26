@@ -166,6 +166,10 @@
     HINT_SCREEN_TEXTURE = 'hint_screen_texture'
     HINT_NORMAL_ROUGHNESS_TEXTURE = 'hint_normal_roughness_texture'
     HINT_DEPTH_TEXTURE = 'hint_depth_texture'
+    HINT_BLIT_SOURCE0 = 'hint_blit_source0'
+    HINT_BLIT_SOURCE1 = 'hint_blit_source1'
+    HINT_BLIT_SOURCE2 = 'hint_blit_source2'
+    HINT_BLIT_SOURCE3 = 'hint_blit_source3'
     FILTER_NEAREST = 'filter_nearest'
     FILTER_LINEAR = 'filter_linear'
     FILTER_NEAREST_MIPMAP = 'filter_nearest_mipmap'
@@ -279,6 +283,10 @@ hint_identifier ::= HINT_DEFAULT_WHITE_TEXTURE
 			      | HINT_SCREEN_TEXTURE
 			      | HINT_NORMAL_ROUGHNESS_TEXTURE
 			      | HINT_DEPTH_TEXTURE
+			      | HINT_BLIT_SOURCE0
+			      | HINT_BLIT_SOURCE1
+			      | HINT_BLIT_SOURCE2
+			      | HINT_BLIT_SOURCE3
 			      | FILTER_NEAREST
 			      | FILTER_LINEAR
 			      | FILTER_NEAREST_MIPMAP

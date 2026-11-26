@@ -31,7 +31,7 @@ FloatConstant =
 StringConstant = \"([^\\\"\n]|\\.)*\"
 UnterminatedStringConstant = \"([^\\\"\n]|\\.)*
 
-PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
+PreprocessorLine = ([^\\\r\n] | \\[ \t]*(\r\n|\r|\n) | \\)*
 
 %state IN_BLOCK_COMMENT
 
@@ -182,6 +182,10 @@ PreprocessorLine = ([^\\\r\n]*(\\\\[ \t]*[\r\n])?)*
 	"hint_screen_texture" 		{ return GdsTypes.HINT_SCREEN_TEXTURE; }
 	"hint_normal_roughness_texture" { return GdsTypes.HINT_NORMAL_ROUGHNESS_TEXTURE; }
 	"hint_depth_texture" 		{ return GdsTypes.HINT_DEPTH_TEXTURE; }
+	"hint_blit_source0" 		{ return GdsTypes.HINT_BLIT_SOURCE0; }
+	"hint_blit_source1" 		{ return GdsTypes.HINT_BLIT_SOURCE1; }
+	"hint_blit_source2" 		{ return GdsTypes.HINT_BLIT_SOURCE2; }
+	"hint_blit_source3" 		{ return GdsTypes.HINT_BLIT_SOURCE3; }
 	"filter_nearest" 			{ return GdsTypes.FILTER_NEAREST; }
 	"filter_linear" 			{ return GdsTypes.FILTER_LINEAR; }
 	"filter_nearest_mipmap" 	{ return GdsTypes.FILTER_NEAREST_MIPMAP; }

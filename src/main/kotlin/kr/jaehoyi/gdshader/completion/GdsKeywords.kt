@@ -121,6 +121,10 @@ object GdsKeywords {
                 "hint_screen_texture",
                 "hint_normal_roughness_texture",
                 "hint_depth_texture",
+                "hint_blit_source0",
+                "hint_blit_source1",
+                "hint_blit_source2",
+                "hint_blit_source3",
                 "source_color",
             )
 

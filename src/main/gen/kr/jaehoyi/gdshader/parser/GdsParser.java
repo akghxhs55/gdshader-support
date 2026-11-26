@@ -985,6 +985,10 @@ public class GdsParser implements PsiParser, LightPsiParser {
   // 			      | HINT_SCREEN_TEXTURE
   // 			      | HINT_NORMAL_ROUGHNESS_TEXTURE
   // 			      | HINT_DEPTH_TEXTURE
+  // 			      | HINT_BLIT_SOURCE0
+  // 			      | HINT_BLIT_SOURCE1
+  // 			      | HINT_BLIT_SOURCE2
+  // 			      | HINT_BLIT_SOURCE3
   // 			      | FILTER_NEAREST
   // 			      | FILTER_LINEAR
   // 			      | FILTER_NEAREST_MIPMAP
@@ -1013,6 +1017,10 @@ public class GdsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, HINT_SCREEN_TEXTURE);
     if (!r) r = consumeToken(b, HINT_NORMAL_ROUGHNESS_TEXTURE);
     if (!r) r = consumeToken(b, HINT_DEPTH_TEXTURE);
+    if (!r) r = consumeToken(b, HINT_BLIT_SOURCE0);
+    if (!r) r = consumeToken(b, HINT_BLIT_SOURCE1);
+    if (!r) r = consumeToken(b, HINT_BLIT_SOURCE2);
+    if (!r) r = consumeToken(b, HINT_BLIT_SOURCE3);
     if (!r) r = consumeToken(b, FILTER_NEAREST);
     if (!r) r = consumeToken(b, FILTER_LINEAR);
     if (!r) r = consumeToken(b, FILTER_NEAREST_MIPMAP);

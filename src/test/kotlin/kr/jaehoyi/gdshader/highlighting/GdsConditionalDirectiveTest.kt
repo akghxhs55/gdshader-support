@@ -138,6 +138,24 @@ class GdsConditionalDirectiveTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test define continued on the next line`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define SCALE(x) \
+                ((x) * 2.0)
+            #define ENABLED \
+                1
+            #if ENABLED
+            void f() {}
+            #else
+            void f() { not valid
+            #endif
+            void fragment() { float y = SCALE(1.0); }
+            """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code.trimIndent())
         myFixture.checkHighlighting(false, false, true)

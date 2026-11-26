@@ -140,6 +140,10 @@ public interface GdsTypes {
   IElementType FLOAT_CONSTANT = new GdsTokenType("float constant");
   IElementType GLOBAL = new GdsTokenType("global");
   IElementType HINT_ANISOTROPY_TEXTURE = new GdsTokenType("hint_anisotropy");
+  IElementType HINT_BLIT_SOURCE0 = new GdsTokenType("hint_blit_source0");
+  IElementType HINT_BLIT_SOURCE1 = new GdsTokenType("hint_blit_source1");
+  IElementType HINT_BLIT_SOURCE2 = new GdsTokenType("hint_blit_source2");
+  IElementType HINT_BLIT_SOURCE3 = new GdsTokenType("hint_blit_source3");
   IElementType HINT_COLOR_CONVERSION_DISABLED = new GdsTokenType("color_conversion_disabled");
   IElementType HINT_DEFAULT_BLACK_TEXTURE = new GdsTokenType("hint_default_black");
   IElementType HINT_DEFAULT_TRANSPARENT_TEXTURE = new GdsTokenType("hint_default_transparent");

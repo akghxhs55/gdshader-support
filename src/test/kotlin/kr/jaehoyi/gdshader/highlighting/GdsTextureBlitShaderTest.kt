@@ -37,6 +37,23 @@ class GdsTextureBlitShaderTest : BasePlatformTestCase() {
         assertTrue(requireNotNull(gutters[0].tooltipText).contains("blit"))
     }
 
+    fun `test blit source hints`() {
+        doHighlightTest(
+            """
+            shader_type texture_blit;
+            uniform sampler2D source0 : hint_blit_source0;
+            uniform sampler2D source3 : hint_blit_source3, filter_nearest;
+            void blit() { COLOR0 = texture(source0, UV) + texture(source3, UV); }
+            """,
+        )
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform sampler2D source : <error descr="'hint_blit_source' is not supported in 'spatial' shaders.">hint_blit_source1</error>;
+            """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code.trimIndent())
         myFixture.checkHighlighting(true, false, true)

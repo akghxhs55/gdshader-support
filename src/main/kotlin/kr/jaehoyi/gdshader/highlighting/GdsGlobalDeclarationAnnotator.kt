@@ -208,6 +208,8 @@ class GdsGlobalDeclarationAnnotator : Annotator {
                         "'hint_normal_roughness_texture' is not supported in '${shaderType.text}' shaders."
                     name == "hint_depth_texture" && shaderType != null && shaderType != ShaderType.SPATIAL ->
                         "'hint_depth_texture' is not supported in '${shaderType.text}' shaders."
+                    name.startsWith("hint_blit_source") && shaderType != null && shaderType != ShaderType.TEXTURE_BLIT ->
+                        "'hint_blit_source' is not supported in '${shaderType.text}' shaders."
                     (name in SAMPLER_HINTS || name.startsWith("filter_") || name.startsWith("repeat_")) && !isSampler ->
                         "This hint is only for sampler types."
                     name.startsWith("filter_") -> conflict("filter mode", name, filter).also { if (filter == null) filter = name }
@@ -280,6 +282,10 @@ class GdsGlobalDeclarationAnnotator : Annotator {
                 "hint_screen_texture",
                 "hint_normal_roughness_texture",
                 "hint_depth_texture",
+                "hint_blit_source0",
+                "hint_blit_source1",
+                "hint_blit_source2",
+                "hint_blit_source3",
             )
     }
 }
