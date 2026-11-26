@@ -16,6 +16,7 @@ import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.BoolType
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.model.FunctionSpec
 import kr.jaehoyi.gdshader.model.GeneratedBuiltins
 import kr.jaehoyi.gdshader.model.IntType
 import kr.jaehoyi.gdshader.model.SamplerType
@@ -24,6 +25,7 @@ import kr.jaehoyi.gdshader.model.UIntType
 import kr.jaehoyi.gdshader.model.VectorType
 import kr.jaehoyi.gdshader.psi.GdsAssignExpr
 import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
+import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
@@ -37,6 +39,9 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
+import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
+import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsFunctionContextAnnotator :
     Annotator,
@@ -78,7 +83,53 @@ class GdsFunctionContextAnnotator :
         val nameRef = call.functionNameRef ?: return
         if (GdsArrayMethodResolver.isMemberCall(call)) return
         val function = call.parentOfType<GdsFunctionDeclaration>() ?: return
-        if (nameRef.text == function.functionNameDecl.name) error(holder, nameRef, "Recursion is not allowed.")
+        if (nameRef.text != function.functionNameDecl.name) return
+        if (resolveCallTarget(call, function) === function) error(holder, nameRef, "Recursion is not allowed.")
+    }
+
+    // Mirrors how Godot binds a call before its recursion check: an exact match among the overloads declared so far,
+    // else the one with the most leading matching arguments, else the first one declared, which keeps the plain name.
+    private fun resolveCallTarget(
+        call: GdsFunctionCall,
+        function: GdsFunctionDeclaration,
+    ): GdsFunctionDeclaration? {
+        val nameDecl = function.functionNameDecl
+        val candidates = mutableListOf<Pair<GdsFunctionDeclaration, FunctionSpec>>()
+        GdsResolver.processFunctionDeclaration(call) { candidate ->
+            if (candidate is GdsFunctionNameDecl &&
+                candidate.name == nameDecl.name &&
+                !GdsConditionalDirectives.areExclusive(candidate, nameDecl)
+            ) {
+                val declaration = candidate.parent as? GdsFunctionDeclaration
+                val spec = candidate.functionSpec
+                if (declaration != null && spec != null) candidates += declaration to spec
+            }
+            true
+        }
+        if (candidates.size <= 1) return candidates.firstOrNull()?.first
+
+        val argTypes =
+            call.argumentList?.initializerList.orEmpty().map { initializer ->
+                initializer.expression?.let { GdsExpressionTypeInference.inferType(it) } ?: return null
+            }
+        val exact = GdsOverloadResolver.resolveFunctionOverload(candidates.map { it.second }, argTypes, GdsConstantReducer.reduceArguments(call))
+        if (exact != null) return candidates.first { it.second === exact }.first
+
+        var best = candidates.first().first
+        var bestCount = 0
+        for ((declaration, spec) in candidates) {
+            if (spec.parameters.size != argTypes.size) continue
+            val count =
+                spec.parameters
+                    .zip(argTypes)
+                    .takeWhile { (parameter, argType) -> parameter.type == argType }
+                    .size
+            if (count > bestCount) {
+                best = declaration
+                bestCount = count
+            }
+        }
+        return best
     }
 
     private fun checkFragmentOnlyFunction(

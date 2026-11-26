@@ -1,5 +1,6 @@
 package kr.jaehoyi.gdshader.highlighting
 
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class GdsBuiltinNameConflictTest : BasePlatformTestCase() {
@@ -57,6 +58,49 @@ class GdsBuiltinNameConflictTest : BasePlatformTestCase() {
             shader_type spatial;
             float f(float x) { return <error descr="Recursion is not allowed.">f</error>(x); }
             float g(float x) { float values[2]; return float(values.length()) + f(x); }
+            """,
+        )
+    }
+
+    fun `test calling an overload from a later overload is not recursion`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            vec4 foo(vec2 uv) { return vec4(1.0); }
+            vec4 foo(vec2 uv, vec4 t) { return foo(uv) + t; }
+            """,
+        )
+    }
+
+    fun `test calling itself from a later overload is recursion`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            vec4 foo(vec2 uv) { return vec4(1.0); }
+            vec4 foo(vec2 uv, vec4 t) { return <error descr="Recursion is not allowed.">foo</error>(uv, t); }
+            """,
+        )
+    }
+
+    fun `test a partially matching call from a later overload binds to itself`() {
+        myFixture.configureByText(
+            "test_shader.gdshader",
+            """
+            shader_type canvas_item;
+            vec4 foo(vec2 uv) { return vec4(1.0); }
+            vec4 foo(vec2 uv, vec4 t) { return foo(uv, 1.0); }
+            """.trimIndent(),
+        )
+        val errors = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.ERROR }.map { it.description }
+        assertContainsElements(errors, "Recursion is not allowed.")
+    }
+
+    fun `test calling an undeclared overload from the first overload is recursion`() {
+        doHighlightTest(
+            """
+            shader_type canvas_item;
+            vec4 foo(vec2 uv, vec4 t) { return <error descr="Recursion is not allowed.">foo</error>(<error descr="Too few arguments for 'foo(vec2, vec4)' call. Expected at least 2 but received 1.">uv</error>) + t; }
+            vec4 foo(vec2 uv) { return vec4(1.0); }
             """,
         )
     }
