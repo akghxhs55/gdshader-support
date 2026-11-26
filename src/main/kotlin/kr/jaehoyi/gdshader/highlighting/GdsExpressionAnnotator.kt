@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
+import kr.jaehoyi.gdshader.psi.impl.GdsBuiltinDefine
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 
 class GdsExpressionAnnotator :
@@ -312,6 +313,7 @@ class GdsExpressionAnnotator :
                     resolved.variableSpec is ConstantSpec -> "Constants cannot be modified"
                     else -> "Cannot assign to read-only built-in '${resolved.name}'"
                 }
+            is GdsBuiltinDefine -> CONSTANT_EXPRESSION
             else -> null
         }
     }

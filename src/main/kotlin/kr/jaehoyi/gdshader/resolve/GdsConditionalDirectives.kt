@@ -74,14 +74,16 @@ object GdsConditionalDirectives {
             GdsTypes.PP_ERROR_LINE,
         )
 
-    val BUILTIN_DEFINES = setOf("CURRENT_RENDERER", "RENDERER_COMPATIBILITY", "RENDERER_MOBILE", "RENDERER_FORWARD_PLUS")
-
-    private val BUILTIN_VALUES =
+    // Godot 4.7.2, ShaderPreprocessor::preprocess. CURRENT_RENDERER has no value because it depends on the project.
+    val BUILTIN_DEFINE_VALUES: Map<String, Int?> =
         mapOf(
-            "RENDERER_COMPATIBILITY" to 0L,
-            "RENDERER_MOBILE" to 1L,
-            "RENDERER_FORWARD_PLUS" to 2L,
+            "CURRENT_RENDERER" to null,
+            "RENDERER_COMPATIBILITY" to 0,
+            "RENDERER_MOBILE" to 1,
+            "RENDERER_FORWARD_PLUS" to 2,
         )
+
+    val BUILTIN_DEFINES: Set<String> = BUILTIN_DEFINE_VALUES.keys
 
     private val ANALYSIS_KEY = Key.create<CachedValue<Analysis>>("GDS_CONDITIONAL_DIRECTIVES")
     private val DIRECTIVE_NAME_REGEX = Regex("""^\s*#\s*[A-Za-z]+""")
@@ -412,7 +414,7 @@ object GdsConditionalDirectives {
         }
 
         private fun expand(name: String): Any? {
-            BUILTIN_VALUES[name]?.let { return it }
+            BUILTIN_DEFINE_VALUES[name]?.let { return it.toLong() }
             val state = macros[name] as? MacroState.Defined ?: return null
             val body = state.body ?: return null
             return ConditionEvaluator(body, macros, depth + 1).evaluateAll()

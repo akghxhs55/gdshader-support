@@ -14,6 +14,8 @@ class GdsVariableReference(
     private val key: String = element.text
 
     override fun resolve(): PsiElement? {
+        GdsPreprocessorDefinitions.resolveBuiltinDefine(element, key)?.let { return it }
+
         var result: PsiElement? = null
 
         GdsResolver.processVariableDeclaration(element) { element ->

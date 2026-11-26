@@ -15,6 +15,7 @@ import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GdsStructNameRef
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 
 class GdsUnresolvedReferenceAnnotator :
     Annotator,
@@ -82,6 +83,8 @@ class GdsUnresolvedReferenceAnnotator :
         element: GdsStructMemberNameRef,
         holder: AnnotationHolder,
     ) {
+        // GdsDeclarationAnnotator reports a built-in define name as a parse error.
+        if (element.text in GdsConditionalDirectives.BUILTIN_DEFINES) return
         val postfixExpr = element.parent as? GdsPostfixExpr ?: return
         val receiverType = GdsExpressionTypeInference.inferTypeBefore(postfixExpr, element) ?: return
 

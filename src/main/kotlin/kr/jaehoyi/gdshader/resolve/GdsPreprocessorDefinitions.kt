@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import kr.jaehoyi.gdshader.GdsLexerAdapter
 import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
+import kr.jaehoyi.gdshader.psi.impl.GdsBuiltinDefine
 import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 
 object GdsPreprocessorDefinitions {
@@ -40,6 +41,14 @@ object GdsPreprocessorDefinitions {
             // Function-like macros only expand when called.
             .firstOrNull { it.name == name && !it.isFunctionLike }
             ?.let { GdsMacroElement(it) }
+
+    fun resolveBuiltinDefine(
+        place: PsiElement,
+        name: String,
+    ): GdsBuiltinDefine? {
+        if (name !in GdsConditionalDirectives.BUILTIN_DEFINES) return null
+        return GdsBuiltinDefine(place.manager, name, GdsConditionalDirectives.BUILTIN_DEFINE_VALUES[name])
+    }
 
     fun resolveCallableMacro(
         place: PsiElement,

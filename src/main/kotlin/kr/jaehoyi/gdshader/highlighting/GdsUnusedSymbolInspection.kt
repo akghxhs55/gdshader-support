@@ -23,6 +23,7 @@ import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVisitor
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 import kr.jaehoyi.gdshader.resolve.GdsSearchScopes
 
 class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symbol.description") {
@@ -74,6 +75,8 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
     }
 
     private fun isUnused(element: PsiNamedElement): Boolean {
+        // Usages resolve to the built-in define, and the declaration is already an error.
+        if (element.name in GdsConditionalDirectives.BUILTIN_DEFINES) return false
         val useScope = element.useScope
         if (useScope is LocalSearchScope) {
             return ReferencesSearch.search(element, useScope, false).findFirst() == null

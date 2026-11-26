@@ -188,6 +188,23 @@ class VariableCompletionTest : GdsCompletionTestBase() {
         assertContainsElements(lookupStrings, "EPSILON")
     }
 
+    fun `test completion shows builtin defines`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+
+            void fragment() {
+                int r = RENDERER_<caret>;
+            }
+            """.trimIndent(),
+        )
+
+        val lookupStrings = completeAndGetStrings()
+
+        assertContainsElements(lookupStrings, "RENDERER_COMPATIBILITY", "RENDERER_MOBILE", "RENDERER_FORWARD_PLUS")
+    }
+
     fun `test completion shows non-literal and function-like macros`() {
         myFixture.configureByText(
             "test.gdshader",

@@ -125,6 +125,19 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test resolved builtin defines`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int R = RENDERER_MOBILE;
+            void fragment() {
+                float a[RENDERER_FORWARD_PLUS];
+                if (CURRENT_RENDERER == RENDERER_COMPATIBILITY) {}
+            }
+        """,
+        )
+    }
+
     fun `test resolved non-literal define`() {
         doHighlightTest(
             """

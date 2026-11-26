@@ -36,6 +36,8 @@ import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
 import kr.jaehoyi.gdshader.psi.GdsStructMemberDeclarator
 import kr.jaehoyi.gdshader.psi.GdsStructMemberList
+import kr.jaehoyi.gdshader.psi.GdsStructMemberNameDecl
+import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
@@ -58,6 +60,8 @@ class GdsDeclarationAnnotator :
         holder: AnnotationHolder,
     ) {
         if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.DECLARATION_VALIDATION)) return
+
+        checkBuiltinDefineName(element, holder)
 
         when {
             element is GdsItem -> checkShaderTypeFirst(element, holder)
@@ -109,6 +113,32 @@ class GdsDeclarationAnnotator :
             }
             element.node.elementType in GdsConditionalDirectives.DIRECTIVES -> checkDirective(element, holder)
         }
+    }
+
+    // Godot's preprocessor replaces the name with a number before parsing, so the parser error of each position is reported.
+    private fun checkBuiltinDefineName(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
+        if (element.text !in GdsConditionalDirectives.BUILTIN_DEFINES) return
+        val message =
+            when (element) {
+                is GdsFunctionNameDecl -> "Expected a function name after type."
+                is GdsStructNameDecl -> "Expected a struct identifier."
+                is GdsStructMemberNameDecl -> "Expected an identifier or '['."
+                is GdsStructMemberNameRef -> "Expected an identifier as a member."
+                is GdsVariableNameDecl ->
+                    when (element.parent) {
+                        is GdsUniformDeclaration, is GdsVaryingDeclaration -> "Expected an identifier or '['."
+                        is GdsParameter -> "Expected an identifier for argument name."
+                        else -> "Expected an identifier or '[' after type."
+                    }
+                else -> return
+            }
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
     }
 
     // === Preprocessor directives ===

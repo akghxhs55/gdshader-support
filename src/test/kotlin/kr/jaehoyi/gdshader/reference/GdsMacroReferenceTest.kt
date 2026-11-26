@@ -9,6 +9,8 @@ import kr.jaehoyi.gdshader.model.VectorType
 import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
+import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
+import kr.jaehoyi.gdshader.psi.impl.GdsBuiltinDefine
 import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 
@@ -208,6 +210,36 @@ class GdsMacroReferenceTest : BasePlatformTestCase() {
             """,
         )
         assertEquals(3, initializerValue("x"))
+    }
+
+    fun `test builtin define resolves as int constant`() {
+        configure(
+            """
+            void fragment() {
+                int m = RENDERER_MOBILE;
+                int c = CURRENT_RENDERER;
+            }
+            """,
+        )
+        val target = initializer("m").let { PsiTreeUtil.findChildOfType(it, GdsVariableNameRef::class.java)!! }.reference.resolve()
+        assertInstanceOf(target, GdsBuiltinDefine::class.java)
+        assertEquals(IntType, initializerType("m"))
+        assertEquals(1, initializerValue("m"))
+        assertEquals(IntType, initializerType("c"))
+        assertNull(initializerValue("c"))
+    }
+
+    fun `test builtin define wins over variable with same name`() {
+        configure(
+            """
+            void fragment() {
+                float RENDERER_MOBILE = 5.0;
+                int m = RENDERER_MOBILE;
+            }
+            """,
+        )
+        assertEquals(IntType, initializerType("m"))
+        assertEquals(1, initializerValue("m"))
     }
 
     private fun configure(body: String) {

@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Aligned render modes, stencil modes, uniform hints and file templates with Godot
 - Added Godot validations for declarations, shader stages, varyings, constants and literals
 - Support highlighting and inspections in unindexed files (#22)
+- Support built-in preprocessor defines
 
 ## 1.2.2 (2026-11-24)
 

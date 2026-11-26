@@ -20,6 +20,37 @@ class GdsBuiltinNameConflictTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test built-in define names cannot be declared globally`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float <error descr="Expected an identifier or '['.">CURRENT_RENDERER</error>;
+            varying float <error descr="Expected an identifier or '['.">RENDERER_MOBILE</error>;
+            const float <error descr="Expected an identifier or '[' after type.">RENDERER_FORWARD_PLUS</error> = 1.0;
+            struct <error descr="Expected a struct identifier.">RENDERER_COMPATIBILITY</error> { float a; };
+            struct S { float <error descr="Expected an identifier or '['.">RENDERER_MOBILE</error>; };
+            float <error descr="Expected a function name after type.">RENDERER_MOBILE</error>(float x) { return x; }
+            """,
+        )
+    }
+
+    fun `test built-in define names cannot be declared locally`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct S { float a; };
+            float f(float <error descr="Expected an identifier for argument name.">RENDERER_MOBILE</error>) { return 1.0; }
+            void fragment() {
+                float <error descr="Expected an identifier or '[' after type.">CURRENT_RENDERER</error> = 1.0;
+                const float <error descr="Expected an identifier or '[' after type.">RENDERER_FORWARD_PLUS</error> = 1.0;
+                for (int <error descr="Expected an identifier or '[' after type.">RENDERER_COMPATIBILITY</error> = 0, i = 0; i < 2; i++) {}
+                S s;
+                float x = s.<error descr="Expected an identifier as a member.">RENDERER_MOBILE</error>;
+            }
+            """,
+        )
+    }
+
     fun `test recursion`() {
         doHighlightTest(
             """

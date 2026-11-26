@@ -1,6 +1,7 @@
 package kr.jaehoyi.gdshader.psi
 
 import com.intellij.psi.PsiElement
+import kr.jaehoyi.gdshader.psi.impl.GdsBuiltinDefine
 import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import kr.jaehoyi.gdshader.resolve.GdsMacroExpansion
 
@@ -132,6 +133,7 @@ object GdsConstantEvaluator {
                 }
             }
             is GdsMacroElement -> GdsMacroExpansion.evaluate(varRef)
+            is GdsBuiltinDefine -> resolved.value
             else -> null
         }
     }

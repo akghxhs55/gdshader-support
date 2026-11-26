@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 
@@ -501,6 +502,16 @@ object GdsLookupElements {
 
         return builder
     }
+
+    val BUILTIN_DEFINES: List<LookupElement> =
+        GdsConditionalDirectives.BUILTIN_DEFINE_VALUES.map { (name, value) ->
+            LookupElementBuilder
+                .create(name)
+                .withBoldness(true)
+                .withIcon(AllIcons.Nodes.Constant)
+                .withTypeText("#define ${value ?: ""}".trimEnd(), true)
+                .withPriority(PRIORITY_BUILTIN)
+        }
 
     fun createFromMacro(macro: GdsPreprocessorDefinitions.GdsMacro): LookupElement {
         val parameters = macro.parameters

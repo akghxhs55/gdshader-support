@@ -1564,6 +1564,18 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test assign to builtin define`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                <error descr="Assignment to constant expression">CURRENT_RENDERER = 1</error>;
+                float f = <error descr="Cannot assign a value of type 'int' to type 'float'">RENDERER_MOBILE</error>;
+            }
+            """.trimIndent(),
+        )
+    }
+
     fun `test compound assign to literal`() {
         doHighlightTest(
             """
