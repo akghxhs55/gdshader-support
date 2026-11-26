@@ -8,7 +8,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.BoolType
-import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.IntType
 import kr.jaehoyi.gdshader.model.UIntType
 import kr.jaehoyi.gdshader.model.VoidType
@@ -32,34 +31,13 @@ class GdsStatementAnnotator : Annotator {
         if (!GdsInspectionUtil.isEnabled(element, GdsInspectionUtil.STATEMENT_VALIDATION)) return
 
         when (element) {
-            is GdsSimpleStatement -> {
-                checkDiscardStatement(element, holder)
-                checkBreakContinueStatement(element, holder)
-            }
+            is GdsSimpleStatement -> checkBreakContinueStatement(element, holder)
             is GdsReturnStatement -> checkReturnStatement(element, holder)
             is GdsSwitchStatement -> checkSwitchStatement(element, holder)
             is GdsIfStatement -> checkIfStatement(element, holder)
             is GdsForStatement -> checkForStatement(element, holder)
             is GdsWhileStatement -> checkWhileStatement(element, holder)
             is GdsDoWhileStatement -> checkDoWhileStatement(element, holder)
-        }
-    }
-
-    private fun checkDiscardStatement(
-        element: GdsSimpleStatement,
-        holder: AnnotationHolder,
-    ) {
-        val firstChild = element.firstChild ?: return
-        if (firstChild.node.elementType != GdsTypes.CF_DISCARD) return
-
-        val functionDecl = element.parentOfType<GdsFunctionDeclaration>() ?: return
-        val context = FunctionContext.fromText(functionDecl.functionNameDecl.text)
-
-        if (context != FunctionContext.COMMON && context != FunctionContext.FRAGMENT && context != FunctionContext.LIGHT) {
-            holder
-                .newAnnotation(HighlightSeverity.ERROR, "'discard' can only be used in 'fragment' or 'light' functions")
-                .range(element)
-                .create()
         }
     }
 

@@ -32,7 +32,7 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
             """
             shader_type spatial;
             void vertex() {
-                <error descr="'discard' can only be used in 'fragment' or 'light' functions">discard;</error>
+                <error descr="'discard' cannot be used within the 'vertex' processor function.">discard;</error>
             }
         """,
         )
