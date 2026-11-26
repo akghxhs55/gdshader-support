@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.model.DataType
+import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunction
@@ -55,7 +56,7 @@ class GdsFunctionReference(
         val specs = specsWithElements.map { it.first }
         val resolved =
             if (argTypes != null) {
-                GdsOverloadResolver.resolveFunctionOverload(specs, argTypes)
+                GdsOverloadResolver.resolveFunctionOverload(specs, argTypes, GdsConstantReducer.reduceArguments(functionCall))
             } else {
                 val argCount = functionCall.argumentList?.initializerList?.size ?: 0
                 GdsOverloadResolver.filterByArgumentCount(specs, argCount).singleOrNull()

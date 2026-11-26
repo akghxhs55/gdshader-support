@@ -1,25 +1,121 @@
 package kr.jaehoyi.gdshader.resolve
 
 import kr.jaehoyi.gdshader.model.*
+import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 
 object GdsOverloadResolver {
+    data class FunctionCallResolution(
+        val spec: FunctionSpec,
+        val returnType: DataType,
+    )
+
     fun resolveFunctionOverload(
         candidates: List<FunctionSpec>,
         argumentTypes: List<DataType>,
-        constantArguments: List<Boolean> = emptyList(),
-    ): FunctionSpec? {
-        val allowConstantConversions = candidates.size == 1
-        return resolveOverload(candidates, argumentTypes) { paramType, argType, index, aliasBindings ->
-            isFunctionTypeCompatible(
-                paramType,
-                argType,
-                index,
-                constantArguments,
-                allowConstantConversions,
-                aliasBindings,
-            )
+        constantArguments: List<GdsConstantReducer.Result> = emptyList(),
+    ): FunctionSpec? = resolveFunctionCall(candidates, argumentTypes, constantArguments)?.spec
+
+    // Godot converts scalar constant arguments for every built-in function, never for stage functions,
+    // and for a user function only when its name has no overloads.
+    fun resolveFunctionCall(
+        candidates: List<FunctionSpec>,
+        argumentTypes: List<DataType>,
+        constantArguments: List<GdsConstantReducer.Result> = emptyList(),
+    ): FunctionCallResolution? {
+        val countMatches = filterByArgumentCount(candidates, argumentTypes.size)
+        if (countMatches.isEmpty()) return null
+
+        val userFunctionCount = candidates.count { !Builtins.isEngineFunction(it) && !Builtins.isStageFunction(it) }
+        val noConversions = emptyList<GdsConstantReducer.Result>()
+
+        for (allowConversions in listOf(false, true)) {
+            for (spec in countMatches) {
+                val convertible =
+                    when {
+                        !allowConversions -> false
+                        Builtins.isEngineFunction(spec) -> true
+                        Builtins.isStageFunction(spec) -> false
+                        else -> userFunctionCount == 1
+                    }
+                if (allowConversions && !convertible) continue
+
+                val bindings = bindArguments(spec.parameters, argumentTypes, if (convertible) constantArguments else noConversions)
+                if (bindings != null) return FunctionCallResolution(spec, substituteReturnType(spec.returnType, bindings))
+            }
         }
+        return null
     }
+
+    private fun bindArguments(
+        params: List<ParameterSpec>,
+        argTypes: List<DataType>,
+        constantArguments: List<GdsConstantReducer.Result>,
+    ): Map<AliasType, DataType>? {
+        val bindings = mutableMapOf<AliasType, DataType>()
+        for (i in argTypes.indices) {
+            if (i >= params.size) return null
+            val paramType = params[i].type
+            val argType = argTypes[i]
+            val constant = constantArguments.getOrNull(i)?.takeIf { it != GdsConstantReducer.NotConstant }
+
+            val boundType =
+                when {
+                    paramType == argType -> continue
+                    paramType is AliasType ->
+                        when {
+                            matchesAliasType(paramType, argType) -> argType
+                            constant != null && argType is Scalar -> {
+                                val scalar = aliasScalar(paramType) ?: return null
+                                if (!isConstantConvertible(constant, scalar)) return null
+                                scalar
+                            }
+                            else -> return null
+                        }
+                    constant != null && paramType is Scalar && argType is Scalar ->
+                        if (isConstantConvertible(constant, paramType)) continue else return null
+                    else -> return null
+                }
+
+            val existing = bindings[paramType]
+            if (existing != null && existing != boundType) return null
+            bindings[paramType as AliasType] = boundType
+        }
+        return bindings
+    }
+
+    private fun substituteReturnType(
+        returnType: DataType,
+        bindings: Map<AliasType, DataType>,
+    ): DataType {
+        if (returnType !is AliasType) return returnType
+        bindings[returnType]?.let { return it }
+        if (returnType == AliasType.GVEC4_TYPE) {
+            bindings.entries
+                .firstOrNull { isGenericSampler(it.key) }
+                ?.let { resolveGvec4FromSampler(it.value) }
+                ?.let { return it }
+        }
+        return returnType
+    }
+
+    private fun aliasScalar(aliasType: AliasType): Scalar? =
+        when (aliasType) {
+            AliasType.VEC_TYPE -> FloatType.DEFAULT
+            AliasType.VEC_INT_TYPE -> IntType
+            AliasType.VEC_UINT_TYPE -> UIntType
+            AliasType.VEC_BOOL_TYPE -> BoolType
+            else -> null
+        }
+
+    // A macro argument may expand to a literal, so it is given the benefit of the doubt.
+    private fun isConstantConvertible(
+        constant: GdsConstantReducer.Result,
+        to: Scalar,
+    ): Boolean =
+        when (constant) {
+            is GdsConstantReducer.Constant -> GdsConstantReducer.convertConstant(constant, to)
+            else -> true
+        }
 
     fun resolveConstructorOverload(
         candidates: List<FunctionSpec>,
@@ -67,28 +163,6 @@ object GdsOverloadResolver {
             val requiredCount = spec.parameters.count { !it.isOptional }
             argumentCount in requiredCount..spec.parameters.size
         }
-
-    fun resolveAliasType(
-        aliasType: AliasType,
-        argTypes: List<DataType>,
-        paramTypes: List<DataType>,
-    ): DataType? {
-        for (i in paramTypes.indices) {
-            if (i >= argTypes.size) break
-            val paramType = paramTypes[i]
-            val argType = argTypes[i]
-
-            if (paramType == aliasType) {
-                return argType
-            }
-
-            if (aliasType == AliasType.GVEC4_TYPE && isGenericSampler(paramType)) {
-                return resolveGvec4FromSampler(argType)
-            }
-        }
-
-        return null
-    }
 
     fun matchesAliasType(
         aliasType: AliasType,
@@ -150,50 +224,28 @@ object GdsOverloadResolver {
         return true
     }
 
-    private fun isFunctionTypeCompatible(
+    private fun isAliasCompatible(
         paramType: DataType,
         argType: DataType,
-        argumentIndex: Int = 0,
-        constantArguments: List<Boolean> = emptyList(),
-        allowConstantConversions: Boolean = false,
         aliasBindings: MutableMap<AliasType, DataType>,
     ): Boolean {
         if (paramType == argType) return true
+        if (paramType !is AliasType || !matchesAliasType(paramType, argType)) return false
 
-        if (allowConstantConversions && constantArguments.getOrElse(argumentIndex) { false }) {
-            if (paramType is Scalar && argType is Scalar && isNumericScalarConvertible(argType, paramType)) return true
+        val existingBinding = aliasBindings[paramType]
+        if (existingBinding != null) {
+            return existingBinding == argType
         }
-
-        if (paramType is AliasType) {
-            if (!matchesAliasType(paramType, argType)) return false
-
-            val existingBinding = aliasBindings[paramType]
-            if (existingBinding != null) {
-                return existingBinding == argType
-            }
-            aliasBindings[paramType] = argType
-            return true
-        }
-
-        return false
+        aliasBindings[paramType] = argType
+        return true
     }
-
-    private fun isNumericScalarConvertible(
-        from: Scalar,
-        to: Scalar,
-    ): Boolean =
-        when (from) {
-            is IntType -> to is IntType || to is UIntType || to is FloatType
-            is UIntType -> to is IntType || to is UIntType || to is FloatType
-            else -> false
-        }
 
     private fun isConstructorTypeCompatible(
         paramType: DataType,
         argType: DataType,
         aliasBindings: MutableMap<AliasType, DataType>,
     ): Boolean {
-        if (isFunctionTypeCompatible(paramType, argType, aliasBindings = aliasBindings)) return true
+        if (isAliasCompatible(paramType, argType, aliasBindings)) return true
 
         return when {
             paramType is Scalar && argType is Scalar -> isConstructorScalarConvertible(argType, paramType)

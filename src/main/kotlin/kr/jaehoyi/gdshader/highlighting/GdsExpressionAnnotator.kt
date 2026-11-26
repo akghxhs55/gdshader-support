@@ -187,7 +187,7 @@ class GdsExpressionAnnotator : Annotator {
 
         val operatorType = operator.node.firstChildNode.elementType
         if (operatorType == GdsTypes.OP_ASSIGN) {
-            if (lhsType != rhsType) {
+            if (!lhsType.acceptsValueOf(rhsType)) {
                 holder
                     .newAnnotation(
                         HighlightSeverity.ERROR,

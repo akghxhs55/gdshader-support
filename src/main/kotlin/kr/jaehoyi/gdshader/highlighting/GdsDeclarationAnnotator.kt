@@ -13,6 +13,7 @@ import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.model.acceptsValueOf
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
@@ -368,7 +369,7 @@ class GdsDeclarationAnnotator : Annotator {
         val expr = initializer.expression ?: return
         val exprType = GdsExpressionTypeInference.inferType(expr) ?: return
 
-        if (declaredType.name != exprType.name) {
+        if (!declaredType.acceptsValueOf(exprType)) {
             holder
                 .newAnnotation(
                     HighlightSeverity.ERROR,

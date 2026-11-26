@@ -525,7 +525,7 @@ def expand_plugin(doc):
 
 
 def derive_return(return_type, params, types):
-    """Mirrors GdsOverloadResolver.resolveAliasType."""
+    """Mirrors GdsOverloadResolver.substituteReturnType."""
     if return_type not in ALIAS_DOMAINS:
         return return_type
     for param, concrete in zip(params, types):

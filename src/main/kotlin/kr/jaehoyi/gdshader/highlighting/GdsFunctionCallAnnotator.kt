@@ -21,7 +21,7 @@ import kr.jaehoyi.gdshader.psi.GdsAssignExpr
 import kr.jaehoyi.gdshader.psi.GdsBlock
 import kr.jaehoyi.gdshader.psi.GdsConditionalExpr
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
-import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
+import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpression
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
@@ -161,7 +161,7 @@ class GdsFunctionCallAnnotator : Annotator {
         if (functions.isNotEmpty()) {
             val resolved =
                 checkArguments(functions, argCount, functionName, functionCall, holder) { specs, argTypes ->
-                    GdsOverloadResolver.resolveFunctionOverload(specs, argTypes, collectConstantArguments(functionCall))
+                    GdsOverloadResolver.resolveFunctionOverload(specs, argTypes, GdsConstantReducer.reduceArguments(functionCall))
                 }
             resolved?.let { checkOutArguments(functionCall, it, holder) }
             return
@@ -210,13 +210,6 @@ class GdsFunctionCallAnnotator : Annotator {
         }
     }
 
-    private fun collectConstantArguments(functionCall: GdsFunctionCall): List<Boolean> {
-        val argList = functionCall.argumentList ?: return emptyList()
-        return argList.initializerList.map { initializer ->
-            initializer.expression?.let { GdsConstantEvaluator.evaluate(it) != null } == true
-        }
-    }
-
     private fun checkArguments(
         candidates: List<FunctionSpec>,
         argCount: Int,
@@ -241,6 +234,17 @@ class GdsFunctionCallAnnotator : Annotator {
 
         val resolved = resolveOverload(countMatches, argTypes)
         if (resolved != null) return resolved
+
+        if (countMatches.any { Builtins.isEngineFunction(it) }) {
+            val argListElement = functionCall.argumentList ?: return null
+            holder
+                .newAnnotation(
+                    HighlightSeverity.ERROR,
+                    "Invalid arguments for the built-in function: '$name(${argTypes.joinToString(",") { it.name }})'",
+                ).range(argListElement)
+                .create()
+            return null
+        }
 
         val bestCandidate = countMatches.firstOrNull() ?: return null
         for (i in argTypes.indices) {

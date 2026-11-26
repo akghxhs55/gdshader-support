@@ -108,26 +108,23 @@ object Builtins {
             ShaderType.CANVAS_ITEM to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
             ShaderType.CANVAS_ITEM to FunctionContext.FRAGMENT to sdfFunctions,
             ShaderType.CANVAS_ITEM to FunctionContext.LIGHT to sdfFunctions,
-            ShaderType.PARTICLES to FunctionContext.COMMON to globalFunctions +
-                listOf(
-                    FunctionSpec(
-                        name = "emit_subparticle",
-                        returnType = BOOL,
-                        parameters =
-                            listOf(
-                                ParameterSpec("xform", MAT4),
-                                ParameterSpec("velocity", VEC3),
-                                ParameterSpec("color", VEC4),
-                                ParameterSpec("custom", VEC4),
-                                ParameterSpec("flags", UINT),
-                            ),
-                        description = "Emits a particle from a sub-emitter.",
-                    ),
-                ),
+            ShaderType.PARTICLES to FunctionContext.COMMON to globalFunctions + emitSubparticleFunction,
             ShaderType.SKY to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
             ShaderType.FOG to FunctionContext.COMMON to globalFunctions,
         )
     }
+
+    private val ENGINE_FUNCTIONS: Set<FunctionSpec> by lazy {
+        (GeneratedBuiltins.globalFunctions + GeneratedBuiltins.fragmentOnlyFunctions).toHashSet()
+    }
+
+    private val STAGE_FUNCTIONS: Set<FunctionSpec> by lazy {
+        (sdfFunctions + emitSubparticleFunction).toHashSet()
+    }
+
+    fun isEngineFunction(spec: FunctionSpec): Boolean = spec in ENGINE_FUNCTIONS
+
+    fun isStageFunction(spec: FunctionSpec): Boolean = spec in STAGE_FUNCTIONS
 
     private val FUNCTION_LOOKUP_CACHE: Map<Pair<ShaderType, FunctionContext>, Map<String, List<FunctionSpec>>> by lazy {
         FUNCTIONS.mapValues { entry ->
@@ -235,6 +232,21 @@ object Builtins {
                         FunctionContext.FOG,
                     ),
             ),
+        )
+
+    private val emitSubparticleFunction =
+        FunctionSpec(
+            name = "emit_subparticle",
+            returnType = BOOL,
+            parameters =
+                listOf(
+                    ParameterSpec("xform", MAT4),
+                    ParameterSpec("velocity", VEC3),
+                    ParameterSpec("color", VEC4),
+                    ParameterSpec("custom", VEC4),
+                    ParameterSpec("flags", UINT),
+                ),
+            description = "Emits a particle from a sub-emitter.",
         )
 
     private val sdfFunctions =

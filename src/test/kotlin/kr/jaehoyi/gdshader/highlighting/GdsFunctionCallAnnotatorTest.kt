@@ -949,6 +949,106 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === Built-in function constant conversion ===
+
+    fun `test built-in functions convert scalar constants across overloads`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float x = 0.5;
+                vec2 v = vec2(0.5);
+                float a = pow(x, 2);
+                float b = clamp(x, 0, 1);
+                float c = sin(1);
+                float d = max(x, 0);
+                float e = step(0, x);
+                float f = max(1, 2.0);
+                vec2 g = max(v, 1);
+                int h = max(1, 2);
+                float i = max(1u, 2);
+                float j = pow(2, x);
+            }
+        """,
+        )
+    }
+
+    fun `test built-in function does not convert non-constant arguments`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float x = 0.5;
+                int n = 2;
+                float a = pow(<error descr="Invalid arguments for the built-in function: 'pow(float,int)'">x, n</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test only reduced constants are converted`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define TWO 2
+            const int C = 2;
+            float half_of(float v) { return v * 0.5; }
+            void fragment() {
+                const int L = 2;
+                float x = 0.5;
+                float a = pow(x, -2);
+                float b = pow(x, int(2));
+                float c = pow(x, (2));
+                float d = pow(x, TWO);
+                float e = half_of(-1);
+                float f = pow(<error descr="Invalid arguments for the built-in function: 'pow(float,int)'">x, 1 + 1</error>);
+                float g = pow(<error descr="Invalid arguments for the built-in function: 'pow(float,int)'">x, C</error>);
+                float h = pow(<error descr="Invalid arguments for the built-in function: 'pow(float,int)'">x, L</error>);
+                float i = half_of(<error descr="No matching function for 'half_of(float)' call: argument 1 should be float but is int">C</error>);
+                float j = half_of(<error descr="No matching function for 'half_of(float)' call: argument 1 should be float but is int">1 + 1</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test built-in function converts constants only when the value fits`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a = uintBitsToFloat(1);
+                float b = uintBitsToFloat(<error descr="Invalid arguments for the built-in function: 'uintBitsToFloat(int)'">-1</error>);
+                float c = intBitsToFloat(2147483647u);
+                float d = intBitsToFloat(<error descr="Invalid arguments for the built-in function: 'intBitsToFloat(uint)'">2147483648u</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test stage function does not convert constants`() {
+        doHighlightTest(
+            """
+            shader_type particles;
+            void process() {
+                emit_subparticle(<error descr="No matching function for 'emit_subparticle(mat4, vec3, vec4, vec4, uint)' call: argument 5 should be uint but is int">mat4(1.0), vec3(0.0), vec4(1.0), vec4(0.0), 0</error>);
+            }
+        """,
+        )
+    }
+
+    fun `test overloaded user function does not convert constants`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f(float a) { return a; }
+            float f(vec2 a) { return a.x; }
+            void fragment() {
+                float x = f(<error descr="No matching function for 'f(float)' call: argument 1 should be float but is int">1</error>);
+            }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

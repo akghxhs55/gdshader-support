@@ -53,6 +53,11 @@ object GdsConstantReducer {
             else -> Unknown
         }
 
+    fun reduceArguments(functionCall: GdsFunctionCall): List<Result> =
+        functionCall.argumentList?.initializerList.orEmpty().map { initializer ->
+            initializer.expression?.let { reduce(it) } ?: NotConstant
+        }
+
     fun convertConstant(
         constant: Constant,
         to: DataType,

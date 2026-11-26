@@ -191,15 +191,9 @@ object GdsExpressionTypeInference {
 
         val argTypes = collectArgumentTypes(functionCall) ?: return null
 
-        val resolvedSpec = GdsOverloadResolver.resolveFunctionOverload(candidates, argTypes) ?: return null
-
-        val returnType = resolvedSpec.returnType
-        if (returnType is AliasType) {
-            val paramTypes = resolvedSpec.parameters.map { it.type }
-            return GdsOverloadResolver.resolveAliasType(returnType, argTypes, paramTypes) ?: returnType
-        }
-
-        return returnType
+        return GdsOverloadResolver
+            .resolveFunctionCall(candidates, argTypes, GdsConstantReducer.reduceArguments(functionCall))
+            ?.returnType
     }
 
     private fun collectArgumentTypes(functionCall: GdsFunctionCall): List<DataType>? {

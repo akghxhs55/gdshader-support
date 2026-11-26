@@ -287,6 +287,12 @@ open class ArrayType(
     override fun getConstructors(): List<FunctionSpec> = BuiltinConstructors.getConstructors(this)
 }
 
+fun DataType.acceptsValueOf(valueType: DataType): Boolean {
+    if (this == valueType) return true
+    if (this !is ArrayType || valueType !is ArrayType || elementType != valueType.elementType) return false
+    return containerSize == null || valueType.containerSize == null
+}
+
 class MatrixType private constructor(
     val colType: VectorType,
 ) : DataType(

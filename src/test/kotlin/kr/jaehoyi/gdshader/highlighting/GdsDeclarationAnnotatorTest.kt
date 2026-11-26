@@ -727,6 +727,21 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test unsized array constructor initializes sized array`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a[2] = float[](1.0, 2.0);
+                float b[] = float[](1.0, 2.0);
+                float c[2];
+                c = float[](1.0, 2.0);
+                float d[2] = <error descr="Cannot assign a value of type 'int[]' to type 'float[2]'">int[](1, 2)</error>;
+            }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
