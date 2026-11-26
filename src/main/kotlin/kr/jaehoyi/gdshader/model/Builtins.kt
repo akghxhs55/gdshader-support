@@ -111,6 +111,7 @@ object Builtins {
             ShaderType.PARTICLES to FunctionContext.COMMON to globalFunctions + emitSubparticleFunction,
             ShaderType.SKY to FunctionContext.COMMON to globalFunctions + fragmentShaderOnlyFunctions,
             ShaderType.FOG to FunctionContext.COMMON to globalFunctions,
+            ShaderType.TEXTURE_BLIT to FunctionContext.COMMON to globalFunctions,
         )
     }
 
@@ -230,6 +231,10 @@ object Builtins {
                 ShaderType.FOG to
                     listOf(
                         FunctionContext.FOG,
+                    ),
+                ShaderType.TEXTURE_BLIT to
+                    listOf(
+                        FunctionContext.BLIT,
                     ),
             ),
         )

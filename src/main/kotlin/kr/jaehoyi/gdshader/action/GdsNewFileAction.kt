@@ -34,6 +34,7 @@ class GdsNewFileAction :
             .addKind("Particles", GdsFileType.icon, "Particles")
             .addKind("Sky", GdsFileType.icon, "Sky")
             .addKind("Fog", GdsFileType.icon, "Fog")
+            .addKind("Texture Blit", GdsFileType.icon, "Texture Blit")
     }
 
     override fun getActionName(

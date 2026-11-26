@@ -8,6 +8,7 @@ enum class ShaderType(
     PARTICLES("particles"),
     SKY("sky"),
     FOG("fog"),
+    TEXTURE_BLIT("texture_blit"),
     ;
 
     companion object {

@@ -197,6 +197,7 @@
         <internalFileTemplate name="Particles" />
         <internalFileTemplate name="Sky" />
         <internalFileTemplate name="Fog" />
+        <internalFileTemplate name="Texture Blit" />
         <internalFileTemplate name="Shader Include" />
         
     </extensions>

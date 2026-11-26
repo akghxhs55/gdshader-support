@@ -58,6 +58,7 @@ class GdsProcessingFunctionLineMarkerProvider : LineMarkerProvider {
                 ShaderType.PARTICLES -> "particle_shader.html"
                 ShaderType.SKY -> "sky_shader.html"
                 ShaderType.FOG -> "fog_shader.html"
+                ShaderType.TEXTURE_BLIT -> "texture_blit_shader.html"
             }
         val functionUrl =
             when (functionContext) {
@@ -68,6 +69,7 @@ class GdsProcessingFunctionLineMarkerProvider : LineMarkerProvider {
                 FunctionContext.PROCESS -> "process-built-ins"
                 FunctionContext.SKY -> "sky-built-ins"
                 FunctionContext.FOG -> "fog-built-ins"
+                FunctionContext.BLIT -> "blit-built-ins"
                 else -> return
             }
 

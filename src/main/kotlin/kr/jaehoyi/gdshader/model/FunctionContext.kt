@@ -11,6 +11,7 @@ enum class FunctionContext(
     PROCESS("process"),
     SKY("sky"),
     FOG("fog"),
+    BLIT("blit"),
     ;
 
     companion object {
@@ -23,6 +24,7 @@ enum class FunctionContext(
                 "process" -> PROCESS
                 "sky" -> SKY
                 "fog" -> FOG
+                "blit" -> BLIT
                 else -> COMMON
             }
     }

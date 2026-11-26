@@ -70,6 +70,7 @@ object GdsKeywords {
             ShaderType.PARTICLES to setOf("keep_data", "disable_force", "disable_velocity", "collision_use_scale"),
             ShaderType.SKY to setOf("use_half_res_pass", "use_quarter_res_pass", "disable_fog", "use_debanding"),
             ShaderType.FOG to setOf(),
+            ShaderType.TEXTURE_BLIT to setOf("blend_mix", "blend_add", "blend_sub", "blend_mul", "blend_disabled"),
         )
 
     val STENCIL_MODES =
@@ -91,6 +92,7 @@ object GdsKeywords {
             ShaderType.PARTICLES to setOf(),
             ShaderType.SKY to setOf(),
             ShaderType.FOG to setOf(),
+            ShaderType.TEXTURE_BLIT to setOf(),
         )
 
     // Mirrors the COMPLETION_HINT case of ShaderLanguage::complete_code.

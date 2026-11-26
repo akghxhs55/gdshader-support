@@ -7039,6 +7039,71 @@ internal object GeneratedBuiltins {
                         description = "Output emission color value, added to color during light pass to produce final color. Only written to fog volume if used.",
                     ),
                 ),
+            ShaderType.TEXTURE_BLIT to FunctionContext.COMMON to
+                listOf(
+                    ParameterSpec(
+                        name = "TIME",
+                        type = FLOAT,
+                        description = "Global time since the engine has started, in seconds. It repeats after every <code>3,600</code> seconds (which can be changed with the <a href=\"https://docs.godotengine.org/en/stable/classes/class_projectsettings.html#class-projectsettings-property-rendering-limits-time-time-rollover-secs\">rollover</a> setting). It's affected by <a href=\"https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-property-time-scale\">time_scale</a> but not by pausing. If you need a <code>TIME</code> variable that is not affected by time scale, add your own <a href=\"https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shading_language.html#doc-shading-language-global-uniforms\">global shader uniform</a> and update it each frame.",
+                    ),
+                    ConstantSpec(
+                        name = "PI",
+                        type = FLOAT,
+                        description = "A <code>PI</code> constant (<code>3.141592</code>). The ratio of a circle's circumference to its diameter and the number of radians in a half turn.",
+                    ),
+                    ConstantSpec(
+                        name = "TAU",
+                        type = FLOAT,
+                        description = "A <code>TAU</code> constant (<code>6.283185</code>). An equivalent of <code>PI * 2</code> and amount of radians in full turn.",
+                    ),
+                    ConstantSpec(
+                        name = "E",
+                        type = FLOAT,
+                        description = "An <code>E</code> constant (<code>2.718281</code>). Euler's number and a base of the natural logarithm.",
+                    ),
+                ),
+            ShaderType.TEXTURE_BLIT to FunctionContext.BLIT to
+                listOf(
+                    ParameterSpec(
+                        name = "FRAGCOORD",
+                        type = VEC4,
+                        description = "Coordinate of pixel center. In screen space. <code>xy</code> specifies position in viewport. Upper-left of the viewport is the origin, <code>(0.0, 0.0)</code>.",
+                    ),
+                    ParameterSpec(
+                        name = "UV",
+                        type = VEC2,
+                        description = "UV from the <code>vertex()</code> function. This is set to sample all of a source texture.",
+                    ),
+                    ParameterSpec(
+                        name = "MODULATE",
+                        type = VEC4,
+                        description = "<code>MODULATE</code> color passed in by RenderingServer API.",
+                    ),
+                    ParameterSpec(
+                        name = "COLOR0",
+                        type = VEC4,
+                        qualifier = ParameterQualifier.OUT,
+                        description = "Output color to blended with the DrawableTexture target. Initialized to <code>(0.0, 0.0, 0.0, 0.0)</code>.",
+                    ),
+                    ParameterSpec(
+                        name = "COLOR1",
+                        type = VEC4,
+                        qualifier = ParameterQualifier.OUT,
+                        description = "Output color to blended with an extra DrawableTexture target. Initialized to <code>(0.0, 0.0, 0.0, 0.0)</code>.",
+                    ),
+                    ParameterSpec(
+                        name = "COLOR2",
+                        type = VEC4,
+                        qualifier = ParameterQualifier.OUT,
+                        description = "Output color to blended with an extra DrawableTexture target. Initialized to <code>(0.0, 0.0, 0.0, 0.0)</code>.",
+                    ),
+                    ParameterSpec(
+                        name = "COLOR3",
+                        type = VEC4,
+                        qualifier = ParameterQualifier.OUT,
+                        description = "Output color to blended with an extra DrawableTexture target. Initialized to <code>(0.0, 0.0, 0.0, 0.0)</code>.",
+                    ),
+                ),
         )
 
     private fun functionDoc(

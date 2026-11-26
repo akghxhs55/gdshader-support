@@ -15,7 +15,8 @@
       "canvas_item_shader.rst": "CANVAS_ITEM",
       "particle_shader.rst": "PARTICLES",
       "sky_shader.rst": "SKY",
-      "fog_shader.rst": "FOG"
+      "fog_shader.rst": "FOG",
+      "texture_blit_shader.rst": "TEXTURE_BLIT"
     },
     "label_files": [
       "shader_functions.rst",
@@ -35,7 +36,8 @@
     "CANVAS_ITEM": "CANVAS_ITEM",
     "PARTICLES": "PARTICLES",
     "SKY": "SKY",
-    "FOG": "FOG"
+    "FOG": "FOG",
+    "TEXTURE_BLIT": "TEXTURE_BLIT"
   },
   "variable_sections": {
     "Global built-ins": ["COMMON"],
@@ -46,7 +48,8 @@
     "Start built-ins": ["START"],
     "Process built-ins": ["PROCESS"],
     "Sky built-ins": ["SKY"],
-    "Fog built-ins": ["FOG"]
+    "Fog built-ins": ["FOG"],
+    "Blit built-ins": ["BLIT"]
   },
   "output": "../src/main/kotlin/kr/jaehoyi/gdshader/model/GeneratedBuiltins.kt"
 }
