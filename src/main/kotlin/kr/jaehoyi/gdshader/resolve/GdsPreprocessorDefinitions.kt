@@ -52,14 +52,23 @@ object GdsPreprocessorDefinitions {
     fun parseMacro(element: PsiElement): GdsMacro? {
         if (element.node?.elementType != GdsTypes.PP_DEFINE_LINE) return null
         // Highlighting may inspect an incomplete PSI tree while the user edits a directive.
-        val rawText = element.text ?: return null
+        val define = parseDefine(element.text ?: return null) ?: return null
+        return GdsMacro(
+            name = define.name,
+            parameters = define.parameters,
+            body = define.body,
+            element = element,
+            nameOffset = define.nameOffset,
+        )
+    }
+
+    fun parseDefine(rawText: String): Define? {
         // Same-length replacement keeps offsets into the original text valid.
         val text = LINE_CONTINUATION_REGEX.replace(rawText) { " ".repeat(it.value.length) }
 
         val prefix = DEFINE_PREFIX_REGEX.find(text) ?: return null
         val nameStart = prefix.range.last + 1
         val nameMatch = IDENTIFIER_REGEX.find(text, nameStart)?.takeIf { it.range.first == nameStart } ?: return null
-        val name = nameMatch.value
         var index = nameMatch.range.last + 1
 
         var parameters: List<String>? = null
@@ -78,14 +87,15 @@ object GdsPreprocessorDefinitions {
             index = close + 1
         }
 
-        return GdsMacro(
-            name = name,
-            parameters = parameters,
-            body = tokenize(text.substring(index)),
-            element = element,
-            nameOffset = nameMatch.range.first,
-        )
+        return Define(nameMatch.value, parameters, tokenize(text.substring(index)), nameMatch.range.first)
     }
+
+    data class Define(
+        val name: String,
+        val parameters: List<String>?,
+        val body: List<MacroToken>,
+        val nameOffset: Int,
+    )
 
     private fun tokenize(text: String): List<MacroToken> {
         val lexer = GdsLexerAdapter()

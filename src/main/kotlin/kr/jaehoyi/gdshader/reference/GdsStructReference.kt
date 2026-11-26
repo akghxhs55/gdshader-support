@@ -4,6 +4,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceBase
 import kr.jaehoyi.gdshader.psi.GdsElementFactory
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 class GdsStructReference(
@@ -12,7 +13,9 @@ class GdsStructReference(
 ) : PsiReferenceBase<PsiElement>(element, textRange) {
     private val key: String = element.text
 
-    override fun resolve(): PsiElement? = GdsResolver.findStructDeclaration(element, key)
+    override fun resolve(): PsiElement? =
+        GdsResolver.findStructDeclaration(element, key)
+            ?: GdsPreprocessorDefinitions.resolveObjectMacro(element, key)
 
     override fun handleElementRename(newElementName: String): PsiElement? {
         val identifier = GdsElementFactory.createIdentifier(element.project, newElementName) ?: return null

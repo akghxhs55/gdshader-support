@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.psi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.model.*
+import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 
 object GdsDataTypeFactory {
@@ -82,7 +83,7 @@ object GdsDataTypeFactory {
         var baseType = Builtins.getType(typeText)
 
         if (baseType == null) {
-            baseType = resolveStructType(typeNode, visiting)
+            baseType = resolveStructType(typeNode, visiting) ?: resolveMacroType(typeNode)
         }
 
         if (baseType == null) return null
@@ -92,6 +93,13 @@ object GdsDataTypeFactory {
             baseType = baseType.withPrecision(precision)
         }
         return baseType
+    }
+
+    private fun resolveMacroType(typeNode: GdsType): DataType? {
+        val structRef = typeNode.structNameRef ?: return null
+        val macro = (structRef.reference.resolve() as? GdsMacroElement)?.macro ?: return null
+        val typeName = macro.body.singleOrNull()?.text ?: return null
+        return Builtins.getType(typeName) ?: createFromStructName(structRef, typeName)
     }
 
     private fun resolveStructType(

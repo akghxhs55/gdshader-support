@@ -16,7 +16,7 @@ import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
 class GdsParserDefinition : ParserDefinition {
-    override fun createLexer(project: Project): Lexer = GdsLexerAdapter()
+    override fun createLexer(project: Project): Lexer = GdsConditionalLexer()
 
     override fun getCommentTokens(): TokenSet = GdsTokenSets.COMMENTS
 

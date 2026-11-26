@@ -39,8 +39,10 @@ import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 import kr.jaehoyi.gdshader.resolve.GdsIncludeManager
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 import kr.jaehoyi.gdshader.resolve.GdsResolver
 import kr.jaehoyi.gdshader.resolve.GdsScopeProcessor
 
@@ -99,6 +101,51 @@ class GdsDeclarationAnnotator : Annotator {
                     .range(element)
                     .create()
             }
+            element.node.elementType in GdsConditionalDirectives.DIRECTIVES -> checkDirective(element, holder)
+        }
+    }
+
+    // === Preprocessor directives ===
+
+    private fun checkDirective(
+        element: PsiElement,
+        holder: AnnotationHolder,
+    ) {
+        val file = element.containingFile ?: return
+        val analysis = GdsConditionalDirectives.getAnalysis(file)
+        val offset = element.textRange.startOffset
+        val message =
+            analysis.problems[offset]
+                ?: when (element.node.elementType) {
+                    GdsTypes.PP_ERROR_LINE ->
+                        if (analysis.statusAt(offset) == GdsConditionalDirectives.Status.ACTIVE) errorDirectiveMessage(element) else null
+                    GdsTypes.PP_DEFINE_LINE -> if (isMacroRedefinition(element)) "Macro redefinition." else null
+                    GdsTypes.PP_UNDEF_LINE ->
+                        if (UNDEF_NAME_REGEX.find(element.text)?.groupValues?.get(1) in GdsConditionalDirectives.BUILTIN_DEFINES) {
+                            "Cannot use 'undef' on built-in define."
+                        } else {
+                            null
+                        }
+                    else -> null
+                } ?: return
+
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
+    }
+
+    private fun errorDirectiveMessage(element: PsiElement): String =
+        element.text
+            .removePrefix("#error")
+            .trim()
+            .ifEmpty { "#error" }
+
+    private fun isMacroRedefinition(element: PsiElement): Boolean {
+        val macro = GdsPreprocessorDefinitions.parseMacro(element) ?: return false
+        if (macro.name in GdsConditionalDirectives.BUILTIN_DEFINES) return true
+        return GdsPreprocessorDefinitions.getVisibleMacros(element).any { other ->
+            other.name == macro.name && other.element != element && !GdsConditionalDirectives.areExclusive(other.element, element)
         }
     }
 
@@ -190,6 +237,7 @@ class GdsDeclarationAnnotator : Annotator {
         var found = false
         GdsResolver.processFunctionDeclaration(position) { function ->
             if (function !is GdsFunctionNameDecl || function.name != name) return@processFunctionDeclaration true
+            if (GdsConditionalDirectives.areExclusive(function, nameDecl)) return@processFunctionDeclaration true
             val other = function.parent as? GdsFunctionDeclaration ?: return@processFunctionDeclaration true
             found = isProcessingFunction || getParameterSignature(other) == signature
             !found
@@ -235,7 +283,7 @@ class GdsDeclarationAnnotator : Annotator {
     ): Boolean {
         var found = false
         GdsResolver.processStructDeclaration(position) { struct ->
-            found = struct.name == name
+            found = struct.name == name && !GdsConditionalDirectives.areExclusive(struct, position)
             !found
         }
         return found
@@ -251,7 +299,7 @@ class GdsDeclarationAnnotator : Annotator {
         val first =
             memberList.structMemberList
                 .flatMap { it.structMemberDeclaratorList }
-                .firstOrNull { it.structMemberNameDecl.text == name } ?: return
+                .firstOrNull { it.structMemberNameDecl.text == name && !GdsConditionalDirectives.areExclusive(it, element) } ?: return
         if (first !== element) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
@@ -315,7 +363,7 @@ class GdsDeclarationAnnotator : Annotator {
     private fun collectVisibleVariables(position: PsiElement): List<GdsVariable> {
         val result = mutableListOf<GdsVariable>()
         GdsResolver.processVariableDeclaration(position) { element ->
-            result += element
+            if (!GdsConditionalDirectives.areExclusive(element, position)) result += element
             true
         }
         return result
@@ -488,5 +536,9 @@ class GdsDeclarationAnnotator : Annotator {
             is GdsVariable -> hasConflictingVariable(name, position)
             else -> false
         }
+    }
+
+    private companion object {
+        val UNDEF_NAME_REGEX = Regex("""^\s*#undef\s+([A-Za-z_][A-Za-z0-9_]*)""")
     }
 }

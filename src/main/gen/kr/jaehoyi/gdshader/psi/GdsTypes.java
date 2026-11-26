@@ -208,6 +208,7 @@ public interface GdsTypes {
   IElementType PP_IFDEF_LINE = new GdsTokenType("Preprocessor ifdef line");
   IElementType PP_IFNDEF_LINE = new GdsTokenType("Preprocessor ifndef line");
   IElementType PP_IF_LINE = new GdsTokenType("Preprocessor if line");
+  IElementType PP_INACTIVE_CODE = new GdsTokenType("Inactive code");
   IElementType PP_INCLUDE_LINE = new GdsTokenType("Preprocessor include line");
   IElementType PP_PRAGMA_LINE = new GdsTokenType("Preprocessor pragma line");
   IElementType PP_UNDEF_LINE = new GdsTokenType("Preprocessor undef line");

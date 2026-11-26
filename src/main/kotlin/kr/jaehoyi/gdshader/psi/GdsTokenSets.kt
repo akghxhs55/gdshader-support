@@ -21,6 +21,7 @@ object GdsTokenSets {
             GdsTypes.PP_INCLUDE_LINE,
             GdsTypes.PP_PRAGMA_LINE,
             GdsTypes.PP_UNKNOWN_LINE,
+            GdsTypes.PP_INACTIVE_CODE,
         )
 
     val OPERATORS =

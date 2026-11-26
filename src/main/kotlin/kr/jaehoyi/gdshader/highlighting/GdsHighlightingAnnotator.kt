@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.ConstantSpec
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
@@ -14,6 +15,7 @@ import kr.jaehoyi.gdshader.psi.GdsStructMemberNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructNameRef
+import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
@@ -25,6 +27,14 @@ class GdsHighlightingAnnotator : Annotator {
         element: PsiElement,
         holder: AnnotationHolder,
     ) {
+        if (element.node?.elementType == GdsTypes.PP_INACTIVE_CODE) {
+            holder
+                .newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .textAttributes(CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES)
+                .create()
+            return
+        }
+
         val colorAttribute =
             when (element) {
                 is GdsVariableNameDecl -> {

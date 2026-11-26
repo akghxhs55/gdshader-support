@@ -33,6 +33,7 @@
     PP_INCLUDE_LINE = "Preprocessor include line"
     PP_PRAGMA_LINE = "Preprocessor pragma line"
     PP_UNKNOWN_LINE = "Preprocessor unknown line"
+    PP_INACTIVE_CODE = "Inactive code"
     IDENTIFIER = "identifier"
     INT_CONSTANT = "int constant"
     UINT_CONSTANT = "uint constant"
