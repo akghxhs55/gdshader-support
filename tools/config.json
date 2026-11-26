@@ -1,16 +1,52 @@
 {
-  "target_version": "stable",
-  "sources": [
-    {
-      "url": "https://raw.githubusercontent.com/godotengine/godot-docs/refs/heads/master/tutorials/shaders/shader_reference/shader_functions.rst",
-      "base_doc_url": "https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shader_functions.html"
-    }
-  ],
-  "substitutions": {
-    "|componentwise|": "<a href=\"https://docs.godotengine.org/en/stable/tutorials/shaders/shader_reference/shader_functions.html#shading-componentwise\">Component-wise Function</a>."
+  "godot": {
+    "repository": "godotengine/godot",
+    "ref": "4.7.2-stable",
+    "shader_language": "servers/rendering/shader_language.cpp",
+    "shader_types": "servers/rendering/shader_types.cpp"
   },
-  "output": {
-    "json_path": "./build/generated/shader_functions.json",
-    "code_template": "./templates/kotlin_function_spec.j2"
-  }
+  "docs": {
+    "repository": "godotengine/godot-docs",
+    "ref": "4.7",
+    "directory": "tutorials/shaders/shader_reference",
+    "functions": "shader_functions.rst",
+    "variables": {
+      "spatial_shader.rst": "SPATIAL",
+      "canvas_item_shader.rst": "CANVAS_ITEM",
+      "particle_shader.rst": "PARTICLES",
+      "sky_shader.rst": "SKY",
+      "fog_shader.rst": "FOG"
+    },
+    "label_files": [
+      "shader_functions.rst",
+      "shading_language.rst",
+      "shader_preprocessor.rst",
+      "spatial_shader.rst",
+      "canvas_item_shader.rst",
+      "particle_shader.rst",
+      "sky_shader.rst",
+      "fog_shader.rst",
+      "texture_blit_shader.rst"
+    ],
+    "url": "https://docs.godotengine.org/en/stable"
+  },
+  "shader_modes": {
+    "SPATIAL": "SPATIAL",
+    "CANVAS_ITEM": "CANVAS_ITEM",
+    "PARTICLES": "PARTICLES",
+    "SKY": "SKY",
+    "FOG": "FOG"
+  },
+  "variable_sections": {
+    "Global built-ins": ["COMMON"],
+    "Vertex built-ins": ["VERTEX"],
+    "Fragment built-ins": ["FRAGMENT"],
+    "Light built-ins": ["LIGHT"],
+    "Start and Process built-ins": ["START", "PROCESS"],
+    "Start built-ins": ["START"],
+    "Process built-ins": ["PROCESS"],
+    "Sky built-ins": ["SKY"],
+    "Fog built-ins": ["FOG"]
+  },
+  "output": "../src/main/kotlin/kr/jaehoyi/gdshader/model/GeneratedBuiltins.kt"
 }

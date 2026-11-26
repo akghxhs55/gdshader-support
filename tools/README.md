@@ -1,45 +1,35 @@
-# GDShader Builtin Functions Generator
+# GDShader Builtins Generator
 
-This directory contains tools to extract GDShader builtin function specifications from the Godot documentation and generate Kotlin code for the plugin.
+`generate_builtins.py` generates `src/main/kotlin/kr/jaehoyi/gdshader/model/GeneratedBuiltins.kt`, which holds the built-in functions and built-in variables used by `Builtins.kt`.
 
-## Prerequisites
+## Sources
 
-- Python 3.x
-- `requests` module: `pip install requests`
+- **Godot engine** (ground truth for what exists): function signatures from `builtin_func_defs`, `builtin_func_out_args` and `frag_only_func_defs` in `servers/rendering/shader_language.cpp`; built-in variables, their types and read-only flags from `servers/rendering/shader_types.cpp`.
+- **godot-docs** (descriptions only): `shader_functions.rst` and the per-shader-type pages in `tutorials/shaders/shader_reference`.
 
-## Workflow
+The versions are pinned in `config.json` (`godot.ref`, `docs.ref`). Update them when a new stable Godot version is released.
 
-### 1. Extract Specifications
+## How the output is built
 
-The `extract_function_specs.py` script downloads the raw ReStructuredText (RST) documentation from the Godot repository and parses it into a structured JSON file.
+- A documented signature that uses alias types (`vec_type`, `gsampler2D`, ...) is kept as-is only if the plugin's overload resolver would read it as exactly the engine's overload set. Otherwise the engine overloads are emitted with concrete types and the closest documented signature supplies the description.
+- Variable descriptions are matched by shader type, section and name. Placeholders such as `USERDATAX` or `LIGHTX_COLOR` describe the numbered engine built-ins (`USERDATA1`..`USERDATA6`, `LIGHT0_COLOR`..`LIGHT3_COLOR`).
+- Writable variables take `out` or `inout` from the docs, read-only ones become `in`, and built-ins with a constant value become `ConstantSpec`.
+- Stage functions (`texture_sdf`, `emit_subparticle`, ...) and processing functions are still written by hand in `Builtins.kt`.
 
-**Configuration:** `config.json`
-- `sources`: List of RST file URLs to process.
-- `substitutions`: RST substitutions map (e.g., `|componentwise|`).
-- `output`: Path where the JSON file will be saved.
+Mismatches between the engine and the docs (missing descriptions, different types, removed built-ins) are printed as warnings.
 
-**Command:**
+## Usage
+
+Requires Python 3.9+ with no extra packages.
+
 ```bash
-python3 extract_function_specs.py
-```
-**Output:** `build/generated/shader_functions.json`
-
-### 2. Generate Kotlin Code
-
-The `generate_kotlin_builtins.py` script reads the generated JSON file and produces a Kotlin code fragment containing the `FunctionSpec` definitions.
-
-**Command:**
-```bash
-python3 generate_kotlin_builtins.py > builtins_fragment.kt
+python3 tools/generate_builtins.py
 ```
 
-### 3. Apply to Codebase
+This downloads the pinned files from GitHub. To use local checkouts at the pinned refs instead:
 
-Copy the content of `builtins_fragment.kt` and replace the `globalFunctions` list in `src/main/kotlin/kr/jaehoyi/gdshader/model/Builtins.kt`.
+```bash
+python3 tools/generate_builtins.py --godot-dir ~/godot-src --docs-dir ~/godot-docs-src
+```
 
-## File Structure
-
-- `extract_function_specs.py`: Main parser logic.
-- `generate_kotlin_builtins.py`: Kotlin code generator.
-- `config.json`: Configuration file.
-- `build/generated/`: Directory where intermediate JSON artifacts are stored.
+Run `./gradlew ktlintCheck test` after regenerating.
