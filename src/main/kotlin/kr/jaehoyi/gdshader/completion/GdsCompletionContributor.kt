@@ -98,7 +98,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     }
 
                     // 2. After RENDER_MODE
-                    result.addAllElements(GdsLookupElements.RENDER_MODES)
+                    result.addAllElements(GdsLookupElements.renderModes(GdsPsiImplUtil.getShaderType(position)))
                 }
             },
         )
@@ -127,7 +127,7 @@ class GdsCompletionContributor : CompletionContributor() {
                     }
 
                     // 2. After STENCIL_MODE
-                    result.addAllElements(GdsLookupElements.STENCIL_MODES)
+                    result.addAllElements(GdsLookupElements.stencilModes(GdsPsiImplUtil.getShaderType(position)))
                 }
             },
         )
@@ -205,13 +205,10 @@ class GdsCompletionContributor : CompletionContributor() {
 
                     // 5. After COLON
                     if (prevLeaf.elementType == GdsTypes.COLON) {
-                        val uniformDeclaration = position.parentOfType<GdsUniformDeclaration>()
-                        val typeText = uniformDeclaration?.type?.text ?: return
-                        val type = Builtins.getType(typeText) ?: return
+                        val uniformDeclaration = position.parentOfType<GdsUniformDeclaration>() ?: return
+                        val type = Builtins.getType(uniformDeclaration.type?.text ?: return) ?: return
 
-                        result.addAllElements(
-                            GdsLookupElements.UNIFORM_HINTS[type] ?: emptyList(),
-                        )
+                        result.addAllElements(GdsLookupElements.uniformHints(type, uniformDeclaration.arraySizeList.isNotEmpty()))
                         return
                     }
 
@@ -221,13 +218,10 @@ class GdsCompletionContributor : CompletionContributor() {
                             return
                         }
 
-                        val uniformDeclaration = position.parentOfType<GdsUniformDeclaration>()
-                        val typeText = uniformDeclaration?.type?.text ?: return
-                        val type = Builtins.getType(typeText) ?: return
+                        val uniformDeclaration = position.parentOfType<GdsUniformDeclaration>() ?: return
+                        val type = Builtins.getType(uniformDeclaration.type?.text ?: return) ?: return
 
-                        result.addAllElements(
-                            GdsLookupElements.UNIFORM_HINTS[type] ?: emptyList(),
-                        )
+                        result.addAllElements(GdsLookupElements.uniformHints(type, uniformDeclaration.arraySizeList.isNotEmpty()))
                         return
                     }
 

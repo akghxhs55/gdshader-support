@@ -97,7 +97,7 @@ enum class UniformQualifier(
 ) {
     NORMAL(""),
     GLOBAL("global"),
-    LOCAL("local"),
+    INSTANCE("instance"),
     ;
 
     companion object {
@@ -106,7 +106,7 @@ enum class UniformQualifier(
         fun fromText(text: String?): UniformQualifier =
             when (text) {
                 "global" -> GLOBAL
-                "local" -> LOCAL
+                "instance" -> INSTANCE
                 null, "" -> NORMAL
                 else -> {
                     LOG.warn("Unknown UniformQualifier text: $text")

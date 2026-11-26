@@ -165,21 +165,22 @@ object GdsLookupElements {
                 .withInsertHandler(GdsSemicolonInsertHandler)
         }
 
-    val RENDER_MODES =
-        GdsKeywords.RENDER_MODES.values.flatten().map {
-            LookupElementBuilder
-                .create(it)
-                .withBoldness(true)
-                .withIcon(AllIcons.Nodes.Enum)
-        }
+    fun renderModes(shaderType: ShaderType?): List<LookupElement> = modes(GdsKeywords.RENDER_MODES, shaderType)
 
-    val STENCIL_MODES =
-        GdsKeywords.STENCIL_MODES.values.flatten().map {
+    fun stencilModes(shaderType: ShaderType?): List<LookupElement> = modes(GdsKeywords.STENCIL_MODES, shaderType)
+
+    private fun modes(
+        modesByType: Map<ShaderType, Set<String>>,
+        shaderType: ShaderType?,
+    ): List<LookupElement> {
+        val names = if (shaderType != null) modesByType[shaderType].orEmpty() else modesByType.values.flatten().toSet()
+        return names.map {
             LookupElementBuilder
                 .create(it)
                 .withBoldness(true)
                 .withIcon(AllIcons.Nodes.Enum)
         }
+    }
 
     val PRECISIONS =
         GdsKeywords.PRECISIONS.map {
@@ -410,36 +411,37 @@ object GdsLookupElements {
             builder.withPriority(PRIORITY_HIGHEST)
         }
 
-    val UNIFORM_HINTS: Map<DataType, List<LookupElement>> =
-        GdsKeywords.UNIFORM_HINTS.mapValues { entry ->
-            entry.value.map {
-                when (it) {
-                    "hint_enum" ->
-                        LookupElementBuilder
-                            .create(it)
-                            .withBoldness(true)
-                            .appendTailText("(String1, String2, ...)", true)
-                            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+    fun uniformHints(
+        type: DataType,
+        isArray: Boolean,
+    ): List<LookupElement> =
+        GdsKeywords.getUniformHints(type, isArray).map {
+            when (it) {
+                "hint_enum" ->
+                    LookupElementBuilder
+                        .create(it)
+                        .withBoldness(true)
+                        .appendTailText("(String1, String2, ...)", true)
+                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
 
-                    "hint_range" ->
-                        LookupElementBuilder
-                            .create(it)
-                            .withBoldness(true)
-                            .appendTailText("(min, max[, step])", true)
-                            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+                "hint_range" ->
+                    LookupElementBuilder
+                        .create(it)
+                        .withBoldness(true)
+                        .appendTailText("(min, max[, step])", true)
+                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
 
-                    "instance_index" ->
-                        LookupElementBuilder
-                            .create(it)
-                            .withBoldness(true)
-                            .appendTailText("(index)", true)
-                            .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
+                "instance_index" ->
+                    LookupElementBuilder
+                        .create(it)
+                        .withBoldness(true)
+                        .appendTailText("(index)", true)
+                        .withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS)
 
-                    else ->
-                        LookupElementBuilder
-                            .create(it)
-                            .withBoldness(true)
-                }
+                else ->
+                    LookupElementBuilder
+                        .create(it)
+                        .withBoldness(true)
             }
         }
 

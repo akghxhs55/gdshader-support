@@ -1,9 +1,11 @@
 package kr.jaehoyi.gdshader.completion
 
 import kr.jaehoyi.gdshader.model.Builtins
+import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.InterpolationQualifier
 import kr.jaehoyi.gdshader.model.ParameterQualifier
 import kr.jaehoyi.gdshader.model.Precision
+import kr.jaehoyi.gdshader.model.SamplerType
 import kr.jaehoyi.gdshader.model.ShaderType
 
 object GdsKeywords {
@@ -66,7 +68,7 @@ object GdsKeywords {
                     "world_vertex_coords",
                 ),
             ShaderType.PARTICLES to setOf("keep_data", "disable_force", "disable_velocity", "collision_use_scale"),
-            ShaderType.SKY to setOf("use_half_res_pass", "use_quarter_res_pass", "disable_fog"),
+            ShaderType.SKY to setOf("use_half_res_pass", "use_quarter_res_pass", "disable_fog", "use_debanding"),
             ShaderType.FOG to setOf(),
         )
 
@@ -76,7 +78,7 @@ object GdsKeywords {
                 setOf(
                     "read",
                     "write",
-                    "write_if_depth_fail",
+                    "write_depth_fail",
                     "compare_always",
                     "compare_less",
                     "compare_equal",
@@ -91,66 +93,55 @@ object GdsKeywords {
             ShaderType.FOG to setOf(),
         )
 
-    private val SAMPLER3D_HINTS =
-        setOf(
-            "instance_index",
-            "source_color",
-            "hint_default_white",
-            "hint_default_black",
-            "hint_default_transparent",
-            "filter_nearest",
+    // Mirrors the COMPLETION_HINT case of ShaderLanguage::complete_code.
+    private val SAMPLER_FILTER_AND_REPEAT_HINTS =
+        listOf(
             "filter_linear",
-            "filter_nearest_mipmap",
             "filter_linear_mipmap",
-            "hint_nearest_mipmap_anisotropic",
-            "hint_linear_mipmap_anisotropic",
+            "filter_linear_mipmap_anisotropic",
+            "filter_nearest",
+            "filter_nearest_mipmap",
+            "filter_nearest_mipmap_anisotropic",
             "repeat_enable",
             "repeat_disable",
         )
 
-    val UNIFORM_HINTS =
-        mapOf(
-            Builtins.VEC3 to setOf("instance_index", "source_color", "color_conversion_disabled"),
-            Builtins.VEC4 to setOf("instance_index", "source_color", "color_conversion_disabled"),
-            Builtins.INT to setOf("instance_index", "hint_enum", "hint_range"),
-            Builtins.FLOAT to setOf("instance_index", "hint_range"),
-            Builtins.SAMPLER2D to
-                setOf(
-                    "instance_index",
-                    "source_color",
-                    "hint_normal",
-                    "hint_default_white",
-                    "hint_default_black",
-                    "hint_default_transparent",
-                    "hint_anisotropy",
-                    "hint_roughness_r",
-                    "hint_roughness_g",
-                    "hint_roughness_b",
-                    "hint_roughness_a",
-                    "hint_roughness_normal",
-                    "hint_roughness_gray",
-                    "filter_nearest",
-                    "filter_linear",
-                    "filter_nearest_mipmap",
-                    "filter_linear_mipmap",
-                    "hint_nearest_mipmap_anisotropic",
-                    "hint_linear_mipmap_anisotropic",
-                    "repeat_enable",
-                    "repeat_disable",
-                    "hint_screen_texture",
-                    "hint_depth_texture",
-                    "hint_normal_roughness_texture",
-                ),
-            Builtins.SAMPLER3D to SAMPLER3D_HINTS,
-            Builtins.ISAMPLER3D to SAMPLER3D_HINTS,
-            Builtins.USAMPLER3D to SAMPLER3D_HINTS,
-            Builtins.SAMPLER2DARRAY to SAMPLER3D_HINTS,
-            Builtins.ISAMPLER2DARRAY to SAMPLER3D_HINTS,
-            Builtins.USAMPLER2DARRAY to SAMPLER3D_HINTS,
-            Builtins.SAMPLERCUBE to SAMPLER3D_HINTS,
-            Builtins.SAMPLERCUBEARRAY to SAMPLER3D_HINTS,
-            Builtins.SAMPLEREXTERNALOES to SAMPLER3D_HINTS,
-        )
+    private val SAMPLER_HINTS =
+        SAMPLER_FILTER_AND_REPEAT_HINTS +
+            listOf(
+                "hint_anisotropy",
+                "hint_default_black",
+                "hint_default_white",
+                "hint_default_transparent",
+                "hint_normal",
+                "hint_roughness_a",
+                "hint_roughness_b",
+                "hint_roughness_g",
+                "hint_roughness_gray",
+                "hint_roughness_normal",
+                "hint_roughness_r",
+                "hint_screen_texture",
+                "hint_normal_roughness_texture",
+                "hint_depth_texture",
+                "source_color",
+            )
+
+    fun getUniformHints(
+        type: DataType,
+        isArray: Boolean,
+    ): List<String> {
+        val hints =
+            when {
+                type == Builtins.VEC3 || type == Builtins.VEC4 -> listOf("source_color", "color_conversion_disabled")
+                isArray && (type == Builtins.INT || type == Builtins.FLOAT) -> emptyList()
+                type == Builtins.INT -> listOf("hint_range", "hint_enum")
+                type == Builtins.FLOAT -> listOf("hint_range")
+                type is SamplerType && isArray -> SAMPLER_FILTER_AND_REPEAT_HINTS + "source_color"
+                type is SamplerType -> SAMPLER_HINTS
+                else -> emptyList()
+            }
+        return if (isArray) hints else hints + "instance_index"
+    }
 
     val PRECISIONS =
         Precision.entries

@@ -90,6 +90,22 @@ class GdsDocumentationTest : BasePlatformTestCase() {
         assertTrue(plainDoc.contains("The main color."))
     }
 
+    fun `test instance uniform documentation`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            instance uniform vec4 <caret>tint;
+            """.trimIndent(),
+        )
+
+        val element = myFixture.elementAtCaret
+        val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
+        val plainDoc = requireNotNull(provider.generateDoc(element, null)).replace(Regex("<[^>]*>"), "")
+
+        assertTrue(plainDoc.contains("instance uniform vec4 tint"))
+    }
+
     fun `test user defined struct documentation`() {
         myFixture.configureByText(
             "test.gdshader",

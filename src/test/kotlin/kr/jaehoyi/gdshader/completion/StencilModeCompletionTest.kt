@@ -12,8 +12,8 @@ class StencilModeCompletionTest : GdsCompletionTestBase() {
         val completions = completeAndGetStrings()
 
         assertContainsElements(completions, GdsKeywords.STENCIL_MODES.flatMap { it.value })
-        assertContainsElements(completions, "write_if_depth_fail", "compare_not_equal")
-        assertDoesntContain(completions, "write_depth_fail")
+        assertContainsElements(completions, "write_depth_fail", "compare_not_equal")
+        assertDoesntContain(completions, "write_if_depth_fail")
         assertDoesntContain(completions, "shader_type", "stencil_mode", "void", "uniform")
     }
 

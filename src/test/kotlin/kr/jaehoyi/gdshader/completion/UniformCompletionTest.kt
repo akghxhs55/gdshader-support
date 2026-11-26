@@ -107,8 +107,8 @@ class UniformCompletionTest : GdsCompletionTestBase() {
 
         val completions = completeAndGetStrings()
 
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.VEC3])
-        assertContainsElements(completions, expectedHints.toList())
+        val expectedHints = GdsKeywords.getUniformHints(Builtins.VEC3, isArray = false)
+        assertContainsElements(completions, expectedHints)
         assertDoesntContain(completions, "hint_enum", "hint_range", "hint_normal", "hint_default_white")
         assertDoesntContain(
             completions,
@@ -136,8 +136,8 @@ class UniformCompletionTest : GdsCompletionTestBase() {
 
         val completions = completeAndGetStrings()
 
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.VEC4])
-        assertContainsElements(completions, expectedHints.toList())
+        val expectedHints = GdsKeywords.getUniformHints(Builtins.VEC4, isArray = false)
+        assertContainsElements(completions, expectedHints)
         assertDoesntContain(completions, "hint_enum", "hint_range", "hint_normal", "hint_default_white")
         assertDoesntContain(
             completions,
@@ -165,8 +165,8 @@ class UniformCompletionTest : GdsCompletionTestBase() {
 
         val completions = completeAndGetStrings()
 
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.INT])
-        assertContainsElements(completions, expectedHints.toList())
+        val expectedHints = GdsKeywords.getUniformHints(Builtins.INT, isArray = false)
+        assertContainsElements(completions, expectedHints)
         assertDoesntContain(completions, "hint_normal", "hint_default_white", "filter_nearest", "filter_linear")
         assertDoesntContain(
             completions,
@@ -194,8 +194,8 @@ class UniformCompletionTest : GdsCompletionTestBase() {
 
         val completions = completeAndGetStrings()
 
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.FLOAT])
-        assertContainsElements(completions, expectedHints.toList())
+        val expectedHints = GdsKeywords.getUniformHints(Builtins.FLOAT, isArray = false)
+        assertContainsElements(completions, expectedHints)
         assertDoesntContain(completions, "hint_enum", "hint_normal", "hint_default_white", "filter_nearest", "filter_linear")
         assertDoesntContain(
             completions,
@@ -213,6 +213,36 @@ class UniformCompletionTest : GdsCompletionTestBase() {
         )
     }
 
+    fun `test hints follow godot completion for every sampler type`() {
+        for (type in listOf("isampler2D", "usampler2D", "sampler3D", "samplerCube")) {
+            myFixture.configureByText(
+                "test.gdshader",
+                """
+                uniform $type myVar : <caret>
+                """.trimIndent(),
+            )
+
+            val completions = completeAndGetStrings()
+
+            assertContainsElements(completions, "filter_linear_mipmap_anisotropic", "filter_nearest_mipmap_anisotropic", "hint_default_black", "instance_index")
+            assertDoesntContain(completions, "hint_linear_mipmap_anisotropic", "hint_nearest_mipmap_anisotropic", "hint_range")
+        }
+    }
+
+    fun `test hints for uniform arrays`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            uniform sampler2D myVar[2] : <caret>
+            """.trimIndent(),
+        )
+
+        val completions = completeAndGetStrings()
+
+        assertContainsElements(completions, "filter_linear", "repeat_enable", "source_color")
+        assertDoesntContain(completions, "hint_default_black", "instance_index")
+    }
+
     fun `test hint for sampler2D`() {
         myFixture.configureByText(
             "test.gdshader",
@@ -223,8 +253,8 @@ class UniformCompletionTest : GdsCompletionTestBase() {
 
         val completions = completeAndGetStrings()
 
-        val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[Builtins.SAMPLER2D])
-        assertContainsElements(completions, expectedHints.toList())
+        val expectedHints = GdsKeywords.getUniformHints(Builtins.SAMPLER2D, isArray = false)
+        assertContainsElements(completions, expectedHints)
         assertDoesntContain(completions, "hint_enum", "hint_range")
         assertDoesntContain(
             completions,
@@ -258,8 +288,8 @@ class UniformCompletionTest : GdsCompletionTestBase() {
 
             val completions = completeAndGetStrings()
 
-            val expectedHints = requireNotNull(GdsKeywords.UNIFORM_HINTS[type])
-            assertContainsElements(completions, expectedHints.toList())
+            val expectedHints = GdsKeywords.getUniformHints(type, isArray = false)
+            assertContainsElements(completions, expectedHints)
             assertDoesntContain(completions, "hint_enum", "hint_range")
         }
     }
