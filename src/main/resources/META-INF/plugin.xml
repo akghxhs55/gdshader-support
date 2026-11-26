@@ -181,6 +181,11 @@
             enabledByDefault="true"
             level="WARNING"
             implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnusedSymbolInspection" />
+        <lang.inspectionSuppressor
+            language="kr.jaehoyi.gdshader"
+            implementationClass="kr.jaehoyi.gdshader.highlighting.GdsInspectionSuppressor" />
+        <daemon.changeLocalityDetector
+            implementation="kr.jaehoyi.gdshader.highlighting.GdsSuppressionChangeLocalityDetector" />
 
         <!-- Spell Checking -->
         <spellchecker.support

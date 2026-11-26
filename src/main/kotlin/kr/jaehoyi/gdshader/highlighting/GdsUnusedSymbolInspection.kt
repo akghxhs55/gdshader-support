@@ -67,6 +67,8 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
 
                 if (isIgnoredTopLevel(element)) return
 
+                if (isUnderscoreLocal(element)) return
+
                 if (isUnused(element)) {
                     val kind =
                         when (parent) {
@@ -121,6 +123,15 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
         !reportIncludeTopLevelSymbols &&
             element.containingFile.viewProvider.virtualFile.fileType == GdsIncludeFileType &&
             element.parentOfTypes(GdsBlock::class, GdsParameterList::class) == null
+
+    private fun isUnderscoreLocal(element: GdsVariableNameDecl): Boolean {
+        if (!element.name.startsWith("_")) return false
+        return when (element.parent) {
+            is GdsParameter, is GdsLocalVariableDeclarator -> true
+            is GdsConstantDeclarator -> element.parentOfTypes(GdsBlock::class) != null
+            else -> false
+        }
+    }
 
     private fun isUnused(element: PsiNamedElement): Boolean {
         // Usages resolve to the built-in define, and the declaration is already an error.

@@ -6,7 +6,12 @@ This inspection reports local variables, constants, parameters, uniforms,
 varyings, structs, and helper functions that are declared but never referenced. Built-in processing functions
 such as <code>fragment</code>, <code>vertex</code>, and <code>start</code> are
 not reported as unused. Top-level symbols in include files are not reported
-unless the option is enabled.
+unless the option is enabled. Parameters, local variables, and local constants
+whose names start with <code>_</code> are not reported.
+</p>
+<p>
+To suppress a report, put <code>// noinspection GdsUnusedSymbol</code> on its own
+line above the declaration or at the end of its last line.
 </p>
 <pre><code>uniform float unused_uniform; // never used
 

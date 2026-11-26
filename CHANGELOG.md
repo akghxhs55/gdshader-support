@@ -25,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - Report unresolved references as errors
 - Added option to report unused top-level symbols in include files
 - Report unused uniforms, varyings and structs
+- Added unused symbol check suppression
 
 ## 1.2.2 (2026-11-24)
 

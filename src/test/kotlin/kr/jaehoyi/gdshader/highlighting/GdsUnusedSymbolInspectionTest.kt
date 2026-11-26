@@ -391,6 +391,216 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test underscore parameters and locals not flagged`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float helper(float _a, float _) {
+                float _b = 1.0;
+                const float _C = 2.0;
+                return 0.0;
+            }
+            void fragment() {
+                ALBEDO = vec3(helper(1.0, 2.0));
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test underscore top-level symbols flagged`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float <warning descr="Constant '_K' is never used">_K</warning> = 2.0;
+            uniform float <warning descr="Uniform '_u' is never used">_u</warning>;
+            float <warning descr="Function '_helper' is never used">_helper</warning>() {
+                return 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppressed by comment above`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            // noinspection GdsUnusedSymbol
+            uniform float u;
+            //noinspection GdsUnusedSymbol
+            float helper() {
+                return 1.0;
+            }
+            void fragment() {
+                // noinspection GdsUnusedSymbol
+                float x = 1.0;
+                // noinspection Foo, GdsUnusedSymbol because it is a sample
+                const float K = 1.0;
+                // noinspection GdsUnusedSymbol
+
+                float y = 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppressed by trailing comment`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float u; // noinspection GdsUnusedSymbol
+            void fragment() {
+                float x =
+                    1.0; // noinspection GdsUnusedSymbol
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppression comment requirements`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ALBEDO = vec3(1.0); // noinspection GdsUnusedSymbol
+                float <warning descr="Variable 'b' is never used">b</warning> = 1.0;
+                /* noinspection GdsUnusedSymbol */
+                float <warning descr="Variable 'c' is never used">c</warning> = 1.0;
+                // noinspection Foo
+                float <warning descr="Variable 'd' is never used">d</warning> = 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppression comment covers declaration only`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            // noinspection GdsUnusedSymbol
+            void fragment() {
+                float <warning descr="Variable 'x' is never used">x</warning> = 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test editing suppression comment updates highlighting`() {
+        myFixture.configureByText(
+            "test_shader.gdshader",
+            """
+            shader_type spatial;
+            void fragment() {
+                // noinspection Foo<caret>
+                float x = 1.0;
+            }
+            """.trimIndent(),
+        )
+        assertSize(1, unusedWarnings())
+        val id = ",GdsUnusedSymbol"
+        myFixture.type(id)
+        assertEmpty(unusedWarnings())
+        repeat(id.length) { myFixture.type('') }
+        assertSize(1, unusedWarnings())
+    }
+
+    fun `test suppress fix inserts comment above local`() {
+        doSuppressFixTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float <caret>x = 1.0;
+            }
+            """.trimIndent(),
+            """
+            shader_type spatial;
+            void fragment() {
+                // noinspection GdsUnusedSymbol
+                float x = 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppress fix inserts comment above top-level`() {
+        doSuppressFixTest(
+            """
+            shader_type spatial;
+            uniform float <caret>u;
+            """.trimIndent(),
+            """
+            shader_type spatial;
+            // noinspection GdsUnusedSymbol
+            uniform float u;
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppress fix moves declaration sharing a line`() {
+        doSuppressFixTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                ALBEDO = vec3(1.0); float <caret>x = 1.0;
+            }
+            """.trimIndent(),
+            """
+            shader_type spatial;
+            void fragment() {
+                ALBEDO = vec3(1.0);
+                // noinspection GdsUnusedSymbol
+                float x = 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppress fix merges into existing comment`() {
+        doSuppressFixTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                // noinspection Foo reason
+                float <caret>x = 1.0;
+            }
+            """.trimIndent(),
+            """
+            shader_type spatial;
+            void fragment() {
+                // noinspection Foo,GdsUnusedSymbol reason
+                float x = 1.0;
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test suppress fix not offered for parameter`() {
+        myFixture.configureByText(
+            "test_shader.gdshader",
+            """
+            shader_type spatial;
+            float helper(float <caret>a) {
+                return 1.0;
+            }
+            void fragment() {
+                ALBEDO = vec3(helper(1.0));
+            }
+            """.trimIndent(),
+        )
+        assertEmpty(myFixture.filterAvailableIntentions(SUPPRESS_FIX))
+    }
+
+    private fun unusedWarnings() = myFixture.doHighlighting().filter { it.description?.endsWith("is never used") == true }
+
+    private fun doSuppressFixTest(
+        before: String,
+        after: String,
+    ) {
+        myFixture.configureByText("test_shader.gdshader", before)
+        myFixture.launchAction(myFixture.findSingleIntention(SUPPRESS_FIX))
+        myFixture.checkResult(after)
+        myFixture.checkHighlighting(true, false, true)
+    }
+
     private fun doHighlightTest(
         code: String,
         fileName: String = "test_shader.gdshader",
@@ -399,5 +609,9 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
         myFixture.checkHighlighting(true, false, true)
         val removalFixes = myFixture.getAllQuickFixes().filter { it.text.startsWith("Remove '") }
         assertEmpty("Unused symbols should only produce warnings", removalFixes)
+    }
+
+    companion object {
+        private const val SUPPRESS_FIX = "Suppress for declaration"
     }
 }

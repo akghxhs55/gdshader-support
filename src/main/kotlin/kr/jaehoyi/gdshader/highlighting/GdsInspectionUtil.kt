@@ -11,6 +11,7 @@ object GdsInspectionUtil {
     const val FUNCTION_CALL_VALIDATION = "GdsFunctionCallValidation"
     const val STATEMENT_VALIDATION = "GdsStatementValidation"
     const val UNRESOLVED_REFERENCE = "GdsUnresolvedReference"
+    const val UNUSED_SYMBOL = "GdsUnusedSymbol"
 
     fun isEnabled(
         element: PsiElement,
