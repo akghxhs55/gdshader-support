@@ -21,8 +21,6 @@ import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsUniformGroupDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
-// Mirrors the checks Godot runs while parsing shader_type, render_mode, stencil_mode, group_uniforms
-// and uniform declarations (ShaderLanguage::_parse_shader, _parse_shader_mode).
 class GdsGlobalDeclarationAnnotator : Annotator {
     override fun annotate(
         element: PsiElement,

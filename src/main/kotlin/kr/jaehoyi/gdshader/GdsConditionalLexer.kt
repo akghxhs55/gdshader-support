@@ -6,9 +6,7 @@ import com.intellij.psi.tree.IElementType
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 
-// Merges the code of branches that are known to be disabled into a single PP_INACTIVE_CODE token,
-// so that the parser only sees code Godot would compile. It needs the whole file, so it is not used
-// for incremental highlighting.
+// Needs the whole file to evaluate directives, so the editor highlighter keeps using GdsLexerAdapter.
 class GdsConditionalLexer : LexerBase() {
     private class Token(
         val type: IElementType,

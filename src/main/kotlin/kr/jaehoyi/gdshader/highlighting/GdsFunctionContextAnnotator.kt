@@ -37,8 +37,6 @@ import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 
-// Mirrors Godot's checks that depend on the shader type and the enclosing function: discard,
-// fragment-only built-in functions, varyings and the constant argument of textureGather.
 class GdsFunctionContextAnnotator : Annotator {
     override fun annotate(
         element: PsiElement,
