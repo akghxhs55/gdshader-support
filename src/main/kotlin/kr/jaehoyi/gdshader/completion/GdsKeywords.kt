@@ -11,89 +11,85 @@ import kr.jaehoyi.gdshader.model.ShaderType
 object GdsKeywords {
     val SHADER_TYPES = ShaderType.entries.map { it.text }.toSet()
 
-    val RENDER_MODES =
+    data class ModeInfo(
+        val name: String,
+        val options: List<String> = emptyList(),
+    ) {
+        val values: List<String> get() = if (options.isEmpty()) listOf(name) else options.map { "${name}_$it" }
+    }
+
+    // Mirrors the modes and stencil_modes in servers/rendering/shader_types.cpp (Godot 4.7.2).
+    val RENDER_MODE_INFOS: Map<ShaderType, List<ModeInfo>> =
         mapOf(
             ShaderType.SPATIAL to
-                setOf(
-                    "blend_mix",
-                    "blend_add",
-                    "blend_sub",
-                    "blend_mul",
-                    "blend_premul_alpha",
-                    "depth_draw_opaque",
-                    "depth_draw_always",
-                    "depth_draw_never",
-                    "depth_prepass_alpha",
-                    "depth_test_default",
-                    "depth_test_disabled",
-                    "depth_test_inverted",
-                    "specular_occlusion_disabled",
-                    "sss_mode_skin",
-                    "cull_back",
-                    "cull_front",
-                    "cull_disabled",
-                    "unshaded",
-                    "wireframe",
-                    "debug_shadow_splits",
-                    "diffuse_burley",
-                    "diffuse_lambert",
-                    "diffuse_lambert_wrap",
-                    "diffuse_toon",
-                    "specular_schlick_ggx",
-                    "specular_toon",
-                    "specular_disabled",
-                    "skip_vertex_transform",
-                    "world_vertex_coords",
-                    "ensure_correct_normals",
-                    "shadows_disabled",
-                    "ambient_light_disabled",
-                    "shadow_to_opacity",
-                    "vertex_lighting",
-                    "particle_trails",
-                    "alpha_to_coverage",
-                    "alpha_to_coverage_and_one",
-                    "fog_disabled",
+                listOf(
+                    ModeInfo("blend", listOf("mix", "add", "sub", "mul", "premul_alpha")),
+                    ModeInfo("depth_draw", listOf("opaque", "always", "never")),
+                    ModeInfo("depth_prepass_alpha"),
+                    ModeInfo("depth_test", listOf("default", "disabled", "inverted")),
+                    ModeInfo("sss_mode_skin"),
+                    ModeInfo("cull", listOf("back", "front", "disabled")),
+                    ModeInfo("unshaded"),
+                    ModeInfo("wireframe"),
+                    ModeInfo("diffuse", listOf("lambert", "lambert_wrap", "burley", "toon")),
+                    ModeInfo("specular", listOf("schlick_ggx", "toon", "disabled")),
+                    ModeInfo("skip_vertex_transform"),
+                    ModeInfo("world_vertex_coords"),
+                    ModeInfo("ensure_correct_normals"),
+                    ModeInfo("shadows_disabled"),
+                    ModeInfo("ambient_light_disabled"),
+                    ModeInfo("shadow_to_opacity"),
+                    ModeInfo("vertex_lighting"),
+                    ModeInfo("particle_trails"),
+                    ModeInfo("alpha_to_coverage"),
+                    ModeInfo("alpha_to_coverage_and_one"),
+                    ModeInfo("debug_shadow_splits"),
+                    ModeInfo("fog_disabled"),
+                    ModeInfo("specular_occlusion_disabled"),
                 ),
             ShaderType.CANVAS_ITEM to
-                setOf(
-                    "blend_mix",
-                    "blend_add",
-                    "blend_sub",
-                    "blend_mul",
-                    "blend_premul_alpha",
-                    "blend_disabled",
-                    "unshaded",
-                    "light_only",
-                    "skip_vertex_transform",
-                    "world_vertex_coords",
+                listOf(
+                    ModeInfo("skip_vertex_transform"),
+                    ModeInfo("blend", listOf("mix", "add", "sub", "mul", "premul_alpha", "disabled")),
+                    ModeInfo("unshaded"),
+                    ModeInfo("light_only"),
+                    ModeInfo("world_vertex_coords"),
                 ),
-            ShaderType.PARTICLES to setOf("keep_data", "disable_force", "disable_velocity", "collision_use_scale"),
-            ShaderType.SKY to setOf("use_half_res_pass", "use_quarter_res_pass", "disable_fog", "use_debanding"),
-            ShaderType.FOG to setOf(),
-            ShaderType.TEXTURE_BLIT to setOf("blend_mix", "blend_add", "blend_sub", "blend_mul", "blend_disabled"),
+            ShaderType.PARTICLES to
+                listOf(
+                    ModeInfo("collision_use_scale"),
+                    ModeInfo("disable_force"),
+                    ModeInfo("disable_velocity"),
+                    ModeInfo("keep_data"),
+                ),
+            ShaderType.SKY to
+                listOf(
+                    ModeInfo("use_half_res_pass"),
+                    ModeInfo("use_quarter_res_pass"),
+                    ModeInfo("disable_fog"),
+                    ModeInfo("use_debanding"),
+                ),
+            ShaderType.FOG to listOf(),
+            ShaderType.TEXTURE_BLIT to listOf(ModeInfo("blend", listOf("mix", "add", "sub", "mul", "disabled"))),
         )
 
-    val STENCIL_MODES =
-        mapOf(
-            ShaderType.SPATIAL to
-                setOf(
-                    "read",
-                    "write",
-                    "write_depth_fail",
-                    "compare_always",
-                    "compare_less",
-                    "compare_equal",
-                    "compare_not_equal",
-                    "compare_less_or_equal",
-                    "compare_greater",
-                    "compare_greater_or_equal",
-                ),
-            ShaderType.CANVAS_ITEM to setOf(),
-            ShaderType.PARTICLES to setOf(),
-            ShaderType.SKY to setOf(),
-            ShaderType.FOG to setOf(),
-            ShaderType.TEXTURE_BLIT to setOf(),
-        )
+    val STENCIL_MODE_INFOS: Map<ShaderType, List<ModeInfo>> =
+        ShaderType.entries.associateWith { shaderType ->
+            if (shaderType == ShaderType.SPATIAL) {
+                listOf(
+                    ModeInfo("read"),
+                    ModeInfo("write"),
+                    ModeInfo("write_depth_fail"),
+                    ModeInfo("compare", listOf("always", "less", "equal", "less_or_equal", "greater", "not_equal", "greater_or_equal")),
+                )
+            } else {
+                listOf()
+            }
+        }
+
+    val RENDER_MODES: Map<ShaderType, Set<String>> = RENDER_MODE_INFOS.mapValues { (_, infos) -> infos.flatMap { it.values }.toSet() }
+
+    val STENCIL_MODES: Map<ShaderType, Set<String>> = STENCIL_MODE_INFOS.mapValues { (_, infos) -> infos.flatMap { it.values }.toSet() }
 
     // Mirrors the COMPLETION_HINT case of ShaderLanguage::complete_code.
     private val SAMPLER_FILTER_AND_REPEAT_HINTS =

@@ -62,6 +62,7 @@
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsUnresolvedReferenceAnnotator" />
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionCallAnnotator" />
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsDeclarationAnnotator" />
+        <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsGlobalDeclarationAnnotator" />
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsStatementAnnotator" />
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionAnnotator" />
         
