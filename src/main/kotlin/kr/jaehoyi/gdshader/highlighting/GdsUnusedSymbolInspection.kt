@@ -28,7 +28,10 @@ import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsParameterList
+import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
+import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVisitor
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
@@ -55,7 +58,9 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
                 val parent = element.parent
                 if (parent !is GdsLocalVariableDeclarator &&
                     parent !is GdsConstantDeclarator &&
-                    parent !is GdsParameter
+                    parent !is GdsParameter &&
+                    parent !is GdsUniformDeclaration &&
+                    parent !is GdsVaryingDeclaration
                 ) {
                     return
                 }
@@ -67,6 +72,8 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
                         when (parent) {
                             is GdsParameter -> GdsBundle.message("inspection.unused.symbol.message.parameter")
                             is GdsConstantDeclarator -> GdsBundle.message("inspection.unused.symbol.message.constant")
+                            is GdsUniformDeclaration -> GdsBundle.message("inspection.unused.symbol.message.uniform")
+                            is GdsVaryingDeclaration -> GdsBundle.message("inspection.unused.symbol.message.varying")
                             else -> GdsBundle.message("inspection.unused.symbol.message.variable")
                         }
                     holder.registerProblem(
@@ -87,6 +94,19 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
 
                 if (isUnused(element)) {
                     val kind = GdsBundle.message("inspection.unused.symbol.message.function")
+                    holder.registerProblem(
+                        element,
+                        "$kind ${GdsBundle.message("inspection.unused.symbol.message", element.name)}",
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    )
+                }
+            }
+
+            override fun visitStructNameDecl(element: GdsStructNameDecl) {
+                if (isIgnoredTopLevel(element)) return
+
+                if (isUnused(element)) {
+                    val kind = GdsBundle.message("inspection.unused.symbol.message.struct")
                     holder.registerProblem(
                         element,
                         "$kind ${GdsBundle.message("inspection.unused.symbol.message", element.name)}",
