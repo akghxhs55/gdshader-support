@@ -33,6 +33,146 @@
     PP_INCLUDE_LINE = "Preprocessor include line"
     PP_PRAGMA_LINE = "Preprocessor pragma line"
     PP_UNKNOWN_LINE = "Preprocessor unknown line"
+    IDENTIFIER = "identifier"
+    INT_CONSTANT = "int constant"
+    UINT_CONSTANT = "uint constant"
+    FLOAT_CONSTANT = "float constant"
+    STRING_CONSTANT = "string constant"
+    TRUE = 'true'
+    FALSE = 'false'
+    BRACKET_OPEN = '['
+    BRACKET_CLOSE = ']'
+    CURLY_BRACKET_OPEN = '{'
+    CURLY_BRACKET_CLOSE = '}'
+    PARENTHESIS_OPEN = '('
+    PARENTHESIS_CLOSE = ')'
+    QUESTION = '?'
+    COMMA = ','
+    COLON = ':'
+    SEMICOLON = ';'
+    PERIOD = '.'
+    OP_EQUAL = '=='
+    OP_NOT_EQUAL = '!='
+    OP_LESS = '<'
+    OP_LESS_EQUAL = '<='
+    OP_GREATER = '>'
+    OP_GREATER_EQUAL = '>='
+    OP_AND = '&&'
+    OP_OR = '||'
+    OP_NOT = '!'
+    OP_ADD = '+'
+    OP_SUB = '-'
+    OP_MUL = '*'
+    OP_DIV = '/'
+    OP_MOD = '%'
+    OP_SHIFT_LEFT = '<<'
+    OP_SHIFT_RIGHT = '>>'
+    OP_ASSIGN = '='
+    OP_ASSIGN_ADD = '+='
+    OP_ASSIGN_SUB = '-='
+    OP_ASSIGN_MUL = '*='
+    OP_ASSIGN_DIV = '/='
+    OP_ASSIGN_MOD = '%='
+    OP_ASSIGN_SHIFT_LEFT = '<<='
+    OP_ASSIGN_SHIFT_RIGHT = '>>='
+    OP_ASSIGN_BIT_AND = '&='
+    OP_ASSIGN_BIT_OR = '|='
+    OP_ASSIGN_BIT_XOR = '^='
+    OP_BIT_AND = '&'
+    OP_BIT_OR = '|'
+    OP_BIT_XOR = '^'
+    OP_BIT_INVERT = '~'
+    OP_INCREMENT = '++'
+    OP_DECREMENT = '--'
+    CF_IF = 'if'
+    CF_ELSE = 'else'
+    CF_FOR = 'for'
+    CF_WHILE = 'while'
+    CF_DO = 'do'
+    CF_SWITCH = 'switch'
+    CF_CASE = 'case'
+    CF_DEFAULT = 'default'
+    CF_BREAK = 'break'
+    CF_CONTINUE = 'continue'
+    CF_RETURN = 'return'
+    CF_DISCARD = 'discard'
+    SHADER_TYPE = 'shader_type'
+    RENDER_MODE = 'render_mode'
+    STENCIL_MODE = 'stencil_mode'
+    CONST = 'const'
+    STRUCT = 'struct'
+    PRECISION_LOW = 'lowp'
+    PRECISION_MEDIUM = 'mediump'
+    PRECISION_HIGH = 'highp'
+    UNIFORM = 'uniform'
+    UNIFORM_GROUP = 'group_uniforms'
+    INSTANCE = 'instance'
+    GLOBAL = 'global'
+    VARYING = 'varying'
+    ARG_IN = 'in'
+    ARG_OUT = 'out'
+    ARG_INOUT = 'inout'
+    INTERPOLATION_FLAT = 'flat'
+    INTERPOLATION_SMOOTH = 'smooth'
+    TYPE_VOID = 'void'
+    TYPE_BOOL = 'bool'
+    TYPE_BVEC2 = 'bvec2'
+    TYPE_BVEC3 = 'bvec3'
+    TYPE_BVEC4 = 'bvec4'
+    TYPE_INT = 'int'
+    TYPE_IVEC2 = 'ivec2'
+    TYPE_IVEC3 = 'ivec3'
+    TYPE_IVEC4 = 'ivec4'
+    TYPE_UINT = 'uint'
+    TYPE_UVEC2 = 'uvec2'
+    TYPE_UVEC3 = 'uvec3'
+    TYPE_UVEC4 = 'uvec4'
+    TYPE_FLOAT = 'float'
+    TYPE_VEC2 = 'vec2'
+    TYPE_VEC3 = 'vec3'
+    TYPE_VEC4 = 'vec4'
+    TYPE_MAT2 = 'mat2'
+    TYPE_MAT3 = 'mat3'
+    TYPE_MAT4 = 'mat4'
+    TYPE_SAMPLER2D = 'sampler2D'
+    TYPE_ISAMPLER2D = 'isampler2D'
+    TYPE_USAMPLER2D = 'usampler2D'
+    TYPE_SAMPLER2DARRAY = 'sampler2DArray'
+    TYPE_ISAMPLER2DARRAY = 'isampler2DArray'
+    TYPE_USAMPLER2DARRAY = 'usampler2DArray'
+    TYPE_SAMPLER3D = 'sampler3D'
+    TYPE_ISAMPLER3D = 'isampler3D'
+    TYPE_USAMPLER3D = 'usampler3D'
+    TYPE_SAMPLERCUBE = 'samplerCube'
+    TYPE_SAMPLERCUBEARRAY = 'samplerCubeArray'
+    TYPE_SAMPLEREXT = 'samplerExternalOES'
+    HINT_DEFAULT_WHITE_TEXTURE = 'hint_default_white'
+    HINT_DEFAULT_BLACK_TEXTURE = 'hint_default_black'
+    HINT_DEFAULT_TRANSPARENT_TEXTURE = 'hint_default_transparent'
+    HINT_NORMAL_TEXTURE = 'hint_normal'
+    HINT_ROUGHNESS_NORMAL_TEXTURE = 'hint_roughness_normal'
+    HINT_ROUGHNESS_R = 'hint_roughness_r'
+    HINT_ROUGHNESS_G = 'hint_roughness_g'
+    HINT_ROUGHNESS_B = 'hint_roughness_b'
+    HINT_ROUGHNESS_A = 'hint_roughness_a'
+    HINT_ROUGHNESS_GRAY = 'hint_roughness_gray'
+    HINT_ANISOTROPY_TEXTURE = 'hint_anisotropy'
+    HINT_SOURCE_COLOR = 'source_color'
+    HINT_COLOR_CONVERSION_DISABLED = 'color_conversion_disabled'
+    HINT_RANGE = 'hint_range'
+    HINT_ENUM = 'hint_enum'
+    HINT_INSTANCE_INDEX = 'instance_index'
+    HINT_SCREEN_TEXTURE = 'hint_screen_texture'
+    HINT_NORMAL_ROUGHNESS_TEXTURE = 'hint_normal_roughness_texture'
+    HINT_DEPTH_TEXTURE = 'hint_depth_texture'
+    FILTER_NEAREST = 'filter_nearest'
+    FILTER_LINEAR = 'filter_linear'
+    FILTER_NEAREST_MIPMAP = 'filter_nearest_mipmap'
+    FILTER_LINEAR_MIPMAP = 'filter_linear_mipmap'
+    FILTER_NEAREST_MIPMAP_ANISOTROPIC = 'filter_nearest_mipmap_anisotropic'
+    FILTER_LINEAR_MIPMAP_ANISOTROPIC = 'filter_linear_mipmap_anisotropic'
+    REPEAT_ENABLE = 'repeat_enable'
+    REPEAT_DISABLE = 'repeat_disable'
   ]
 }
 
@@ -118,7 +258,7 @@ hint ::= simple_hint
 	   | instance_index_hint
 	   
 simple_hint ::= hint_identifier
-range_hint ::= HINT_RANGE PARENTHESIS_OPEN number COMMA number (COMMA number)? PARENTHESIS_CLOSE { pin(".*")=1 }
+range_hint ::= HINT_RANGE PARENTHESIS_OPEN expression COMMA expression (COMMA expression)? PARENTHESIS_CLOSE { pin(".*")=1 }
 enum_hint ::= HINT_ENUM PARENTHESIS_OPEN STRING_CONSTANT (COMMA STRING_CONSTANT)* PARENTHESIS_CLOSE { pin(".*")=1 }
 instance_index_hint ::= HINT_INSTANCE_INDEX PARENTHESIS_OPEN INT_CONSTANT PARENTHESIS_CLOSE
 
@@ -258,10 +398,11 @@ private struct_member_item ::= !(CURLY_BRACKET_CLOSE | <<eof>>) struct_member
 	recoverWhile=struct_member_recover
 }
 private struct_member_recover ::= !(CURLY_BRACKET_CLOSE | precision | type)
-struct_member ::= precision? type array_size? struct_member_name_decl array_size? SEMICOLON
+struct_member ::= precision? type array_size? struct_member_declarator (COMMA struct_member_declarator)* SEMICOLON
 {
 	pin=2
 }
+struct_member_declarator ::= struct_member_name_decl array_size?
 struct_member_name_decl ::= IDENTIFIER
 {
 	implements="com.intellij.psi.PsiNameIdentifierOwner"
@@ -290,8 +431,8 @@ for_statement ::= CF_FOR PARENTHESIS_OPEN for_init? SEMICOLON for_condition? SEM
 	pin=1
 }
 for_init ::= precision? type local_variable_declarator_list
-for_condition ::= expression
-for_iteration ::= expression
+for_condition ::= expression (COMMA expression)*
+for_iteration ::= expression (COMMA expression)*
 
 do_while_statement ::= CF_DO statement_body CF_WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
 {
@@ -443,10 +584,6 @@ literal ::= TRUE
 		  | INT_CONSTANT
 		  | UINT_CONSTANT
 		  
-number ::= (OP_SUB)? FLOAT_CONSTANT
-		 | (OP_SUB)? INT_CONSTANT
-		 | UINT_CONSTANT
-
 // Operators
 assignment_operator ::= OP_ASSIGN | OP_ASSIGN_ADD | OP_ASSIGN_SUB | OP_ASSIGN_MUL | OP_ASSIGN_DIV 
                         | OP_ASSIGN_MOD | OP_ASSIGN_SHIFT_LEFT | OP_ASSIGN_SHIFT_RIGHT | OP_ASSIGN_BIT_AND

@@ -115,10 +115,10 @@ class GdsStructureViewElement(
                     GdsIcons.STRUCT,
                     null,
                 )
-            is GdsStructMember ->
+            is GdsStructMemberDeclarator ->
                 PresentationData(
-                    element.structMemberNameDecl?.name ?: "",
-                    element.type.text,
+                    element.structMemberNameDecl.name,
+                    (element.parent as? GdsStructMember)?.type?.text,
                     GdsIcons.STRUCT_MEMBER,
                     null,
                 )
@@ -175,6 +175,7 @@ class GdsStructureViewElement(
                 element.structBlock
                     ?.structMemberList
                     ?.structMemberList
+                    ?.flatMap { it.structMemberDeclaratorList }
                     ?.mapNotNull { (it as? NavigatablePsiElement)?.let(::GdsStructureViewElement) }
                     ?.toTypedArray()
                     ?: emptyArray()

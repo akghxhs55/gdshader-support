@@ -33,6 +33,24 @@ class GdsStructMemberReferenceTest : BasePlatformTestCase() {
         assertEquals("my_field", (resolved as GdsStructMemberNameDecl).name)
     }
 
+    fun `test struct member declared with other members in one statement`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type spatial;
+            struct MyStruct { float first, second; };
+            void fragment() {
+                MyStruct s;
+                s.second = 1.0;
+            }
+            """.trimIndent(),
+        )
+
+        val ref = PsiTreeUtil.findChildrenOfType(myFixture.file, GdsStructMemberNameRef::class.java).single { it.text == "second" }
+        val resolved = ref.reference.resolve() as? GdsStructMemberNameDecl
+        assertEquals("second", resolved?.name)
+    }
+
     fun `test nested struct member reference`() {
         val code = """
             shader_type spatial;

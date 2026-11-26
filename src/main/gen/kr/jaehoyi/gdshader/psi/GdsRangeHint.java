@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GdsRangeHint extends PsiElement {
 
   @NotNull
-  List<GdsNumber> getNumberList();
+  List<GdsExpression> getExpressionList();
 
 }

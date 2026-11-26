@@ -192,6 +192,20 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test comma lists in for statement`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void my_func() {
+                for (int i = 0, j = 0; i < 3, j < 3; i++, j++) {
+                }
+                for (int i = 0, j = 0; i < 3, <error descr="Expected a boolean expression">j</error>; i++) {
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
     fun `test bool type in while statement condition`() {
         doHighlightTest(
             """

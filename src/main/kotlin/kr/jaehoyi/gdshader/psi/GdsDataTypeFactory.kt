@@ -119,18 +119,20 @@ object GdsDataTypeFactory {
             var hasUnresolvedMembers = structBlock == null || PsiTreeUtil.hasErrorElements(structBlock)
 
             structBlock?.structMemberList?.structMemberList?.forEach { member ->
-                val memberName = member.structMemberNameDecl?.text
                 val memberBaseType = getBaseType(member.precision?.text, member.type, visiting)
-                if (memberName == null || memberBaseType == null || memberName in members) {
-                    hasUnresolvedMembers = true
-                    return@forEach
-                }
+                for (declarator in member.structMemberDeclaratorList) {
+                    val memberName = declarator.structMemberNameDecl.text
+                    if (memberBaseType == null || memberName in members) {
+                        hasUnresolvedMembers = true
+                        continue
+                    }
 
-                val memberType = withArraySize(memberBaseType, member.arraySizeList.firstOrNull())
-                if (memberType is ArrayType && memberType.containerSize == null) {
-                    hasUnresolvedMembers = true
+                    val memberType = withArraySize(memberBaseType, member.arraySize ?: declarator.arraySize)
+                    if (memberType is ArrayType && memberType.containerSize == null) {
+                        hasUnresolvedMembers = true
+                    }
+                    members[memberName] = memberType
                 }
-                members[memberName] = memberType
             }
 
             return StructType(structName, members, hasUnresolvedMembers)

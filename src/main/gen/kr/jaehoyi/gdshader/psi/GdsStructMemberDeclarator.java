@@ -5,6 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface GdsNumber extends PsiElement {
+public interface GdsStructMemberDeclarator extends PsiElement {
+
+  @Nullable
+  GdsArraySize getArraySize();
+
+  @NotNull
+  GdsStructMemberNameDecl getStructMemberNameDecl();
 
 }

@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface GdsForIteration extends PsiElement {
 
   @NotNull
-  GdsExpression getExpression();
+  List<GdsExpression> getExpressionList();
 
 }

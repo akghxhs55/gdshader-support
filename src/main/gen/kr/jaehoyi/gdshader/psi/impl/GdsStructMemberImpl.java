@@ -28,9 +28,9 @@ public class GdsStructMemberImpl extends ASTWrapperPsiElement implements GdsStru
   }
 
   @Override
-  @NotNull
-  public List<GdsArraySize> getArraySizeList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsArraySize.class);
+  @Nullable
+  public GdsArraySize getArraySize() {
+    return findChildByClass(GdsArraySize.class);
   }
 
   @Override
@@ -40,9 +40,9 @@ public class GdsStructMemberImpl extends ASTWrapperPsiElement implements GdsStru
   }
 
   @Override
-  @Nullable
-  public GdsStructMemberNameDecl getStructMemberNameDecl() {
-    return findChildByClass(GdsStructMemberNameDecl.class);
+  @NotNull
+  public List<GdsStructMemberDeclarator> getStructMemberDeclaratorList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsStructMemberDeclarator.class);
   }
 
   @Override

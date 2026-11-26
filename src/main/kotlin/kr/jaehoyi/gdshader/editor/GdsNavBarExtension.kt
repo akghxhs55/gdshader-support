@@ -30,7 +30,7 @@ class GdsNavBarExtension : StructureAwareNavBarModelExtension() {
             is GdsUniformDeclaration -> obj.variableNameDecl?.name
             is GdsConstantDeclarator -> obj.variableNameDecl.name
             is GdsVaryingDeclaration -> obj.variableNameDecl?.name
-            is GdsStructMember -> obj.structMemberNameDecl?.name
+            is GdsStructMemberDeclarator -> obj.structMemberNameDecl.name
             is GdsParameter -> obj.variableNameDecl.name
             else -> null
         }
@@ -47,7 +47,7 @@ class GdsNavBarExtension : StructureAwareNavBarModelExtension() {
             is GdsUniformDeclaration -> GdsIcons.UNIFORM
             is GdsConstantDeclarator -> GdsIcons.CONSTANT
             is GdsVaryingDeclaration -> GdsIcons.VARYING
-            is GdsStructMember -> GdsIcons.STRUCT_MEMBER
+            is GdsStructMemberDeclarator -> GdsIcons.STRUCT_MEMBER
             is GdsParameter -> GdsIcons.PARAMETER
             else -> null
         }

@@ -7,14 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface GdsStructMember extends PsiElement {
 
-  @NotNull
-  List<GdsArraySize> getArraySizeList();
+  @Nullable
+  GdsArraySize getArraySize();
 
   @Nullable
   GdsPrecision getPrecision();
 
-  @Nullable
-  GdsStructMemberNameDecl getStructMemberNameDecl();
+  @NotNull
+  List<GdsStructMemberDeclarator> getStructMemberDeclaratorList();
 
   @NotNull
   GdsType getType();

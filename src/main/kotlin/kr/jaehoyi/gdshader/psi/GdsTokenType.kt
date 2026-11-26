@@ -5,6 +5,4 @@ import kr.jaehoyi.gdshader.GdsLanguage
 
 class GdsTokenType(
     debugName: String,
-) : IElementType(debugName, GdsLanguage) {
-    override fun toString(): String = "GDShaderTokenType." + super.toString()
-}
+) : IElementType(debugName, GdsLanguage)

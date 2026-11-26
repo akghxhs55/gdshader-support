@@ -29,8 +29,8 @@ public class GdsRangeHintImpl extends ASTWrapperPsiElement implements GdsRangeHi
 
   @Override
   @NotNull
-  public List<GdsNumber> getNumberList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsNumber.class);
+  public List<GdsExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsExpression.class);
   }
 
 }

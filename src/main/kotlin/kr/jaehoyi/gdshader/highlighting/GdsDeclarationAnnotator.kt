@@ -30,6 +30,7 @@ import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
+import kr.jaehoyi.gdshader.psi.GdsStructMemberDeclarator
 import kr.jaehoyi.gdshader.psi.GdsStructMemberList
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
 import kr.jaehoyi.gdshader.psi.GdsTypes
@@ -73,8 +74,8 @@ class GdsDeclarationAnnotator : Annotator {
                 checkDoubleArraySize(element.arraySizeList, holder)
                 checkDuplicateVariable(element.variableNameDecl, holder)
             }
-            element is GdsStructMember -> {
-                checkDoubleArraySize(element.arraySizeList, holder)
+            element is GdsStructMemberDeclarator -> {
+                checkSplitDoubleArraySize(element, holder)
                 checkDuplicateStructMember(element, holder)
             }
             element is GdsLocalVariableDeclarator -> {
@@ -241,13 +242,16 @@ class GdsDeclarationAnnotator : Annotator {
     }
 
     private fun checkDuplicateStructMember(
-        element: GdsStructMember,
+        element: GdsStructMemberDeclarator,
         holder: AnnotationHolder,
     ) {
-        val nameDecl = element.structMemberNameDecl ?: return
+        val nameDecl = element.structMemberNameDecl
         val name = nameDecl.text
-        val memberList = element.parent as? GdsStructMemberList ?: return
-        val first = memberList.structMemberList.firstOrNull { it.structMemberNameDecl?.text == name } ?: return
+        val memberList = element.parent?.parent as? GdsStructMemberList ?: return
+        val first =
+            memberList.structMemberList
+                .flatMap { it.structMemberDeclaratorList }
+                .firstOrNull { it.structMemberNameDecl.text == name } ?: return
         if (first !== element) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
@@ -340,6 +344,7 @@ class GdsDeclarationAnnotator : Annotator {
             when (element) {
                 is GdsLocalVariableDeclarator -> element.arraySize
                 is GdsConstantDeclarator -> element.arraySize
+                is GdsStructMemberDeclarator -> element.arraySize
                 else -> return
             } ?: return
 
@@ -347,7 +352,7 @@ class GdsDeclarationAnnotator : Annotator {
             when (val parentDecl = element.parent?.parent) {
                 is GdsLocalVariableDeclaration -> parentDecl.arraySize
                 is GdsConstantDeclaration -> parentDecl.arraySize
-                else -> null
+                else -> (element.parent as? GdsStructMember)?.arraySize
             }
 
         if (parentArraySize != null) {

@@ -11,20 +11,32 @@ import static kr.jaehoyi.gdshader.psi.GdsTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import kr.jaehoyi.gdshader.psi.*;
 
-public class GdsNumberImpl extends ASTWrapperPsiElement implements GdsNumber {
+public class GdsStructMemberDeclaratorImpl extends ASTWrapperPsiElement implements GdsStructMemberDeclarator {
 
-  public GdsNumberImpl(@NotNull ASTNode node) {
+  public GdsStructMemberDeclaratorImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull GdsVisitor visitor) {
-    visitor.visitNumber(this);
+    visitor.visitStructMemberDeclarator(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof GdsVisitor) accept((GdsVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public GdsArraySize getArraySize() {
+    return findChildByClass(GdsArraySize.class);
+  }
+
+  @Override
+  @NotNull
+  public GdsStructMemberNameDecl getStructMemberNameDecl() {
+    return findNotNullChildByClass(GdsStructMemberNameDecl.class);
   }
 
 }

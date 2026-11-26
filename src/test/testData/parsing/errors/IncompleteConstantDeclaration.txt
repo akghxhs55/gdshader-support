@@ -2,11 +2,11 @@ GDShader File
   GdsItemImpl(ITEM)
     GdsTopLevelDeclarationImpl(TOP_LEVEL_DECLARATION)
       GdsConstantDeclarationImpl(CONSTANT_DECLARATION)
-        PsiElement(GDShaderTokenType.CONST)('const')
+        PsiElement(const)('const')
         PsiWhiteSpace(' ')
         GdsTypeImpl(TYPE)
           GdsPrimitiveTypeImpl(PRIMITIVE_TYPE)
-            PsiElement(GDShaderTokenType.TYPE_INT)('int')
-        PsiErrorElement:GDShaderTokenType.BRACKET_OPEN or GDShaderTokenType.IDENTIFIER expected, got ';'
+            PsiElement(int)('int')
+        PsiErrorElement:'[' or identifier expected, got ';'
           <empty list>
-        PsiElement(GDShaderTokenType.SEMICOLON)(';')
+        PsiElement(;)(';')

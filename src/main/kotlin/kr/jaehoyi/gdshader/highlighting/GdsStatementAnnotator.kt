@@ -191,14 +191,14 @@ class GdsStatementAnnotator : Annotator {
         element: GdsForStatement,
         holder: AnnotationHolder,
     ) {
-        val expression = element.forCondition?.expression ?: return
-        val type = GdsExpressionTypeInference.inferType(expression) ?: return
-
-        if (type !is BoolType) {
-            holder
-                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
-                .range(expression)
-                .create()
+        for (expression in element.forCondition?.expressionList.orEmpty()) {
+            val type = GdsExpressionTypeInference.inferType(expression) ?: continue
+            if (type !is BoolType) {
+                holder
+                    .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
+                    .range(expression)
+                    .create()
+            }
         }
     }
 

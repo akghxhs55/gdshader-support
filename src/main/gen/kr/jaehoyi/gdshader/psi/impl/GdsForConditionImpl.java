@@ -29,8 +29,8 @@ public class GdsForConditionImpl extends ASTWrapperPsiElement implements GdsForC
 
   @Override
   @NotNull
-  public GdsExpression getExpression() {
-    return findNotNullChildByClass(GdsExpression.class);
+  public List<GdsExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsExpression.class);
   }
 
 }

@@ -44,9 +44,10 @@ class GdsStructMemberReference(
         val structDecl = resolveStruct(element, structType.name) ?: return null
 
         structDecl.structBlock?.structMemberList?.structMemberList?.forEach { member ->
-            val nameDecl = member.structMemberNameDecl
-            if (nameDecl?.text == memberName) {
-                return nameDecl
+            member.structMemberDeclaratorList.forEach { declarator ->
+                if (declarator.structMemberNameDecl.text == memberName) {
+                    return declarator.structMemberNameDecl
+                }
             }
         }
         return null

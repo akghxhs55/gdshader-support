@@ -29,8 +29,8 @@ public class GdsForIterationImpl extends ASTWrapperPsiElement implements GdsForI
 
   @Override
   @NotNull
-  public GdsExpression getExpression() {
-    return findNotNullChildByClass(GdsExpression.class);
+  public List<GdsExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, GdsExpression.class);
   }
 
 }

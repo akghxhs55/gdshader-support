@@ -205,10 +205,6 @@ public class GdsVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitNumber(@NotNull GdsNumber o) {
-    visitPsiElement(o);
-  }
-
   public void visitParameter(@NotNull GdsParameter o) {
     visitPsiElement(o);
   }
@@ -310,6 +306,10 @@ public class GdsVisitor extends PsiElementVisitor {
   }
 
   public void visitStructMember(@NotNull GdsStructMember o) {
+    visitPsiElement(o);
+  }
+
+  public void visitStructMemberDeclarator(@NotNull GdsStructMemberDeclarator o) {
     visitPsiElement(o);
   }
 

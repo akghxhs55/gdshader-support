@@ -1,13 +1,13 @@
 GDShader File
-  PsiElement(GDShaderTokenType.IDENTIFIER)('a')
+  PsiElement(identifier)('a')
   PsiWhiteSpace(' ')
-  PsiErrorElement:GDShaderTokenType.BRACKET_OPEN or GDShaderTokenType.IDENTIFIER expected, got '='
-    PsiElement(GDShaderTokenType.OP_ASSIGN)('=')
+  PsiErrorElement:'[' or identifier expected, got '='
+    PsiElement(=)('=')
   PsiWhiteSpace(' ')
-  PsiElement(GDShaderTokenType.IDENTIFIER)('a')
+  PsiElement(identifier)('a')
   PsiWhiteSpace(' ')
-  PsiErrorElement:GDShaderTokenType.BRACKET_OPEN or GDShaderTokenType.IDENTIFIER expected, got '+'
-    PsiElement(GDShaderTokenType.OP_ADD)('+')
+  PsiErrorElement:'[' or identifier expected, got '+'
+    PsiElement(+)('+')
   PsiWhiteSpace(' ')
-  PsiElement(GDShaderTokenType.INT_CONSTANT)('1')
-  PsiElement(GDShaderTokenType.SEMICOLON)(';')
+  PsiElement(int constant)('1')
+  PsiElement(;)(';')

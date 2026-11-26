@@ -26,7 +26,7 @@ class GdsStructureViewModel(
             GdsVaryingDeclaration::class.java,
             GdsFunctionDeclaration::class.java,
             GdsStructDeclaration::class.java,
-            GdsStructMember::class.java,
+            GdsStructMemberDeclarator::class.java,
             GdsParameter::class.java,
         )
 

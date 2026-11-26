@@ -380,6 +380,34 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct members declared in one statement`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct Data { float a, b[2]; float[2] c, d; vec2 <error descr="Redefinition of 'a'">a</error>, e; };
+            struct Sized { float[2] f, g<error descr="Array size is already defined">[3]</error>; };
+            void fragment() {
+                Data data = Data(1.0, float[2](1.0, 2.0), float[2](1.0, 2.0), float[2](1.0, 2.0), vec2(1.0), vec2(1.0));
+                float x = data.a + data.b[1] + data.c[0] + data.d[1] + data.e.y;
+            }
+        """,
+        )
+    }
+
+    fun `test range hint accepts constant expressions`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define MAX_VALUE 4.0
+            const float M = 2.0;
+            uniform float a : hint_range(0.0, M) = 1.0;
+            uniform float b : hint_range(0.0, 2.0 * 3.0) = 1.0;
+            uniform float c : hint_range(0.0, MAX_VALUE, 0.5) = 1.0;
+            uniform float d : hint_range(-1, float(2)) = 0.5;
+        """,
+        )
+    }
+
     fun `test same member name in different structs and globals`() {
         doHighlightTest(
             """
