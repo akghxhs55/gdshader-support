@@ -68,12 +68,12 @@ class GdsDeclarationAnnotator : Annotator {
             }
             element is GdsUniformDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
-                checkDuplicateVariable(element.variableNameDecl, holder)
+                checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true)
                 checkUniformInitializerType(element, holder)
             }
             element is GdsVaryingDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
-                checkDuplicateVariable(element.variableNameDecl, holder)
+                checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true)
             }
             element is GdsParameter -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
@@ -93,7 +93,7 @@ class GdsDeclarationAnnotator : Annotator {
                 if (element.parentOfType<GdsFunctionDeclaration>() != null) {
                     checkDuplicateLocalVariable(element.variableNameDecl, holder)
                 } else {
-                    checkDuplicateVariable(element.variableNameDecl, holder)
+                    checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true)
                 }
                 checkInitializerType(element.initializer, GdsDataTypeFactory.createFromConstantDeclaration(element), holder)
             }
@@ -219,7 +219,7 @@ class GdsDeclarationAnnotator : Annotator {
         holder: AnnotationHolder,
     ) {
         val nameDecl = element.functionNameDecl
-        if (hasConflictingFunction(nameDecl, nameDecl)) {
+        if (hasConflictingFunction(nameDecl, nameDecl) || isBuiltinName(nameDecl.name, nameDecl, includeFunctions = true)) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '${nameDecl.name}'")
                 .range(nameDecl)
@@ -314,15 +314,27 @@ class GdsDeclarationAnnotator : Annotator {
     private fun checkDuplicateVariable(
         nameDecl: GdsVariableNameDecl?,
         holder: AnnotationHolder,
+        checkBuiltins: Boolean = false,
     ) {
         if (nameDecl == null) return
         val name = nameDecl.name
-        if (hasConflictingVariable(name, nameDecl)) {
+        if (hasConflictingVariable(name, nameDecl) || (checkBuiltins && isBuiltinName(name, nameDecl, includeFunctions = false))) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
                 .range(nameDecl)
                 .create()
         }
+    }
+
+    // Godot reserves the built-in variables of every processing function of the shader type in the
+    // global scope, and the built-in function names for functions.
+    private fun isBuiltinName(
+        name: String,
+        position: PsiElement,
+        includeFunctions: Boolean,
+    ): Boolean {
+        val shaderType = GdsPsiImplUtil.getShaderType(position) ?: return false
+        return name in Builtins.getVariableNames(shaderType) || (includeFunctions && name in Builtins.ENGINE_FUNCTION_NAMES)
     }
 
     private fun hasConflictingVariable(

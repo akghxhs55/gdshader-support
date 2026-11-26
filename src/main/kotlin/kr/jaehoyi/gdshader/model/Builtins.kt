@@ -125,6 +125,16 @@ object Builtins {
 
     fun isEngineFunction(spec: FunctionSpec): Boolean = spec in ENGINE_FUNCTIONS
 
+    val ENGINE_FUNCTION_NAMES: Set<String> by lazy { ENGINE_FUNCTIONS.map { it.name }.toSet() }
+
+    private val VARIABLE_NAMES_BY_SHADER_TYPE: Map<ShaderType, Set<String>> by lazy {
+        VARIABLES.entries
+            .groupBy({ it.key.first }, { entry -> entry.value.map { it.name } })
+            .mapValues { (_, names) -> names.flatten().toSet() }
+    }
+
+    fun getVariableNames(shaderType: ShaderType): Set<String> = VARIABLE_NAMES_BY_SHADER_TYPE[shaderType].orEmpty()
+
     fun isStageFunction(spec: FunctionSpec): Boolean = spec in STAGE_FUNCTIONS
 
     private val FUNCTION_LOOKUP_CACHE: Map<Pair<ShaderType, FunctionContext>, Map<String, List<FunctionSpec>>> by lazy {

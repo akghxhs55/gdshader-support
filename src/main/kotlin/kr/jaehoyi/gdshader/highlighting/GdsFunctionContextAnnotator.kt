@@ -35,6 +35,7 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 
 // Mirrors Godot's checks that depend on the shader type and the enclosing function: discard,
 // fragment-only built-in functions, varyings and the constant argument of textureGather.
@@ -48,6 +49,7 @@ class GdsFunctionContextAnnotator : Annotator {
         when (element) {
             is GdsSimpleStatement -> if (element.firstChild?.node?.elementType == GdsTypes.CF_DISCARD) checkDiscard(element, holder)
             is GdsFunctionCall -> {
+                checkRecursion(element, holder)
                 checkFragmentOnlyFunction(element, holder)
                 checkTextureGather(element, holder)
             }
@@ -66,6 +68,16 @@ class GdsFunctionContextAnnotator : Annotator {
             return
         }
         checkRestrictedItem(element, "discard", holder)
+    }
+
+    private fun checkRecursion(
+        call: GdsFunctionCall,
+        holder: AnnotationHolder,
+    ) {
+        val nameRef = call.functionNameRef ?: return
+        if (GdsArrayMethodResolver.isMemberCall(call)) return
+        val function = call.parentOfType<GdsFunctionDeclaration>() ?: return
+        if (nameRef.text == function.functionNameDecl.name) error(holder, nameRef, "Recursion is not allowed.")
     }
 
     private fun checkFragmentOnlyFunction(
