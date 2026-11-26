@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file.
 - Fixed struct member resolution
 - Fixed constructor call symbol resolution (#21)
 - Fixed null pointer exception when open macro documentation (#23)
+- Generated built-in functions and variables from the Godot 4.7.2 engine source
+- Added `texture_blit` shader type
+- Added conditional preprocessor directive evaluation
+- Aligned built-in function overload resolution with Godot
+- Aligned grammar with Godot (multiple struct members, `hint_range` expressions, comma lists in `for`, line continuation)
+- Aligned render modes, stencil modes, uniform hints and file templates with Godot
+- Added Godot validations for declarations, shader stages, varyings, constants and literals
 
 ## 1.2.2 (2026-11-24)
 
