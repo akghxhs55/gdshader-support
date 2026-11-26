@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Aligned grammar with Godot (multiple struct members, `hint_range` expressions, comma lists in `for`, line continuation)
 - Aligned render modes, stencil modes, uniform hints and file templates with Godot
 - Added Godot validations for declarations, shader stages, varyings, constants and literals
+- Support highlighting and inspections in unindexed files (#22)
 
 ## 1.2.2 (2026-11-24)
 

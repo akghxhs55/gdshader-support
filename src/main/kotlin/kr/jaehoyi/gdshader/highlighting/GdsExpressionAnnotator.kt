@@ -3,13 +3,16 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import kr.jaehoyi.gdshader.model.*
 import kr.jaehoyi.gdshader.psi.*
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 
-class GdsExpressionAnnotator : Annotator {
+class GdsExpressionAnnotator :
+    Annotator,
+    DumbAware {
     override fun annotate(
         element: PsiElement,
         holder: AnnotationHolder,

@@ -2,6 +2,7 @@ package kr.jaehoyi.gdshader.codeinsight
 
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ElementColorProvider
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
 import kr.jaehoyi.gdshader.codeinsight.GdsColorUtil.convertColorToVecString
@@ -15,7 +16,9 @@ import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import java.awt.Color
 
-class GdsLocalVariableColorProvider : ElementColorProvider {
+class GdsLocalVariableColorProvider :
+    ElementColorProvider,
+    DumbAware {
     override fun getColorFrom(element: PsiElement): Color? {
         if (element.node.elementType != GdsTypes.IDENTIFIER) {
             return null

@@ -2,13 +2,16 @@ package kr.jaehoyi.gdshader.highlighting
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
 import kr.jaehoyi.gdshader.GdsBundle
+import kr.jaehoyi.gdshader.GdsFileType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
@@ -72,24 +75,44 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
 
     private fun isUnused(element: PsiNamedElement): Boolean {
         val useScope = element.useScope
-        val scope =
-            if (useScope is LocalSearchScope) {
-                useScope
-            } else {
-                if (!isIndexed(element)) return false
-                GdsSearchScopes.godotFiles(element.project)
-            }
+        if (useScope is LocalSearchScope) {
+            return ReferencesSearch.search(element, useScope, false).findFirst() == null
+        }
+
+        // A LocalSearchScope search reads the file directly, so usages in the same file are found even when the
+        // file is not indexed.
+        val file = element.containingFile ?: return false
+        if (ReferencesSearch.search(element, LocalSearchScope(file), false).findFirst() != null) return false
+
+        // Only include files can be included, so symbols in a shader file are never used by other files.
+        if (file.fileType == GdsFileType) return true
+
+        val project = element.project
+        if (DumbService.isDumb(project)) return false
+        val scope = GdsSearchScopes.godotFiles(project)
+        if (!isIndexed(file, element.name ?: return false, scope)) return false
         return ReferencesSearch.search(element, scope, false).findFirst() == null
     }
 
-    // Searches outside a LocalSearchScope go through the word index, which knows nothing about unindexed files
-    // such as ones in folders excluded from indexing.
-    private fun isIndexed(element: PsiNamedElement): Boolean {
-        val file = element.containingFile ?: return false
-        val name = element.name ?: return false
-        return !PsiSearchHelper
-            .getInstance(element.project)
-            .processAllFilesWithWord(name, GlobalSearchScope.fileScope(file), { false }, true)
+    // Searches in other files go through the word index, which knows nothing about unindexed files such as ones in
+    // folders excluded from indexing or outside the solution directory. The query must use the same scope as the
+    // search because the index answers queries over a single file even for unindexed files.
+    private fun isIndexed(
+        file: PsiFile,
+        name: String,
+        scope: GlobalSearchScope,
+    ): Boolean {
+        var found = false
+        PsiSearchHelper.getInstance(file.project).processAllFilesWithWord(
+            name,
+            scope,
+            {
+                found = it == file
+                !found
+            },
+            true,
+        )
+        return found
     }
 
     private fun isProcessingFunction(element: GdsFunctionNameDecl): Boolean {

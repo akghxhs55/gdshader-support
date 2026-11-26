@@ -67,6 +67,10 @@
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsFunctionContextAnnotator" />
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsExpressionAnnotator" />
         <annotator language="kr.jaehoyi.gdshader" implementationClass="kr.jaehoyi.gdshader.highlighting.GdsConstantAnnotator" />
+        <defaultHighlightingSettingProvider
+            id="GdsHighlightingSettingProvider"
+            order="first"
+            implementation="kr.jaehoyi.gdshader.highlighting.GdsHighlightingSettingProvider" />
         
         <!-- Formatting -->
         <lang.formatter

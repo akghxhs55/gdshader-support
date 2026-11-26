@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.GdsBundle
 import kr.jaehoyi.gdshader.model.Builtins
@@ -15,7 +16,9 @@ import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
-class GdsProcessingFunctionLineMarkerProvider : LineMarkerProvider {
+class GdsProcessingFunctionLineMarkerProvider :
+    LineMarkerProvider,
+    DumbAware {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (element.node.elementType != GdsTypes.IDENTIFIER) {
             return null

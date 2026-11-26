@@ -3,6 +3,7 @@ package kr.jaehoyi.gdshader.highlighting
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -37,7 +38,9 @@ import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 
-class GdsFunctionContextAnnotator : Annotator {
+class GdsFunctionContextAnnotator :
+    Annotator,
+    DumbAware {
     override fun annotate(
         element: PsiElement,
         holder: AnnotationHolder,

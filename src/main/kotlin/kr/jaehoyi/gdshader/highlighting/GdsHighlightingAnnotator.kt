@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.colors.CodeInsightColors
+import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import kr.jaehoyi.gdshader.model.ConstantSpec
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
@@ -22,7 +23,9 @@ import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 
-class GdsHighlightingAnnotator : Annotator {
+class GdsHighlightingAnnotator :
+    Annotator,
+    DumbAware {
     override fun annotate(
         element: PsiElement,
         holder: AnnotationHolder,
