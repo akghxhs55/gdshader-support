@@ -171,8 +171,49 @@ class GdsUnusedSymbolInspectionTest : BasePlatformTestCase() {
         }
     }
 
-    private fun doHighlightTest(code: String) {
-        myFixture.configureByText("test_shader.gdshader", code)
+    fun `test top-level symbols in include file not flagged by default`() {
+        doHighlightTest(
+            """
+            const float K = 2.0;
+            float helper(float x, float <warning descr="Parameter 'y' is never used">y</warning>) {
+                const float <warning descr="Constant 'C' is never used">C</warning> = 1.0;
+                float <warning descr="Variable 'z' is never used">z</warning> = x;
+                return x;
+            }
+            """.trimIndent(),
+            "test_include.gdshaderinc",
+        )
+    }
+
+    fun `test top-level symbols in include file flagged when enabled`() {
+        myFixture.enableInspections(GdsUnusedSymbolInspection().apply { reportIncludeTopLevelSymbols = true })
+        doHighlightTest(
+            """
+            const float <warning descr="Constant 'K' is never used">K</warning> = 2.0;
+            float <warning descr="Function 'helper' is never used">helper</warning>() {
+                return 1.0;
+            }
+            """.trimIndent(),
+            "test_include.gdshaderinc",
+        )
+    }
+
+    fun `test top-level symbols in shader file flagged by default`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const float <warning descr="Constant 'K' is never used">K</warning> = 2.0;
+            void fragment() {
+            }
+            """.trimIndent(),
+        )
+    }
+
+    private fun doHighlightTest(
+        code: String,
+        fileName: String = "test_shader.gdshader",
+    ) {
+        myFixture.configureByText(fileName, code)
         myFixture.checkHighlighting(true, false, true)
         val removalFixes = myFixture.getAllQuickFixes().filter { it.text.startsWith("Remove '") }
         assertEmpty("Unused symbols should only produce warnings", removalFixes)

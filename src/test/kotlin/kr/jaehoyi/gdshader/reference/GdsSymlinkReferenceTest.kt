@@ -56,7 +56,7 @@ class GdsSymlinkReferenceTest : BasePlatformTestCase() {
         VfsUtil.markDirtyAndRefresh(false, true, true, root)
         PsiTestUtil.addContentRoot(module, root)
         IndexingTestUtil.waitUntilIndexesAreReady(project)
-        myFixture.enableInspections(GdsUnusedSymbolInspection())
+        myFixture.enableInspections(GdsUnusedSymbolInspection().apply { reportIncludeTopLevelSymbols = true })
     }
 
     override fun tearDown() {

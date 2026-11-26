@@ -2,7 +2,11 @@ package kr.jaehoyi.gdshader.highlighting
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.options.OptPane
+import com.intellij.codeInspection.options.OptPane.checkbox
+import com.intellij.codeInspection.options.OptPane.pane
 import com.intellij.openapi.project.DumbService
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
@@ -10,16 +14,20 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.parentOfTypes
 import kr.jaehoyi.gdshader.GdsBundle
 import kr.jaehoyi.gdshader.GdsFileType
+import kr.jaehoyi.gdshader.GdsIncludeFileType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.psi.GdsBlock
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsFile
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
+import kr.jaehoyi.gdshader.psi.GdsParameterList
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVisitor
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
@@ -27,6 +35,17 @@ import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 import kr.jaehoyi.gdshader.resolve.GdsSearchScopes
 
 class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symbol.description") {
+    @JvmField
+    var reportIncludeTopLevelSymbols = false
+
+    override fun getOptionsPane(): OptPane =
+        pane(
+            checkbox(
+                "reportIncludeTopLevelSymbols",
+                GdsBundle.message("inspection.unused.symbol.option.include.top.level"),
+            ),
+        )
+
     override fun buildVisitor(
         holder: ProblemsHolder,
         isOnTheFly: Boolean,
@@ -40,6 +59,8 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
                 ) {
                     return
                 }
+
+                if (isIgnoredTopLevel(element)) return
 
                 if (isUnused(element)) {
                     val kind =
@@ -62,6 +83,8 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
 
                 if (isProcessingFunction(element)) return
 
+                if (isIgnoredTopLevel(element)) return
+
                 if (isUnused(element)) {
                     val kind = GdsBundle.message("inspection.unused.symbol.message.function")
                     holder.registerProblem(
@@ -73,6 +96,11 @@ class GdsUnusedSymbolInspection : GdsLocalizedInspection("inspection.unused.symb
             }
         }
     }
+
+    private fun isIgnoredTopLevel(element: PsiElement): Boolean =
+        !reportIncludeTopLevelSymbols &&
+            element.containingFile.viewProvider.virtualFile.fileType == GdsIncludeFileType &&
+            element.parentOfTypes(GdsBlock::class, GdsParameterList::class) == null
 
     private fun isUnused(element: PsiNamedElement): Boolean {
         // Usages resolve to the built-in define, and the declaration is already an error.

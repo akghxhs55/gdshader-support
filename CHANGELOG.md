@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Support highlighting and inspections in unindexed files (#22)
 - Support built-in preprocessor defines
 - Report unresolved references as errors
+- Added option to report unused top-level symbols in include files
 
 ## 1.2.2 (2026-11-24)
 
