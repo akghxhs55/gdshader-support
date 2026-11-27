@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## Unreleased
+- Aligned while condition type check with Godot
+
 ## 1.3.0 (2026-11-27)
 
 - Validate function calls in include files (#20)

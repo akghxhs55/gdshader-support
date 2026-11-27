@@ -39,8 +39,6 @@ class GdsStatementAnnotator :
             is GdsSwitchStatement -> checkSwitchStatement(element, holder)
             is GdsIfStatement -> checkIfStatement(element, holder)
             is GdsForStatement -> checkForStatement(element, holder)
-            is GdsWhileStatement -> checkWhileStatement(element, holder)
-            is GdsDoWhileStatement -> checkDoWhileStatement(element, holder)
         }
     }
 
@@ -180,36 +178,6 @@ class GdsStatementAnnotator :
                     .range(expression)
                     .create()
             }
-        }
-    }
-
-    private fun checkWhileStatement(
-        element: GdsWhileStatement,
-        holder: AnnotationHolder,
-    ) {
-        val expression = element.expression ?: return
-        val type = GdsExpressionTypeInference.inferType(expression) ?: return
-
-        if (type !is BoolType) {
-            holder
-                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
-                .range(expression)
-                .create()
-        }
-    }
-
-    private fun checkDoWhileStatement(
-        element: GdsDoWhileStatement,
-        holder: AnnotationHolder,
-    ) {
-        val expression = element.expression ?: return
-        val type = GdsExpressionTypeInference.inferType(expression) ?: return
-
-        if (type !is BoolType) {
-            holder
-                .newAnnotation(HighlightSeverity.ERROR, "Expected a boolean expression")
-                .range(expression)
-                .create()
         }
     }
 }

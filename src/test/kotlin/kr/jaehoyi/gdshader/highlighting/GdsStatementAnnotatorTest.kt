@@ -266,6 +266,20 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test non-bool while and do-while conditions are not flagged`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                while (1) { break; }
+                while (1.0) { break; }
+                while (vec2(1.0)) { break; }
+                do { break; } while (1);
+            }
+            """.trimIndent(),
+        )
+    }
+
     // === break/continue ===
 
     fun `test break in for loop`() {
