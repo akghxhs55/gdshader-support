@@ -54,6 +54,54 @@ class GdsUnresolvedReferenceAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test variable in unbraced body is not visible outside it`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                if (true) int a = 1; <error descr="Unresolved reference 'a'">a</error> = 2;
+                if (true) int b = 1; else <error descr="Unresolved reference 'b'">b</error> = 2;
+                do int c = 1; while (<error descr="Unresolved reference 'c'">c</error> < 3);
+                for (int i = 0; false;) int d = 1; <error descr="Unresolved reference 'd'">d</error> = 2;
+                while (false) int e = 1; <error descr="Unresolved reference 'e'">e</error> = 2;
+            }
+        """,
+        )
+    }
+
+    fun `test local variable is not visible in its own initializer`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int f = <error descr="Unresolved reference 'f'">f</error>;
+                const int c = <error descr="Unresolved reference 'c'">c</error>;
+                for (int i = <error descr="Unresolved reference 'i'">i</error>; false;) { }
+                for (const int k = 0, j = <error descr="Unresolved reference 'j'">j</error>; false;) { }
+                int p = 1, q = <error descr="Unresolved reference 'q'">q</error>;
+                int r[2] = { 1, <error descr="Unresolved reference 'r'">r</error>[0] };
+                int a = 1, b = a;
+                int x = 1;
+                { int x = x; }
+            }
+        """,
+        )
+    }
+
+    fun `test global is not visible in its own initializer`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int G = <error descr="Unresolved reference 'G'">G</error>;
+            const int H = 1, K = <error descr="Unresolved reference 'K'">K</error>;
+            const int M = 1, N = M;
+            uniform int U = <error descr="Unresolved reference 'U'">U</error>;
+            const int A[2] = { 1, <error descr="Unresolved reference 'A'">A</error>[0] };
+            void fragment() { }
+        """,
+        )
+    }
+
     fun `test resolved uniform variable`() {
         doHighlightTest(
             """

@@ -6,6 +6,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import kr.jaehoyi.gdshader.psi.GdsItem
+import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 
 class GdsScopeProcessor<T : PsiElement>(
     private val targetType: Class<T>,
@@ -26,6 +27,7 @@ class GdsScopeProcessor<T : PsiElement>(
         for (declaration in declarations) {
             val isSameFile = declaration.containingFile?.originalFile == originFile
             if (isSameFile && declaration.textOffset >= startOffset) continue
+            if (isSameFile && declaration is GdsVariableNameDecl && declaration.parent.textRange.contains(startOffset)) continue
 
             if (targetType.isInstance(declaration) && !processor(targetType.cast(declaration))) {
                 return false

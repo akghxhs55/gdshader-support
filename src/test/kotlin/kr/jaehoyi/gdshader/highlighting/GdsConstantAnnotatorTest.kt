@@ -66,6 +66,24 @@ class GdsConstantAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test const for variable as array size`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                for (const int n = 3; false;) {
+                    float a[n];
+                    float b[<error descr="Expected a positive integer constant.">n - 3</error>];
+                    a[<error descr="Index [3] out of range [0..2].">3</error>] = 1.0;
+                }
+                for (int m = 3; false;) {
+                    float c[<error descr="Expected a positive integer constant.">m</error>];
+                }
+            }
+            """,
+        )
+    }
+
     fun `test constant index range`() {
         doHighlightTest(
             """

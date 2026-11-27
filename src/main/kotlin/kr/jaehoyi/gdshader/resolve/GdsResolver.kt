@@ -7,6 +7,8 @@ import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.isWritableBuiltin
+import kr.jaehoyi.gdshader.psi.GdsBlockBody
+import kr.jaehoyi.gdshader.psi.GdsCaseBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunction
@@ -44,6 +46,7 @@ object GdsResolver {
                     }
 
                     is GdsStatementBody -> {
+                        if (scope.parent !is GdsBlockBody && scope.parent !is GdsCaseBody) return@walkUpLocalScope true
                         scope.statement?.localVariableDeclaration?.localVariableDeclaratorList?.localVariableDeclaratorList?.forEach {
                             if (!processor(it.variableNameDecl)) return@walkUpLocalScope false
                         }

@@ -129,6 +129,12 @@ object GdsConstantEvaluator {
                         val initializer = declarator.initializer ?: return null
                         evaluate(initializer, visited)
                     }
+                    is GdsLocalVariableDeclarator -> {
+                        val forInit = declarator.parent?.parent as? GdsForInit ?: return null
+                        if (!forInit.isConstant) return null
+                        val initializer = declarator.initializer ?: return null
+                        evaluate(initializer, visited)
+                    }
                     else -> null
                 }
             }
