@@ -166,6 +166,144 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test valid case labels`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int A = 2;
+            const uint B = 2u;
+            void my_func() {
+                int x = 1;
+                switch (x) {
+                    case -1: break;
+                    case 1: break;
+                    case A: break;
+                    case -A: break;
+                    default: break;
+                }
+                uint y = 1u;
+                switch (y) {
+                    case 1u: break;
+                    case B: break;
+                }
+                switch (x) {
+                    case 1: switch (x) { case 1: break; } break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test duplicated case labels`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int A = 1;
+            const int C = A + 1;
+            void my_func() {
+                int x = 1;
+                const int L = 3;
+                switch (x) {
+                    case 1: break;
+                    case <error descr="Duplicated case label: 1.">1</error>: break;
+                    case <error descr="Duplicated case label: 1.">A</error>: break;
+                    case <error descr="Duplicated case label: 1.">0x1</error>: break;
+                    case C: break;
+                    case <error descr="Duplicated case label: 2.">2</error>: break;
+                    case L: break;
+                    case <error descr="Duplicated case label: 3.">3</error>: break;
+                    case -1: break;
+                    case <error descr="Duplicated case label: -1.">-1</error>: break;
+                }
+                uint y = 1u;
+                switch (y) {
+                    case 1u: break;
+                    case <error descr="Duplicated case label: 1.">1u</error>: break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test duplicated default`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void my_func() {
+                int x = 1;
+                switch (x) {
+                    default: break;
+                    case 1: break;
+                    <error descr="Default case must be defined only once.">default</error>: break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test case label type mismatch`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int A = 1;
+            const uint B = 1u;
+            void my_func() {
+                int x = 1;
+                switch (x) {
+                    case <error descr="Expected an integer constant.">1u</error>: break;
+                    case <error descr="Expected an integer constant.">B</error>: break;
+                    case <error descr="Expected an integer constant.">1.0</error>: break;
+                }
+                uint y = 1u;
+                switch (y) {
+                    case <error descr="Expected an unsigned integer constant.">1</error>: break;
+                    case <error descr="Expected an unsigned integer constant.">A</error>: break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test case label must be a literal or constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const int ARR[2] = { 1, 2 };
+            uniform int U;
+            void my_func(const in int p) {
+                int x = 1;
+                int y = 1;
+                switch (x) {
+                    case <error descr="Expected an integer constant.">(1)</error>: break;
+                    case <error descr="Expected an integer constant.">-(1)</error>: break;
+                    case <error descr="Expected an integer constant.">+1</error>: break;
+                    case <error descr="Expected an integer constant.">y</error>: break;
+                    case <error descr="Expected an integer constant.">U</error>: break;
+                    case <error descr="Expected an integer constant.">p</error>: break;
+                    case <error descr="Expected an integer constant.">ARR</error>: break;
+                    case 1 <error descr="Expected a ':'.">+</error> 1: break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test case label with macro`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define Y 3
+            void my_func() {
+                int x = 1;
+                switch (x) {
+                    case Y: break;
+                    case <error descr="Duplicated case label: 3.">3</error>: break;
+                }
+            }
+            """.trimIndent(),
+        )
+    }
+
     // === control statements condition ===
 
     fun `test bool type in if statement condition`() {
