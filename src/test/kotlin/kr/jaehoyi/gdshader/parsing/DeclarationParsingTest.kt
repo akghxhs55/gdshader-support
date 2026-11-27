@@ -43,6 +43,10 @@ class DeclarationParsingTest :
         doTest(true)
     }
 
+    fun testFunctionDeclarationTrailingComma() {
+        doTest(true)
+    }
+
     fun testStructDeclaration() {
         doTest(true)
     }

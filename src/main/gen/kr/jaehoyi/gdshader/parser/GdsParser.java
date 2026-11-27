@@ -1617,7 +1617,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // parameter (COMMA parameter)*
+  // parameter (COMMA (&PARENTHESIS_CLOSE | parameter))*
   public static boolean parameter_list(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_list")) return false;
     boolean r, p;
@@ -1629,7 +1629,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (COMMA parameter)*
+  // (COMMA (&PARENTHESIS_CLOSE | parameter))*
   private static boolean parameter_list_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_list_1")) return false;
     while (true) {
@@ -1640,16 +1640,35 @@ public class GdsParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // COMMA parameter
+  // COMMA (&PARENTHESIS_CLOSE | parameter)
   private static boolean parameter_list_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "parameter_list_1_0")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
     r = consumeToken(b, COMMA);
     p = r; // pin = 1
-    r = r && parameter(b, l + 1);
+    r = r && parameter_list_1_0_1(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // &PARENTHESIS_CLOSE | parameter
+  private static boolean parameter_list_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_list_1_0_1")) return false;
+    boolean r;
+    r = parameter_list_1_0_1_0(b, l + 1);
+    if (!r) r = parameter(b, l + 1);
+    return r;
+  }
+
+  // &PARENTHESIS_CLOSE
+  private static boolean parameter_list_1_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "parameter_list_1_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _AND_);
+    r = consumeToken(b, PARENTHESIS_CLOSE);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */

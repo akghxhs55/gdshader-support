@@ -58,4 +58,12 @@ class ErrorParsingTest :
     fun testGlobalWithoutUniform() {
         doTest(true)
     }
+
+    fun testInvalidCommaInParameterList() {
+        doTest(true)
+    }
+
+    fun testTrailingCommaInFunctionCall() {
+        doTest(true)
+    }
 }

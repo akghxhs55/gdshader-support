@@ -349,7 +349,7 @@ function_name_decl ::= IDENTIFIER
 	methods=[getName setName getNameIdentifier getFunctionSpec]
 }
 
-parameter_list ::= parameter (COMMA parameter)*
+parameter_list ::= parameter (COMMA (&PARENTHESIS_CLOSE | parameter))*
 {
 	pin(".*")=1
 	recoverWhile=parameter_list_recover
