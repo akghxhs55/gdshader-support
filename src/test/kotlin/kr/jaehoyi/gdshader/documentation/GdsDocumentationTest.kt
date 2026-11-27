@@ -144,7 +144,56 @@ class GdsDocumentationTest : BasePlatformTestCase() {
         assertNotNull(provider.generateDoc(element, null))
     }
 
-    fun `test macro documentation does not throw`() {
+    fun `test object-like macro documentation`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            // Warm tint.
+            #define TINT vec3(1.0, 0.5, 0.0)
+            void fragment() {
+                vec3 c = <caret>TINT;
+            }
+            """.trimIndent(),
+        )
+
+        val plainDoc = plainDocAtCaret()
+        assertTrue(plainDoc.contains("#define TINT vec3(1.0, 0.5, 0.0)"))
+        assertTrue(plainDoc.contains("Warm tint."))
+    }
+
+    fun `test function-like macro documentation`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            #define LESS(a, b) ((a) < (b))
+            void fragment() {
+                bool x = <caret>LESS(1.0, 2.0);
+            }
+            """.trimIndent(),
+        )
+
+        val doc = docAtCaret()
+        assertTrue(doc.contains("((a) &lt; (b))"))
+        assertTrue(plain(doc).contains("#define LESS(a, b) ((a) &lt; (b))"))
+    }
+
+    fun `test builtin define documentation`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            void fragment() {
+                int r = <caret>RENDERER_MOBILE;
+            }
+            """.trimIndent(),
+        )
+
+        assertTrue(plainDocAtCaret().contains("#define RENDERER_MOBILE 1"))
+    }
+
+    fun `test macro quick navigate info`() {
         myFixture.configureByText(
             "test.gdshader",
             """
@@ -157,8 +206,59 @@ class GdsDocumentationTest : BasePlatformTestCase() {
         )
 
         val element = myFixture.elementAtCaret
-        assertNull(element.node)
         val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
-        assertNull(provider.generateDoc(element, null))
+        val info = requireNotNull(provider.getQuickNavigateInfo(element, null))
+        assertEquals("#define TINT vec3(1.0)", plain(info))
     }
+
+    fun `test adjacent macros are not included in macro documentation`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            #define COLOR_DIAG vec4(1.0, 0.0, 0.0, 0.0)
+            #define COLOR_VERT vec4(0.0, 1.0, 0.0, 0.0)
+            #define COLOR_HORI vec4(0.0, 0.0, 1.0, 0.0)
+            void fragment() {
+                vec4 c = <caret>COLOR_HORI;
+            }
+            """.trimIndent(),
+        )
+
+        val plainDoc = plainDocAtCaret()
+        assertTrue(plainDoc.contains("#define COLOR_HORI"))
+        assertFalse(plainDoc.contains("COLOR_DIAG"))
+        assertFalse(plainDoc.contains("COLOR_VERT"))
+    }
+
+    fun `test preprocessor line is not included in function documentation`() {
+        myFixture.configureByText(
+            "test.gdshader",
+            """
+            shader_type canvas_item;
+            // Not documentation of my_func.
+            #define SCALE 2.0
+            float my_func(float x) {
+                return x * SCALE;
+            }
+            void fragment() {
+                float y = <caret>my_func(1.0);
+            }
+            """.trimIndent(),
+        )
+
+        val plainDoc = plainDocAtCaret()
+        assertFalse(plainDoc.contains("SCALE"))
+        assertFalse(plainDoc.contains("Not documentation"))
+    }
+
+    private fun docAtCaret(): String {
+        val element = myFixture.elementAtCaret
+        val provider = LanguageDocumentation.INSTANCE.forLanguage(element.language)
+        return requireNotNull(provider.generateDoc(element, null))
+    }
+
+    private fun plainDocAtCaret(): String = plain(docAtCaret())
+
+    private fun plain(html: String): String = html.replace(Regex("<[^>]*>"), "")
 }

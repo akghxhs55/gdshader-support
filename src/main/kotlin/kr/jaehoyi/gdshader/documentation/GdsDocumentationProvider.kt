@@ -9,7 +9,9 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import com.intellij.ui.ColorUtil
 import kr.jaehoyi.gdshader.highlighting.GdsSyntaxHighlighter
 import kr.jaehoyi.gdshader.model.ConstantSpec
@@ -36,11 +38,24 @@ import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsStructBlock
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
+import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
+import kr.jaehoyi.gdshader.psi.impl.GdsBuiltinDefine
 import kr.jaehoyi.gdshader.psi.impl.GdsLightFunction
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
+import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
+import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions.GdsMacro
+
+private val DOC_COMMENT_TOKENS =
+    TokenSet.create(
+        GdsTypes.LINE_COMMENT,
+        GdsTypes.BLOCK_COMMENT_START,
+        GdsTypes.BLOCK_COMMENT_CONTENT,
+        GdsTypes.BLOCK_COMMENT_END,
+    )
 
 class GdsDocumentationProvider : AbstractDocumentationProvider() {
     override fun generateDoc(
@@ -54,6 +69,8 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
             is GdsFunction -> generateFunctionDoc(element)
             is GdsVariable -> generateVariableDoc(element)
             is GdsStructNameDecl -> generateStructDoc(element)
+            is GdsMacroElement -> generateMacroDoc(element)
+            is GdsBuiltinDefine -> generateBuiltinDefineDoc(element)
             else -> generateHintDoc(element)
         }
     }
@@ -85,8 +102,63 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
                 val name = colorize(element.name, GdsSyntaxHighlighter.STRUCT)
                 "$keyword $name"
             }
+            is GdsMacroElement -> getMacroSignature(element.macro)
+            is GdsBuiltinDefine -> getBuiltinDefineSignature(element)
             else -> null
         }
+    }
+
+    private fun generateMacroDoc(element: GdsMacroElement): String {
+        val sb = StringBuilder()
+        sb.append(DocumentationMarkup.DEFINITION_START)
+        sb.append(getMacroSignature(element.macro))
+        sb.append(DocumentationMarkup.DEFINITION_END)
+
+        val comment = findDocumentationComment(element.macro.element)
+        if (comment != null) {
+            sb.append(DocumentationMarkup.CONTENT_START)
+            sb.append(formatDocComment(comment))
+            sb.append(DocumentationMarkup.CONTENT_END)
+        }
+        return sb.toString()
+    }
+
+    private fun generateBuiltinDefineDoc(element: GdsBuiltinDefine): String {
+        val sb = StringBuilder()
+        sb.append(DocumentationMarkup.DEFINITION_START)
+        sb.append(getBuiltinDefineSignature(element))
+        sb.append(DocumentationMarkup.DEFINITION_END)
+        if (element.value == null) {
+            sb.append(DocumentationMarkup.CONTENT_START)
+            sb.append("Set to the value of the active renderer: ")
+            sb.append(
+                GdsConditionalDirectives.BUILTIN_DEFINE_VALUES
+                    .filterValues { it != null }
+                    .keys
+                    .joinToString(", ") { colorize(it, GdsSyntaxHighlighter.CONSTANT) },
+            )
+            sb.append(".")
+            sb.append(DocumentationMarkup.CONTENT_END)
+        }
+        return sb.toString()
+    }
+
+    private fun getMacroSignature(macro: GdsMacro): String {
+        val keyword = colorize("#define", GdsSyntaxHighlighter.PREPROCESSOR)
+        val name = colorize(macro.name, GdsSyntaxHighlighter.CONSTANT)
+        val params =
+            macro.parameters
+                ?.joinToString(", ", "(", ")") { colorize(it, GdsSyntaxHighlighter.PARAMETER) }
+                .orEmpty()
+        val body = if (macro.bodyText.isEmpty()) "" else " " + escapeHtml(macro.bodyText)
+        return "$keyword $name$params$body"
+    }
+
+    private fun getBuiltinDefineSignature(element: GdsBuiltinDefine): String {
+        val keyword = colorize("#define", GdsSyntaxHighlighter.PREPROCESSOR)
+        val name = colorize(element.name, GdsSyntaxHighlighter.CONSTANT)
+        val value = element.value?.let { " " + colorize(it.toString(), GdsSyntaxHighlighter.NUMBER) }.orEmpty()
+        return "$keyword $name$value"
     }
 
     private fun findHintDoc(element: PsiElement): String? {
@@ -308,7 +380,8 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
                 current = current.prevSibling
                 continue
             }
-            if (current is PsiComment) {
+            // Preprocessor lines are also PsiComments; they must not become documentation.
+            if (current is PsiComment && current.elementType in DOC_COMMENT_TOKENS) {
                 comments.add(0, current.text)
                 current = current.prevSibling
                 continue
@@ -332,6 +405,8 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
                 .replace(">", "&gt;")
         }
 
+    private fun escapeHtml(text: String): String = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
     private fun colorize(
         text: String,
         key: TextAttributesKey,
@@ -341,7 +416,7 @@ class GdsDocumentationProvider : AbstractDocumentationProvider() {
         val color = attributes?.foregroundColor
         val hexColor = if (color != null) ColorUtil.toHtmlColor(color) else null
 
-        val escapedText = text.replace("<", "&lt;").replace(">", "&gt;")
+        val escapedText = escapeHtml(text)
         return if (hexColor != null) {
             "<span style=\"color:$hexColor\">$escapedText</span>"
         } else {

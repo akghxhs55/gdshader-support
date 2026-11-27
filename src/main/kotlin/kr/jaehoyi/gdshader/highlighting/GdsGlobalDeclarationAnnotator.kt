@@ -244,7 +244,10 @@ class GdsGlobalDeclarationAnnotator :
     }
 
     private fun hasInstanceIndex(element: GdsUniformDeclaration): Boolean =
-        element.hintSection?.hintList?.hintList?.any { it.instanceIndexHint != null } == true
+        element.hintSection
+            ?.hintList
+            ?.hintList
+            ?.any { it.instanceIndexHint != null } == true
 
     private fun tooManyInstanceUniforms(element: GdsUniformDeclaration): Boolean {
         if (hasInstanceIndex(element)) return false

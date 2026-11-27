@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Added uniform and varying type check
 - Added switch-case validation
 - Added `instance_index` check
+- Added macro definition tooltip
 
 ## 1.3.0 (2026-11-27)
 
