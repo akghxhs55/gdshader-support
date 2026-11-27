@@ -351,6 +351,53 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test function after global with same name`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float a;
+            varying float b;
+            const float c = 1.0;
+            struct d { float x; };
+            void <error descr="Redefinition of 'a'">a</error>() {}
+            void <error descr="Redefinition of 'b'">b</error>() {}
+            void <error descr="Redefinition of 'c'">c</error>() {}
+            float <error descr="Redefinition of 'd'">d</error>(float x) { return x; }
+        """,
+        )
+    }
+
+    fun `test global after function with same name`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void a() {}
+            void b() {}
+            void c() {}
+            void d() {}
+            void e() {}
+            uniform float <error descr="Redefinition of 'a'">a</error>;
+            varying float <error descr="Redefinition of 'b'">b</error>;
+            const float c = 1.0;
+            const float x = 1.0, <error descr="Redefinition of 'd'">d</error> = 2.0;
+            struct e { float y; };
+        """,
+        )
+    }
+
+    fun `test function and global with same name in exclusive branches`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #ifdef A
+            uniform float a;
+            #else
+            void a() {}
+            #endif
+        """,
+        )
+    }
+
     fun `test duplicate struct`() {
         doHighlightTest(
             """

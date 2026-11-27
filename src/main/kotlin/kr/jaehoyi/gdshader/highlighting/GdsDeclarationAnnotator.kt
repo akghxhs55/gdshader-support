@@ -21,6 +21,7 @@ import kr.jaehoyi.gdshader.model.acceptsValueOf
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
+import kr.jaehoyi.gdshader.psi.GdsConstantDeclaratorList
 import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpression
@@ -85,12 +86,12 @@ class GdsDeclarationAnnotator :
             }
             element is GdsUniformDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
-                checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true)
+                checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true, checkFunctions = true)
                 checkUniformInitializerType(element, holder)
             }
             element is GdsVaryingDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
-                checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true)
+                checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true, checkFunctions = true)
             }
             element is GdsParameter -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
@@ -110,7 +111,9 @@ class GdsDeclarationAnnotator :
                 if (element.parentOfType<GdsFunctionDeclaration>() != null) {
                     checkDuplicateLocalVariable(element.variableNameDecl, holder)
                 } else {
-                    checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true)
+                    // Godot skips functions only for the first name of a global constant declaration.
+                    val isFirstDeclarator = (element.parent as? GdsConstantDeclaratorList)?.constantDeclaratorList?.firstOrNull() === element
+                    checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true, checkFunctions = !isFirstDeclarator)
                 }
                 checkInitializerType(element.initializer, GdsDataTypeFactory.createFromConstantDeclaration(element), holder)
             }
@@ -328,7 +331,14 @@ class GdsDeclarationAnnotator :
         holder: AnnotationHolder,
     ): Boolean {
         val nameDecl = element.functionNameDecl
-        if (!hasConflictingFunction(nameDecl, nameDecl) && !isBuiltinName(nameDecl.name, nameDecl, includeFunctions = true)) return false
+        val name = nameDecl.name
+        if (name in GdsConditionalDirectives.BUILTIN_DEFINES) return false
+        val isRedefinition =
+            hasConflictingFunction(nameDecl, nameDecl) ||
+                isBuiltinName(name, nameDecl, includeFunctions = true) ||
+                hasConflictingStruct(name, nameDecl) ||
+                hasConflictingVariable(name, nameDecl)
+        if (!isRedefinition) return false
         holder
             .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '${nameDecl.name}'")
             .range(nameDecl)
@@ -424,10 +434,14 @@ class GdsDeclarationAnnotator :
         nameDecl: GdsVariableNameDecl?,
         holder: AnnotationHolder,
         checkBuiltins: Boolean = false,
+        checkFunctions: Boolean = false,
     ) {
         if (nameDecl == null) return
         val name = nameDecl.name
-        if (hasConflictingVariable(name, nameDecl) || (checkBuiltins && isBuiltinName(name, nameDecl, includeFunctions = false))) {
+        if (hasConflictingVariable(name, nameDecl) ||
+            (checkBuiltins && isBuiltinName(name, nameDecl, includeFunctions = false)) ||
+            (checkFunctions && hasConflictingCallableFunction(name, nameDecl))
+        ) {
             holder
                 .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '$name'")
                 .range(nameDecl)
@@ -450,6 +464,19 @@ class GdsDeclarationAnnotator :
         name: String,
         position: PsiElement,
     ): Boolean = collectVisibleVariables(position).any { it.name == name }
+
+    private fun hasConflictingCallableFunction(
+        name: String,
+        position: PsiElement,
+    ): Boolean {
+        if (name in GdsConditionalDirectives.BUILTIN_DEFINES || isProcessingFunction(name, position)) return false
+        var found = false
+        GdsResolver.processFunctionDeclaration(position) { function ->
+            found = function is GdsFunctionNameDecl && function.name == name && !GdsConditionalDirectives.areExclusive(function, position)
+            !found
+        }
+        return found
+    }
 
     private fun checkDuplicateLocalVariable(
         nameDecl: GdsVariableNameDecl?,
