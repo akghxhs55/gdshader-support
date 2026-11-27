@@ -213,6 +213,11 @@ object Builtins {
             PROCESSING_FUNCTIONS.values.flatten().distinct()
         }
 
+    fun isProcessingFunction(
+        name: String,
+        shaderType: ShaderType?,
+    ): Boolean = shaderType != null && FunctionContext.fromText(name) in PROCESSING_FUNCTIONS[shaderType].orEmpty()
+
     // Processing functions
     val PROCESSING_FUNCTIONS: EnumMap<ShaderType, List<FunctionContext>> =
         EnumMap(

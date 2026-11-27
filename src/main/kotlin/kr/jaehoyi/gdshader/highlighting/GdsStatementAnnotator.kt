@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.BoolType
+import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.IntType
 import kr.jaehoyi.gdshader.model.UIntType
 import kr.jaehoyi.gdshader.model.VoidType
@@ -23,6 +24,7 @@ import kr.jaehoyi.gdshader.psi.GdsSimpleStatement
 import kr.jaehoyi.gdshader.psi.GdsSwitchStatement
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsWhileStatement
+import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 
 class GdsStatementAnnotator :
     Annotator,
@@ -80,6 +82,14 @@ class GdsStatementAnnotator :
         holder: AnnotationHolder,
     ) {
         val functionDecl = element.parentOfType<GdsFunctionDeclaration>() ?: return
+        val functionName = functionDecl.functionNameDecl.name
+        if (Builtins.isProcessingFunction(functionName, GdsPsiImplUtil.getShaderType(element))) {
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Using 'return' in the '$functionName' processor function is incorrect.")
+                .range(element)
+                .create()
+            return
+        }
         val returnType = GdsDataTypeFactory.createFromFunctionDeclaration(functionDecl)
         if (returnType is ArrayType && returnType.containerSize == null) return
         val hasExpression = element.expression != null

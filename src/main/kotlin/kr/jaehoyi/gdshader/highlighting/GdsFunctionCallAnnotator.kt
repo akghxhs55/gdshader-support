@@ -27,12 +27,14 @@ import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpression
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
+import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsInitializer
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
+import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsArrayMethodResolver
 import kr.jaehoyi.gdshader.resolve.GdsOverloadResolver
 import kr.jaehoyi.gdshader.resolve.GdsResolver
@@ -158,6 +160,13 @@ class GdsFunctionCallAnnotator :
         holder: AnnotationHolder,
     ) {
         val nameRef = functionCall.functionNameRef ?: return
+        if (callsProcessingFunction(nameRef, functionName)) {
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Function '$functionName' can't be called from source code.")
+                .range(nameRef)
+                .create()
+            return
+        }
         val functions = collectFunctionCandidates(functionCall, functionName) ?: return
         val argCount = getArgumentCount(functionCall)
 
@@ -174,6 +183,19 @@ class GdsFunctionCallAnnotator :
         if (structConstructors.isEmpty()) return
 
         checkArguments(structConstructors, argCount, functionName, functionCall, holder, GdsOverloadResolver::resolveStructConstructorOverload)
+    }
+
+    private fun callsProcessingFunction(
+        nameRef: PsiElement,
+        functionName: String,
+    ): Boolean {
+        if (!Builtins.isProcessingFunction(functionName, GdsPsiImplUtil.getShaderType(nameRef))) return false
+        var declared = false
+        GdsResolver.processFunctionDeclaration(nameRef) { func ->
+            declared = func is GdsFunctionNameDecl && func.name == functionName
+            !declared
+        }
+        return declared
     }
 
     private fun collectFunctionCandidates(

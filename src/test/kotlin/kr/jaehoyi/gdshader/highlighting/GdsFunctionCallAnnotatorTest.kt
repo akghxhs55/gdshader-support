@@ -1049,6 +1049,19 @@ class GdsFunctionCallAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === processing function call ===
+
+    fun `test calling processing function`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void vertex() {}
+            void fragment() { <error descr="Function 'vertex' can't be called from source code.">vertex</error>(1.0); }
+            void light() { <error descr="Function 'fragment' can't be called from source code.">fragment</error>(); }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

@@ -409,6 +409,44 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === return in processing functions ===
+
+    fun `test return in processing function`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                if (true) { <error descr="Using 'return' in the 'fragment' processor function is incorrect.">return;</error> }
+            }
+            void light() {
+                <error descr="Using 'return' in the 'light' processor function is incorrect.">return 1.0;</error>
+            }
+        """,
+        )
+    }
+
+    fun `test return in function named after another shader type's processing function`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void start() { return; }
+            void helper() { return; }
+            void fragment() { helper(); }
+        """,
+        )
+    }
+
+    fun `test return in particles processing function`() {
+        doHighlightTest(
+            """
+            shader_type particles;
+            void process() {
+                <error descr="Using 'return' in the 'process' processor function is incorrect.">return;</error>
+            }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

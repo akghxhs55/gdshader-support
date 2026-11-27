@@ -70,8 +70,9 @@ class GdsDeclarationAnnotator :
                 checkDuplicateStruct(element, holder)
             }
             element is GdsFunctionDeclaration -> {
-                checkDuplicateFunction(element, holder)
+                val isRedefinition = checkDuplicateFunction(element, holder)
                 checkReturnArraySize(element, holder)
+                if (!isRedefinition) checkProcessingFunctionSignature(element, holder)
             }
             element is GdsUniformDeclaration -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
@@ -247,17 +248,37 @@ class GdsDeclarationAnnotator :
             .create()
     }
 
-    private fun checkDuplicateFunction(
+    private fun checkProcessingFunctionSignature(
         element: GdsFunctionDeclaration,
         holder: AnnotationHolder,
     ) {
-        val nameDecl = element.functionNameDecl
-        if (hasConflictingFunction(nameDecl, nameDecl) || isBuiltinName(nameDecl.name, nameDecl, includeFunctions = true)) {
+        val name = element.functionNameDecl.name
+        if (!Builtins.isProcessingFunction(name, GdsPsiImplUtil.getShaderType(element))) return
+        val parameterList = element.parameterList
+        if (parameterList != null && parameterList.parameterList.isNotEmpty()) {
             holder
-                .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '${nameDecl.name}'")
-                .range(nameDecl)
+                .newAnnotation(HighlightSeverity.ERROR, "Function '$name' expects no arguments.")
+                .range(parameterList)
+                .create()
+        } else if (element.type.text != "void" || element.arraySize != null) {
+            holder
+                .newAnnotation(HighlightSeverity.ERROR, "Function '$name' must be of 'void' return type.")
+                .range(element.type)
                 .create()
         }
+    }
+
+    private fun checkDuplicateFunction(
+        element: GdsFunctionDeclaration,
+        holder: AnnotationHolder,
+    ): Boolean {
+        val nameDecl = element.functionNameDecl
+        if (!hasConflictingFunction(nameDecl, nameDecl) && !isBuiltinName(nameDecl.name, nameDecl, includeFunctions = true)) return false
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Redefinition of '${nameDecl.name}'")
+            .range(nameDecl)
+            .create()
+        return true
     }
 
     private fun hasConflictingFunction(

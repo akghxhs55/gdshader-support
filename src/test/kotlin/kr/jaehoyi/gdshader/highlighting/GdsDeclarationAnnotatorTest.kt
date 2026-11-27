@@ -770,6 +770,35 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === processing function signature ===
+
+    fun `test processing function with arguments`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float vertex(<error descr="Function 'vertex' expects no arguments.">float x</error>) { }
+        """,
+        )
+    }
+
+    fun `test processing function with non-void return type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            <error descr="Function 'vertex' must be of 'void' return type.">float</error> vertex() { }
+        """,
+        )
+    }
+
+    fun `test non-processing function named after another shader type's processing function`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float fog(float x) { return x; }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
