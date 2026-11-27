@@ -17,6 +17,7 @@ import kr.jaehoyi.gdshader.psi.GdsArraySize
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsConstantReducer
+import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
@@ -76,12 +77,13 @@ class GdsConstantAnnotator :
     }
 
     // In a constant declaration Godot rejects every identifier that is not constant and every call
-    // to a function declared in the shader.
+    // to a function declared in the shader. A sampler constant already fails on its type.
     private fun checkConstantInitializer(
         element: GdsConstantDeclarator,
         holder: AnnotationHolder,
     ) {
         val initializer = element.initializer ?: return
+        if (GdsDataTypeFactory.createFromConstantDeclaration(element)?.isOpaque == true) return
         firstNonConstant(initializer)?.let { error(holder, it, "Expected constant expression.") }
     }
 

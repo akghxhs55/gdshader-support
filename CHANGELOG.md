@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Aligned while condition type check with Godot
 - Added preprocessor signature validation
 - Added missing return check
+- Added sampler return type check
 
 ## 1.3.0 (2026-11-27)
 

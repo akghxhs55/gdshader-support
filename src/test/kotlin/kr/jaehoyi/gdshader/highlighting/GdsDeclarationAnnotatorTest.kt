@@ -799,6 +799,76 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === sampler types ===
+
+    fun `test sampler return type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform sampler2D tex;
+            <error descr="Invalid function type (samplers are not allowed).">sampler2D</error> get_tex() { return tex; }
+        """,
+        )
+    }
+
+    fun `test sampler output parameters`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void f(out <error descr="Opaque types cannot be output parameters.">sampler2D</error> a) { }
+            void g(inout <error descr="Opaque types cannot be output parameters.">samplerCube</error> a) { }
+        """,
+        )
+    }
+
+    fun `test sampler input parameters`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void f(sampler2D a, in sampler2D b, const sampler2D c, const in sampler2D d) { }
+        """,
+        )
+    }
+
+    fun `test sampler local variables`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define T sampler2D
+            uniform sampler2D tex;
+            void fragment() {
+                <error descr="Invalid variable type (samplers are not allowed).">sampler2D</error> a;
+                <error descr="Invalid variable type (samplers are not allowed).">usampler3D</error> b[2];
+                const <error descr="Invalid variable type (samplers are not allowed).">sampler2D</error> c = tex;
+                <error descr="Invalid variable type (samplers are not allowed).">T</error> d;
+                for (<error descr="Invalid variable type (samplers are not allowed).">sampler2D</error> e; false;) { }
+            }
+        """,
+        )
+    }
+
+    fun `test sampler global constant`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform sampler2D tex;
+            const <error descr="Invalid constant type (samplers are not allowed).">sampler2D</error> s = tex;
+        """,
+        )
+    }
+
+    fun `test sampler struct member`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct S {
+                <error descr="A 'sampler2D' data type is not allowed here.">sampler2D</error> a;
+                <error descr="A 'isampler2DArray' data type is not allowed here.">isampler2DArray</error> b[2];
+            };
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

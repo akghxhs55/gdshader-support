@@ -8,12 +8,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.ResolveState
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import kr.jaehoyi.gdshader.model.ArrayType
 import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
+import kr.jaehoyi.gdshader.model.SamplerType
 import kr.jaehoyi.gdshader.model.acceptsValueOf
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
@@ -23,6 +25,7 @@ import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpression
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
 import kr.jaehoyi.gdshader.psi.GdsFile
+import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
@@ -39,6 +42,7 @@ import kr.jaehoyi.gdshader.psi.GdsStructMemberList
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameDecl
 import kr.jaehoyi.gdshader.psi.GdsStructMemberNameRef
 import kr.jaehoyi.gdshader.psi.GdsStructNameDecl
+import kr.jaehoyi.gdshader.psi.GdsType
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariable
@@ -65,6 +69,7 @@ class GdsDeclarationAnnotator :
 
         when {
             element is GdsItem -> checkShaderTypeFirst(element, holder)
+            element is GdsType -> checkSamplerType(element, holder)
             element is GdsStructDeclaration -> {
                 checkEmptyStruct(element, holder)
                 checkDuplicateStruct(element, holder)
@@ -218,6 +223,35 @@ class GdsDeclarationAnnotator :
                 .range(element)
                 .create()
         }
+    }
+
+    private fun checkSamplerType(
+        element: GdsType,
+        holder: AnnotationHolder,
+    ) {
+        val message =
+            when (val parent = element.parent) {
+                is GdsFunctionDeclaration -> "Invalid function type (samplers are not allowed)."
+                is GdsParameter -> {
+                    val qualifier = parent.parameterQualifier?.node ?: return
+                    if (qualifier.findChildByType(OUTPUT_QUALIFIERS) == null) return
+                    "Opaque types cannot be output parameters."
+                }
+                is GdsLocalVariableDeclaration, is GdsForInit -> INVALID_VARIABLE_TYPE
+                is GdsConstantDeclaration ->
+                    if (parent.parentOfType<GdsFunctionDeclaration>() != null) {
+                        INVALID_VARIABLE_TYPE
+                    } else {
+                        "Invalid constant type (samplers are not allowed)."
+                    }
+                is GdsStructMember -> null
+                else -> return
+            }
+        val type = GdsDataTypeFactory.createFromType(element) as? SamplerType ?: return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message ?: "A '${type.name}' data type is not allowed here.")
+            .range(element)
+            .create()
     }
 
     private fun checkEmptyStruct(
@@ -653,6 +687,8 @@ class GdsDeclarationAnnotator :
     }
 
     private companion object {
+        const val INVALID_VARIABLE_TYPE = "Invalid variable type (samplers are not allowed)."
+        val OUTPUT_QUALIFIERS = TokenSet.create(GdsTypes.ARG_OUT, GdsTypes.ARG_INOUT)
         val UNDEF_NAME_REGEX = Regex("""^\s*#undef\s+([A-Za-z_][A-Za-z0-9_]*)""")
     }
 }
