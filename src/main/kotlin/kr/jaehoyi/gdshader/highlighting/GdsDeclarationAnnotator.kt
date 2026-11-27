@@ -17,7 +17,9 @@ import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.SamplerType
 import kr.jaehoyi.gdshader.model.StructType
+import kr.jaehoyi.gdshader.model.VoidType
 import kr.jaehoyi.gdshader.model.acceptsValueOf
+import kr.jaehoyi.gdshader.psi.GdsArraySize
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
@@ -31,12 +33,15 @@ import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunctionCall
 import kr.jaehoyi.gdshader.psi.GdsFunctionDeclaration
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
+import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
 import kr.jaehoyi.gdshader.psi.GdsInitializer
 import kr.jaehoyi.gdshader.psi.GdsInitializerList
 import kr.jaehoyi.gdshader.psi.GdsItem
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclaration
 import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
+import kr.jaehoyi.gdshader.psi.GdsPrecision
+import kr.jaehoyi.gdshader.psi.GdsPrimitiveType
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
 import kr.jaehoyi.gdshader.psi.GdsStructMemberDeclarator
@@ -49,10 +54,13 @@ import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariable
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
+import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
+import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
 import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 import kr.jaehoyi.gdshader.resolve.GdsIncludeManager
+import kr.jaehoyi.gdshader.resolve.GdsMacroExpansion
 import kr.jaehoyi.gdshader.resolve.GdsPathUtil
 import kr.jaehoyi.gdshader.resolve.GdsPreprocessorDefinitions
 import kr.jaehoyi.gdshader.resolve.GdsResolver
@@ -74,6 +82,7 @@ class GdsDeclarationAnnotator :
             element is GdsType -> {
                 checkSamplerType(element, holder)
                 checkStructType(element, holder)
+                checkVoidVariableType(element, holder)
             }
             element is GdsStructDeclaration -> {
                 checkEmptyStruct(element, holder)
@@ -95,6 +104,7 @@ class GdsDeclarationAnnotator :
             }
             element is GdsParameter -> {
                 checkDoubleArraySize(element.arraySizeList, holder)
+                checkParameterArraySize(element, holder)
                 checkDuplicateVariable(element.variableNameDecl, holder)
             }
             element is GdsStructMemberDeclarator -> {
@@ -104,18 +114,47 @@ class GdsDeclarationAnnotator :
             element is GdsLocalVariableDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
                 checkDuplicateLocalVariable(element.variableNameDecl, holder)
-                checkInitializerType(element.initializer, GdsDataTypeFactory.createFromLocalVariableDeclaration(element), holder)
+                val declaration = element.parent?.parent
+                val declaredType = GdsDataTypeFactory.createFromLocalVariableDeclaration(element)
+                val context =
+                    ArrayInitializerContext(
+                        initializer = element.initializer,
+                        initializerPrecision = element.precision,
+                        arraySize = element.arraySize ?: (declaration as? GdsLocalVariableDeclaration)?.arraySize,
+                        declarationPrecision =
+                            (declaration as? GdsLocalVariableDeclaration)?.precision ?: (declaration as? GdsForInit)?.precision,
+                        declaredType = declaredType,
+                        allowsExpression = true,
+                    )
+                // A void declaration is already reported on its type.
+                if (declaredType !is VoidType && !checkArrayInitializerStart(context, holder)) {
+                    checkInitializerType(element.initializer, declaredType, holder)
+                }
             }
             element is GdsConstantDeclarator -> {
                 checkSplitDoubleArraySize(element, holder)
-                if (element.parentOfType<GdsFunctionDeclaration>() != null) {
+                val isLocal = element.parentOfType<GdsFunctionDeclaration>() != null
+                if (isLocal) {
                     checkDuplicateLocalVariable(element.variableNameDecl, holder)
                 } else {
                     // Godot skips functions only for the first name of a global constant declaration.
                     val isFirstDeclarator = (element.parent as? GdsConstantDeclaratorList)?.constantDeclaratorList?.firstOrNull() === element
                     checkDuplicateVariable(element.variableNameDecl, holder, checkBuiltins = true, checkFunctions = !isFirstDeclarator)
                 }
-                checkInitializerType(element.initializer, GdsDataTypeFactory.createFromConstantDeclaration(element), holder)
+                val declaration = element.parent?.parent as? GdsConstantDeclaration
+                val declaredType = GdsDataTypeFactory.createFromConstantDeclaration(element)
+                val context =
+                    ArrayInitializerContext(
+                        initializer = element.initializer,
+                        initializerPrecision = element.precision,
+                        arraySize = element.arraySize ?: declaration?.arraySize,
+                        declarationPrecision = declaration?.precision,
+                        declaredType = declaredType,
+                        allowsExpression = isLocal,
+                    )
+                if (!checkArrayInitializerStart(context, holder)) {
+                    checkInitializerType(element.initializer, declaredType, holder)
+                }
             }
             element.node.elementType == GdsTypes.PP_INCLUDE_LINE -> checkIncludeLine(element, holder)
             element.node.elementType == GdsTypes.PP_UNKNOWN_LINE -> {
@@ -278,6 +317,24 @@ class GdsDeclarationAnnotator :
             .create()
     }
 
+    private fun checkVoidVariableType(
+        element: GdsType,
+        holder: AnnotationHolder,
+    ) {
+        val message =
+            when (element.parent) {
+                // Godot does not treat 'void' as a variable type, so it parses the declaration as an expression.
+                is GdsLocalVariableDeclaration, is GdsForInit -> "Void value not allowed in expression."
+                is GdsParameter -> "Void type not allowed as argument."
+                else -> return
+            }
+        if (GdsDataTypeFactory.createFromType(element) !is VoidType) return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(element)
+            .create()
+    }
+
     private fun checkEmptyStruct(
         element: GdsStructDeclaration,
         holder: AnnotationHolder,
@@ -300,6 +357,17 @@ class GdsDeclarationAnnotator :
     ) {
         val arraySize = element.arraySize ?: return
         if (arraySize.expression != null) return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Unknown array size is forbidden in that context.")
+            .range(arraySize)
+            .create()
+    }
+
+    private fun checkParameterArraySize(
+        element: GdsParameter,
+        holder: AnnotationHolder,
+    ) {
+        val arraySize = element.arraySizeList.firstOrNull { it.expression == null } ?: return
         holder
             .newAnnotation(HighlightSeverity.ERROR, "Unknown array size is forbidden in that context.")
             .range(arraySize)
@@ -564,6 +632,95 @@ class GdsDeclarationAnnotator :
 
     // === Initializer type checks ===
 
+    private fun checkArrayInitializerStart(
+        declaration: ArrayInitializerContext,
+        holder: AnnotationHolder,
+    ): Boolean {
+        val initializer = declaration.initializer ?: return false
+        val precision = declaration.initializerPrecision
+        val arraySize = declaration.arraySize
+        if (arraySize == null) {
+            precision ?: return false
+            return report(precision, "Expected expression, found: '${precision.text}'.", holder)
+        }
+        val isUnsized = arraySize.expression == null
+        if (isUnsized && precision != null) return report(initializer, "Expected a '{'.", holder, from = precision)
+        if (initializer.initializerList != null) {
+            precision ?: return false
+            return report(initializer, "Expected data type after precision modifier.", holder, from = precision)
+        }
+        val first = firstExpandedToken(initializer) ?: return false
+
+        val isIdentifier = first.node.elementType == GdsTypes.IDENTIFIER && first.text !in GdsConditionalDirectives.BUILTIN_DEFINES
+        val message =
+            when {
+                precision != null -> constructorPrecisionError(declaration, first) ?: return false
+                isIdentifier && declaration.allowsExpression -> return false
+                isIdentifier && !isUnsized && GdsDataTypeFactory.createFromStructName(first, first.text) != null -> return false
+                !isUnsized && first.parent is GdsPrimitiveType -> constructorPrecisionError(declaration, first) ?: return false
+                isUnsized -> "Expected a '{'."
+                else -> "Invalid data type for the array."
+            }
+        return report(initializer, message, holder, from = precision)
+    }
+
+    // In the `precision type[N](...)` form, Godot requires the same precision as the declaration.
+    private fun constructorPrecisionError(
+        declaration: ArrayInitializerContext,
+        first: PsiElement,
+    ): String? {
+        val precision = declaration.initializerPrecision
+        if (precision != null) {
+            if (first.parent !is GdsPrimitiveType) return "Expected data type after precision modifier."
+            if (first.text in BOOLEAN_TYPE_NAMES) return "The precision modifier cannot be used on boolean types."
+        }
+        if (precision?.text == declaration.declarationPrecision?.text) return null
+
+        val expression = declaration.initializer?.expression
+        val constructed = expression?.let(GdsExpressionTypeInference::inferType)?.name ?: first.text
+        val declared = declaration.declaredType?.name ?: return null
+        val from = listOfNotNull(precision?.text, constructed).joinToString(" ")
+        val to = listOfNotNull(declaration.declarationPrecision?.text, declared).joinToString(" ")
+        return "Cannot convert from '$from' to '$to'."
+    }
+
+    private fun report(
+        element: PsiElement,
+        message: String,
+        holder: AnnotationHolder,
+        from: PsiElement? = null,
+    ): Boolean {
+        val range = from?.let { TextRange(it.textRange.startOffset, element.textRange.endOffset) } ?: element.textRange
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
+            .range(range)
+            .create()
+        return true
+    }
+
+    private class ArrayInitializerContext(
+        val initializer: GdsInitializer?,
+        val initializerPrecision: GdsPrecision?,
+        val arraySize: GdsArraySize?,
+        val declarationPrecision: GdsPrecision?,
+        val declaredType: DataType?,
+        val allowsExpression: Boolean,
+    )
+
+    private fun firstExpandedToken(initializer: GdsInitializer): PsiElement? {
+        var first = PsiTreeUtil.getDeepestFirst(initializer)
+        repeat(MAX_MACRO_EXPANSION_DEPTH) {
+            val site =
+                when (val parent = first.parent) {
+                    is GdsVariableNameRef -> parent.takeIf { it.reference.resolve() is GdsMacroElement }
+                    is GdsFunctionNameRef -> (parent.parent as? GdsFunctionCall)?.takeIf { parent.reference.resolve() is GdsMacroElement }
+                    else -> null
+                } ?: return first
+            first = PsiTreeUtil.getDeepestFirst(GdsMacroExpansion.expand(site) ?: return null)
+        }
+        return null
+    }
+
     private fun checkInitializerType(
         initializer: GdsInitializer?,
         declaredType: DataType?,
@@ -736,6 +893,8 @@ class GdsDeclarationAnnotator :
 
     private companion object {
         const val INVALID_VARIABLE_TYPE = "Invalid variable type (samplers are not allowed)."
+        const val MAX_MACRO_EXPANSION_DEPTH = 16
+        val BOOLEAN_TYPE_NAMES = setOf("bool", "bvec2", "bvec3", "bvec4")
         val OUTPUT_QUALIFIERS = TokenSet.create(GdsTypes.ARG_OUT, GdsTypes.ARG_INOUT)
         val UNDEF_NAME_REGEX = Regex("""^\s*#undef\s+([A-Za-z_][A-Za-z0-9_]*)""")
     }

@@ -12,13 +12,11 @@ object GdsOperatorTypeRules {
         when (operator) {
             GdsTypes.OP_ADD, GdsTypes.OP_SUB, GdsTypes.OP_DIV -> arithmeticResultType(left, right, isMultiplication = false)
             GdsTypes.OP_MUL -> arithmeticResultType(left, right, isMultiplication = true)
-            GdsTypes.OP_MOD, GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT ->
-                integerResultType(left, right, isCommutative = false)
-            GdsTypes.OP_BIT_AND, GdsTypes.OP_BIT_XOR, GdsTypes.OP_BIT_OR ->
-                integerResultType(left, right, isCommutative = true)
+            GdsTypes.OP_MOD, GdsTypes.OP_SHIFT_LEFT, GdsTypes.OP_SHIFT_RIGHT -> integerResultType(left, right)
+            GdsTypes.OP_BIT_AND, GdsTypes.OP_BIT_XOR, GdsTypes.OP_BIT_OR -> left.takeIf { isInteger(it) && it == right }
             GdsTypes.OP_LESS, GdsTypes.OP_LESS_EQUAL, GdsTypes.OP_GREATER, GdsTypes.OP_GREATER_EQUAL ->
                 BoolType.takeIf { left == right && isNumericScalar(left) }
-            GdsTypes.OP_EQUAL, GdsTypes.OP_NOT_EQUAL -> BoolType.takeIf { left == right }
+            GdsTypes.OP_EQUAL, GdsTypes.OP_NOT_EQUAL -> BoolType.takeIf { left == right && left !is ArrayType }
             GdsTypes.OP_AND, GdsTypes.OP_OR -> BoolType.takeIf { left is BoolType && right is BoolType }
             else -> null
         }
@@ -28,8 +26,13 @@ object GdsOperatorTypeRules {
         target: DataType,
         value: DataType,
     ): DataType? {
-        val binaryOperator = COMPOUND_TO_BINARY[operator] ?: return null
-        return binaryResultType(binaryOperator, target, value)?.takeIf { it == target }
+        val result =
+            if (operator in COMPOUND_BITWISE) {
+                integerResultType(target, value)
+            } else {
+                binaryResultType(COMPOUND_TO_BINARY[operator] ?: return null, target, value)
+            }
+        return result?.takeIf { it == target }
     }
 
     fun isNegatable(type: DataType): Boolean =
@@ -76,18 +79,18 @@ object GdsOperatorTypeRules {
     private fun integerResultType(
         left: DataType,
         right: DataType,
-        isCommutative: Boolean,
     ): DataType? {
         if (!isInteger(left) || !isInteger(right)) return null
         if (left == right) return left
         if (left is VectorType && left.elementType == right) return left
-        if (isCommutative && right is VectorType && right.elementType == left) return right
         return null
     }
 
     private fun isNumericScalar(type: DataType): Boolean = type is FloatType || isIntegerScalar(type)
 
     private fun isIntegerScalar(type: DataType): Boolean = type is IntType || type is UIntType
+
+    private val COMPOUND_BITWISE = setOf(GdsTypes.OP_ASSIGN_BIT_AND, GdsTypes.OP_ASSIGN_BIT_XOR, GdsTypes.OP_ASSIGN_BIT_OR)
 
     private val COMPOUND_TO_BINARY =
         mapOf(

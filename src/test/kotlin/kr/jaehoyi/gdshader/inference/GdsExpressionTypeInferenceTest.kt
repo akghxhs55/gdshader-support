@@ -480,12 +480,12 @@ class GdsExpressionTypeInferenceTest : BasePlatformTestCase() {
         doShiftExprTest("ivec2(1) >> ivec3(2)", null)
     }
 
-    fun `test int bitwise and ivec2`() {
-        doBitwiseExprTest("1 & ivec2(3)", VectorType.IVEC2)
+    fun `test int bitwise and ivec2 has no type`() {
+        doBitwiseExprTest("1 & ivec2(3)", null)
     }
 
-    fun `test uvec2 bitwise or uint`() {
-        doBitwiseExprTest("uvec2(1u) | 2u", VectorType.UVEC2)
+    fun `test uvec2 bitwise or uint has no type`() {
+        doBitwiseExprTest("uvec2(1u) | 2u", null)
     }
 
     fun `test int bitwise and uint has no type`() {

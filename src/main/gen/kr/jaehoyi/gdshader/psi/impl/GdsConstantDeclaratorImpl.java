@@ -40,6 +40,12 @@ public class GdsConstantDeclaratorImpl extends ASTWrapperPsiElement implements G
   }
 
   @Override
+  @Nullable
+  public GdsPrecision getPrecision() {
+    return findChildByClass(GdsPrecision.class);
+  }
+
+  @Override
   @NotNull
   public GdsVariableNameDecl getVariableNameDecl() {
     return findNotNullChildByClass(GdsVariableNameDecl.class);

@@ -808,11 +808,143 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
             shader_type spatial;
             void fragment() {
                 float a[2] = float[](1.0, 2.0);
-                float b[] = float[](1.0, 2.0);
+                float b[] = <error descr="Expected a '{'.">float[](1.0, 2.0)</error>;
                 float c[2];
                 c = float[](1.0, 2.0);
                 float d[2] = <error descr="Cannot assign a value of type 'int[]' to type 'float[2]'">int[](1, 2)</error>;
             }
+        """,
+        )
+    }
+
+    fun `test local array initializer start`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define ARR float[](1.0)
+            float[2] g() { return float[2](1.0, 2.0); }
+            void fragment() {
+                bool c = true;
+                float a[2];
+                float b[2];
+                float r1[2] = c ? a : b;
+                float r2[2] = <error descr="Invalid data type for the array.">true ? a : b</error>;
+                float r3[2] = <error descr="Invalid data type for the array.">(a)</error>;
+                float[2] r4 = <error descr="Invalid data type for the array.">(a)</error>;
+                float r5[] = a;
+                float r6[] = g();
+                float r7[] = { 1.0 };
+                float r8[] = <error descr="Expected a '{'.">1.0</error>;
+                float r9[] = <error descr="Expected a '{'.">float[1](1.0)</error>;
+                const float r10[] = <error descr="Expected a '{'.">float[](1.0)</error>;
+                const float r11[2] = <error descr="Invalid data type for the array.">(float[2](1.0, 2.0))</error>;
+                const float r12[2] = float[2](1.0, 2.0);
+                const float r13[2] = r12;
+                float r14[] = <error descr="Expected a '{'.">ARR</error>;
+                float r16[2] = <error descr="Invalid data type for the array.">CURRENT_RENDERER</error>;
+                for (float r15[] = <error descr="Expected a '{'.">float[](1.0)</error>; false;) { }
+            }
+        """,
+        )
+    }
+
+    fun `test global constant array initializer start`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define ARR float[2](1.0, 2.0)
+            struct S { float x; };
+            const float A[2] = { 1.0, 2.0 };
+            const float B[2] = <error descr="Invalid data type for the array.">A</error>;
+            const float C[] = <error descr="Expected a '{'.">float[](1.0)</error>;
+            const float D[] = <error descr="Expected a '{'.">float[1](1.0)</error>;
+            const float EE[2] = float[2](1.0, 2.0);
+            const float F[2] = float[](1.0, 2.0);
+            const float G[2] = <error descr="Invalid data type for the array.">true ? A : A</error>;
+            const float H[] = { 1.0 };
+            const float I = 1.0;
+            const float J[] = <error descr="Expected a '{'.">I</error>;
+            const S K[1] = S[1](S(1.0));
+            const float[2] L = <error descr="Invalid data type for the array.">(float[2](1.0, 2.0))</error>;
+            const float M[2] = ARR;
+        """,
+        )
+    }
+
+    fun `test void variable`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                <error descr="Void value not allowed in expression.">void</error> a;
+                <error descr="Void value not allowed in expression.">void</error> b = 1;
+                <error descr="Void value not allowed in expression.">void</error> c[2];
+                for (<error descr="Void value not allowed in expression.">void</error> d; false;) { }
+            }
+        """,
+        )
+    }
+
+    fun `test precision in local array initializer`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float b[2];
+                highp float a1[2] = highp float[2](1.0, 2.0);
+                highp float a2[2] = highp float[](1.0, 2.0);
+                const highp float a3[2] = highp float[2](1.0, 2.0);
+                highp float[2] a4 = highp float[2](1.0, 2.0);
+                highp float a5[2] = { 1.0, 2.0 };
+                highp float a6[2] = b;
+                float a7[2] = <error descr="Cannot convert from 'highp float[2]' to 'float[2]'.">highp float[2](1.0, 2.0)</error>;
+                highp float a8[2] = <error descr="Cannot convert from 'float[2]' to 'highp float[2]'.">float[2](1.0, 2.0)</error>;
+                highp float a9[2] = <error descr="Cannot convert from 'mediump float[2]' to 'highp float[2]'.">mediump float[2](1.0, 2.0)</error>;
+                bool a10[2] = <error descr="The precision modifier cannot be used on boolean types.">highp bool[2](true, false)</error>;
+                float a12[2] = <error descr="Expected data type after precision modifier.">highp b</error>;
+                float a13[] = <error descr="Expected a '{'.">highp float[](1.0)</error>;
+                float x = <error descr="Expected expression, found: 'highp'.">highp</error> float(1.0);
+            }
+        """,
+        )
+    }
+
+    fun `test precision in global constant array initializer`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            const highp float A[2] = highp float[2](1.0, 2.0);
+            const float B[2] = <error descr="Cannot convert from 'highp float[2]' to 'float[2]'.">highp float[2](1.0, 2.0)</error>;
+            const highp float C[2] = <error descr="Cannot convert from 'float[2]' to 'highp float[2]'.">float[2](1.0, 2.0)</error>;
+            const float D = <error descr="Expected expression, found: 'lowp'.">lowp</error> float(1.0);
+            struct S { float x; };
+            const S F[1] = <error descr="Expected data type after precision modifier.">highp S[1](S(1.0))</error>;
+        """,
+        )
+    }
+
+    fun `test void parameter`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define T void
+            void f(<error descr="Void type not allowed as argument.">void</error> a) { }
+            void g(in <error descr="Void type not allowed as argument.">void</error> a) { }
+            void h(<error descr="Void type not allowed as argument.">void</error> a[2]) { }
+            void k(float b, <error descr="Void type not allowed as argument.">void</error> a) { }
+            void m(<error descr="Void type not allowed as argument.">T</error> a) { }
+        """,
+        )
+    }
+
+    fun `test parameter with unknown array size`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void f(float a<error descr="Unknown array size is forbidden in that context.">[]</error>) { }
+            void g(float<error descr="Unknown array size is forbidden in that context.">[]</error> a) { }
+            void h(in float a<error descr="Unknown array size is forbidden in that context.">[]</error>) { }
+            void k(float a[2], float[2] b) { }
         """,
         )
     }

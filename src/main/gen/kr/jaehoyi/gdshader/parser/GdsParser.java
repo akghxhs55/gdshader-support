@@ -459,7 +459,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable_name_decl array_size? OP_ASSIGN initializer
+  // variable_name_decl array_size? OP_ASSIGN precision? initializer
   public static boolean constant_declarator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constant_declarator")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -469,6 +469,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
     p = r; // pin = 1
     r = r && report_error_(b, constant_declarator_1(b, l + 1));
     r = p && report_error_(b, consumeToken(b, OP_ASSIGN)) && r;
+    r = p && report_error_(b, constant_declarator_3(b, l + 1)) && r;
     r = p && initializer(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -478,6 +479,13 @@ public class GdsParser implements PsiParser, LightPsiParser {
   private static boolean constant_declarator_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "constant_declarator_1")) return false;
     array_size(b, l + 1);
+    return true;
+  }
+
+  // precision?
+  private static boolean constant_declarator_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "constant_declarator_3")) return false;
+    precision(b, l + 1);
     return true;
   }
 
@@ -1350,7 +1358,7 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable_name_decl array_size? (OP_ASSIGN initializer)?
+  // variable_name_decl array_size? (OP_ASSIGN precision? initializer)?
   public static boolean local_variable_declarator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "local_variable_declarator")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
@@ -1370,22 +1378,30 @@ public class GdsParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (OP_ASSIGN initializer)?
+  // (OP_ASSIGN precision? initializer)?
   private static boolean local_variable_declarator_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "local_variable_declarator_2")) return false;
     local_variable_declarator_2_0(b, l + 1);
     return true;
   }
 
-  // OP_ASSIGN initializer
+  // OP_ASSIGN precision? initializer
   private static boolean local_variable_declarator_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "local_variable_declarator_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, OP_ASSIGN);
+    r = r && local_variable_declarator_2_0_1(b, l + 1);
     r = r && initializer(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // precision?
+  private static boolean local_variable_declarator_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "local_variable_declarator_2_0_1")) return false;
+    precision(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

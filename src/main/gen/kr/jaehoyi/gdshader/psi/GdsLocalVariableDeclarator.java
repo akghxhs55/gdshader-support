@@ -13,6 +13,9 @@ public interface GdsLocalVariableDeclarator extends PsiElement {
   @Nullable
   GdsInitializer getInitializer();
 
+  @Nullable
+  GdsPrecision getPrecision();
+
   @NotNull
   GdsVariableNameDecl getVariableNameDecl();
 

@@ -376,6 +376,39 @@ class GdsExpressionAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test array equality`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                float a[2];
+                float b[2];
+                bool c = <error descr="Invalid arguments to operator '==': 'float[2], float[2]'">a == b</error>;
+                bool d = <error descr="Invalid arguments to operator '!=': 'float[2], float[2]'">a != b</error>;
+                bool e = a[0] == b[1];
+            }
+            """.trimIndent(),
+        )
+    }
+
+    fun `test vector and scalar bitwise operators`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                uvec2 a = <error descr="Invalid arguments to operator '&': 'uvec2, uint'">uvec2(1u) & 1u</error>;
+                uvec2 b = <error descr="Invalid arguments to operator '^': 'uint, uvec2'">1u ^ uvec2(1u)</error>;
+                ivec2 c = <error descr="Invalid arguments to operator '|': 'ivec2, int'">ivec2(1) | 1</error>;
+                ivec2 d = ivec2(1) & ivec2(2);
+                uvec2 e = uvec2(1u) % 1u;
+                uvec2 f = uvec2(1u) << 1u;
+                d |= 1;
+                e ^= 1u;
+            }
+            """.trimIndent(),
+        )
+    }
+
     fun `test invalid third operand in shift chain`() {
         doHighlightTest(
             """
