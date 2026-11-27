@@ -1225,14 +1225,25 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // HINT_INSTANCE_INDEX PARENTHESIS_OPEN INT_CONSTANT PARENTHESIS_CLOSE
+  // HINT_INSTANCE_INDEX PARENTHESIS_OPEN (INT_CONSTANT | UINT_CONSTANT) PARENTHESIS_CLOSE
   public static boolean instance_index_hint(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "instance_index_hint")) return false;
     if (!nextTokenIs(b, HINT_INSTANCE_INDEX)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, HINT_INSTANCE_INDEX, PARENTHESIS_OPEN, INT_CONSTANT, PARENTHESIS_CLOSE);
+    r = consumeTokens(b, 0, HINT_INSTANCE_INDEX, PARENTHESIS_OPEN);
+    r = r && instance_index_hint_2(b, l + 1);
+    r = r && consumeToken(b, PARENTHESIS_CLOSE);
     exit_section_(b, m, INSTANCE_INDEX_HINT, r);
+    return r;
+  }
+
+  // INT_CONSTANT | UINT_CONSTANT
+  private static boolean instance_index_hint_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "instance_index_hint_2")) return false;
+    boolean r;
+    r = consumeToken(b, INT_CONSTANT);
+    if (!r) r = consumeToken(b, UINT_CONSTANT);
     return r;
   }
 

@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Added sampler return type check
 - Added uniform and varying type check
 - Added switch-case validation
+- Added `instance_index` check
 
 ## 1.3.0 (2026-11-27)
 

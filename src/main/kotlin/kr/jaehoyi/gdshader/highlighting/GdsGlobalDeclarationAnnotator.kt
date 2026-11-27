@@ -6,6 +6,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.project.DumbAware
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import kr.jaehoyi.gdshader.completion.GdsKeywords
 import kr.jaehoyi.gdshader.model.Builtins
@@ -162,6 +163,8 @@ class GdsGlobalDeclarationAnnotator :
                         type is SamplerType -> "The 'SCOPE_INSTANCE' qualifier is not supported for sampler types."
                         type is MatrixType -> "The 'SCOPE_INSTANCE' qualifier is not supported for matrix types."
                         isArray -> "The 'SCOPE_INSTANCE' qualifier is not supported for uniform arrays."
+                        tooManyInstanceUniforms(element) ->
+                            "Too many 'instance' uniforms in shader, maximum supported is $MAX_INSTANCE_UNIFORM_INDICES."
                         else -> null
                     }
                 }
@@ -203,8 +206,9 @@ class GdsGlobalDeclarationAnnotator :
                     name == "color_conversion_disabled" -> null.also { hint = name }
                     name == "hint_range" && type != Builtins.FLOAT && type != Builtins.INT -> "Range hint is for 'float' and 'int' only."
                     name == "hint_enum" && type != Builtins.INT -> "Enum hint is for 'int' only."
+                    name == "instance_index" && instanceIndex -> "Can only specify 'instance_index' once."
                     name == "instance_index" ->
-                        if (instanceIndex) "Can only specify 'instance_index' once." else null.also { instanceIndex = true }
+                        instanceIndexMessage(current).also { instanceIndex = true }
                     name == "hint_screen_texture" && shaderType != null && shaderType != ShaderType.SPATIAL && shaderType != ShaderType.CANVAS_ITEM ->
                         "'hint_screen_texture' is not supported in '${shaderType.text}' shaders."
                     name == "hint_normal_roughness_texture" && shaderType != null && shaderType != ShaderType.SPATIAL ->
@@ -226,6 +230,30 @@ class GdsGlobalDeclarationAnnotator :
                 return
             }
         }
+    }
+
+    private fun instanceIndexMessage(hint: GdsHint): String? {
+        val constant = hint.instanceIndexHint?.node?.findChildByType(TokenSet.create(GdsTypes.INT_CONSTANT, GdsTypes.UINT_CONSTANT)) ?: return null
+        val digits = constant.text.trimEnd('u', 'U')
+        val value = if (digits.startsWith("0x", ignoreCase = true)) digits.substring(2).toLongOrNull(16) else digits.toLongOrNull()
+        return if (value == null || value >= MAX_INSTANCE_UNIFORM_INDICES) {
+            "Allowed instance uniform indices must be within [0..${MAX_INSTANCE_UNIFORM_INDICES - 1}] range."
+        } else {
+            null
+        }
+    }
+
+    private fun hasInstanceIndex(element: GdsUniformDeclaration): Boolean =
+        element.hintSection?.hintList?.hintList?.any { it.instanceIndexHint != null } == true
+
+    private fun tooManyInstanceUniforms(element: GdsUniformDeclaration): Boolean {
+        if (hasInstanceIndex(element)) return false
+        val autoIndexed =
+            PsiTreeUtil
+                .findChildrenOfType(element.containingFile, GdsUniformDeclaration::class.java)
+                .takeWhile { it !== element }
+                .count { it.uniformHeader.uniformQualifier?.text == "instance" && !hasInstanceIndex(it) }
+        return autoIndexed >= MAX_INSTANCE_UNIFORM_INDICES
     }
 
     private fun conflict(
@@ -253,6 +281,9 @@ class GdsGlobalDeclarationAnnotator :
     }
 
     private companion object {
+        // MAX_INSTANCE_UNIFORM_INDICES in servers/rendering/shader_language.h (Godot 4.7.2)
+        const val MAX_INSTANCE_UNIFORM_INDICES = 16
+
         val ARRAY_HINTS =
             setOf(
                 "source_color",

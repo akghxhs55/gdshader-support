@@ -118,6 +118,33 @@ class GdsGlobalDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test instance index range`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            instance uniform float a : instance_index(15);
+            instance uniform float b : instance_index(15u);
+            instance uniform float c : instance_index(0xF);
+            instance uniform float d : <error descr="Allowed instance uniform indices must be within [0..15] range.">instance_index(16)</error>;
+            instance uniform float e : <error descr="Allowed instance uniform indices must be within [0..15] range.">instance_index(0x10)</error>;
+            instance uniform float f : <error descr="Allowed instance uniform indices must be within [0..15] range.">instance_index(16u)</error>;
+            instance uniform float g : instance_index(1), <error descr="Can only specify 'instance_index' once.">instance_index(2)</error>;
+            """,
+        )
+    }
+
+    fun `test too many instance uniforms`() {
+        val autoIndexed = (0 until 16).joinToString("\n") { "instance uniform float a$it;" }
+        doHighlightTest(
+            """
+            |shader_type spatial;
+            |$autoIndexed
+            |instance uniform float explicit : instance_index(3);
+            |<error descr="Too many 'instance' uniforms in shader, maximum supported is 16.">instance</error> uniform float overflow;
+            """.trimMargin(),
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code.trimIndent())
         myFixture.checkHighlighting(false, false, true)
