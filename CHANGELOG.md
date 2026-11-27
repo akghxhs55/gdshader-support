@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Added preprocessor signature validation
 - Added missing return check
 - Added sampler return type check
+- Added uniform and varying type check
 
 ## 1.3.0 (2026-11-27)
 

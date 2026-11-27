@@ -869,6 +869,34 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test struct uniform type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            #define T S
+            struct S { float a; };
+            uniform <error descr="The 'struct' data type is not supported for uniforms.">S</error> a;
+            instance uniform <error descr="The 'struct' data type is not supported for uniforms.">S</error> b;
+            global uniform <error descr="The 'struct' data type is not supported for uniforms.">S</error> c;
+            uniform <error descr="The 'struct' data type is not supported for uniforms.">S</error> d[2];
+            uniform lowp <error descr="The 'struct' data type is not supported for uniforms.">S</error> e;
+            uniform <error descr="The 'struct' data type is not supported for uniforms.">T</error> f;
+        """,
+        )
+    }
+
+    fun `test struct varying type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            struct S { float a; };
+            varying <error descr="The 'struct' data type is not allowed here.">S</error> a;
+            varying flat highp <error descr="The 'struct' data type is not allowed here.">S</error> b;
+            varying <error descr="The 'struct' data type is not allowed here.">S</error> c[2];
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)

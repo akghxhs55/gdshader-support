@@ -16,6 +16,7 @@ import kr.jaehoyi.gdshader.model.Builtins
 import kr.jaehoyi.gdshader.model.DataType
 import kr.jaehoyi.gdshader.model.FunctionContext
 import kr.jaehoyi.gdshader.model.SamplerType
+import kr.jaehoyi.gdshader.model.StructType
 import kr.jaehoyi.gdshader.model.acceptsValueOf
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
@@ -69,7 +70,10 @@ class GdsDeclarationAnnotator :
 
         when {
             element is GdsItem -> checkShaderTypeFirst(element, holder)
-            element is GdsType -> checkSamplerType(element, holder)
+            element is GdsType -> {
+                checkSamplerType(element, holder)
+                checkStructType(element, holder)
+            }
             element is GdsStructDeclaration -> {
                 checkEmptyStruct(element, holder)
                 checkDuplicateStruct(element, holder)
@@ -250,6 +254,23 @@ class GdsDeclarationAnnotator :
         val type = GdsDataTypeFactory.createFromType(element) as? SamplerType ?: return
         holder
             .newAnnotation(HighlightSeverity.ERROR, message ?: "A '${type.name}' data type is not allowed here.")
+            .range(element)
+            .create()
+    }
+
+    private fun checkStructType(
+        element: GdsType,
+        holder: AnnotationHolder,
+    ) {
+        val message =
+            when (element.parent) {
+                is GdsUniformDeclaration -> "The 'struct' data type is not supported for uniforms."
+                is GdsVaryingDeclaration -> "The 'struct' data type is not allowed here."
+                else -> return
+            }
+        if (GdsDataTypeFactory.createFromType(element) !is StructType) return
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, message)
             .range(element)
             .create()
     }
