@@ -41,6 +41,7 @@ class GdsStatementAnnotator :
             is GdsSwitchStatement -> checkSwitchStatement(element, holder)
             is GdsIfStatement -> checkIfStatement(element, holder)
             is GdsForStatement -> checkForStatement(element, holder)
+            is GdsFunctionDeclaration -> checkMissingReturn(element, holder)
         }
     }
 
@@ -115,6 +116,24 @@ class GdsStatementAnnotator :
                     .create()
             }
         }
+    }
+
+    private fun checkMissingReturn(
+        element: GdsFunctionDeclaration,
+        holder: AnnotationHolder,
+    ) {
+        val block = element.block ?: return
+        val closingBrace = block.node.findChildByType(GdsTypes.CURLY_BRACKET_CLOSE)?.psi ?: return
+        if (Builtins.isProcessingFunction(element.functionNameDecl.name, GdsPsiImplUtil.getShaderType(element))) return
+        val returnType = GdsDataTypeFactory.createFromFunctionDeclaration(element) ?: return
+        if (returnType is VoidType) return
+        if (PsiTreeUtil.findChildOfType(block, GdsReturnStatement::class.java) != null) return
+        if (PsiTreeUtil.hasErrorElements(block)) return
+
+        holder
+            .newAnnotation(HighlightSeverity.ERROR, "Expected at least one 'return' statement in a non-void function.")
+            .range(closingBrace)
+            .create()
     }
 
     private fun checkSwitchStatement(

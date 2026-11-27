@@ -447,6 +447,65 @@ class GdsStatementAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    // === missing return ===
+
+    fun `test non-void function without return`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f() {
+                float x = 1.0;
+            <error descr="Expected at least one 'return' statement in a non-void function.">}</error>
+        """,
+        )
+    }
+
+    fun `test non-void function with empty body`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            vec3 f() {<error descr="Expected at least one 'return' statement in a non-void function.">}</error>
+        """,
+        )
+    }
+
+    fun `test void function without return`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void f() {
+                float x = 1.0;
+            }
+        """,
+        )
+    }
+
+    fun `test return only in nested control flow`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float a(bool b) { if (b) return 1.0; }
+            float c(bool b) { if (b) { } else { return 1.0; } }
+            float d() { while (false) { return 1.0; } }
+            float e() { for (int i = 0; i < 1; i++) { return 1.0; } }
+            float g(int i) { switch (i) { case 0: return 1.0; } }
+            float h() { { return 1.0; } }
+        """,
+        )
+    }
+
+    fun `test code after return`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            float f() {
+                return 1.0;
+                float y = 2.0;
+            }
+        """,
+        )
+    }
+
     private fun doHighlightTest(code: String) {
         myFixture.configureByText("test_shader.gdshader", code)
         myFixture.checkHighlighting(false, false, true)
