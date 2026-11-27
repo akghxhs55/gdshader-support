@@ -21,6 +21,7 @@ import kr.jaehoyi.gdshader.model.VoidType
 import kr.jaehoyi.gdshader.model.acceptsValueOf
 import kr.jaehoyi.gdshader.psi.GdsArraySize
 import kr.jaehoyi.gdshader.psi.GdsBlockBody
+import kr.jaehoyi.gdshader.psi.GdsCaseBody
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaration
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclarator
 import kr.jaehoyi.gdshader.psi.GdsConstantDeclaratorList
@@ -42,6 +43,7 @@ import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsParameter
 import kr.jaehoyi.gdshader.psi.GdsPrecision
 import kr.jaehoyi.gdshader.psi.GdsPrimitiveType
+import kr.jaehoyi.gdshader.psi.GdsStatementBody
 import kr.jaehoyi.gdshader.psi.GdsStructDeclaration
 import kr.jaehoyi.gdshader.psi.GdsStructMember
 import kr.jaehoyi.gdshader.psi.GdsStructMemberDeclarator
@@ -115,7 +117,9 @@ class GdsDeclarationAnnotator :
                 checkSplitDoubleArraySize(element, holder)
                 checkDuplicateLocalVariable(element.variableNameDecl, holder)
                 val declaration = element.parent?.parent
-                val declaredType = GdsDataTypeFactory.createFromLocalVariableDeclaration(element)
+                val declaredType =
+                    GdsDataTypeFactory.createFromLocalVariableDeclaration(element)
+                        ?: GdsDataTypeFactory.createFromForInit(element)
                 val context =
                     ArrayInitializerContext(
                         initializer = element.initializer,
@@ -552,7 +556,7 @@ class GdsDeclarationAnnotator :
     ) {
         if (nameDecl == null) return
         val name = nameDecl.name
-        val myScope = PsiTreeUtil.getParentOfType(nameDecl, GdsBlockBody::class.java)
+        val myScope = localScope(nameDecl)
 
         val hasDuplicate =
             collectVisibleVariables(nameDecl)
@@ -560,11 +564,10 @@ class GdsDeclarationAnnotator :
                 .any { element ->
                     when (element) {
                         is GdsVariableNameDecl -> {
-                            val parent = element.parent
-                            if (parent is GdsLocalVariableDeclarator || parent is GdsConstantDeclarator) {
-                                PsiTreeUtil.getParentOfType(element, GdsBlockBody::class.java) === myScope
-                            } else {
-                                true
+                            when (val parent = element.parent) {
+                                is GdsLocalVariableDeclarator, is GdsConstantDeclarator -> localScope(element) === myScope
+                                is GdsParameter -> myScope?.parent?.parent is GdsFunctionDeclaration
+                                else -> true
                             }
                         }
                         else -> true
@@ -577,6 +580,19 @@ class GdsDeclarationAnnotator :
                 .range(nameDecl)
                 .create()
         }
+    }
+
+    private fun localScope(element: PsiElement): PsiElement? {
+        var current = element.parent
+        while (current != null) {
+            when (current) {
+                is GdsBlockBody, is GdsForInit -> return current
+                // Statements of a block or a case are statement bodies too, but they share the enclosing scope.
+                is GdsStatementBody -> if (current.parent !is GdsBlockBody && current.parent !is GdsCaseBody) return current
+            }
+            current = current.parent
+        }
+        return null
     }
 
     private fun collectVisibleVariables(position: PsiElement): List<GdsVariable> {

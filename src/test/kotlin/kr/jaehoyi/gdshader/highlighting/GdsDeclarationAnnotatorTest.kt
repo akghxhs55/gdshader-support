@@ -923,6 +923,49 @@ class GdsDeclarationAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test for initializer type`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                for (int i = <error descr="Cannot assign a value of type 'float' to type 'int'">1.0</error>; false;) { }
+                for (int i = 0, j = <error descr="Cannot assign a value of type 'float' to type 'int'">1.0</error>; false;) { }
+                for (float a[2] = float[2](1.0, 2.0); false;) { }
+                for (highp float a[2] = <error descr="Cannot convert from 'float[2]' to 'highp float[2]'.">float[2](1.0, 2.0)</error>; false;) { }
+                for (const int i = 0, j = 1; false;) { }
+                for (const float a[2] = float[2](1.0, 2.0); false;) { }
+            }
+        """,
+        )
+    }
+
+    fun `test for and statement body scopes`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            uniform float u;
+            void f(int a) {
+                for (int a = 0; false;) { }
+                { int a = 0; }
+                if (true) int a = 0;
+            }
+            void g(int a) {
+                int <error descr="Redefinition of 'a'">a</error> = 0;
+            }
+            void fragment() {
+                int i;
+                for (int i = 0; false;) { int i = 1; }
+                for (int i = 0; false;) int i = 1;
+                for (int i = 0; false;) for (int i = 0; false;) { }
+                for (int k = 0, <error descr="Redefinition of 'k'">k</error> = 1; false;) { }
+                for (float <error descr="Redefinition of 'u'">u</error> = 0.0; false;) { }
+                while (false) int i = 1;
+                do int i = 1; while (false);
+            }
+        """,
+        )
+    }
+
     fun `test void parameter`() {
         doHighlightTest(
             """

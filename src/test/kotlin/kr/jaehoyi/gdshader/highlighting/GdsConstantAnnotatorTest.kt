@@ -98,6 +98,22 @@ class GdsConstantAnnotatorTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test constant for initializer`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            void fragment() {
+                int x = 1;
+                for (const int i = 0; i < 2;) { break; }
+                for (const int <error descr="Expected initialization of constant.">i</error>; false;) { }
+                for (const int i = <error descr="Expected constant expression.">x</error>; false;) { }
+                for (const int i = 0; false; <error descr="Constants cannot be modified">i++</error>) { }
+                for (const int i = 0; false;) { <error descr="Constants cannot be modified">i = 1</error>; }
+            }
+            """,
+        )
+    }
+
     fun `test array initializer size`() {
         doHighlightTest(
             """

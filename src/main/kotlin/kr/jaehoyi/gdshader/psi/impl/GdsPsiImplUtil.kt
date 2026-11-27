@@ -41,6 +41,7 @@ import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.GdsVaryingDeclaration
+import kr.jaehoyi.gdshader.psi.isConstant
 import kr.jaehoyi.gdshader.reference.GdsFunctionReference
 import kr.jaehoyi.gdshader.reference.GdsStructMemberReference
 import kr.jaehoyi.gdshader.reference.GdsStructReference
@@ -117,10 +118,11 @@ object GdsPsiImplUtil {
                     is GdsForInit -> {
                         val type = GdsDataTypeFactory.createFromForInit(declarator) ?: return null
 
-                        LocalVariableSpec(
-                            name = element.name,
-                            type = type,
-                        )
+                        if (parent.isConstant) {
+                            ConstantSpec(name = element.name, type = type)
+                        } else {
+                            LocalVariableSpec(name = element.name, type = type)
+                        }
                     }
 
                     else -> null

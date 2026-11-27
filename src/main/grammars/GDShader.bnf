@@ -439,7 +439,7 @@ for_statement ::= CF_FOR PARENTHESIS_OPEN for_init? SEMICOLON for_condition? SEM
 {
 	pin=1
 }
-for_init ::= precision? type local_variable_declarator_list
+for_init ::= CONST? precision? type local_variable_declarator_list
 for_condition ::= expression (COMMA expression)*
 for_iteration ::= expression (COMMA expression)*
 

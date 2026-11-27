@@ -19,14 +19,17 @@ import kr.jaehoyi.gdshader.psi.GdsConstantEvaluator
 import kr.jaehoyi.gdshader.psi.GdsConstantReducer
 import kr.jaehoyi.gdshader.psi.GdsDataTypeFactory
 import kr.jaehoyi.gdshader.psi.GdsExpressionTypeInference
+import kr.jaehoyi.gdshader.psi.GdsForInit
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameDecl
 import kr.jaehoyi.gdshader.psi.GdsFunctionNameRef
+import kr.jaehoyi.gdshader.psi.GdsLocalVariableDeclarator
 import kr.jaehoyi.gdshader.psi.GdsPostfixExpr
 import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsVariableNameDecl
 import kr.jaehoyi.gdshader.psi.GdsVariableNameRef
 import kr.jaehoyi.gdshader.psi.impl.GdsLightVariable
 import kr.jaehoyi.gdshader.psi.impl.GdsMacroElement
+import kr.jaehoyi.gdshader.psi.isConstant
 
 class GdsConstantAnnotator :
     Annotator,
@@ -44,6 +47,7 @@ class GdsConstantAnnotator :
         }
         when (element) {
             is GdsConstantDeclarator -> checkConstantInitializer(element, holder)
+            is GdsLocalVariableDeclarator -> checkForInitConstant(element, holder)
             is GdsArraySize -> checkArraySize(element, holder)
             is GdsPostfixExpr -> checkConstantIndices(element, holder)
         }
@@ -84,6 +88,21 @@ class GdsConstantAnnotator :
     ) {
         val initializer = element.initializer ?: return
         if (GdsDataTypeFactory.createFromConstantDeclaration(element)?.isOpaque == true) return
+        firstNonConstant(initializer)?.let { error(holder, it, "Expected constant expression.") }
+    }
+
+    private fun checkForInitConstant(
+        element: GdsLocalVariableDeclarator,
+        holder: AnnotationHolder,
+    ) {
+        val forInit = element.parent?.parent as? GdsForInit ?: return
+        if (!forInit.isConstant) return
+        val initializer = element.initializer
+        if (initializer == null) {
+            error(holder, element, "Expected initialization of constant.")
+            return
+        }
+        if (GdsDataTypeFactory.createFromForInit(element)?.isOpaque == true) return
         firstNonConstant(initializer)?.let { error(holder, it, "Expected constant expression.") }
     }
 

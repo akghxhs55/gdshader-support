@@ -735,21 +735,29 @@ public class GdsParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // precision? type local_variable_declarator_list
+  // CONST? precision? type local_variable_declarator_list
   public static boolean for_init(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_init")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FOR_INIT, "<for init>");
     r = for_init_0(b, l + 1);
+    r = r && for_init_1(b, l + 1);
     r = r && type(b, l + 1);
     r = r && local_variable_declarator_list(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // precision?
+  // CONST?
   private static boolean for_init_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "for_init_0")) return false;
+    consumeToken(b, CONST);
+    return true;
+  }
+
+  // precision?
+  private static boolean for_init_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "for_init_1")) return false;
     precision(b, l + 1);
     return true;
   }
