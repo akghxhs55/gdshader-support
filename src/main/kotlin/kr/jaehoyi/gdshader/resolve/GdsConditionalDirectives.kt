@@ -16,9 +16,6 @@ import kr.jaehoyi.gdshader.GdsLexerAdapter
 import kr.jaehoyi.gdshader.psi.GdsTokenSets
 import kr.jaehoyi.gdshader.psi.GdsTypes
 
-// A condition is only evaluated when everything it depends on is known from the file itself. A macro may
-// also come from an including or included file, and CURRENT_RENDERER depends on the project, so such
-// branches stay UNKNOWN and are parsed like active code.
 object GdsConditionalDirectives {
     enum class Status { ACTIVE, INACTIVE, UNKNOWN }
 
@@ -32,7 +29,18 @@ object GdsConditionalDirectives {
         val chain: Int,
         val index: Int,
         val range: TextRange,
+        val facts: List<Fact> = emptyList(),
     )
+
+    data class Fact(
+        val name: String,
+        val revision: Int,
+        val defined: Boolean,
+    ) {
+        fun contradicts(other: Fact): Boolean = name == other.name && revision == other.revision && defined != other.defined
+
+        fun negate(): Fact = copy(defined = !defined)
+    }
 
     class Analysis(
         val inactiveRanges: List<TextRange>,
@@ -52,9 +60,10 @@ object GdsConditionalDirectives {
                 val a = firstPath[i]
                 val b = secondPath[i]
                 if (a == b) continue
-                return a.chain == b.chain
+                if (a.chain == b.chain) return true
+                break
             }
-            return false
+            return firstPath.any { a -> a.facts.any { fact -> secondPath.any { b -> b.facts.any(fact::contradicts) } } }
         }
 
         private fun branchPath(offset: Int): List<Branch> = branches.filter { it.range.containsOffset(offset) }.sortedBy { it.range.startOffset }
@@ -88,7 +97,13 @@ object GdsConditionalDirectives {
     private val ANALYSIS_KEY = Key.create<CachedValue<Analysis>>("GDS_CONDITIONAL_DIRECTIVES")
     private val DIRECTIVE_NAME_REGEX = Regex("""^\s*#\s*[A-Za-z]+""")
     private val LINE_CONTINUATION_REGEX = Regex("""\\[ \t]*(\r\n|\r|\n)""")
+    private val DEFINED_LITERAL_REGEX =
+        Regex("""^\s*(!?)\s*defined\s*(?:\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)|\s([A-Za-z_][A-Za-z0-9_]*))\s*$""")
     private const val MAX_EXPANSION_DEPTH = 32
+    private const val CONDITION_EVALUATION_ERROR = "Condition evaluation error."
+    private const val FLOAT_LITERAL_ERROR = "Floating-point number operations are not supported by the shader preprocessor."
+    private const val UNEXPECTED_CHARACTER_ERROR = "Unexpected character."
+    private val QUOTE_TOKENS = TokenSet.create(GdsTypes.STRING_CONSTANT, GdsTypes.UNTERMINATED_STRING_CONSTANT)
 
     fun getAnalysis(file: PsiFile): Analysis =
         CachedValuesManager.getCachedValue(file, ANALYSIS_KEY) {
@@ -98,8 +113,13 @@ object GdsConditionalDirectives {
                     .filter { it.node?.elementType in DIRECTIVES }
                     .map { DirectiveToken(it.node.elementType, it.textRange, it.text) }
                     .toList()
-            CachedValueProvider.Result.create(analyze(tokens, file.textLength), PsiModificationTracker.MODIFICATION_COUNT)
+            CachedValueProvider.Result.create(
+                analyze(tokens, file.textLength, undefinedByDefault(file)),
+                PsiModificationTracker.MODIFICATION_COUNT,
+            )
         }
+
+    fun undefinedByDefault(file: PsiFile): Boolean = file.viewProvider.virtualFile.extension == "gdshader"
 
     fun areExclusive(
         first: PsiElement,
@@ -122,6 +142,51 @@ object GdsConditionalDirectives {
         data object Uncertain : MacroState
     }
 
+    private class MacroTable(
+        private val undefinedByDefault: Boolean,
+    ) {
+        private val states = mutableMapOf<String, MacroState>()
+        private val revisions = mutableMapOf<String, Int>()
+        private var revision = 0
+        private var includeRevision = 0
+
+        operator fun get(name: String): MacroState? = states[name]
+
+        operator fun set(
+            name: String,
+            state: MacroState,
+        ) {
+            states[name] = state
+            revisions[name] = ++revision
+        }
+
+        fun include() {
+            states.replaceAll { _, _ -> MacroState.Uncertain }
+            includeRevision = ++revision
+        }
+
+        fun isDefined(name: String): Boolean? {
+            if (name in BUILTIN_DEFINES) return true
+            return when (states[name]) {
+                is MacroState.Defined -> true
+                MacroState.Undefined -> false
+                MacroState.Uncertain -> null
+                null -> if (undefinedByDefault && includeRevision == 0) false else null
+            }
+        }
+
+        fun fact(
+            name: String,
+            defined: Boolean,
+        ): Fact = Fact(name, maxOf(revisions[name] ?: 0, includeRevision), defined)
+    }
+
+    private class Evaluation(
+        val status: Status,
+        val problem: String? = null,
+        val fact: Fact? = null,
+    )
+
     private class Frame(
         val chain: Int,
         val start: DirectiveToken,
@@ -133,17 +198,21 @@ object GdsConditionalDirectives {
         var elseSeen = false
         var status = Status.ACTIVE
         var contentStart = 0
+        var ownFact: Fact? = null
+        var facts: List<Fact> = emptyList()
+        val priorNegations = mutableListOf<Fact>()
     }
 
     fun analyze(
         tokens: List<DirectiveToken>,
         textLength: Int,
+        undefinedByDefault: Boolean = false,
     ): Analysis {
         val inactiveRanges = mutableListOf<TextRange>()
         val branches = mutableListOf<Branch>()
         val problems = mutableMapOf<Int, String>()
         val statuses = mutableMapOf<Int, Status>()
-        val macros = mutableMapOf<String, MacroState>()
+        val macros = MacroTable(undefinedByDefault)
         val stack = ArrayDeque<Frame>()
         var skipDepth = 0
         var chainCount = 0
@@ -158,24 +227,30 @@ object GdsConditionalDirectives {
             if (frame.status == Status.INACTIVE) {
                 if (!range.isEmpty) inactiveRanges += range
             } else {
-                branches += Branch(frame.chain, frame.index, range)
+                branches += Branch(frame.chain, frame.index, range, frame.facts)
             }
+            frame.ownFact?.let { frame.priorNegations += it.negate() }
         }
 
         fun openBranch(
             frame: Frame,
             directive: DirectiveToken,
-            condition: Status,
+            condition: Evaluation,
         ) {
             frame.status =
                 when {
-                    frame.parentStatus == Status.INACTIVE || frame.anyTrue || condition == Status.INACTIVE -> Status.INACTIVE
-                    condition == Status.ACTIVE && !frame.anyUnknown -> Status.ACTIVE
+                    frame.parentStatus == Status.INACTIVE || frame.anyTrue || condition.status == Status.INACTIVE -> Status.INACTIVE
+                    condition.status == Status.ACTIVE && !frame.anyUnknown -> Status.ACTIVE
                     else -> Status.UNKNOWN
                 }
             if (frame.status == Status.ACTIVE) frame.anyTrue = true
             if (frame.status == Status.UNKNOWN) frame.anyUnknown = true
             frame.contentStart = directive.range.endOffset
+            frame.ownFact = condition.fact
+            frame.facts = listOfNotNull(condition.fact) + frame.priorNegations
+            if (condition.problem != null && frame.parentStatus == Status.ACTIVE) {
+                problems[directive.range.startOffset] = condition.problem
+            }
         }
 
         for (directive in tokens) {
@@ -213,9 +288,9 @@ object GdsConditionalDirectives {
                     frame.index++
                     if (type == GdsTypes.PP_ELSE_LINE) {
                         frame.elseSeen = true
-                        openBranch(frame, directive, Status.ACTIVE)
+                        openBranch(frame, directive, Evaluation(Status.ACTIVE))
                     } else {
-                        openBranch(frame, directive, if (frame.anyTrue) Status.INACTIVE else evaluateDirective(directive, macros))
+                        openBranch(frame, directive, evaluateDirective(directive, macros))
                     }
                 }
                 type == GdsTypes.PP_ENDIF_LINE -> {
@@ -241,7 +316,7 @@ object GdsConditionalDirectives {
                     identifierAfterDirective(directive.text)?.let { name ->
                         macros[name] = if (current == Status.UNKNOWN) MacroState.Uncertain else MacroState.Undefined
                     }
-                type == GdsTypes.PP_INCLUDE_LINE -> macros.replaceAll { _, _ -> MacroState.Uncertain }
+                type == GdsTypes.PP_INCLUDE_LINE -> macros.include()
             }
         }
 
@@ -266,32 +341,59 @@ object GdsConditionalDirectives {
 
     private fun evaluateDirective(
         directive: DirectiveToken,
-        macros: Map<String, MacroState>,
-    ): Status {
+        macros: MacroTable,
+    ): Evaluation {
         when (directive.type) {
             GdsTypes.PP_IFDEF_LINE, GdsTypes.PP_IFNDEF_LINE -> {
-                val name = identifierAfterDirective(directive.text) ?: return Status.UNKNOWN
-                val defined = isDefined(name, macros) ?: return Status.UNKNOWN
+                val name = identifierAfterDirective(directive.text) ?: return Evaluation(Status.UNKNOWN)
                 val expected = directive.type == GdsTypes.PP_IFDEF_LINE
-                return if (defined == expected) Status.ACTIVE else Status.INACTIVE
+                val fact = macros.fact(name, expected)
+                val defined = macros.isDefined(name) ?: return Evaluation(Status.UNKNOWN, fact = fact)
+                return Evaluation(if (defined == expected) Status.ACTIVE else Status.INACTIVE, fact = fact)
             }
         }
-        val prefix = DIRECTIVE_NAME_REGEX.find(directive.text) ?: return Status.UNKNOWN
-        val condition = directive.text.substring(prefix.range.last + 1)
-        val value = ConditionEvaluator(tokenize(condition), macros).evaluateAll() ?: return Status.UNKNOWN
-        return if (truthy(value)) Status.ACTIVE else Status.INACTIVE
+        val prefix = DIRECTIVE_NAME_REGEX.find(directive.text) ?: return Evaluation(Status.UNKNOWN)
+        val condition = LINE_CONTINUATION_REGEX.replace(directive.text.substring(prefix.range.last + 1), " ")
+        val fact =
+            DEFINED_LITERAL_REGEX.find(condition)?.let { match ->
+                macros.fact(match.groupValues[2].ifEmpty { match.groupValues[3] }, match.groupValues[1].isEmpty())
+            }
+        val tokens = tokenize(condition)
+        parseError(tokens, macros)?.let { return Evaluation(Status.UNKNOWN, it, fact) }
+        val evaluator = ConditionEvaluator(tokens, macros)
+        val value = evaluator.evaluateAll()
+        val status =
+            when {
+                value == null -> Status.UNKNOWN
+                truthy(value) -> Status.ACTIVE
+                else -> Status.INACTIVE
+            }
+        return Evaluation(status, CONDITION_EVALUATION_ERROR.takeIf { evaluator.usesUndefinedName }, fact)
     }
 
-    private fun isDefined(
-        name: String,
-        macros: Map<String, MacroState>,
-    ): Boolean? {
-        if (name in BUILTIN_DEFINES) return true
-        return when (macros[name]) {
-            is MacroState.Defined -> true
-            MacroState.Undefined -> false
-            else -> null
+    // Errors that ShaderExpression raises while tokenizing the macro-expanded condition, before evaluating it.
+    private fun parseError(
+        tokens: List<Pair<IElementType, String>>,
+        macros: MacroTable,
+        depth: Int = 0,
+    ): String? {
+        if (depth > MAX_EXPANSION_DEPTH) return null
+        var index = 0
+        while (index < tokens.size) {
+            val (type, text) = tokens[index++]
+            when {
+                type == GdsTypes.FLOAT_CONSTANT && text.first().isDigit() && text.any { it == '.' || it == 'e' || it == 'E' } ->
+                    return FLOAT_LITERAL_ERROR
+                type in QUOTE_TOKENS || (type == TokenType.BAD_CHARACTER && text == "'") -> return UNEXPECTED_CHARACTER_ERROR
+                type != GdsTypes.IDENTIFIER -> Unit
+                text == "defined" -> {
+                    if (tokens.getOrNull(index)?.first == GdsTypes.PARENTHESIS_OPEN) index++
+                    index++
+                }
+                else -> (macros[text] as? MacroState.Defined)?.body?.let { body -> parseError(body, macros, depth + 1)?.let { return it } }
+            }
         }
+        return null
     }
 
     private fun identifierAfterDirective(text: String): String? {
@@ -304,7 +406,7 @@ object GdsConditionalDirectives {
 
     private fun tokenize(text: String): List<Pair<IElementType, String>> {
         val lexer = GdsLexerAdapter()
-        lexer.start(LINE_CONTINUATION_REGEX.replace(text, " "))
+        lexer.start(text)
         val tokens = mutableListOf<Pair<IElementType, String>>()
         while (true) {
             val type = lexer.tokenType ?: break
@@ -318,18 +420,19 @@ object GdsConditionalDirectives {
         when (value) {
             is Boolean -> value
             is Long -> value != 0L
-            is Double -> value != 0.0
             else -> false
         }
 
     // Returns null when the value cannot be known.
     private class ConditionEvaluator(
         private val tokens: List<Pair<IElementType, String>>,
-        private val macros: Map<String, MacroState>,
+        private val macros: MacroTable,
         private val depth: Int = 0,
     ) {
         private var position = 0
         private var failed = false
+        var usesUndefinedName = false
+            private set
 
         fun evaluateAll(): Any? {
             if (depth > MAX_EXPANSION_DEPTH || tokens.isEmpty()) return null
@@ -369,7 +472,6 @@ object GdsConditionalDirectives {
                     position++
                     when (val value = parseUnary()) {
                         is Long -> -value
-                        is Double -> -value
                         null -> null
                         else -> fail()
                     }
@@ -387,7 +489,6 @@ object GdsConditionalDirectives {
             position++
             return when (type) {
                 GdsTypes.INT_CONSTANT, GdsTypes.UINT_CONSTANT -> parseInteger(text) ?: fail()
-                GdsTypes.FLOAT_CONSTANT -> text.trimEnd('f', 'F').toDoubleOrNull() ?: fail()
                 GdsTypes.TRUE -> true
                 GdsTypes.FALSE -> false
                 GdsTypes.PARENTHESIS_OPEN -> {
@@ -410,14 +511,20 @@ object GdsConditionalDirectives {
                 if (peek()?.first != GdsTypes.PARENTHESIS_CLOSE) return fail()
                 position++
             }
-            return isDefined(name, macros)
+            return macros.isDefined(name)
         }
 
+        // Godot evaluates both operands of '&&' and '||', so an undefined name fails even where C would short-circuit.
         private fun expand(name: String): Any? {
             BUILTIN_DEFINE_VALUES[name]?.let { return it.toLong() }
+            if (macros.isDefined(name) == false) {
+                usesUndefinedName = true
+                return null
+            }
             val state = macros[name] as? MacroState.Defined ?: return null
             val body = state.body ?: return null
-            return ConditionEvaluator(body, macros, depth + 1).evaluateAll()
+            val nested = ConditionEvaluator(body, macros, depth + 1)
+            return nested.evaluateAll().also { if (nested.usesUndefinedName) usesUndefinedName = true }
         }
 
         private fun parseInteger(text: String): Long? {
@@ -445,42 +552,30 @@ object GdsConditionalDirectives {
                 return if (left == null || right == null) null else false
             }
             if (left == null || right == null) return null
-            val l = numeric(left)
-            val r = numeric(right)
-            if (l is Long && r is Long) {
-                return when (operator) {
-                    "==" -> l == r
-                    "!=" -> l != r
-                    "<" -> l < r
-                    ">" -> l > r
-                    "<=" -> l <= r
-                    ">=" -> l >= r
-                    "+" -> l + r
-                    "-" -> l - r
-                    "*" -> l * r
-                    "/" -> if (r == 0L) fail() else l / r
-                    "%" -> if (r == 0L) fail() else l % r
-                    else -> fail()
-                }
-            }
-            val a = (l as? Number)?.toDouble() ?: return fail()
-            val b = (r as? Number)?.toDouble() ?: return fail()
+            val l = numeric(left) ?: return fail()
+            val r = numeric(right) ?: return fail()
             return when (operator) {
-                "==" -> a == b
-                "!=" -> a != b
-                "<" -> a < b
-                ">" -> a > b
-                "<=" -> a <= b
-                ">=" -> a >= b
-                "+" -> a + b
-                "-" -> a - b
-                "*" -> a * b
-                "/" -> a / b
+                "==" -> l == r
+                "!=" -> l != r
+                "<" -> l < r
+                ">" -> l > r
+                "<=" -> l <= r
+                ">=" -> l >= r
+                "+" -> l + r
+                "-" -> l - r
+                "*" -> l * r
+                "/" -> if (r == 0L) fail() else l / r
+                "%" -> if (r == 0L) fail() else l % r
                 else -> fail()
             }
         }
 
-        private fun numeric(value: Any): Any = if (value is Boolean) (if (value) 1L else 0L) else value
+        private fun numeric(value: Any): Long? =
+            when (value) {
+                is Boolean -> if (value) 1L else 0L
+                is Long -> value
+                else -> null
+            }
 
         private companion object {
             val BINARY_LEVELS =

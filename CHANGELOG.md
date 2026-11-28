@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Added `instance_index` check
 - Added macro definition tooltip
 - Fixed trailing comma validation
+- c
 
 ## 1.3.0 (2026-11-27)
 

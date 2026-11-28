@@ -7,7 +7,9 @@ import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 
 // Needs the whole file to evaluate directives, so the editor highlighter keeps using GdsLexerAdapter.
-class GdsConditionalLexer : LexerBase() {
+class GdsConditionalLexer(
+    private val undefinedByDefault: Boolean = false,
+) : LexerBase() {
     private class Token(
         val type: IElementType,
         val start: Int,
@@ -42,7 +44,7 @@ class GdsConditionalLexer : LexerBase() {
             baseTokens
                 .filter { it.type in GdsConditionalDirectives.DIRECTIVES }
                 .map { GdsConditionalDirectives.DirectiveToken(it.type, TextRange(it.start, it.end), buffer.substring(it.start, it.end)) }
-        val inactiveRanges = GdsConditionalDirectives.analyze(directives, endOffset).inactiveRanges
+        val inactiveRanges = GdsConditionalDirectives.analyze(directives, endOffset, undefinedByDefault).inactiveRanges
         tokens = merge(baseTokens, inactiveRanges)
     }
 

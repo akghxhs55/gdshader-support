@@ -22,6 +22,7 @@ import kr.jaehoyi.gdshader.psi.GdsTypes
 import kr.jaehoyi.gdshader.psi.GdsUniformDeclaration
 import kr.jaehoyi.gdshader.psi.GdsUniformGroupDeclaration
 import kr.jaehoyi.gdshader.psi.impl.GdsPsiImplUtil
+import kr.jaehoyi.gdshader.resolve.GdsConditionalDirectives
 
 class GdsGlobalDeclarationAnnotator :
     Annotator,
@@ -77,7 +78,8 @@ class GdsGlobalDeclarationAnnotator :
         val groups = mutableMapOf<String, String>()
         var referenceValue: Long? = null
 
-        for (current in PsiTreeUtil.findChildrenOfType(file, modeClass)) {
+        val modes = PsiTreeUtil.findChildrenOfType(file, modeClass).filter { !GdsConditionalDirectives.areExclusive(it, element) }
+        for (current in modes) {
             val text = current.text
             val message =
                 if (current.node.firstChildNode?.elementType == GdsTypes.INT_CONSTANT) {

@@ -53,7 +53,7 @@ class GdsConditionalDirectiveTest : BasePlatformTestCase() {
             uniform float value;
             struct Data { float x; };
             float f() { return 0.0; }
-            #elif defined(FROM_INCLUDE)
+            #elif CURRENT_RENDERER == RENDERER_MOBILE
             uniform float value;
             struct Data { float x; };
             float f() { return 1.0; }
@@ -63,7 +63,7 @@ class GdsConditionalDirectiveTest : BasePlatformTestCase() {
             float f() { return 2.0; }
             #endif
             void fragment() {
-            #ifdef FROM_INCLUDE
+            #if CURRENT_RENDERER == RENDERER_MOBILE
                 float local = 1.0;
             #else
                 float local = 2.0;
@@ -96,7 +96,7 @@ class GdsConditionalDirectiveTest : BasePlatformTestCase() {
             #if 0
             #error disabled
             #endif
-            #ifndef FROM_INCLUDE
+            #if CURRENT_RENDERER == RENDERER_MOBILE
             #error maybe disabled
             #endif
             <error descr="Missing feature">#error Missing feature</error>
@@ -112,7 +112,7 @@ class GdsConditionalDirectiveTest : BasePlatformTestCase() {
             <error descr="Macro redefinition.">#define A 1</error>
             #undef A
             #define A 2
-            #ifdef FROM_INCLUDE
+            #if CURRENT_RENDERER == RENDERER_MOBILE
             #define B 1
             #else
             #define B 2
@@ -156,8 +156,173 @@ class GdsConditionalDirectiveTest : BasePlatformTestCase() {
         )
     }
 
-    private fun doHighlightTest(code: String) {
-        myFixture.configureByText("test_shader.gdshader", code.trimIndent())
+    fun `test render modes in exclusive branches`() {
+        val code =
+            """
+            shader_type canvas_item;
+            #if defined(BLEND_ADD)
+            render_mode blend_add;
+            #elif defined(BLEND_MUL)
+            render_mode blend_mul;
+            #endif
+            void fragment() {}
+            """
+        doHighlightTest(code)
+        doHighlightTest(code, "test_include.gdshaderinc")
+    }
+
+    fun `test ifdef and ifndef of the same macro are exclusive`() {
+        val code =
+            """
+            shader_type spatial;
+            #ifdef PER_VERTEX
+            varying vec4 v_tint;
+            #endif
+            #if !defined(PER_VERTEX)
+            uniform float scale;
+            #endif
+            #if defined PER_VERTEX
+            uniform float scale;
+            #endif
+            void fragment() {
+            #ifndef PER_VERTEX
+                vec4 v_tint = vec4(1.0);
+            #endif
+                ALBEDO = v_tint.rgb;
+            }
+            """
+        doHighlightTest(code)
+        doHighlightTest(code, "test_include.gdshaderinc")
+    }
+
+    fun `test else branch is exclusive with the same macro in another chain`() {
+        doHighlightTest(
+            """
+            #ifdef A
+            #else
+            uniform float x;
+            #endif
+            #ifdef A
+            uniform float x;
+            #endif
+            #ifndef A
+            uniform float <error descr="Redefinition of 'x'">x</error>;
+            #endif
+            """,
+            "test_include.gdshaderinc",
+        )
+    }
+
+    fun `test macros not mentioned in a shader are undefined`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            render_mode unshaded
+            #if defined(NO_DEPTH)
+            , depth_test_disabled;
+            #else
+            ;
+            #endif
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+            #ifdef A
+            uniform float x;
+            #endif
+            #ifdef B
+            uniform float x;
+            #endif
+            void fragment() {}
+            """,
+        )
+    }
+
+    fun `test macros stay unknown in include files and after an include`() {
+        myFixture.addFileToProject("defs.gdshaderinc", "")
+        val code =
+            """
+            #ifdef A
+            uniform float x;
+            #endif
+            #ifdef B
+            uniform float <error descr="Redefinition of 'x'">x</error>;
+            #endif
+            #if MODE == 1
+            #endif
+            """
+        doHighlightTest(code, "test_include.gdshaderinc")
+        doHighlightTest("shader_type spatial;\n#include \"res://defs.gdshaderinc\"\n" + code.trimIndent())
+    }
+
+    fun `test undefined name in condition`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            <error descr="Condition evaluation error.">#if MODE == 1</error>
+            #endif
+            <error descr="Unexpected character.">#if MODE == "abc"</error>
+            #endif
+            <error descr="Unexpected character.">#if 'a'</error>
+            #endif
+            <error descr="Condition evaluation error.">#if defined(MODE) && MODE > 1</error>
+            #endif
+            #if 1
+            <error descr="Condition evaluation error.">#elif MODE</error>
+            #endif
+            #define M 1
+            #undef M
+            <error descr="Condition evaluation error.">#if M</error>
+            #endif
+            #define N MODE
+            <error descr="Condition evaluation error.">#if N</error>
+            #endif
+            #if 0
+            #if MODE
+            #endif
+            #endif
+            #if defined(MODE) || !defined(M)
+            #endif
+            """,
+        )
+    }
+
+    fun `test float literal in condition`() {
+        doHighlightTest(
+            """
+            shader_type spatial;
+            <error descr="Floating-point number operations are not supported by the shader preprocessor.">#if 1.0</error>
+            void f() {}
+            #endif
+            <error descr="Floating-point number operations are not supported by the shader preprocessor.">#if MODE > 1e3</error>
+            #endif
+            #define SCALE 1.5f
+            <error descr="Floating-point number operations are not supported by the shader preprocessor.">#if SCALE > 1</error>
+            #endif
+            #if 0
+            <error descr="Floating-point number operations are not supported by the shader preprocessor.">#elif 2.0</error>
+            #endif
+            #if defined(SCALE) && 0x1E > 1
+            #endif
+            #if 0
+            #if 1.0
+            #endif
+            #endif
+            """,
+        )
+        doHighlightTest(
+            """
+            <error descr="Floating-point number operations are not supported by the shader preprocessor.">#if FROM_INCLUDE > 0.5</error>
+            #endif
+            """,
+            "test_include.gdshaderinc",
+        )
+    }
+
+    private fun doHighlightTest(
+        code: String,
+        fileName: String = "test_shader.gdshader",
+    ) {
+        myFixture.configureByText(fileName, code.trimIndent())
         myFixture.checkHighlighting(false, false, true)
     }
 }
